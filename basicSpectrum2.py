@@ -191,9 +191,7 @@ class BasicSpectrum:
         float, float
           x-position; y-maximum
         '''
-        low,high=self._minMaxIndex(low,high)
-        high_index=(self.data_table[self.name_x]-high).abs().sort_values().index[0]
-        low_index=(self.data_table[self.name_x]-low).abs().sort_values().index[0]
+        low_index,high_index=self._minMaxIndex(low,high)
         maxi_index=self.data_table[self.name_y][low_index:high_index].idxmax()
         if Print:
             print('the maximum is at: '+ str(self.data_table[self.name_x][maxi_index])\
@@ -218,9 +216,7 @@ class BasicSpectrum:
         float, float
           x-position; y-minimum
         '''
-        low,high=self._minMaxIndex(low,high)
-        high_index=(self.data_table[self.name_x]-high).abs().sort_values().index[0]
-        low_index=(self.data_table[self.name_x]-low).abs().sort_values().index[0]
+        low_index,high_index=self._minMaxIndex(low,high)
         min_index=self.data_table[self.name_y][low_index:high_index].idxmin()
         if Print:
             print('the minimum is at: '+ str(self.data_table[self.name_x][min_index])\
