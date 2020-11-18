@@ -10,10 +10,6 @@ import numpy as np
 from basicSpectrum2 import BasicSpectrum
 import sys
 
-#with open("test_output.txt", 'w') as file:
-#    sys.stdout=file
-
-
 x=np.linspace(250,800,800-249)
 
 def gauss(x, amp, cen, sigma):
@@ -125,6 +121,5 @@ class TestBasicSpectrum(unittest.TestCase):
         norm = spec.baselineCorrection(730,itself=False)
         self.assertTrue(self.assertEqualArray(norm.data_table['y'],y-np.mean(y[480:])))
 
-#file.close()
 if __name__ == '__main__':
     unittest.main()
