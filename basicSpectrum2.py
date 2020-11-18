@@ -42,6 +42,10 @@ class BasicSpectrum:
     
     """
     def __init__(self, x, y, sort=True,name=None,name_x=None,name_y=None):
+        if type(x) == pd.core.series.Series:
+            x=x.values
+        if type(y) == pd.core.series.Series:
+            y=y.values
         if name_x is None:
            self.name_x='x'
         else:
@@ -69,7 +73,7 @@ class BasicSpectrum:
                 low=(self.data_table[self.name_x]).min()
         if high == None:
             high=(self.data_table[self.name_x]).max()
-        high_index=(self.data_table[self.name_x]-high).abs().sort_values().index[0]
+        high_index=(self.data_table[self.name_x]-high).abs().sort_values().index[0]+1
         low_index=(self.data_table[self.name_x]-low).abs().sort_values().index[0] - self.data_table.index[0]
         if low_index<high_index:
             return low_index,high_index
@@ -128,32 +132,30 @@ class BasicSpectrum:
         if itself:
             self.data_table= data_table
         else:
-            BasicSpectrum(data_table[self.name_x],data_table[self.name_y],self.name,self.name_x,self.name_y)
+             return BasicSpectrum(data_table[self.name_x],data_table[self.name_y],True,self.name,self.name_x,self.name_y)
     
     def __sub__(self, obj):
         '''subtract two spectra'''
-        ret_obj = BasicSpectrum(self.data_table[self.name_x],self.data_table[self.name_y],self.name,self.name_x,self.name_y)
+        ret_obj = BasicSpectrum(self.data_table[self.name_x],self.data_table[self.name_y],True,self.name,self.name_x,self.name_y)
         ret_obj.data_table[ret_obj.name_y]= self.data_table[self.name_y] - obj.data_table[obj.name_y]
         return ret_obj
     
     def __mul__(self, number):
         '''multiply spectrum by number'''
-        ret_obj = BasicSpectrum(self.data_table[self.name_x],self.data_table[self.name_y],self.name,self.name_x,self.name_y)
-        ret_obj.data_table['absorbances']= self.data_table['absorbances'] * number
-        ret_obj.y=self.y*number
+        ret_obj = BasicSpectrum(self.data_table[self.name_x],self.data_table[self.name_y],True,self.name,self.name_x,self.name_y)
+        ret_obj.data_table[self.name_y]= self.data_table[self.name_y] * number
         return ret_obj
     
     def __add__(self, obj):
         '''add two spectra'''
-        ret_obj = BasicSpectrum(self.data_table[self.name_x],self.data_table[self.name_y],self.name,self.name_x,self.name_y)
-        ret_obj.data_table[ret_obj.name_y]= self.data_table[self.name_y] + obj.data_table[obj.name_y]
+        ret_obj = BasicSpectrum(self.data_table[self.name_x],self.data_table[self.name_y],True,self.name,self.name_x,self.name_y)
+        ret_obj.data_table[ret_obj.name_y] = ret_obj.data_table[ret_obj.name_y] + obj.data_table[obj.name_y]
         return ret_obj
     
     def __truediv__(self, number):
         '''divide spectrum by a number'''
-        ret_obj = BasicSpectrum(self.data_table[self.name_x],self.data_table[self.name_y],self.name,self.name_x,self.name_y)
-        ret_obj.data_table['absorbances']= self.data_table['absorbances'] / number
-        ret_obj.y=self.y/number
+        ret_obj = BasicSpectrum(self.data_table[self.name_x],self.data_table[self.name_y],True,self.name,self.name_x,self.name_y)
+        ret_obj.data_table[self.name_y]= self.data_table[self.name_y] / number
         return ret_obj
         
     def obtainValue(self,value):
@@ -226,12 +228,12 @@ class BasicSpectrum:
     def forcePositive(self,itself=True):
         '''add minimum value of the y vector to itself and thus force it to be positive'''
         self.positive=True
-        mini=self.data_table[self.name_x].min()
+        mini=self.data_table[self.name_y].min()
         if mini<0:
             if itself:
-                self.data_table[self.name_x] = self.data_table[self.name_y]-mini   
+                self.data_table[self.name_y] = self.data_table[self.name_y]-mini   
             else:
-               spec= BasicSpectrum(self.data_table[self.name_x],self.data_table[self.name_y]-mini,self.name,self.name_x,self.name_y)
+               spec = BasicSpectrum(self.data_table[self.name_x],self.data_table[self.name_y]-mini,True,self.name,self.name_x,self.name_y)
                return  spec 
     
     def normalize(self,wavelength=None,low=None,high=None,itself=True):
@@ -259,11 +261,11 @@ class BasicSpectrum:
         else:
            val=self.obtainValue(wavelength)
         data=self.data_table.copy()
-        data[self.name_y]=self.data[self.name_y]/val
+        data[self.name_y]=data[self.name_y]/val
         if itself:
             self.data_table[self.name_y]=data[self.name_y]
         else:
-            spec= BasicSpectrum(data[self.name_x],data[self.name_y],self.name,self.name_x,self.name_y)
+            spec= BasicSpectrum(data[self.name_x],data[self.name_y],True,self.name,self.name_x,self.name_y)
             return  spec
                    
           
@@ -309,6 +311,7 @@ class BasicSpectrum:
         -------
             matplotlib axex object
         '''
+        ret_fig= False
         plot_properties=dict({'fsize':14,'small_tick':True,'which':'both','direction':'in'},**kwargs)
         for i in plot_properties.keys():
             if i in kwargs.keys():  kwargs.pop(i) 
@@ -322,16 +325,17 @@ class BasicSpectrum:
               axes='new'  
         if axes == 'new':
             fig, ax1 = plt.subplots(1)
+            ret_fig =True
         else:
             ax1=axes
         if label is None:
+            label='_'
+
+        if fill: 
             ax1.plot(self.data_table[self.name_x],self.data_table[self.name_y],**kwargs)
+            plt.fill_between(self.data_table[self.name_x],self.data_table[self.name_y],color=plt.gca().lines[-1].get_color(),alpha=0.5,label=label)
         else:
-            if fill: 
-                ax1.plot(self.data_table[self.name_x],self.data_table[self.name_y],**kwargs)
-                plt.fill_between(self.data_table[self.name_x],self.data_table[self.name_y],color=plt.gca().lines[-1].get_color(),alpha=0.5,label=label)
-            else:
-                ax1.plot(self.data_table[self.name_x],self.data_table[self.name_y],**kwargs,label=label,)
+            ax1.plot(self.data_table[self.name_x],self.data_table[self.name_y],label=label,**kwargs)
         ax1.set_xlabel(x_label,size=plot_properties['fsize'])
         ax1.set_ylabel( y_label,size=plot_properties['fsize'])
         plt.ticklabel_format(style='sci',scilimits=(-3,4),axis='y')
@@ -347,7 +351,10 @@ class BasicSpectrum:
         plt.xlim(self.data_table[self.name_x][self.data_table.index[0]],self.data_table[self.name_x][self.data_table.index[-1]])
         if two_Xaxes and self._xtranformed:
             self._twinyAxes(plot_properties['fsize'])
-        return ax1
+        if ret_fig:
+            return fig, ax1
+        else :
+            return ax1
         
     def _twinyAxes(self,fsize):
         """Twin X axes for plotSpectrum function"""
