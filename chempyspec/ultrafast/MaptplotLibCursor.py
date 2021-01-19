@@ -7,24 +7,26 @@ Created on Fri Nov 13 17:59:23 2020
 import numpy as np
 
 class SnaptoCursor(object):
-    def __init__(self, ax,x, y,number_click=-1,vertical_draw=True,draw='snap',color=False,single_line=True):
-        if number_click==-1:
-            self.number_click=np.inf
+    def __init__(self, ax, x, y, number_click=-1, vertical_draw=True, draw='snap', color=False, single_line=True):
+        if number_click == -1:
+            self.number_click = np.inf
         else:
-            self.number_click=number_click
+            self.number_click = number_click
         self.ax = ax
-        self.draw=draw
-        self.vertical_draw=vertical_draw
-        self.color=color
+        self.draw = draw
+        self.vertical_draw = vertical_draw
+        self.color = color
         self.x = x
         self.y = y
-        self.similar = y==np.zeros(len(y))
-        self.datax=[]
-        self.datay=[]
-        self.scat=[]
-        self.single_line=single_line
+        self.similar = y == np.zeros(len(y))
+        self.datax = []
+        self.datay = []
+        self.scat = []
+        self.single_line = single_line
+
     def mouseMove(self, event):
-        if not event.inaxes: return
+        if not event.inaxes:
+            return
         self.x_pos, self.y_pos = event.xdata, event.ydata
         if self.single_line:
             indx = np.searchsorted(self.x, [self.x_pos])[0]
@@ -60,7 +62,7 @@ class SnaptoCursor(object):
     
     def onClick(self,event):
         if not event.inaxes: return
-        if event.button==1:
+        if event._button_svd_select==1:
             #print(self.number_click)
             if len(self.datax)<self.number_click:
                 x,y=event.xdata,event.ydata
@@ -80,7 +82,7 @@ class SnaptoCursor(object):
             else:
                 pass
             self.ax.figure.canvas.draw_idle()
-        elif event.button==3:
+        elif event._button_svd_select==3:
             if len(self.datax)==0:
                 pass
             else:

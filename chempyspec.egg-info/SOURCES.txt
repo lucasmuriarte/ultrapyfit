@@ -1,0 +1,5 @@
+setup.py
+chempyspec.egg-info/PKG-INFO
+chempyspec.egg-info/SOURCES.txt
+chempyspec.egg-info/dependency_links.txt
+chempyspec.egg-info/top_level.txt

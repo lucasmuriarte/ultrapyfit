@@ -172,11 +172,11 @@ class threadItter(QThread):
     
     @pyqtSlot()
     def run(self):
-        experiment.Fit_completed=False
+        experiment.fit_completed=False
         if ex.my_thread_Fit.isRunning: 
             time.sleep(1)
             if experiment.SVD_fit==False:
-                while experiment.Fit_completed==False:
+                while experiment.fit_completed==False:
                     prev_val=experiment.number_it
                     time.sleep(1)
                     val=experiment.number_it
@@ -315,7 +315,7 @@ class SnaptoCursor(object):
     
     def onClick(self,event):
         if not event.inaxes: return
-        if event.button==1:
+        if event._button_svd_select==1:
             #print(self.number_click)
             if len(self.datax)<self.number_click:
                 x,y=event.xdata,event.ydata
@@ -335,7 +335,7 @@ class SnaptoCursor(object):
             else:
                 pass
             self.ax.figure.canvas.draw_idle()
-        elif event.button==3:
+        elif event._button_svd_select==3:
             if len(self.datax)==0:
                 pass
             else:
@@ -1556,7 +1556,7 @@ class ModelWindow(QMainWindow):
             else:
                 experiment.correctionFlutuationsPoly(points,order)  
                 ax.remove()
-                figo,ax2=experiment.plotSpectra(times=points_plot,ncol=2)
+                figo,ax2=experiment.plot_spectra(times=points_plot, ncol=2)
                 ax2.remove()
                 ax2.figure=fig
                 fig.add_axes(ax2)
@@ -1582,7 +1582,7 @@ class ModelWindow(QMainWindow):
             size=QSize(1250,725)
         points_plot=list(experiment.getAutoPoints(15))
         subWindow=QMdiSubWindow(self)    
-        fig,ax=experiment.plotSpectra(times=['auto',16],ncol=2)
+        fig,ax=experiment.plot_spectra(times=['auto', 16], ncol=2)
         grapth=Grapth(fig,subWindow,toolbar=True,cursor=True,y=False,number_click=-1,)
         subWindow.resize(size)
         spin=QSpinBox(subWindow)
@@ -1806,7 +1806,7 @@ class ModelWindow(QMainWindow):
             error_dialog.exec()
         else:
             try:
-                if experiment.Fit_completed or experiment.prefit_done:
+                if experiment.fit_completed or experiment.prefit_done:
                     params=experiment.params
                 else:
                     params=experiment.initial_params
@@ -2287,7 +2287,7 @@ class ModelWindow(QMainWindow):
                 rango=[0,len(x)-1]#define the fitting range
             else:
                 rango=[idx[0],len(x)-1]
-            self.fig,ax=experiment.plotSpectra(times='auto',ncol=2)
+            self.fig,ax=experiment.plot_spectra(times='auto', ncol=2)
             subWindow = QMdiSubWindow(self)
             self.OneFit_widget=Grapth(self.fig,subWindow,toolbar=False,cursor=True,y=False,click=True,number_click=1)
             subWindow.setWindowTitle("Selecting trace for single fitting")
@@ -2365,7 +2365,7 @@ class ModelWindow(QMainWindow):
                 rango=[0,len(x)-1]#define the fitting range
             else:
                 rango=[idx[0],len(x)-1]
-            self.fig,ax=experiment.plotSpectra(times='auto',ncol=2)
+            self.fig,ax=experiment.plot_spectra(times='auto', ncol=2)
             subWindow = QMdiSubWindow(self)
             self.integrateFig=Grapth(self.fig,subWindow,toolbar=False,cursor=True,y=False,click=True,number_click=2)
             subWindow.setWindowTitle("Selecting area for integral band analysis")
@@ -2822,7 +2822,7 @@ class ModelWindow(QMainWindow):
                 self.wavelength_irf=self.IRF_experiment.wavelength
             self.subWindow = QMdiSubWindow(self)
             points=[i for i in self.IRF_experiment.x[::2]]
-            self.fig,_=self.IRF_experiment.plotSpectra(times=points,ncol=2)
+            self.fig,_=self.IRF_experiment.plot_spectra(times=points, ncol=2)
             self.IRF_widget=Grapth(self.fig,self.subWindow,toolbar=False,cursor=True,y=False,click=True,number_click=1)
             self.formatSubWindow(self.subWindow,self.IRF_widget,'Fitting solvent IRF')
             btn = QPushButton("Select wavelength", self.subWindow) 
@@ -2849,7 +2849,7 @@ class ModelWindow(QMainWindow):
             point=[np.argmin(abs(data[:idx[0],idx[1]]-i)) for i in\
                    np.linspace(data[0,idx[1]],np.max(data[idx[0],idx[1]]),8)]
             time_points = list(np.sort(np.array(x)[point]))
-            self.fig,ax=experiment.plotSpectra(times=time_points,ncol=2)
+            self.fig,ax=experiment.plot_spectra(times=time_points, ncol=2)
             self.subWindow = QMdiSubWindow(self)
             self.IRF_widget=Grapth(self.fig,self.subWindow,toolbar=False,cursor=True,y=False,click=True,number_click=1)
             self.formatSubWindow(self.subWindow,self.IRF_widget,'Fitting Raman peak IRF')
@@ -3253,7 +3253,7 @@ class ModelWindow(QMainWindow):
             error_dialog.setText('Please select spectra by clicking on Trace figure')
             error_dialog.exec()
         else:
-            fig,_=experiment.plotSpectra(sorted(points))
+            fig,_=experiment.plot_spectra(sorted(points))
             subWindow = QMdiSubWindow(self)
             widget=Grapth(fig,subWindow)
             self.formatSubWindow(subWindow,widget,'Selected Spectra')
@@ -3347,7 +3347,7 @@ class ModelWindow(QMainWindow):
     
     def deletePointWaveFunc(self):
         try:
-            fig,_=experiment.plotSpectra(times='auto')
+            fig,_=experiment.plot_spectra(times='auto')
             self.subWindow_del_wave = QMdiSubWindow(self)
             self.widget_del_wave=Grapth(fig,self.subWindow_del_wave,cursor=True,y=False)
             self.formatSubWindow(self.subWindow_del_wave,self.widget_del_wave,'Delete wavelength points')
@@ -3731,11 +3731,11 @@ class ModelWindow(QMainWindow):
         experiment.sbk7=''
         experiment.radio =''
         experiment.radio1=''
-        experiment.button=''
+        experiment._button_svd_select= ''
         experiment.button2=''
-        experiment.fig=''
+        experiment._fig= ''
         experiment.figGVD=''
-        experiment.ax=''
+        experiment._ax= ''
         experiment.l=''
     
     def saveasFunc(self): 
@@ -3910,13 +3910,13 @@ class ModelWindow(QMainWindow):
                 self.text013.setText('')
                 print('a')
             elif texto=='From':
-                fig,_=experiment.plotSpectra()
+                fig,_=experiment.plot_spectra()
                 self.selectCombo(fig,self.text003)
             elif texto=='Until':
-                fig,_=experiment.plotSpectra()
+                fig,_=experiment.plot_spectra()
                 self.selectCombo(fig,self.text013)
             else:
-                fig,_=experiment.plotSpectra()
+                fig,_=experiment.plot_spectra()
                 self.selectCombo(fig,[self.text003,self.text013],number_click=2)
         except:
             self.messageError()
@@ -4554,7 +4554,7 @@ class ModelWindow(QMainWindow):
     def SelectTracesGrapthFunc(self):
         try:
             self.pop_edit_status=self.edit_general['pop_edit']
-            fig,self.ax=experiment.plotSpectra()
+            fig,self.ax=experiment.plot_spectra()
             self.subWindow = QMdiSubWindow(self)
             self.widget_select=Grapth(fig,self.subWindow,cursor=True,y=False)
             self.formatSubWindow(self.subWindow,self.widget_select)
@@ -4694,11 +4694,11 @@ class ModelWindow(QMainWindow):
             number=int(self.text26.text())
             wave=float(self.text36.text())
             if text16_value=='False' or text16_value=='false':
-                fig,_=experiment.plotSpectra(times=['auto',number,wave],rango=rango,n_points=average,legend=False,include_rango_max=include_max)
+                fig,_=experiment.plot_spectra(times=['auto', number, wave], rango=rango, n_points=average, legend=False, include_rango_max=include_max)
             elif self.text16.text().isdigit():
-                fig,_=experiment.plotSpectra(times=['auto',number,wave],rango=rango,n_points=average,ncol=int(self.text16.text()),include_rango_max=include_max)
+                fig,_=experiment.plot_spectra(times=['auto', number, wave], rango=rango, n_points=average, ncol=int(self.text16.text()), include_rango_max=include_max)
             else:
-                fig,_=experiment.plotSpectra(times=['auto',number,wave],rango=rango,n_points=average,include_rango_max=include_max)
+                fig,_=experiment.plot_spectra(times=['auto', number, wave], rango=rango, n_points=average, include_rango_max=include_max)
             subWindow = QMdiSubWindow(self)
             widget=Grapth(fig,subWindow)
             self.formatSubWindow(subWindow,widget,'Spectra Auto plotted')
@@ -4747,7 +4747,7 @@ class ModelWindow(QMainWindow):
     #menu bar2     
     def PlotSpecAutoFunc(self):
         try:
-            fig,_=experiment.plotSpectra(times='auto')
+            fig,_=experiment.plot_spectra(times='auto')
             subWindow = QMdiSubWindow(self)
             widget=Grapth(fig,subWindow)
             if experiment.data_before_first_selection is not None:
@@ -4776,7 +4776,7 @@ class ModelWindow(QMainWindow):
         
     def PlotSpecAutoFuncProcess(self):
         try:
-            fig,_=experiment.plotSpectra(times='auto')
+            fig,_=experiment.plot_spectra(times='auto')
             subWindow = QMdiSubWindow(self)
             widget=Grapth(fig,subWindow)
             self.formatSubWindow(subWindow,widget,'Spectra Auto plotted')
@@ -4785,7 +4785,7 @@ class ModelWindow(QMainWindow):
     #menu bar2 action
     def PlotSpecAllFunc(self):
         try:
-            fig,_=experiment.plotSpectra()
+            fig,_=experiment.plot_spectra()
             subWindow = QMdiSubWindow(self)
             widget=Grapth(fig,subWindow)
             self.formatSubWindow(subWindow,widget,'All Spectra')
@@ -4929,7 +4929,7 @@ class ModelWindow(QMainWindow):
     def PlotSVDFunc(self):
         try:
         #fig,ax=self.plotTest()
-            fig,ax=experiment.plotSingularValues(log_scale=False)
+            fig,ax=experiment.plot_singular_values(log_scale=False)
             subWindow = QMdiSubWindow(self)
             widget=Grapth(fig,subWindow,cursor=True,click=False)
             self.formatSubWindow(subWindow,widget,'Singular Values',close_button=True)
@@ -5011,11 +5011,11 @@ class ModelWindow(QMainWindow):
             times=[float(i) for i in text14_str.split(',')]
             text24_value=self.text24.text()
             if text24_value=='False' or text24_value=='false':
-                fig,_=experiment.plotSpectra(times=times,n_points=average,legend=False)
+                fig,_=experiment.plot_spectra(times=times, n_points=average, legend=False)
             elif self.text24.text().isdigit():
-                fig,_=experiment.plotSpectra(times=times,n_points=average,ncol=int(self.text24.text()))
+                fig,_=experiment.plot_spectra(times=times, n_points=average, ncol=int(self.text24.text()))
             else:
-                fig,_=experiment.plotSpectra(times=times,n_points=average)
+                fig,_=experiment.plot_spectra(times=times, n_points=average)
             subWindow = QMdiSubWindow(self)
             widget=Grapth(fig,subWindow)
             self.formatSubWindow(subWindow,widget,'Spectra plotted manually')
@@ -5555,7 +5555,7 @@ class ModelWindow(QMainWindow):
                         typo='exp_mix'
                         value=exp_val.value()
                     rang=[float(i) for i in rango.text().split('-')]
-                    experiment.defineWeights(rang,typo,value)
+                    experiment.define_weights(rang, typo, value)
                     for  i in range(len(experiment.x)):
                         it= QTableWidgetItem(str(experiment.weights['vector'][i]))
                         par_table.setItem(2,i,it)
@@ -6714,7 +6714,7 @@ class ModelWindow(QMainWindow):
     #button after go to fit plot Fit
     def button71Func(self,number=None,selection=None,residues=True,first_plot=True):
         try:
-            fig,ax=experiment.plotFit(fit_number=number,selection=selection,plot_residues=residues)
+            fig,ax=experiment.plot_fit(fit_number=number, selection=selection, plot_residues=residues)
             number_name=f'(fit {number})' if number is not None  else 'last fit'
             w,h=fig.get_size_inches()*fig.dpi
             subWindow = QMdiSubWindow(ex)

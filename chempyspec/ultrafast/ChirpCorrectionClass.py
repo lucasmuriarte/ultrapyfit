@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from PyQt5.QtGui import  QIcon
 from matplotlib.widgets import Slider, Button, RadioButtons
-from MaptplotLibCursor import SnaptoCursor 
+from chempyspec.ultrafast.MaptplotLibCursor import SnaptoCursor 
 from pylab import pcolormesh
 
 

@@ -7,7 +7,7 @@ Created on Mon Nov 23 11:10:17 2020
 
 import unittest
 import numpy as np
-from GlobExpParams import GlobExpParameters
+from chempyspec.ultrafast.GlobExpParams import GlobExpParameters
 from parameterized import parameterized
 import sys
 
@@ -39,7 +39,7 @@ class TestBasicSpectrum(unittest.TestCase):
     def test__addDeconvolution(self,fwhm,opt_fwhm,tau_inf):
         params=GlobExpParameters(number_traces,taus)
         params._generateParams(0,False)
-        params._addDeconvolution(fwhm,opt_fwhm,tau_inf)
+        params._add_deconvolution(fwhm, opt_fwhm, tau_inf)
         #notice tau_inf is not a parameter and thus is not added only its preexponential function plus fwhm
         number = (len(taus)+2)*2*number_traces 
         if tau_inf is None: number -= number_traces

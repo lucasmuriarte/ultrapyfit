@@ -8,9 +8,9 @@ import numpy as np
 from ExploreResultsClass import ExploreResults
 from PlotTransientClass import ExploreData
 from GlobExpParams import GlobExpParameters
-from outils import defineWeights, UnvariableContainer, VariableContainer
+from outils import define_weights, UnvariableContainer, LabBook
 from PreprocessingClass import Preprocessing
-from GlobalFitClass import GlobalFitExponetial
+from GlobalFitClass import GlobalFitExponential
 from GlobalTargetClass import GlobalFitTargetModel
 import os
 
@@ -49,7 +49,7 @@ class Experiment(ExploreData,ExploreResults):
         self.deconv=True
         self.SVD_fit=False
         self.type_fit='Exponential'
-        self.fit_records=VariableContainer()
+        self.fit_records=LabBook()
         self.fit_records.single_fits={}
         self.fit_records.bootstrap_record={}
         self.fit_records.conf_interval={}
@@ -203,7 +203,7 @@ class Experiment(ExploreData,ExploreResults):
         self.x=self.x-value
     
     def defineWeights(self,rango,typo='constant',val=5):
-        self.weights=defineWeights(self.x, rango, typo='constant', val=5)
+        self.weights=define_weights(self.x, rango, typo='constant', val=5)
 
     def createNewDir(self,path):
         if not os.path.exists(path):
@@ -230,8 +230,8 @@ class Experiment(ExploreData,ExploreResults):
         
     def finalFit(self,vary=True,maxfev=5000,apply_weights=False):
         if self._params_initialized == 'Global':
-            minimizer=GlobalFitExponetial(self.selected_traces,self.selected_wavelength,self.params,\
-                                          self._deconv,self.tau_inf,GVD_corrected=self.GVD_corrected)
+            minimizer=GlobalFitExponential(self.selected_traces, self.selected_wavelength, self.params, \
+                                           self._deconv, self.tau_inf, GVD_corrected=self.GVD_corrected)
         elif self._params_initialized == 'Target':
             minimizer=GlobalFitTargetModel(self.selected_traces,self.selected_wavelength,self.params)
         else:
