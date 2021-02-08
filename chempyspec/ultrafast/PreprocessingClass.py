@@ -41,7 +41,7 @@ class Preprocessing:
     """
     
     @staticmethod
-    def baselineSubstraction(data, number_spec=2, only_one=False):
+    def baseline_substraction(data, number_spec=2, only_one=False):
         """
         Subtract a initial spectrum or an average of initial spectra
         (normally before time = 0) to the entire data set.
@@ -91,7 +91,7 @@ class Preprocessing:
         return data_return
     
     @staticmethod
-    def delPoints(points, data, dimension_vector, axis=0):
+    def del_points(points, data, dimension_vector, axis=0):
         """
         Delete rows or columns from the data set according to the closest values
         given in points to the values found in dimension_vector. The length of
@@ -168,7 +168,7 @@ class Preprocessing:
         return data_return, dimension_vector
     
     @staticmethod
-    def cutColumns(data, columns, mini=None, maxi=None, innerdata=None):
+    def cut_columns(data, columns, mini=None, maxi=None, innerdata=None):
         """
         Cut columns of the data set and wavelength vector according to the closest
         values of mini and maxi margins given.  
@@ -233,24 +233,19 @@ class Preprocessing:
                 cut_index += 1
             columns_res = columns[cut_index:]
             data_res = data[:, cut_index:]
-        elif innerdata == 'select':
+        elif innerdata == 'select' or innerdata == 'cut':
             cut_maxi = (pd.Series(columns)-maxi).abs().sort_values().index[0]
             cut_mini = (pd.Series(columns)-mini).abs().sort_values().index[0]
             if columns[cut_mini] < mini:
                 cut_mini += 1
             if columns[cut_maxi] < maxi:
                 cut_maxi += 1
-            columns_res = columns[cut_mini:cut_maxi]
-            data_res = data[:, cut_mini:cut_maxi]
-        elif innerdata == 'cut':
-            cut_maxi = (pd.Series(columns)-maxi).abs().sort_values().index[0]
-            cut_mini = (pd.Series(columns)-mini).abs().sort_values().index[0]
-            if columns[cut_mini] < mini:
-                cut_mini += 1
-            if columns[cut_maxi] < maxi:
-                cut_maxi += 1
-            columns_res = np.append(columns[:cut_mini], columns[cut_maxi:])
-            data_res = np.concatenate((data[:, :cut_mini], data[:, cut_maxi:]), axis=1)
+            if innerdata == 'select':
+                columns_res = columns[cut_mini:cut_maxi]
+                data_res = data[:, cut_mini:cut_maxi]
+            else:
+                columns_res = np.append(columns[:cut_mini], columns[cut_maxi:])
+                data_res = np.concatenate((data[:, :cut_mini], data[:, cut_maxi:]), axis=1)
         else:
             statement_4 = 'if mini and maxi margins are be given indicates \
             that innerdata action either cut or select'
@@ -258,7 +253,7 @@ class Preprocessing:
         return data_res, columns_res
     
     @staticmethod
-    def cutRows(data, rows, mini=None, maxi=None):
+    def cut_rows(data, rows, mini=None, maxi=None):
         """
         Cut rows of the data set and time vector according to the closest
         values of mini and maxi margins given. Contrary to cutColumns functions,
@@ -307,8 +302,8 @@ class Preprocessing:
         return data_res, rows_res
     
     @staticmethod
-    def averageTimePoints(data, time, starting_point, step, 
-                          method='log', grid_dense=5):
+    def average_time_points(data, time, starting_point, step,
+                            method='log', grid_dense=5):
         """
         Average time points collected (rows). This function can be use to average 
         time points. Useful in multiprobe time-resolved experiments or flash-
@@ -405,7 +400,7 @@ class Preprocessing:
         return data_res, time_res
     
     @staticmethod
-    def derivateSpace(data, window_length=25, polyorder=3, deriv=1, mode='mirror'):
+    def derivate_space(data, window_length=25, polyorder=3, deriv=1, mode='mirror'):
         """
         Apply a Savitky-Golay filter to the data in the spectral range (rows).
         This function can be used to correct for baseline fluctuations and still 
@@ -446,7 +441,7 @@ class Preprocessing:
         return data2
     
     @staticmethod
-    def shitTime(time, value):
+    def shit_time(time, value):
         """
         Shift the time vector by a value
         
@@ -466,7 +461,7 @@ class Preprocessing:
         return time - value
     
     @staticmethod
-    def substractPolynomBaseline(data, wavelength, points, order=3):
+    def substract_polynom_baseline(data, wavelength, points, order=3):
         """
         Fit and subtract a polynomial to the data in the spectral range (rows).
         This function can be used to correct for baseline fluctuations typically
@@ -509,7 +504,7 @@ class Preprocessing:
         return data_corr
 
     @staticmethod
-    def correctChrip(data, wavelength, time, method='selmeiller', return_details=False):
+    def correct_chrip(data, wavelength, time, method='selmeiller', return_details=False):
         if method == 'selmeiller':
             GVD = ChripCorrection(data, wavelength, time)
             correct_data = GVD.GVDFromGrapth()

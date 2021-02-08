@@ -60,9 +60,9 @@ class SnaptoCursor(object):
         self.txt.set_position((x,y))
         self.ax.figure.canvas.draw_idle()
     
-    def onClick(self,event):
+    def onClick(self, event):
         if not event.inaxes: return
-        if event._button_svd_select==1:
+        if event.button == 1:
             #print(self.number_click)
             if len(self.datax)<self.number_click:
                 x,y=event.xdata,event.ydata
@@ -82,8 +82,8 @@ class SnaptoCursor(object):
             else:
                 pass
             self.ax.figure.canvas.draw_idle()
-        elif event._button_svd_select==3:
-            if len(self.datax)==0:
+        elif event.button == 3:
+            if len(self.datax) == 0:
                 pass
             else:
                 del self.datax[-1]
@@ -92,7 +92,7 @@ class SnaptoCursor(object):
                 del self.scat[-1]
                 self.ax.figure.canvas.draw_idle()  
     
-    def onEnterAxes(self,event):
+    def onEnterAxes(self, event):
         if not event.inaxes: return
         try:
             self.onLeaveAxes(event)

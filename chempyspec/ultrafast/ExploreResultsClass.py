@@ -4,7 +4,7 @@ Created on Sun Nov 15 18:35:41 2020
 
 @author: lucas
 """
-from chempyspec.ultrafast.outils import FiguresFormating, solve_kmatrix
+from chempyspec.ultrafast.outils import FiguresFormating, solve_kmatrix, TimeUnitFormater
 import matplotlib.pyplot as plt
 import numpy as np
 from ModelCreatorClass import ModelCreator
@@ -14,13 +14,13 @@ from matplotlib.widgets import Slider
 
 class ExploreResults(FiguresFormating):
     def __init__(self, fits, **kwargs):
-        units = dict({'time_unit': 'ps', 'time_unit_high': 'ns', 'time_unit_low': 'fs', 'wavelength_unit': 'nm',
-                      'factor_high': 1000, 'factor_low': 1000}, **kwargs)
+        units = dict({'time_unit': 'ps', 'wavelength_unit': 'nm'}, **kwargs)
         if type(fits) == dict:
-            self.all_fit = fits
+            self.global_fits = fits
         else:
-            self.all_fit = {1: fits}
+            self.global_fits = {1: fits}
         self.units = units
+        self._unit_formater = TimeUnitFormater(self.units['time_unit'])
         self._l = None
         self._ll = None
         self._lll = None
@@ -33,15 +33,16 @@ class ExploreResults(FiguresFormating):
         self._x_verivefit = None
         self._residues = None
         self._wavelength_fit = None
+        self._title = None
 
     def results(self, fit_number=None, verify_svd_fit=False):
         """
         Returns a data set created from the best parameters values.
 
-         Parameters
+        Parameters
         ----------
         fit_number: int or None (default None)
-            defines the fit number of the results object. If None the last fit in the result object will
+            defines the fit number of the results all_fit dcitionary. If None the last fit in  will
             be considered
 
         verify_svd_fit: bool (default  False)
@@ -51,7 +52,7 @@ class ExploreResults(FiguresFormating):
         """
         x, data, wavelength, result_params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space,  = \
             self._get_values(fit_number=fit_number, verify_svd_fit=verify_svd_fit)
-        model = ModelCreator(x, exp_no, tau_inf)
+        model = ModelCreator(exp_no, x, tau_inf)
         ndata, nx = data.shape
         if type_fit == 'Exponential':
             if deconv:
@@ -71,9 +72,30 @@ class ExploreResults(FiguresFormating):
                 curve_resultados[:, i] = model.expNGaussDatasetTM(result_params, i, [coeffs, eigs, eigenmatrix])
         return curve_resultados
 
-    def plot_fit(self, size=14, fit_number=None, selection=None, plot_residues=True):
+    def plot_fit(self, fit_number=None, selection=None, plot_residues=True, size=14,):
         """
-
+        Funtion that generates a figure with the results of the fit stored in the all_fit attributes
+        If less than 10 traces are fitted or selected a legend will be displayed
+        
+        Parameters
+        ----------
+        fit_number: int or None (default None)
+            defines the fit number of the results all_fit dcitionary. If None the last fit in  will
+            be considered
+        
+        selection: list or None (default None)    
+            If None all the traces fiited will be plooted, if not only those selected in the lis
+        
+        plot_residues: Bool (default True)
+            If True the Figure returned will contain two axes a top one with the residues, and the bottom one
+            with the fit and data
+            
+        size: int (default 14)
+            size of the figure text labels including tick labels axis labels and legend
+        
+        Returns
+        ----------
+        Figure and axes matplotlib objects
         """
         x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
@@ -130,7 +152,7 @@ class ExploreResults(FiguresFormating):
             e.g.2: the last two exponentials plus tau_inf; number = [1, 2, -1]
 
         fit_number: int or None (default None)
-            defines the fit number of the results object. If None the last fit in the result object will
+            defines the fit number of the results all_fit dcitionary. If None the last fit in  will
             be considered
 
         Returns
@@ -143,7 +165,7 @@ class ExploreResults(FiguresFormating):
                   for ii in range(exp_no)]
         if deconv and tau_inf is not None:
             values.append([params['yinf_' + str(i + 1)].value for i in range(data.shape[1])])
-        if number is not 'all':
+        if number != 'all':
             assert type(number) == list, \
                 'Number should be "all" or a list containing the desired species if tau inf include -1 in the list'
             das = self.DAS(fit_number=fit_number)
@@ -153,21 +175,45 @@ class ExploreResults(FiguresFormating):
             das = np.array(values)
         return das
 
-    def plotDAS(self, number='all', fit_number=None, size=14, precision=2, plot_integrated_DAS=False, cover_range=None):
+    def plot_DAS(self, fit_number=None, number='all', precision=2, size=14, cover_range=None, plot_integrated_DAS=False):
         """
-        REtunrs the Decay Asociated Spectra of the FIt
-        Parameters: 
-            number --> 'all' or a list conataining the decay of the species you want, plus -1 if you want the tau inf if existing
-                        eg1.: if you want the decay of the second and third, [2,3] // eg2.:  fist third and inf, [2,3,-1]
-                            
+        Funtion that generates a figure with the decay associted spectra (DAS) of the fit stored in the all_fit attributes
+        
+        Parameters
+        ----------
+        fit_number: int or None (default None)
+            defines the fit number of the results all_fit dcitionary. If None the last fit in  will
+            be considered.
+        
+        number: list of inst or 'all'
+            Defines the DAS spectra wanted, if there is tau_inf include -1 in the list
+            e.g.: for a fit with three exponential, if the last two are wanted; number = [1, 2]
+            e.g.2: the last two exponentials plus tau_inf; number = [1, 2, -1]
+        
+        precision: int (default 2)
+            Defines the number of decimal places of the legend legend
+        
+        size: int (default 14)
+            size of the figure text labels including tick labels axis labels and legend
+        
+        cover_range: List of length 2 or None (default None)
+            Defines a range in wavelength that will be cover in white. This can be use to cut the excitation
+            wavelength range   
+        
+        plot_integrated_DAS: bool (default False)
+            Defines in case if data has been dericvated to directly integrate the DAS
+            
+        Returns
+        ----------
+        Figure and axes matplotlib objects
         """
         # verify type of fit is: either fit to Singular vectors or global fit to traces
         x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
         das = self.DAS(fit_number=fit_number)
-        xlabel = self._get_wave_label(wavelength)
+        xlabel = self._get_wave_label_res(wavelength)
         legenda = self._legend_plot_DAS(params, exp_no, deconv, tau_inf, type_fit, precision)
-        if number is not 'all':
+        if number != 'all':
             wanted = self._wanted_DAS(exp_no, number, tau_inf)
             # constants=' '.join([str(i.split('=')[1]) for i in legenda[:number]])
             # print(f'WARNING! time constants of value {constants} has been used to fit')
@@ -186,12 +232,25 @@ class ExploreResults(FiguresFormating):
             FiguresFormating.cover_excitation(ax, cover_range, wavelength)
         return fig, ax
 
-    def verifiedFit(self, fit_number=None):
-        x, self._data_fit, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
+    def verify_fit(self, fit_number=None):
+        """
+        Funtion that generates a figure with a slider to evaluate every single trace fitted independently
+        
+        Parameters
+        ----------
+        fit_number: int or None (default None)
+            defines the fit number of the results all_fit dcitionary. If None the last fit in  will
+            be considered.
+            
+        Returns
+        ----------
+        Figure and axes matplotlib objects
+        """
+        x, self._data_fit, self._wavelength_fit, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
         xlabel = 'Time (' + self.units['time_unit'] + ')'
         self._fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10, 8), gridspec_kw={'height_ratios': [1, 5]})
-        self._fittes = self.results(params)
+        self._fittes = self.results(fit_number=None)
         if deconv:
             self._residues = self._data_fit - self._fittes
             self._x_verivefit = x * 1.0
@@ -202,15 +261,15 @@ class ExploreResults(FiguresFormating):
             self._residues = self._data_fit[index:, :] - self._fittes
         initial_i = self._data_fit.shape[1] // 5
         self._l = ax[1].plot(self._x_verivefit, self._data_fit[:, initial_i], marker='o', ms=3, linestyle=None,
-                             label='raw data')
+                             label='raw data')[0]
         self._lll = ax[0].plot(self._x_verivefit, self._residues[:, initial_i], marker='o', ms=3, linestyle=None,
-                               label='residues')
-        self._ll = ax[1].plot(self._x_verivefit, self._fittes[:, initial_i], alpha=0.5, lw=1.5, color='r', label='fit')
+                               label='residues')[0]
+        self._ll = ax[1].plot(self._x_verivefit, self._fittes[:, initial_i], alpha=0.5, lw=1.5, color='r', label='fit')[0]
         delta_f = 1.0
         _, maxi = self._data_fit.shape
         axcolor = 'orange'
-        axspec = self._fig.add_axes([0.20, .02, 0.60, 0.01], facecolor=axcolor)
-        self._sspec = Slider(axspec, 'curve number', 0, maxi - 1, valstep=delta_f, valinit=0)
+        axspec = self._fig.add_axes([0.20, .05, 0.60, 0.02], facecolor=axcolor)
+        self._sspec = Slider(axspec, 'curve number', 1, maxi, valstep=delta_f, valinit=maxi//5)
         self._sspec.on_changed(self._update_verified_Fit)
         FiguresFormating.format_figure(ax[0], self._residues, self._x_verivefit, size=14)
         ax[0].set_ylabel('Residues', size=14)
@@ -218,10 +277,11 @@ class ExploreResults(FiguresFormating):
         ax[1].legend(loc='upper right')
         ax[0].legend(loc='upper right')
         title = round(self._wavelength_fit[initial_i])
+        self._title = ax[0].set_title(f'{title} nm')
         plt.title(f'{title} nm')
-        FiguresFormating.axis_labels(ax, xlabel, r'$\Delta$A', size=14)
-        self._fig.tight_layout()
-        plt.subplots_adjust(bottom=0.25)
+        FiguresFormating.axis_labels(ax[1], xlabel, r'$\Delta$A', size=14)
+        # self._fig.tight_layout()
+        plt.subplots_adjust(bottom=0.2)
         return self._fig, ax
 
     def _update_verified_Fit(self, val):
@@ -233,6 +293,7 @@ class ExploreResults(FiguresFormating):
         value = int(round(value))
         # update curve
         title = round(self._wavelength_fit[value])
+        self._title.set_text(f'{title} nm')
         plt.title(f'{title} nm')
         self._l.set_ydata(self._data_fit[:, value])
         self._ll.set_ydata(self._fittes[:, value])
@@ -240,7 +301,34 @@ class ExploreResults(FiguresFormating):
         # redraw canvas while idle
         self._fig.canvas.draw_idle()
 
-    def plotConcentrations(self, fit_number=None, size=14, names=None, plot_total_c=True, legend=True):  # tmp function.
+    def plot_concentrations(self, fit_number=None, names=None, plot_total_c=True, legend=True,  size=14,):  # tmp function.
+        """
+        Funtion that generates a figure with the concentration evolution of a Target fit
+        
+        Parameters
+        ----------
+        fit_number: int or None (default None)
+            defines the fit number of the results all_fit dcitionary. If None the last fit in  will
+            be considered.
+        
+        names: list (default None)
+            List that allows to redefine the names of the components. 
+            Is none the default names "specie" is use.
+            The names are display in the legend if legend is True
+        
+        plot_total_c: bool (default True)
+            Defines if the Total concentration is 
+        
+        legend: bool (default True)
+            Defines if the legend is display
+        
+        size: int (default 14)
+            size of the figure text labels including tick labels axis labels and legend
+            
+        Returns
+        ----------
+        Figure and axes matplotlib objects
+        """
         x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
 
@@ -272,8 +360,46 @@ class ExploreResults(FiguresFormating):
             FiguresFormating.axis_labels(ax, xlabel, 'Concentration (A.U.)', size=size)
             plt.xlim(-3, round(maxi_tau * 7))
             return fig, ax
-
-    def _get_wave_label(self, wavelength):
+    
+    def print_results(self, fit_number=None):
+        """
+        Print out a sumarize result of the fit.
+        
+        Parameters
+        ----------
+        fit_number: int or None (default None)
+            defines the fit number of the results all_fit dcitionary. If None the last fit in  will
+            be considered.
+        """
+        if fit_number is None:
+            fit_number = max(self.global_fits.keys())
+        _, data, _, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
+            self._get_values(fit_number=fit_number)
+        if deconv:
+            names=['t0_1','fwhm_1']+['tau%i_1'%(i+1) for i in range(exp_no)]
+            print_names = ['time 0','fwhm']
+        else:
+            names=['t0_1']+['tau%i_1'%(i+1) for i in range(exp_no)]
+            print_names = ['time 0']
+        print_names = print_names + ['tau %i' %i for i in range(1,exp_no + 1)] 
+        # print_resultados='\t'+',\n\t'.join([f'{name.split("_")[0]}:\t{round(params[name].value,4)}\t{params[name].vary}' for name in names])
+        print(f'Fit number {fit_number}: \tGlobal {type_fit} fit')
+        print('-------------------------------------------------')
+        print('Results:\tParameter\t\tInitial value\tFinal value\t\tVary')
+        for i in range(len(names)):
+            line = [f'\t{print_names[i]}:','{:.4f}'.format(params[names[i]].init_value),
+                      '{:.4f}'.format(params[names[i]].value),f'{params[names[i]].vary}']
+            print('\t\t'+'   \t\t'.join(line))
+        print('Details:')
+        print(f'\t\tNumber of traces: {data.shape[1]}; averige: {self.global_fits[fit_number].details["avg_traces"]}')
+        if type_fit == 'Exponential':
+            print(f'\t\tFit with {exp_no} exponentials; Deconvolution {deconv}')
+            print(f'\t\tTau inf: {tau_inf}')
+        print(f'\t\tNumber of iterations: {self.global_fits[fit_number].nfev}')
+        print(f'\t\tNumber of parameters optimized: {len(params)}')
+        print(f'\t\tWeights: {self.global_fits[fit_number].weights}')
+        
+    def _get_wave_label_res(self, wavelength):
         """
         Returns a formatted string from the units attribute
         """
@@ -289,30 +415,12 @@ class ExploreResults(FiguresFormating):
         """
         returns legend for plot_DAS function
         """
-        legenda = []
-        for i in range(exp_no):
-            tau = params['tau%i_1' % (i + 1)].value
-            if tau < 0.09:
-                tau *= self.units['factor_low']
-                legenda.append(
-                    rf'$\tau {i + 1}$ = ' + '{:.2f}'.format(round(tau, precision)) + ' ' + self.units['time_unit_low'])
-            elif tau > 999:
-                if tau > 1E12:
-                    legenda.append(r'$\tau$ = inf')
-                else:
-                    tau /= self.units['factor_high']
-                    legenda.append(
-                        rf'$\tau {i + 1}$ = ' + '{:.2f}'.format(round(tau, precision)) + ' '
-                        + self.units['time_unit_high'])
-            else:
-                legenda.append(rf'$\tau {i + 1}$ = ' + '{:.2f}'.format(round(tau, precision)) + ' '
-                               + self.units['time_unit'])
+        legenda = [self._unit_formater.value_formated(params['tau%i_1' % (i + 1)].value, precision) for i in range(exp_no)]
         if deconv and type_fit == 'Exponential':
             if tau_inf is None:
                 pass
             elif tau_inf != 1E+12:
-                legenda.append(r'$\tau$ = {:.2f}'.format(round(tau_inf / self.units['factor_high'], precision))
-                               + ' ' + self.units['time_unit_high)'])
+                legenda.append(self._unit_formater.value_formated(tau_inf, precision))
             else:
                 legenda.append(r'$\tau$ = inf')
         return legenda
@@ -333,6 +441,9 @@ class ExploreResults(FiguresFormating):
         return legend
 
     def _wanted_DAS(self, exp_no, number, tau_inf):
+        """
+        return a sub-array of DAS
+        """
         posible = [i + 1 for i in range(exp_no)]
         if tau_inf is not None:
             posible.append(-1)
@@ -343,21 +454,23 @@ class ExploreResults(FiguresFormating):
         """
         return values from the results object
         """
-        if fit_number is None and verify_svd_fit:
-            fit_number = max(self.all_fit.keys())
-        if self.all_fit[fit_number].details['svd_fit']:
-            params = self.all_fit[fit_number][11]
-            data = self.all_fit[fit_number][10]
-        else:
-            params = self.all_fit[fit_number].params
-            data = self.all_fit[fit_number].data
-        x = self.all_fit[fit_number].x
-        svd_fit = self.all_fit[fit_number].details['svd_fit']
-        wavelength = self.all_fit[fit_number].wavelength
-        deconv = self.all_fit[fit_number].details['deconv']
-        tau_inf = self.all_fit[fit_number].details['tau_inf']
-        exp_no = self.all_fit[fit_number].details['exp_no']
-        derivative_space = self.all_fit[fit_number].details['derivate']
+        if fit_number is None:
+            fit_number = max(self.global_fits.keys())
+        # if self.all_fit[fit_number].details['svd_fit']:
+        #     params = self.all_fit[fit_number][11]
+        #     data = self.all_fit[fit_number][10]
+        # else:
+        #     params = self.all_fit[fit_number].params
+        #     data = self.all_fit[fit_number].data
+        params = self.global_fits[fit_number].params
+        data = self.global_fits[fit_number].data
+        x = self.global_fits[fit_number].x
+        svd_fit = self.global_fits[fit_number].details['svd_fit']
+        wavelength = self.global_fits[fit_number].wavelength
+        deconv = self.global_fits[fit_number].details['deconv']
+        tau_inf = self.global_fits[fit_number].details['tau_inf']
+        exp_no = self.global_fits[fit_number].details['exp_no']
+        derivative_space = self.global_fits[fit_number].details['derivate']
         # check for type of fit done target or exponential
-        type_fit = self.all_fit[fit_number].details['type']
+        type_fit = self.global_fits[fit_number].details['type']
         return x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space

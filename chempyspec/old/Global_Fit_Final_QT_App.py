@@ -395,20 +395,20 @@ class MainWindowFtest(QMainWindow):
         self.parent = parent
         self.label = QLabel('Please select the parameter which you want to calculate the Confidence intervals', self)
         self.label.setGeometry(50,10,450,30)
-        self.resultados=experiment.all_fit[fit_number][3]
-        if experiment.all_fit[fit_number][8][2] == 'Exponential':
-            if experiment.all_fit[fit_number][5]:
-                params=['t0_1','fwhm_1']+['tau%i_1'%(i+1) for i in range(experiment.all_fit[fit_number][4])]
+        self.resultados=experiment.global_fits[fit_number][3]
+        if experiment.global_fits[fit_number][8][2] == 'Exponential':
+            if experiment.global_fits[fit_number][5]:
+                params=['t0_1','fwhm_1']+['tau%i_1' % (i+1) for i in range(experiment.global_fits[fit_number][4])]
             else:
-                params=['t0_1']+['tau%i_1'%(i+1) for i in range(experiment.all_fit[fit_number][4])]
+                params=['t0_1']+['tau%i_1' % (i+1) for i in range(experiment.global_fits[fit_number][4])]
             self.params=[i for i in params if self.resultados.params[i].vary]
             self.names=[i.split('_')[0] for i in self.params]
         else:
-            if experiment.all_fit[fit_number][5]:
-                params=['t0_1','fwhm_1']+['k_%i%i' % (i+1,i+1) for i in range(experiment.all_fit[fit_number][4])]
+            if experiment.global_fits[fit_number][5]:
+                params=['t0_1','fwhm_1']+['k_%i%i' % (i+1,i+1) for i in range(experiment.global_fits[fit_number][4])]
 
             else:
-                params=['t0_1']+['k_%i%i' % (i+1,i+1) for i in range(experiment.all_fit[fit_number][4])]
+                params=['t0_1']+['k_%i%i' % (i+1,i+1) for i in range(experiment.global_fits[fit_number][4])]
             self.params=[i for i in params if self.resultados.params[i].vary]
             self.names=[i.split('_')[0] if 'k' not in i else i for i in self.params]
 #            self.names=[i.split('_')[0] if 'k' not in i else 'tau'+i.split('_')[1][0] for i in self.params]
@@ -476,29 +476,29 @@ class MainWindowFtest(QMainWindow):
         self.close()
 
 def confinterval(fit_number,params):
-    if experiment.all_fit[fit_number][9]:#check for singular vector fit
-        data=experiment.all_fit[fit_number][10]
+    if experiment.global_fits[fit_number][9]:#check for singular vector fit
+        data=experiment.global_fits[fit_number][10]
         wavelength=None
     else:
-        data=experiment.all_fit[fit_number][1]
-        wavelength=experiment.all_fit[fit_number][2]
-    if experiment.all_fit[fit_number][7]==False:#check if the data is derivate
-            experiment2=GlobalFit(x=experiment.all_fit[fit_number][0],data=data,\
-                                  wavelength=wavelength,exp_no=experiment.all_fit[fit_number][4],\
-                                  deconv=experiment.all_fit[fit_number][5])
+        data=experiment.global_fits[fit_number][1]
+        wavelength=experiment.global_fits[fit_number][2]
+    if experiment.global_fits[fit_number][7]==False:#check if the data is derivate
+            experiment2=GlobalFit(x=experiment.global_fits[fit_number][0], data=data, \
+                                  wavelength=wavelength, exp_no=experiment.global_fits[fit_number][4], \
+                                  deconv=experiment.global_fits[fit_number][5])
     else:
-        experiment2=GlobalFit(x=experiment.all_fit[fit_number][0],data=data,\
-                              wavelength=wavelength,exp_no=experiment.all_fit[fit_number][4],\
-                              deconv=experiment.all_fit[fit_number][5],derivate=True,window_length=experiment.all_fit[fit_number][7]['window_length'],\
-                              polyorder=experiment.all_fit[fit_number][7]['polyorder'],deriv=experiment.all_fit[fit_number][7]['deriv'],\
-                              done=experiment.all_fit[fit_number][7]['done'])
+        experiment2=GlobalFit(x=experiment.global_fits[fit_number][0], data=data, \
+                              wavelength=wavelength, exp_no=experiment.global_fits[fit_number][4], \
+                              deconv=experiment.global_fits[fit_number][5], derivate=True, window_length=experiment.global_fits[fit_number][7]['window_length'], \
+                              polyorder=experiment.global_fits[fit_number][7]['polyorder'], deriv=experiment.global_fits[fit_number][7]['deriv'], \
+                              done=experiment.global_fits[fit_number][7]['done'])
     experiment2.data_before_last_Fit=data
-    experiment2.tau_inf=experiment.all_fit[fit_number][6]
-    experiment2.type_fit=experiment.all_fit[fit_number][8][2]
+    experiment2.tau_inf=experiment.global_fits[fit_number][6]
+    experiment2.type_fit=experiment.global_fits[fit_number][8][2]
     print(experiment2.type_fit)
     if type(params[0]) is int:#check if we calculate bootstrap or f-test
 #        print('boot')
-        experiment2.all_fit=experiment.all_fit
+        experiment2.global_fits=experiment.global_fits
         experiment2.prefit_done=True
         experiment2.residuesBootStrap(fit_number,params[0],params[1])
         if fit_number in experiment.bootstrap_residues_record.keys():
@@ -514,7 +514,7 @@ def confinterval(fit_number,params):
             experiment.general_report['Fits done'][f'Fit number {fit_number}']=experiment.general_report['Fits done'][f'Fit number {fit_number}']+'\n\t\tConfidence interbal calculated by Bootstrap'
         
     else:
-        resultados=experiment.all_fit[fit_number][3]
+        resultados=experiment.global_fits[fit_number][3]
         if resultados.params[params[0]].stderr is None:
             for p in resultados.params:
                 resultados.params[p].stderr = abs(resultados.params[p].value * 0.1)
@@ -1433,7 +1433,7 @@ class ModelWindow(QMainWindow):
                             text=open(path+' fit report'+extra,'w')
                             text.write(texto)
                             text.close()
-            fit=experiment.all_fit[number]
+            fit=experiment.global_fits[number]
             x=fit[0]
             trace=fit[1]
             wavelength=fit[2]
@@ -2976,7 +2976,7 @@ class ModelWindow(QMainWindow):
                 error_dialog.setText('please introduce a number')
                 error_dialog.exec()
             if number:
-                experiment.shitTime(time)
+                experiment.shit_time(time)
                 self.printMessage('Time shifted')
         except:
             self.messageError()
@@ -3339,7 +3339,7 @@ class ModelWindow(QMainWindow):
                 error_dialog.setText('No points have been selected')
                 error_dialog.exec()
             else:
-                experiment.delPoints(index)
+                experiment.del_points(index)
                 self.subWindow_del_time.close()
                 self.printMessage('Points deleted')
         except:
@@ -3368,7 +3368,7 @@ class ModelWindow(QMainWindow):
                 error_dialog.setText('No points have been selected')
                 error_dialog.exec()
             else:
-                experiment.delPoints(index,dimension='wavelength')
+                experiment.del_points(index, dimension='wavelength')
                 self.subWindow_del_wave.close()
                 self.printMessage('Points deleted')
         except:
@@ -3394,10 +3394,10 @@ class ModelWindow(QMainWindow):
             start=float(self.text09.text())
             step=float(self.text19.text())
             if self.select_average.currentText() is 'Constant Step':
-                experiment.averageTimePoints(starting_point=start,step=step,method='constant')
+                experiment.average_time_points(starting_point=start, step=step, method='constant')
             else:
                 speed=int(self.spin.value())
-                experiment.averageTimePoints(starting_point=start,step=step,method='log',grid_dense=speed)
+                experiment.average_time_points(starting_point=start, step=step, method='log', grid_dense=speed)
             self.exploreDataOn()
             self.printMessage('Times averaged')
 
@@ -3706,7 +3706,7 @@ class ModelWindow(QMainWindow):
                 experiment=pickle.load(file)
             self.manual_load=experiment.experiment_manual_load
             self.IRF_value=experiment.IRF_value
-            self.fit_number=len(experiment.all_fit)
+            self.fit_number=len(experiment.global_fits)
             self.undo_wavelength=None
             self.undo_time=None
             self.undo_data=None
@@ -4802,9 +4802,9 @@ class ModelWindow(QMainWindow):
                 tau_inf=experiment.tau_inf
                 deconv=experiment.deconv 
             else:
-                exp_no=experiment.all_fit[number][4]
-                tau_inf=experiment.all_fit[number][6]
-                deconv=experiment.all_fit[number][5]
+                exp_no=experiment.global_fits[number][4]
+                tau_inf=experiment.global_fits[number][6]
+                deconv=experiment.global_fits[number][5]
             posible=[i+1 for i in range(exp_no)]
             names=['tau %i' %(i+1) for i in range(exp_no)]
             if tau_inf is not None and deconv:
@@ -5036,7 +5036,7 @@ class ModelWindow(QMainWindow):
         try:
             if self.initialize_global_fit:
                 n_spect=int(self.text03.text())
-                experiment.baselineSubstraction(n_spect,only_one=True)
+                experiment.baseline_substraction(n_spect, only_one=True)
                 self.printMessage('Baseline substracted')
                 self.repaint() 
             else:
@@ -5049,7 +5049,7 @@ class ModelWindow(QMainWindow):
         try:
             if self.initialize_global_fit:
                 n_spect=int(self.text03.text())
-                experiment.baselineSubstraction(n_spect,only_one=False)
+                experiment.baseline_substraction(n_spect, only_one=False)
                 self.printMessage('Baseline substracted')
                 self.repaint()
             else:
@@ -5725,7 +5725,7 @@ class ModelWindow(QMainWindow):
             self.button0.show()
             self.fit_in_progress=False
             self.noZones()
-            typo=experiment.all_fit[experiment.fit_number][8][2]
+            typo=experiment.global_fits[experiment.fit_number][8][2]
             if typo == 'Exponential':
                 self.edit_general['pop_edit']=True 
             else:
@@ -5872,11 +5872,11 @@ class ModelWindow(QMainWindow):
 
     #button after go to previous fit
     def button61Func(self,export=False):
-        if len(experiment.all_fit) == 0 and len(experiment.single_fits) == 0 :
+        if len(experiment.global_fits) == 0 and len(experiment.single_fits) == 0 :
             by_dialog = QMessageBox(self)
             by_dialog.setText("So far no fits have been run")
             by_dialog.exec()
-        elif len(experiment.all_fit) == 0 and export:
+        elif len(experiment.global_fits) == 0 and export:
             by_dialog = QMessageBox(self)
             by_dialog.setText("So far no fits have been run")    
         else:
@@ -5889,13 +5889,13 @@ class ModelWindow(QMainWindow):
             layout.addWidget(label)
             layout.setAlignment(Qt.AlignTop)
             self.prev_subWindow.layout().addLayout(main_layout)
-            if len(experiment.all_fit) != 0:
+            if len(experiment.global_fits) != 0:
                 
                 #♣self.prev_subWindow.resize(150,200)
                 #self.prev_subWindow.layout(QVBoxLayout())
                 group=QButtonGroup(self.prev_subWindow)
                 widget_dict={}
-                for i in range(len(experiment.all_fit)):
+                for i in range(len(experiment.global_fits)):
                     widget_dict['widget  %i'%(i+1)]=QRadioButton("fit number: %i" %(i+1),self.prev_subWindow)
                     widget_dict['widget  %i'%(i+1)].setObjectName(f"fit number: %i" %(i+1))
                     if export:
@@ -5913,7 +5913,7 @@ class ModelWindow(QMainWindow):
                         layout.addWidget(label2)
                         layout.setAlignment(Qt.AlignTop)
             if len(experiment.single_fits) != 0 and export == False: 
-                if len(experiment.all_fit) %10==0 and len(experiment.all_fit) != 0:
+                if len(experiment.global_fits) %10==0 and len(experiment.global_fits) != 0:
                     label2 = QLabel('---------------------', self.prev_subWindow)
                     main_layout.addLayout(layout)
                     layout=QVBoxLayout()
@@ -6047,11 +6047,11 @@ class ModelWindow(QMainWindow):
         except:
             pass
         buttonname = f'Fit results %i' %(fit_number)
-        params=experiment.all_fit[fit_number][3].params
-        exp_no=experiment.all_fit[fit_number][4]
-        tau_inf=experiment.all_fit[fit_number][6]
-        deconv=experiment.all_fit[fit_number][5]
-        type_fit=experiment.all_fit[fit_number][8][2]
+        params=experiment.global_fits[fit_number][3].params
+        exp_no=experiment.global_fits[fit_number][4]
+        tau_inf=experiment.global_fits[fit_number][6]
+        deconv=experiment.global_fits[fit_number][5]
+        type_fit=experiment.global_fits[fit_number][8][2]
         text=['time 0']
         name=['t0_1']
         val=1
@@ -6096,17 +6096,17 @@ class ModelWindow(QMainWindow):
             fit_results.insertPlainText(f'\nDeconvolution')
         else:
             fit_results.insertPlainText(f'\nNo deconvolution')
-        if experiment.all_fit[fit_number][9]:
-            shape=experiment.all_fit[fit_number][10].shape[1]
+        if experiment.global_fits[fit_number][9]:
+            shape=experiment.global_fits[fit_number][10].shape[1]
             fit_results.insertPlainText(f'\nFit done to singular vectors: {shape}')
         else:
             string=experiment.general_report['Fits done'][f'Fit number {fit_number}']
             average=re.findall('average \d+',string)[0].split(' ')[1]
-            shape=experiment.all_fit[fit_number][1].shape[1]
+            shape=experiment.global_fits[fit_number][1].shape[1]
             fit_results.insertPlainText(f'\nnumber of Traces fitted: {shape}, average {average}')
-        fit_results.insertPlainText(f'\nnumber of iterations: {experiment.all_fit[fit_number][3].nfev}')
+        fit_results.insertPlainText(f'\nnumber of iterations: {experiment.global_fits[fit_number][3].nfev}')
         fit_results.insertPlainText(f'\nnumber of parameters optimized: {len(params)}')
-        weights=experiment.all_fit[fit_number][8][3]
+        weights=experiment.global_fits[fit_number][8][3]
         if type(weights) is str:
             fit_results.insertPlainText(f'\nWeights: {weights}')
         else:
@@ -6123,7 +6123,7 @@ class ModelWindow(QMainWindow):
         btn_all_report.clicked.connect(lambda:self.displayCompletellyReport(fit_number)) 
 #        btn_test = QPushButton("Verify Fit", self.fit_subwindows[fit_number]) 
         
-        if experiment.all_fit[fit_number][9]:
+        if experiment.global_fits[fit_number][9]:
             if fit_number in experiment.conf_interval.keys():
                 btn_confidence_interval = QPushButton("F-test conf-intervals results", self.fit_subwindows[fit_number]) 
                 btn_confidence_interval.clicked.connect(lambda: self.diplayFtestconf(fit_number))
@@ -6638,10 +6638,10 @@ class ModelWindow(QMainWindow):
         try:
             subwindow = QMdiSubWindow(self)
             subwindow.resize(450,300)
-            params=deepcopy(experiment.all_fit[fit_number][3])
+            params=deepcopy(experiment.global_fits[fit_number][3])
             contents=self.formatSubWindow(subwindow,QTextEdit(),'Extended fit report',close_button=True)
             text=fit_report(params)
-            if 	experiment.all_fit[fit_number][8][2] == 'Target':
+            if 	experiment.global_fits[fit_number][8][2] == 'Target':
                 text = [i for i in text.split('\n') if 'tau' not in i]
                 text = ('\n').join(text)
             contents.setText(text)
@@ -6739,7 +6739,7 @@ class ModelWindow(QMainWindow):
 
     def replotSelectFit(self,number):
         try:
-            wavelenghts=experiment.all_fit[number][2]
+            wavelenghts=experiment.global_fits[number][2]
             fit_subWindow = QMdiSubWindow(self)
             fit_subWindow.setObjectName('Fit selection')
             fit_subWindow.setWindowTitle('Fit selection')
@@ -6801,7 +6801,7 @@ class ModelWindow(QMainWindow):
             window=int(self.text12.text())
             poly=int(self.text22.text())
             deriv=int(self.text32.text())
-            experiment.derivateSpace(window,poly,deriv)
+            experiment.derivate_space(window, poly, deriv)
             self.repaint() 
             self.printMessage('Data derivated')
             self.repaint()
@@ -6814,14 +6814,14 @@ class ModelWindow(QMainWindow):
         except:
             pass
         if fit_number is not None:
-            self.x_fit=experiment.all_fit[fit_number][0]
-            self.data_fit=experiment.all_fit[fit_number][1]
-            self.wavelength_fit=experiment.all_fit[fit_number][2]
-            if experiment.all_fit[fit_number][9]:
-                params=experiment.all_fit[fit_number][11]
+            self.x_fit=experiment.global_fits[fit_number][0]
+            self.data_fit=experiment.global_fits[fit_number][1]
+            self.wavelength_fit=experiment.global_fits[fit_number][2]
+            if experiment.global_fits[fit_number][9]:
+                params=experiment.global_fits[fit_number][11]
             else:
-                params=experiment.all_fit[fit_number][3].params
-            deconv=experiment.all_fit[fit_number][5]
+                params=experiment.global_fits[fit_number][3].params
+            deconv=experiment.global_fits[fit_number][5]
         else:
             self.data_fit=experiment.data_before_last_Fit
             self.x_fit=experiment.x_before_last_Fit
@@ -6906,14 +6906,14 @@ class ModelWindow(QMainWindow):
             except:
                 pass
             if fit_number is not None:
-                self.x_fit=experiment.all_fit[fit_number][0]
-                self.data_fit=experiment.all_fit[fit_number][1]
-                self.wavelength_fit=experiment.all_fit[fit_number][2]
-                if experiment.all_fit[fit_number][9]:
-                    params=experiment.all_fit[fit_number][11]
+                self.x_fit=experiment.global_fits[fit_number][0]
+                self.data_fit=experiment.global_fits[fit_number][1]
+                self.wavelength_fit=experiment.global_fits[fit_number][2]
+                if experiment.global_fits[fit_number][9]:
+                    params=experiment.global_fits[fit_number][11]
                 else:
-                    params=experiment.all_fit[fit_number][3].params
-                deconv=experiment.all_fit[fit_number][5]
+                    params=experiment.global_fits[fit_number][3].params
+                deconv=experiment.global_fits[fit_number][5]
             else:
                 self.data_fit=experiment.data_before_last_Fit
                 self.x_fit=experiment.x_before_last_Fit

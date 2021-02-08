@@ -277,6 +277,7 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         ndata, nx = self.data.shape
         # range is descending just for no specific reason
         for iy in range(nx, 0, -1):
+            print(iy)
             single_param = lmfit.Parameters()
             single_param['y0_%i' % iy] = fit_params['y0_%i' % iy]
             single_param.add(('t0_%i' % iy), value=fit_params['t0_1'].value, expr=None, vary=fit_params['t0_1'].vary)
@@ -374,10 +375,10 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         resultados.data = self.data
         resultados.wavelength = np.array([i for i in range(1, self.data.shape[1] + 1)])
         tau_inf = self.tau_inf if self.deconv else None
-        resultados.details = {'exp_no': self.exp_no, 'deconv': self.deconv, ' type': 'Exponential', 'tau_inf': tau_inf,
+        resultados.details = {'exp_no': self.exp_no, 'deconv': self.deconv, 'type': 'Exponential', 'tau_inf': tau_inf,
                               'maxfev': fit_condition[0], 'time_constraint': fit_condition[1], 'svd_fit': False,
-                              'derivate': False}
-        resultados.weights = False if self.weights['apply'] else self.weights
+                              'derivate': False, 'avg_traces': 'unknown'}
+        resultados.weights = False if not self.weights['apply'] else self.weights
         return resultados
 
     def _singleFit(self, params, function, i):

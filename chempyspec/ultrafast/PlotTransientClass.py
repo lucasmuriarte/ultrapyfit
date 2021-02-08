@@ -7,7 +7,7 @@ Created on Thu Nov 12 21:18:25 2020
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import Normalize
-from chempyspec.ultrafast.outils import select_traces, FiguresFormating
+from chempyspec.ultrafast.outils import select_traces, FiguresFormating, TimeUnitFormater, TimeMultiplicator
 from chempyspec.ultrafast.PreprocessingClass import ExperimentException
 from chempyspec.ultrafast.MaptplotLibCursor import SnaptoCursor
 import pandas as pd
@@ -45,11 +45,7 @@ class ExploreData(PlotSVD):
 
     units: dictionary
         This dictionary contains the strings of the units to format axis labels and legends automatically:
-        "time_unit": str of the unit. >>> e.g.: ps for picosecond
-        "time_unit_high":  str of the time unit higher e.g.: if time_unit is ps time_unit_high should be ns.
-        "time_unit_low": str of the time unit lower e.g.: if time_unit is ps time_unit_low should be fs.
-        "factor_high": relation between time_unit and time_unit_high
-        "factor_low": relation between time_unit and time_unit_low
+        "time_unit": str of the unit. >>> e.g.: 'ps' for picosecond
         "wavelength_unit": wavelength unit
         The dictionary keys can be passes as kwargs when instantiating the object
 
@@ -83,8 +79,7 @@ class ExploreData(PlotSVD):
         kwargs:
             units attribute keys
         """
-        units = dict({'time_unit': 'ps', 'time_unit_high': 'ns', 'time_unit_low': 'fs', 'wavelength_unit': 'nm',
-                      'factor_high': 1000, 'factor_low': 1000}, **kwargs)
+        units = dict({'time_unit': 'ps', 'wavelength_unit': 'nm'}, **kwargs)
         self.data = data
         self.x = x
         self.wavelength = wavelength
@@ -94,8 +89,11 @@ class ExploreData(PlotSVD):
         else:
             self.selected_traces = selected_traces
             self.selected_wavelength = selected_wavelength
-        self._SVD_fit = False
         self.units = units
+        self._SVD_fit = False
+        self._unit_formater = TimeUnitFormater(self.units['time_unit'])
+        self._cursor = None
+        self._fig_select = None
         self.color_map = cmap
         super().__init__(self.x, self.data, self.wavelength, self.selected_traces, self.selected_wavelength)
         # PlotSVD.__init__(self.x, self.data, self.wavelength, self.selected_traces, self.selected_wavelength)
@@ -113,6 +111,10 @@ class ExploreData(PlotSVD):
 
         size: int (default 14)
             size of the figure text labels including tick labels axis labels and legend
+        
+        Returns
+        ----------
+        Figure and axes matplotlib objects
         """
         if auto:
             values = [i for i in range(len(self.wavelength))[::len(self.wavelength)//10]]
@@ -139,7 +141,7 @@ class ExploreData(PlotSVD):
         return fig, ax
     
     def plot_spectra(self, times='all', rango=None, n_points=0, cover_range=None, from_max_to_min=True,
-                     legend=True, ncol=1, cmap=None, size=14, include_rango_max=True):
+                     legend=True, legend_decimal=2, ncol=1, cmap=None, size=14, include_rango_max=True):
         """
         Function to plot spectra
 
@@ -189,6 +191,9 @@ class ExploreData(PlotSVD):
         legend: bool (default True)
             If True a legend will be display, If False color-bar with the times will be display
 
+        legend_decimal: int (default 2)
+            number of decimal values in the legend names
+
         ncol: int (default 1)
             Number of legend columns
 
@@ -201,6 +206,10 @@ class ExploreData(PlotSVD):
         include_rango_max: bool (default True)
             If True, spectra are auto-plotted in a given range the last spectrum plotted will be the
             closest to the range limit
+        
+        Returns
+        ----------
+        Figure and axes matplotlib objects
         """
         if times == 'all' or times == 'auto' or type(times) == list:
             if cmap is None:
@@ -214,10 +223,7 @@ class ExploreData(PlotSVD):
                 legend = False
                 n_points = 0
             times = self._time_to_real_times(times, rango, include_rango_max, from_max_to_min)
-            legenda = ['{:.2f}'.format(i*self.units['factor_low']) + ' ' + self.units['time_unit_low'] if abs(i) < 0.09
-                       else '{:.2f}'.format(i) + ' ' + self.units['time_unit'] if i < 999
-                       else '{:.2f}'.format(i/self.units['factor_high']) + ' ' + self.units['time_unit_high']
-                       for i in times]
+            legenda = [self._unit_formater.value_formated(i, legend_decimal) for i in times]
             a = np.linspace(0, 1, len(times))
             c = plt.cm.ScalarMappable(norm=None, cmap=cmap)
             colors = c.to_rgba(a, norm=False)
@@ -264,8 +270,12 @@ class ExploreData(PlotSVD):
 
         Parameters
         ----------
-            cmap: str or None
-                name of matplotlib color map if None the attribute color_map will be use
+        cmap: str or None
+            name of matplotlib color map if None the attribute color_map will be use
+        
+        Returns
+        ----------
+        Figure and axes matplotlib objects
         """
         if cmap is None:
             cmap = self.color_map
@@ -323,7 +333,7 @@ class ExploreData(PlotSVD):
             self.selected_traces, self.selected_wavelength = select_traces(self.data, self.wavelength, points,
                                                                            average, avoid_regions)
     
-    def select_traces_graph(self, points=-1):
+    def select_traces_graph(self, points=-1, average = 0):
         """
         Function to select traces graphically
 
@@ -332,13 +342,13 @@ class ExploreData(PlotSVD):
         points: int (default -1)
             Defines the number of traces that can be selected. If -1 an infinitive number of traces can be selected
         """
-        fig, ax = self.plot_spectra()
-        cursor = SnaptoCursor(ax, self.wavelength, self.wavelength * 0.0, points)
-        plt.connect('axes_enter_event', cursor.onEnterAxes)
-        plt.connect('axes_leave_event', cursor.onLeaveAxes)
-        plt.connect('motion_notify_event', cursor.mouseMove)
-        plt.connect('button_press_event', cursor.onClick)
-        fig.canvas.mpl_connect('close_event', self.selectTraces(cursor.datax, points))
+        self._fig_select, ax = self.plot_spectra()
+        self._cursor = SnaptoCursor(ax, self.wavelength, self.wavelength * 0.0, points)
+        plt.connect('axes_enter_event', self._cursor.onEnterAxes)
+        plt.connect('axes_leave_event', self._cursor.onLeaveAxes)
+        plt.connect('motion_notify_event', self._cursor.mouseMove)
+        plt.connect('button_press_event', self._cursor.onClick)
+        self._fig_select.canvas.mpl_connect('close_event', self.select_traces(self._cursor.datax, average))
     
     def _time_to_real_times(self, times, rango, include_max, from_max_to_min):
         """
