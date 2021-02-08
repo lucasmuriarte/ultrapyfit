@@ -5,14 +5,15 @@ Created on Thu Nov 12 20:55:03 2020
 @author: lucas
 """
 import numpy as np
-from ExploreResultsClass import ExploreResults
-from PlotTransientClass import ExploreData
-from GlobExpParams import GlobExpParameters
-from outils import define_weights, UnvariableContainer, LabBook
-from PreprocessingClass import Preprocessing
-from GlobalFitClass import GlobalFitExponential
-from GlobalTargetClass import GlobalFitTargetModel
+from chempyspec.ultrafast.ExploreResultsClass import ExploreResults
+from chempyspec.ultrafast.PlotTransientClass import ExploreData
+from chempyspec.ultrafast.GlobExpParams import GlobExpParameters
+from chempyspec.ultrafast.outils import define_weights, UnvariableContainer, LabBook, book_annotate
+from chempyspec.ultrafast.PreprocessingClass import Preprocessing
+from chempyspec.ultrafast.GlobalFitClass import GlobalFitExponential
+from chempyspec.ultrafast.GlobalTargetClass import GlobalFitTargetModel
 import os
+
 
 class ExperimentException(Exception):
     """General Purpose Exception."""
@@ -25,224 +26,203 @@ class ExperimentException(Exception):
         """string"""
         return "{}".format(self.msg)
 
-class Experiment(ExploreData,ExploreResults):
-    
-    def __init__(self,x, data, wavelength=None):
+
+class Experiment(ExploreData, ExploreResults):
+    def __init__(self, x, data, wavelength=None):
         if wavelength is None:
-            self.wavelength=wavelength
-            general_cal='\tNone'
+            self.wavelength = wavelength
+            general_cal = '\tNone'
         else:
-            self.wavelength=np.array(wavelength)
-            general_cal='\tAlready calibrated'
-        self.x=x
-        self.data=data
-        self.selected_traces = None
-        self.selected_wavelength = None
-        self.data_sets=UnvariableContainer()
-        self.data_sets.original_data={'time':x,'data':data,'wavelength':wavelength}
-        self.excitation=None
-        self._fit_number=0
-        self.units={'time_unit':'ps','time_unit_high':'ns','time_unit_low':'fs',
-                    'wavelength_unit':'nm','factor_high':1000,'factor_low':1000}
-        self._params_initialized=False
-        self.GVD_corrected=False
-        self.deconv=True
-        self.SVD_fit=False
-        self.type_fit='Exponential'
-        self.fit_records=LabBook()
-        self.fit_records.single_fits={}
-        self.fit_records.bootstrap_record={}
-        self.fit_records.conf_interval={}
-        self.fit_records.target_models={}
-        self.fit_records.global_fits={}
-        self.params=None
-        self.weights={'apply':False,'vector':None,'range':[],'type':'constant','value':2}
-        self.cmap='viridis'
-        self.general_report={'File':'\tNone','Excitation':self.excitation,
-                             'Units':{'Time unit':'\tps','Wavelength unit':'nm'},
-                             'Data Shape':{'Initial number of traces':f'{data.shape[1]}','Initial time points':
-                                         f'{data.shape[0]}','Actual number of traces':'All','Actual time points':'All'},
-                             'Preprocessing':{'Calibration':general_cal,'GVD correction':[],'IRF Fit':'\tNone','Baseline correction':None,
-                                              'Cutted Wavelengths':[],'Cutted Times':[],'Deleted wavelength points':[],
-                                              'Deleted time points':[],'Average time points':[],'Time shift':[],
-                                              'Polynom fit':[],'Derivate data':False},
-                             'Fits done':{},'Sequence of actions':[],'User comments':[]}
+            self.wavelength = np.array(wavelength)
+            general_cal = '\tAlready calibrated'
+        self.x = x
+        self.data = data
+        self.selected_traces = data
+        self.selected_wavelength = wavelength
+        self.data_sets = UnvariableContainer()
+        self.excitation = None
+        self.tau_inf = 1E12
+        self.GVD_corrected = False
+        self.action_records = UnvariableContainer(name="Sequence of actions")
+        self.fit_records = UnvariableContainer(name="Fits")
+        self.params = None
+        self.weights = {'apply': False, 'vector': None, 'range': [], 'type': 'constant', 'value': 2}
+        self.cmap = 'viridis'
+        self.preprocessing_report = LabBook(name="Pre-processing")
+        self._averige_selected_traces = 0
+        self._deconv = True
+        self._exp_no = 1
+        self._fit_number = 0
+        self._params_initialized = False
+        self._last_data_sets = None
+        self._initialized()
         ExploreData.__init__(self,self.x,self.data,self.wavelength,self.selected_traces,self.selected_wavelength,self.cmap)
         ExploreResults.__init__(self,self.fit_records.global_fits)
+    
+    @staticmethod
+    def load():
+        pass
+    
+    def _initialized(self):
+        self.data_sets.original_data = UnvariableContainer(time=self.x, data=self.data, wavelength=self.wavelength)
+        self.fit_records.single_fits = {}
+        self.fit_records.bootstrap_record = {}
+        self.fit_records.conf_interval = {}
+        self.fit_records.target_models = {}
+        self.fit_records.global_fits = {}
+        self.baseline_substraction = book_annotate(self.preprocessing_report)(self.baseline_substraction)
+        self.cut_time = book_annotate(self.preprocessing_report)(self.cut_time)
+        self.average_time = book_annotate(self.preprocessing_report)(self.average_time)
+        self.derivate_data = book_annotate(self.preprocessing_report)(self.derivate_data)
+        self.cut_wavelength = book_annotate(self.preprocessing_report)(self.cut_wavelength)
+        self.del_points = book_annotate(self.preprocessing_report)(self.del_points)
+        self.shitTime = book_annotate(self.preprocessing_report)(self.shit_time)
     
     @property
     def chirp_corrected(self):
         return self.GVD_corrected
     
     @chirp_corrected.setter
-    def chirp_corrected(self,value):
-        self.GVD_corrected = value
-    
-    def _addToGeneralReport(self,key,val,sub_key=None):
-        '''modify general report dictionary'''
-        if key == 'Sequence of actions':
-            self.general_report['Sequence of actions'].append(val)
-        elif sub_key is not None:
-            self.general_report[key][sub_key]=val
-        else:
-            self.general_report[key]=val
-        
-    def defineUnits(self,time,wavelength):
-        times = ['Ato s','fs','ps','ns','μs','ms','s','min','h']
-        assert (time in times[1:-1]) or time=='us'
-        assert type(wavelength) == str
-        if time == 'us':
-            self.units['time_unit'] = 'µs'
-            self.units['time_unit_high'] = 'ms'
-            self.units['time_unit_low'] = 'ns'
-        else:
-            index=times.index(time)
-            self.units['time_unit'] = time
-            self.units['time_unit_high'] = times[index+1]
-            self.units['time_unit_low'] = times[index-1]
-        if self.units['time_unit'] == 's':
-            self.units['factor_high'] = 60
-        elif self.units['time_unit'] == 'min':
-            self.units['factor_high'] = 60
-            self.units['factor_low'] = 60
-        else:
-            pass
-        self.units['wavelength_unit']=wavelength
-        
-        #general report changes
-        self._addToGeneralReport('Units',f'\t{self.time_unit}','Time unit')
-        self._addToGeneralReport('Units',self.units['wavelength_unit'],'Wavelength unit')
-        self._addToGeneralReport('Sequence of actions','\t--> Units changed')
-                         
-    def baselineSubstraction(self, nuber_spec=2,only_one=False):
-        self.data_sets.before_baseline_substraction=\
-        {'time':self.x,'data':self.data,'wavelength':self.wavelength}
-        new_data=Preprocessing.baselineSubstraction(self.data,nuber_spec=2,only_one=False)
-        self.data=new_data
-        if only_one:
-            string = f'Substracted time {nuber_spec} spectrum'
-        else:
-            init,final=0,nuber_spec if type(nuber_spec) == int else nuber_spec[0],nuber_spec[1]
-            string = f'Substracted average {init}-{final} spectra'
-        
-        #general report changes
-        self._addToGeneralReport('Preprocessing',string,'Baseline correction')
-        self._addToGeneralReport('Sequence of actions','\t--> Baseline Substraction')
-    
-    def cutTime(self, mini=None,maxi=None):
-        self.data_sets.before_cut_time=\
-        {'time':self.x,'data':self.data,'wavelength':self.wavelength}
-        new_data,new_x=Preprocessing.cutTime(self.data,self.x,mini,maxi)
-        self.data,self.x=new_data,new_x
-        
-        #general report changes
-        units=self.units["time_unit"]
-        mini_str = f'from {mini} {units}'if mini is not None else ''
-        maxi_str = f'until {maxi} {units}'if maxi is not None else ''
-        action=f'\t\tSelected data {mini_str} {maxi_str}'
-        self.general_report['Preprocessing']['Cutted Times'].append(action)
-        self._addToGeneralReport('Sequence of actions',f'\t--> Cut or selection of time range')
-        self._addToGeneralReport('Data Shape',self.data.shape[0],'Actual time points')
-    
-    def averageTimePoints(self, starting_point, step, method='log',grid_dense=5):
-        self.data_sets.before_average_time=\
-        {'time':self.x,'data':self.data,'wavelength':self.wavelength}
-        new_data,new_x=Preprocessing.averageTimePoints(self.data,self.x,starting_point, step, method, grid_dense)
-        self.data,self.x=new_data,new_x
-        
-        #general report changes
-        self._addToGeneralReport('Preprocessing',f'\t\tAverage from {starting_point}, with {method} {step} step','Average time points')
-        self._addToGeneralReport('Sequence of actions','\t--> Average of time points')
-        self._addToGeneralReport('Data Shape',self.data.shape[0],'Actual time points')
-        
-    def derivateData(self, window_length=25,polyorder=3,deriv=1,mode='mirror'):
-        self.data_sets.before_derivation=\
-        {'time':self.x,'data':self.data,'wavelength':self.wavelength}
-        new_data=Preprocessing.derivateData(window_length,polyorder,deriv,mode)
-        self.data=new_data
-        
-        #general report changes
-        string ='\t'+'\t\t\t'.join([f'{key}: {self.derivative_space[key]}\n' for key in self.derivative_space])
-        self._addToGeneralReport('Preprocessing',string,'Derivate data')
-        self._addToGeneralReport('Sequence of actions','\t--> Derivation of Data')
+    def chirp_corrected(self, value):
+        if type(value) == bool:
+            self.GVD_corrected = value
 
-    def cutWavelenghts(self, left=None,right=None,innercut=False):    
-        self.data_sets.before_cut_wavelenght=\
-        {'time':self.x,'data':self.data,'wavelength':self.wavelength}    
-        new_data,new_wave=Preprocessing.cutWavelenghts(left,right,innercut)
-        self.data,self.wavelength=new_data,new_wave
+    @property
+    def type_fit(self):
+        if self._params_initialized == False:
+            return "Not ready to fit data"
+        else:
+            return f"parameters for {self._params_initialized} fit  with {self._exp_no} components"
+
+    @type_fit.setter
+    def type_fit(self, value):
+        pass
+
+    def _add_to_data_set(self, key):
+        if hasattr(self.data_sets, key):
+            pass
+        else:
+            container = UnvariableContainer(time=self.x, data=self.data, wavelength=self.wavelength)
+            self.data_sets.__setattr__(key, container)
+            self._last_data_sets = container
         
-        #general report changes
-        units=self.units["wavelength_unit"]
-        left_str = f'from {left} {units}'if left is not None else ''
-        right_str = f'until {right} {units}'if right is not None else ''
-        mode = 'Cutted' if innercut else 'Selected'
-        action=f'\t\t{mode} data {left_str} {right_str}'
-        self.general_report['Preprocessing']['Cutted Wavelengths'].append(action)
-        self._addToGeneralReport('Sequence of actions',f'\t--> Cut or selection of wavelength')
-        self._addToGeneralReport('Data Shape',self.data.shape[1],'Actual number of traces')
+    def _add_action(self, value):
+        val = len(self.action_records.__dict__)
+        self.action_records.__setattr__(f"_{val+1}", value)
         
-    def delPoints(self, points,dimension='time'):
-        self.data_sets.before_delete_point=\
-        {'time':self.x,'data':self.data,'wavelength':self.wavelength}    
+    def baseline_substraction(self, number_spec=2, only_one=False):
+        self._add_to_data_set("before_baseline_substraction")
+        self._add_action("baseline substraction")
+        new_data = Preprocessing.baseline_substraction(self.data, number_spec=number_spec, only_one=only_one)
+        self.data = new_data
+
+    def cut_time(self, mini=None,maxi=None):
+        self._add_to_data_set("before_cut_time")
+        self._add_action("cut time")
+        new_data, new_x = Preprocessing.cut_rows(self.data, self.x, mini, maxi)
+        self.data, self.x = new_data, new_x
+
+    def average_time(self, starting_point, step, method='log', grid_dense=5):
+        self._add_to_data_set("before_average_time")
+        self._add_action("average time")
+        new_data, new_x = Preprocessing.average_time_points(self.data, self.x, starting_point, step, method, grid_dense)
+        self.data, self.x = new_data, new_x
+
+    def derivate_data(self, window_length=25, polyorder=3, deriv=1, mode='mirror'):
+        self._add_to_data_set("before_derivation")
+        self._add_action("derivate data")
+        new_data = Preprocessing.derivateData(window_length, polyorder, deriv, mode)
+        self.data = new_data
+
+    def cut_wavelength(self, left=None, right=None, innercut=False):
+        self._add_to_data_set("before_cut_wavelength")
+        self._add_action("cut wavelength")
+        new_data, new_wave = Preprocessing.cut_columns(self.data, self.wavelength, left, right, innercut)
+        self.data, self.wavelength = new_data, new_wave
+
+    def del_points(self, points, dimension='time'):
+        self._add_to_data_set("before_delete_point")
+        self._add_action(f"delete point {dimension}")
         if dimension == 'time':
-            new_data,new_x=Preprocessing.delPoints(points,self.data,self.x)
-            self.data,self.x=new_data,new_x
+            new_data, new_x = Preprocessing.del_points(points, self.data, self.x)
         elif dimension == 'wavelength':
-            new_data,new_wave=Preprocessing.delPoints(points,self.data,self.wavelength)
+            new_data, new_wave = Preprocessing.del_points(points, self.data, self.wavelength)
         else:
             raise ExperimentException('dimension should be "time" or "wavelength"')
-        
-        #general report changes
-        lista=self.general_report['Preprocessing']['Deleted {dimension} points'] + points
-        self._addToGeneralReport('Preprocessing',lista,'Deleted {dimension} points')
-        self._addToGeneralReport('Data Shape',self.data.shape[0],'Actual number of traces')
-        self._addToGeneralReport('Data Shape',self.data.shape[1],'Actual time points')
+        self.data, self.x = new_data, new_x
 
-    def shitTime(self,value):
-        self.x=self.x-value
+    def shit_time(self, value):
+        self._add_to_data_set("before_time_shift")
+        self._add_action("shift time")
+        self.x = self.x-value
     
-    def defineWeights(self,rango,typo='constant',val=5):
-        self.weights=define_weights(self.x, rango, typo='constant', val=5)
+    def define_weights(self, rango, typo='constant', val=5):
+        self._add_action("define weights")
+        self.weights = define_weights(self.x, rango, typo=typo, val=val)
 
-    def createNewDir(self,path):
+    def createNewDir(self, path):
         if not os.path.exists(path):
             os.makedirs(path)
-        self.working_directory=path
+        self.working_directory = path
         self.save['path']=self.working_directory
     
-    def initializeExpParams(self,t0,*taus,fwhm=0.12,tau_inf=1E12,opt_fwhm=False):
-        taus = list(taus)
-        param_creator = GlobExpParameters(self.selected_traces,taus)
-        if fwhm == None: 
-            self._deconv=False
-            vary_t0=False
-        else :
-            vary_t0=True
-            self._deconv=True
-            self.tau_inf=tau_inf
-        param_creator.adjustParams(t0,vary_t0,fwhm,opt_fwhm,self.GVD_corrected,tau_inf)
-        self.params = param_creator.params
-        self._params_initialized = 'Global'
+    def select_traces(self, points=10, average=1, avoid_regions=None):
+        super().select_traces(points, average, avoid_regions)
+        self._readapt_params()
+        self._averige_selected_traces = average if points != 'all' else 0
         
-        #general report changes
-        self._addToGeneralReport('Sequence of actions','\t--> New parameters initialized')
-        
-    def finalFit(self,vary=True,maxfev=5000,apply_weights=False):
-        if self._params_initialized == 'Global':
-            minimizer=GlobalFitExponential(self.selected_traces, self.selected_wavelength, self.params, \
-                                           self._deconv, self.tau_inf, GVD_corrected=self.GVD_corrected)
+    def _readapt_params(self):
+        if self._params_initialized == 'Exponential':
+            previous_taus = self._last_params['taus']
+            t0 = self._last_params['t0']
+            fwhm = self._last_params['fwhm']
+            tau_inf = self._last_params['tau_inf']
+            opt_fwhm = self._last_params['opt_fwhm']
+            self.initialize_exp_params(t0, fwhm, *previous_taus, tau_inf=tau_inf, opt_fwhm=opt_fwhm)
         elif self._params_initialized == 'Target':
-            minimizer=GlobalFitTargetModel(self.selected_traces,self.selected_wavelength,self.params)
+            print('to be coded')
+            # to do
+            # self.initialize_target_params()
+        else:
+            pass
+    
+    def initialize_exp_params(self, t0, fwhm, *taus, tau_inf=1E12, opt_fwhm=False):
+        taus = list(taus)
+        self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': taus, 'tau_inf': tau_inf, 'opt_fwhm': opt_fwhm}
+        self._exp_no = len(taus)
+        param_creator = GlobExpParameters(self.selected_traces.shape[1], taus)
+        if fwhm is None:
+            self._deconv = False
+            vary_t0 = False
+        else:
+            vary_t0 = True
+            self._deconv = True
+            self.tau_inf = tau_inf
+        param_creator.adjustParams(t0, vary_t0, fwhm, opt_fwhm, self.GVD_corrected, tau_inf)
+        self.params = param_creator.params
+        self._params_initialized = 'Exponential'
+        self._add_action(f'new {self._params_initialized} parameters initialized')
+        
+    def initialize_target_params(self, t0, fwhm, *taus, tau_inf=1E12, opt_fwhm=False):
+            pass
+        
+    def final_fit(self, vary=True, maxfev=5000, apply_weights=False):
+        if self._params_initialized == 'Exponential':
+            minimizer = GlobalFitExponential(self.x, self.selected_traces, self._exp_no, self.params,
+                                             self._deconv, self.tau_inf, GVD_corrected=self.GVD_corrected)
+        elif self._params_initialized == 'Target':
+            minimizer = GlobalFitTargetModel(self.selected_traces, self.selected_wavelength, self.params)
         else:
              raise ExperimentException('Parameters need to be initiliazed first"')
         if apply_weights:
             minimizer.weights = self.weights
-        results = minimizer.finalFit(vary,maxfev,apply_weights)
-        results.details['SVD_fit']=self.SVD_fit
-        self.fit_records.global_fits[self._fit_number]=results
         self._fit_number += 1
-        
+        results = minimizer.finalFit(vary, maxfev, apply_weights)
+        results.details['svd_fit'] = self._SVD_fit
+        results.wavelength = self.selected_wavelength
+        results.details['avg_traces'] =  self._averige_selected_traces
+        self.fit_records.global_fits[self._fit_number] = results
+        self._add_action(f'{self._params_initialized} fit performed')
         
         
         

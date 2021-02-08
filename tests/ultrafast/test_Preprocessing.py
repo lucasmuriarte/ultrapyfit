@@ -55,7 +55,7 @@ class TestPreprocessing(unittest.TestCase):
         test for baseline sbtarction considering all rows of data_wave have only
         one number increassing from 0 to 74
         """
-        result = Preprocessing.baselineSubstraction(data_wave, number_spec, only_one)
+        result = Preprocessing.baseline_substraction(data_wave, number_spec, only_one)
         exp = data_wave*0.0
         if only_one or number_spec == 0:
             resta = np.ones((1, 150))*number_spec
@@ -80,11 +80,11 @@ class TestPreprocessing(unittest.TestCase):
         if type(points) == int:
             points = [points]
         if points[0] < 349:
-            data_res, vec_res = Preprocessing.delPoints(points, data_time, time)
+            data_res, vec_res = Preprocessing.del_points(points, data_time, time)
             vector = time * 1.0
             axis = 0
         else:
-            data_res, vec_res = Preprocessing.delPoints(points, data_wave, wave)
+            data_res, vec_res = Preprocessing.del_points(points, data_wave, wave)
             axis = 1
             vector = wave * 1.0
         self.assertEqual(data_res.shape[axis], len(vec_res))
@@ -97,7 +97,7 @@ class TestPreprocessing(unittest.TestCase):
         test in case the number of columns and rows are the same
         """
         datas = np.ones((75, 75))
-        data_res, vec_res = Preprocessing.delPoints(points, datas, time, axis)
+        data_res, vec_res = Preprocessing.del_points(points, datas, time, axis)
         self.assertEqual(data_res.shape[axis], len(vec_res))
         self.assertEqual(data_res.shape[axis], len(time)-len(points))
     
@@ -110,8 +110,8 @@ class TestPreprocessing(unittest.TestCase):
         minimum value lower than 360 idex == 27 (considering cefro index 28 points)
         minimum value lower than 370 idex == 57 (considering cefro index 58 points)
         """
-        data_res, vector_res = Preprocessing.cutColumns(data_wave, wave, mini, 
-                                                        maxi, innerdata)
+        data_res, vector_res = Preprocessing.cut_columns(data_wave, wave, mini,
+                                                         maxi, innerdata)
         if maxi is None:
             self.assertTrue(wave[20] not in vector_res)
             self.assertTrue(vector_res[0] > mini)
@@ -149,7 +149,7 @@ class TestPreprocessing(unittest.TestCase):
         testing exceptions are raised
         """
         with self.assertRaises(ExperimentException) as context:
-            Preprocessing.cutColumns(data_wave, wave, mini, maxi, innerdata)
+            Preprocessing.cut_columns(data_wave, wave, mini, maxi, innerdata)
             print(context.msg)
     
     @parameterized.expand([[25, None],
@@ -160,7 +160,7 @@ class TestPreprocessing(unittest.TestCase):
         minimum value lower than 25 idex == 37 (considering cefro index 38 points)
         minimum value lower than 40 idex == 60 (considering cefro index 61 points)
         """
-        data_res, vector_res = Preprocessing.cutRows(data_time, time, mini, maxi) 
+        data_res, vector_res = Preprocessing.cut_rows(data_time, time, mini, maxi)
         
         if maxi is None and mini is not None:
             self.assertTrue(time[25] not in vector_res)
@@ -187,7 +187,7 @@ class TestPreprocessing(unittest.TestCase):
                            [5, 10, 'constant', 5]])
     def test_averageTimePoints(self, starting_point, step, method, grid_dense):
         time_2 = np.linspace(0, 74, 75)
-        data_res, vector_res = Preprocessing.averageTimePoints(
+        data_res, vector_res = Preprocessing.average_time_points(
             data_time, time_2, starting_point, step, method, grid_dense)  
         self.assertTrue(vector_res[starting_point] == starting_point)
         if method == 'cosntant':
@@ -205,7 +205,7 @@ class TestPreprocessing(unittest.TestCase):
                            [14],
                            [5.3]])
     def shitTime(self, value):
-        vector_res = Preprocessing.averageTimePoints(time, value)
+        vector_res = Preprocessing.average_time_points(time, value)
         self.assertTrue(vector_res[0] == time[0] - value)
 
 

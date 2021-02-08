@@ -8,6 +8,7 @@ import numpy as np
 import lmfit
 from ModelCreatorClass import  ModelCreator
 
+
 class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
     def __init__(self, x, data, exp_no, params,deconv=True,SVD=False,GVD_corrected=True,**kwargs):
         weights=dict({'apply':False,'vector':None,'range':[],'type':'constant','value':2},**kwargs)
@@ -72,19 +73,19 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
         return resid
     
     def preFit(self):
-        #initiate self.data_before_last_Fit copying from self.data which will be used to fit
-        #parameters have been created with lenght of self.data
-        #this allow to keep after the fit a copy of the data that was fitted
-        fit_params=self.initial_params.copy()
+        # initiate self.data_before_last_Fit copying from self.data which will be used to fit
+        # parameters have been created with lenght of self.data
+        # this allow to keep after the fit a copy of the data that was fitted
+        fit_params = self.initial_params.copy()
         ndata, nx = self.data_before_last_Fit.shape
         ksize = self.exp_no #size of the matrix = no of exponenses = no of species
         kmatrix = np.array([[fit_params['k_%i%i' % (i+1,j+1)].value for j in range(ksize)] for i in range(ksize)])
         cinitials = [fit_params['c_%i' % (i+1)].value for i in range(ksize)]
-        eigs, vects = np.linalg.eig(kmatrix)#do the eigenshit
-        #eigenmatrix = np.array([[vects[j][i] for j in range(len(eigs))] for i in range(len(eigs))]) 
+        eigs, vects = np.linalg.eig(kmatrix) # do the eigenshit
+        # eigenmatrix = np.array([[vects[j][i] for j in range(len(eigs))] for i in range(len(eigs))])
         eigenmatrix = np.array(vects) 
-        coeffs = np.linalg.solve(eigenmatrix, cinitials) #solve the initial conditions sheet
-        #didnt tested but should work, if no then probably minor correction is needed.
+        coeffs = np.linalg.solve(eigenmatrix, cinitials) # solve the initial conditions sheet
+        # didnt tested but should work, if no then probably minor correction is needed.
         for iy in range(nx):
             print(iy)
             single_param=lmfit.Parameters()
@@ -95,23 +96,23 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
             if self.deconv:
                 single_param.add(('fwhm_%i' %(iy+1)), value=fit_params['fwhm_1'].value,expr=None,vary=fit_params['fwhm_1'].vary)
             result=lmfit.minimize(self.single_fit,single_param,args=(self.expNGaussDatasetTM, iy,[coeffs,eigs,eigenmatrix]),nan_policy='propagate')    
-            if self.GVD_correction==False and self.deconv:
-                fit_params['t0_%i' %(iy+1)]=result.params['t0_%i' %(iy+1)]
+            if self.GVD_correction == False and self.deconv:
+                fit_params['t0_%i' % (iy+1)] = result.params['t0_%i' %(iy+1)]
             for i in range(self.exp_no):
-                fit_params['pre_exp%i_' %(i+1) +str (iy+1)]=result.params['pre_exp%i_' %(i+1) +str (iy+1)]
-            self.params=fit_params
-        self.prefit_done=True             
+                fit_params['pre_exp%i_' %(i+1) +str(iy+1)] = result.params['pre_exp%i_' %(i+1) +str (iy+1)]
+            self.params = fit_params
+        self.prefit_done = True
 
-    def finalFit(self,vary_taus=True,maxfev=None,apply_weights=False):
-        if type(vary_taus)== bool:
-            vary_taus=[vary_taus for i in range(self.exp_no)]
-        self.Fit_completed=False
-        if self.prefit_done==False:
+    def finalFit(self, vary_taus=True, maxfev=None, apply_weights=False):
+        if type(vary_taus) == bool:
+            vary_taus = [vary_taus for i in range(self.exp_no)]
+        self.Fit_completed = False
+        if self.prefit_done == False:
             self.preFit()
-        fit_condition=[maxfev,'No constrain',self.type_fit]#self.type_fit is important to know if we are doing an expoential or taget fit
-        fit_params=self.params
-        if apply_weights and len(self.weights['vector'])==len(self.x):
-            self.weights['apply']=True
+        fit_condition = [maxfev, 'No constrain', self.type_fit] # self.type_fit is important to know if we are doing an expoential or taget fit
+        fit_params = self.params
+        if apply_weights and len(self.weights['vector']) == len(self.x):
+            self.weights['apply'] = True
             fit_condition.append(self.weights)
         else:
             fit_condition.append('no weights')

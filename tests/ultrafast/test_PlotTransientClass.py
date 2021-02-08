@@ -9,7 +9,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
-path = 'C:/Users/lucas/git project/chempyspec/example/3_exp_data_gauss_denoised.csv'
+path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_gauss_denoised.csv'
 time, data, wave = readData(path, wave_is_row=True)
 data_select, wave_select = select_traces(data, wave, 'auto')
 explorer = ExploreData(time, data, wave, data_select, wave_select)

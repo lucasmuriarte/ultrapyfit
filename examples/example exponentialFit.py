@@ -7,7 +7,7 @@ Created on Sun Jan 10 23:02:19 2021
 from chempyspec.ultrafast.GlobalFitClass import globalfit_exponential
 from chempyspec.ultrafast.outils import readData, select_traces
 
-path = 'C:/Users/lucas/git project/chempyspec/example/3_exp_data_denoised_2.csv'
+path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2.csv'
 time, data, wave = readData(path, wave_is_row= True)
 
 original_taus = [8, 30, 200]

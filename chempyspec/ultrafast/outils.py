@@ -13,6 +13,136 @@ import re
 import datetime
 from chempyspec.ultrafast.PreprocessingClass import ExperimentException
 from chempyspec.ultrafast.ModelCreatorClass import ModelCreator
+from enum import Enum
+from decimal import Decimal
+
+
+class TimeMultiplicator(Enum):
+    y = 1E-24
+    z = 1E-21
+    a = 1E-18 # ato
+    f = 1E-15 # femto
+    p = 1E-12 # pico
+    n = 1E-9 # nano
+    µ = 1E-6 # micro
+    m = 1E-3 # mili
+    s = 1E0 # one
+    
+    @staticmethod
+    def chose(value):
+        try:
+            return TimeMultiplicator(TimeMultiplicator._member_map_[value[0]])
+        except:
+            raise ExperimentException("the value should start by one of the letters in TimeUnitMultiplicator")
+
+
+class TimeUnitFormater:
+    """
+    Class to format a time number in a string with the corresponding unit, after indicating the unit measure.
+    
+    
+    i.e.:
+        formater = TimeUnitFormater("m") # formater for milisecond measurement
+        
+        formater.value_formated(3046)
+        >>> '3.05 s'
+        
+        formater.value_formated(3046E-7)
+        >>> '0.30 μs'
+        
+        formater.value_formated(3046E3)
+        >>> '50.77 mins' 
+        
+        formater.value_formated(3046E3, 4)
+        >>> '50.7667 mins'        
+    """
+    def __init__(self, multiplicator: TimeMultiplicator = TimeMultiplicator.p):
+        if type(multiplicator) == type(TimeMultiplicator):
+            self._multiplicator = multiplicator
+        else:
+            try:
+                self.multiplicator = multiplicator
+            except:
+                msg = "TimeMultiplicator instantiation error. Pass a TimeMultiplicator name as a string or a TimeMultiplicator object"
+                raise ExperimentException(msg)
+    
+    @property    
+    def multiplicator(self):
+        return self._multiplicator.value
+    
+    @multiplicator.setter
+    def multiplicator(self, name):
+        self._multiplicator = TimeMultiplicator.chose(name)
+
+    def value_formated(self, value, decimal=2):
+        """
+        Funtion to tranform the number to string
+        Parameters
+        ----------
+        value: int or float
+            Value to be formated
+            
+        decimal: int (default 2)
+            number of decimal numbers of the output string
+            
+        """
+        return self._transform(value, decimal)
+    
+    def _transform(self, value, decimal):
+        """
+        Realfuntion to tranforming the number to string
+        """
+        negative = False
+        if value == 0:
+            inter = 0
+            name = f'{self._multiplicator.name}s'
+            if name == 'ss':
+                name = name[0]
+        else:
+            turns = 0
+            if value < 0:
+                negative = True
+            inter = abs(value)
+            # print(value, inter)
+            if abs(value) > 999.9:
+                multi = 1E3
+                while inter > 999.9:
+                    inter /= 1E3
+                    turns += 1
+            elif abs(value) < 0.01:
+                multi = 1E-3
+                while inter < 0.01:
+                    inter *= 1E3
+                    turns += 1
+            else:
+                multi = 1
+            val = self._multiplicator.value * multi**turns
+            # print(val, inter)
+            
+            if 1 >= val >= 1E-24:
+                name = TimeMultiplicator(TimeMultiplicator(self._multiplicator.value * multi**turns))
+                if name.name != "s":
+                    name = f'{name.name}s'
+                else:
+                    name = "s"
+            elif self._multiplicator.value == 1.0 and value > 999.9 or val > 1:
+                if val > 1:
+                    inter = (inter * val)/60
+                else:
+                    inter = value/60
+                if inter > 999.9:
+                    inter = value/3600
+                    name = "hours"
+                else:
+                    name = "mins"  
+            else:
+                raise ExperimentException("time units are smaller than 1E-24, this cannot be handeled")
+        formated = Decimal(inter)
+        if negative:
+            return f"-{str(formated.quantize(Decimal(10) ** - decimal))} {name}"
+        else:
+            return f"{str(formated.quantize(Decimal(10) ** - decimal))} {name}"
+
 
 
 def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None):
@@ -36,7 +166,7 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
         according to indexes
             
     space: int or list or "auto" (default 10)
-        If type(space) =int: a series of traces separated by the value indicated
+        If type(space) = int: a series of traces separated by the value indicated
         will be selected.
         If type(space) = list: the traces in the list will be selected.
         If space = auto, the number of returned traces is 10 and equally spaced
@@ -279,7 +409,6 @@ def readData(path, wavelength=0, time=0, wave_is_row=False, separator=',', decim
 
 
 class ReadData:
-
     @staticmethod
     def _readPandas(pandas):
         """
@@ -344,6 +473,34 @@ def solve_kmatrix(exp_no, params):
     return coeffs, eigs, eigenmatrix
 
 
+def book_annotate_all_methods(book=None, cls=None):
+    if book is None:
+        book = LabBook()
+    if cls is None:
+        return lambda cls: book_annotate_all_methods(book, cls)
+
+    class DecoratedClass(cls):
+        if hasattr(cls, "book"):
+            obj = getattr(cls, "book")
+            if isinstance(obj, LabBook):
+                pass
+            else:
+                cls.book_annotate = book
+        else:
+            cls.book = book
+
+        def __init__(self, *args, **kargs):
+            super().__init__(*args, **kargs)
+
+        def __getattribute__(self, item):
+            value = object.__getattribute__(self, item)
+            if callable(value):
+                return book_annotate(cls.book)(value)
+            return value
+
+    return DecoratedClass
+
+
 def froze_it(cls):
     cls.__frozen = False
 
@@ -376,15 +533,15 @@ def froze_it(cls):
     return cls
 
 
-@froze_it
-class UnvariableContainer:
-    """
-    Object where once an attribute has been set cannot be modified if
-    self.__frozen = False
-    """
-    def __init__(self, **kws):
-        for key, val in kws.items():
-            setattr(self, key, val)
+# @froze_it
+# class UnvariableContainer:
+#     """
+#     Object where once an attribute has been set cannot be modified if
+#     self.__frozen = False
+#     """
+#     def __init__(self, **kws):
+#         for key, val in kws.items():
+#             setattr(self, key, val)
 
 
 def book_annotate(container, extend=True):
@@ -402,14 +559,20 @@ def book_annotate(container, extend=True):
         This decorator dumps out the arguments passed to a function before calling it
         """
         argnames = func.__code__.co_varnames[:func.__code__.co_argcount]
+        if argnames[0] == 'self':
+            argnames = argnames[1:]
         fname = func.__name__
-        type(argnames)
-
+        
         # @wraps use to keep meta data of func
         @wraps(func)
         def echo_func(*args, **kwargs):
+            valores = dict(zip(argnames, args), **kwargs)
+            defaults = dict(zip(argnames[-len(func.__defaults__):] ,func.__defaults__))  
+            for i in defaults.keys():
+                if i not in valores.keys():
+                    valores[i] = defaults[i]
             container.__setattr__(fname, ', '.join('%s = %r' % entry
-                                                   for entry in (dict(zip(argnames, args), **kwargs)).items()), extend)
+                                                   for entry in valores.items()), extend)
             return func(*args, **kwargs)
 
         return echo_func
@@ -424,11 +587,10 @@ class LabBook(object):
     the function parameters names and the values passed.
     """
 
-    creation = datetime.datetime.now().strftime("day: %d %b %Y | hour: %H:%M:%S")
-
     def __init__(self, **kws):
         for key, val in kws.items():
             setattr(self, key, val)
+        self.creation = datetime.datetime.now().strftime("day: %d %b %Y | hour: %H:%M:%S")
 
     def __setattr__(self, key, val, extend=False):
         """
@@ -450,6 +612,20 @@ class LabBook(object):
             super().__setattr__(key, prev_val)
         else:
             super().__setattr__(key, val)
+    
+    @property
+    def actions(self):
+        actions = [i for i in self.__dict__.keys() if i not in ["name", "creation"]]
+        return actions
+    
+    def clean(self):
+        """
+        Clean the LabBook except name attribute if given
+        """
+        for key, value in self.__dict__.items():
+            if key != 'name' and key != 'creation':
+                self.delete(key)
+        self.creation = datetime.datetime.now().strftime("day: %d %b %Y | hour: %H:%M:%S")
 
     def delete(self, key, element='all'):
         """
@@ -475,7 +651,7 @@ class LabBook(object):
                 statement = 'element should be "all" or a integer'
                 raise ExperimentException(statement)
 
-    def print(self, creation=True):
+    def print(self, creation=True, print_protected=False, single_line=False,):
         """
         Print all attributes and their values as a Lab report
 
@@ -483,32 +659,55 @@ class LabBook(object):
         ----------
             creation: bool (default True)
                 If True prints the day and hour of the LabBook creation
+                
+            print_protected: bool (default False)
+                Define if protected attributes starting wiht "_" are printed
+                
         """
         if hasattr(self, 'name'):
             name = getattr(self, 'name')
-            print(name)
-            print(''.join(['-' for i in range(len(name))]))
+            print(f'\t {name}')
+            print(''.join(['-' for i in range(len(name)+10)]))
         for key, value in self.__dict__.items():
-            if key != 'notes' and key != 'name':
-                self._print_attribute(key)
+            if key != 'notes' and key != 'name' and key != 'creation' and key[0] != "_":
+                self._print_attribute(key, single_line, False)
         if hasattr(self, 'notes'):
-            self._print_attribute('notes')
+            self._print_attribute('notes', False, False)
+        if print_protected:
+            for key, value in self.__dict__.items():
+                if key[0] == "_":
+                    self._print_attribute(key, single_line, True)
         if creation:
             self._print_attribute('creation')
 
-    def _print_attribute(self, key):
+    def _print_attribute(self, key, single_line=True, protected = True):
         """
         print single attribute
         """
         value = getattr(self, key)
+        if protected:
+            val =f'(p) {key}'
+        else:
+            val = ' '.join(key.split('_'))
         if type(value) == list:
-            print(f'\t {key}:')
+            print(f'\t {val}:')
             for i in value:
                 print(f'\t\t {i}')
         else:
-            print(f'\t {key}:\n\t\t {value}')
+            if single_line:
+                print(f'\t {val}: {value}')
+            else:
+                print(f'\t {val}:\n\t\t {value}')
         print('')
 
+@froze_it
+class UnvariableContainer(LabBook):
+    """
+    Object where once an attribute has been set cannot be modified if
+    self.__frozen = False
+    """
+    def __init__(self, **kws):
+        super().__init__(**kws)
 
 class FiguresFormating:
     """
@@ -588,6 +787,9 @@ class FiguresFormating:
         data: np array
             array containing the data plotted. Is used to get minimum and maximum values and
             adjust the y margins if set_ylim is True
+
+        x_vector: array
+            the x vector plotted in the figure
 
         size: int
             size of the the tick labels

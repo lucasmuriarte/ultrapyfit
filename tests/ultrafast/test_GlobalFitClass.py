@@ -4,8 +4,8 @@ from chempyspec.ultrafast.outils import readData, select_traces
 import numpy as np
 
 
-path = 'C:/Users/lucas/git project/chempyspec/example/3_exp_data_denoised_2.csv'
-path2 = 'C:/Users/lucas/git project/chempyspec/example/3_exp_data_gauss_denoised.csv'
+path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2.csv'
+path2 = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_gauss_denoised.csv'
 
 original_taus = [8, 30, 200]
 
