@@ -1,4 +1,4 @@
-import unittest
+pip3import unittest
 from ultrafast.GlobalFitClass import globalfit_exponential, globalfit_gauss_exponential
 from ultrafast.tools import readData, select_traces
 import numpy as np
