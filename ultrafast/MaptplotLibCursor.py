@@ -6,8 +6,18 @@ Created on Fri Nov 13 17:59:23 2020
 """
 import numpy as np
 
+
 class SnaptoCursor(object):
-    def __init__(self, ax, x, y, number_click=-1, vertical_draw=True, draw='snap', color=False, single_line=True):
+    def __init__(
+            self,
+            ax,
+            x,
+            y,
+            number_click=-1,
+            vertical_draw=True,
+            draw='snap',
+            color=False,
+            single_line=True):
         if number_click == -1:
             self.number_click = np.inf
         else:
@@ -36,37 +46,41 @@ class SnaptoCursor(object):
             x = self.x_pos
             y = self.y_pos
         self.ly.set_xdata(x)
-        self.marker.set_data([x],[y])
-        if abs(x)>=0.1:
-            texto_x=1
+        self.marker.set_data([x], [y])
+        if abs(x) >= 0.1:
+            texto_x = 1
         else:
             try:
-                texto_x=[True if i=='0' else False for i in str(x).split('.')[1]].index(False)+1
-            except:
-                texto_x=3
-        if abs(y)>=0.1:
-            texto_y=1
+                texto_x = [True if i == '0' else False for i in str(x).split('.')[
+                    1]].index(False) + 1
+            except BaseException:
+                texto_x = 3
+        if abs(y) >= 0.1:
+            texto_y = 1
         else:
             try:
-                texto_y=[True if i=='0' else False for i in str(y).split('.')[1]].index(False)+1
-            except:
-                texto_y=3
-        if self.similar.all()==False:
+                texto_y = [True if i == '0' else False for i in str(y).split('.')[
+                    1]].index(False) + 1
+            except BaseException:
+                texto_y = 3
+        if self.similar.all() == False:
             self.lx.set_ydata(y)
-            self.txt.set_text('x='+str(round(x,texto_x))+', y='+str(round(y,texto_y)))
-            self.txt.set_position((x,y))
+            self.txt.set_text('x=' + str(round(x, texto_x)) +
+                              ', y=' + str(round(y, texto_y)))
+            self.txt.set_position((x, y))
         else:
-            self.txt.set_text('x=' +str(round(x,texto_x)))
-        self.txt.set_position((x,y))
+            self.txt.set_text('x=' + str(round(x, texto_x)))
+        self.txt.set_position((x, y))
         self.ax.figure.canvas.draw_idle()
-    
+
     def onClick(self, event):
-        if not event.inaxes: return
+        if not event.inaxes:
+            return
         if event.button == 1:
-            #print(self.number_click)
-            if len(self.datax)<self.number_click:
-                x,y=event.xdata,event.ydata
-                if self.draw=='snap':   
+            # print(self.number_click)
+            if len(self.datax) < self.number_click:
+                x, y = event.xdata, event.ydata
+                if self.draw == 'snap':
                     indx = np.searchsorted(self.x, [x])[0]
                     x = self.x[indx]
                     y = self.y[indx]
@@ -76,9 +90,16 @@ class SnaptoCursor(object):
 #                      ('double' if event.dblclick else 'single', event.button,
 #                       event.x, event.y, event.xdata, event.ydata))
                 if self.vertical_draw:
-                    self.scat.append(self.ax.axvline(self.datax[-1],alpha=0.5,color='red',zorder=np.inf))
+                    self.scat.append(self.ax.axvline(
+                        self.datax[-1], alpha=0.5, color='red', zorder=np.inf))
                 else:
-                    self.scat.append(self.ax.scatter(self.datax,self.datay, color='red',marker='x',zorder=np.inf))
+                    self.scat.append(
+                        self.ax.scatter(
+                            self.datax,
+                            self.datay,
+                            color='red',
+                            marker='x',
+                            zorder=np.inf))
             else:
                 pass
             self.ax.figure.canvas.draw_idle()
@@ -90,38 +111,41 @@ class SnaptoCursor(object):
                 del self.datay[-1]
                 self.scat[-1].remove()
                 del self.scat[-1]
-                self.ax.figure.canvas.draw_idle()  
-    
+                self.ax.figure.canvas.draw_idle()
+
     def onEnterAxes(self, event):
-        if not event.inaxes: return
+        if not event.inaxes:
+            return
         try:
             self.onLeaveAxes(event)
-        except:
+        except BaseException:
             pass
-        if self.similar.all()==False:
-            self.lx = self.ax.axhline(color='k',alpha=0.2)  # the horiz line
+        if self.similar.all() == False:
+            self.lx = self.ax.axhline(color='k', alpha=0.2)  # the horiz line
         if self.single_line:
             try:
-                line=self.ax.lines[0]
-                self.x=line.get_xdata()
-                if self.similar.all()==False:
-                    self.y=line.get_ydata()
-            except:
+                line = self.ax.lines[0]
+                self.x = line.get_xdata()
+                if self.similar.all() == False:
+                    self.y = line.get_ydata()
+            except BaseException:
                 pass
         self.ly = self.ax.axvline(color='k', alpha=0.2)  # the vert line
-        self.marker, = self.ax.plot([0],[0], marker="o", color="crimson", zorder=3)
+        self.marker, = self.ax.plot(
+            [0], [0], marker="o", color="crimson", zorder=3)
         self.txt = self.ax.text(0.7, 0.9, '')
         if self.color is not False:
             event.inaxes.patch.set_facecolor(self.color)
         event.canvas.draw()
-    
-    def onLeaveAxes(self,event):
-        if not event.inaxes: return
+
+    def onLeaveAxes(self, event):
+        if not event.inaxes:
+            return
         #print ('leave_axes', event.inaxes)
         self.marker.remove()
         self.ly.remove()
         self.txt.remove()
-        if self.similar.all()==False:
+        if self.similar.all() == False:
             self.lx.remove()
         event.inaxes.patch.set_facecolor('white')
         event.canvas.draw()

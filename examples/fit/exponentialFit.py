@@ -5,7 +5,7 @@ Created on Sun Jan 10 23:02:19 2021
 @author: lucas
 """
 from ultrafast.GlobalFitClass import globalfit_exponential
-from ultrafast.outils import readData, select_traces
+from ultrafast.tools import readData, select_traces
 
 path = 'examples/denoised_2.csv'
 time, data, wave = readData(path, wave_is_row= True)
