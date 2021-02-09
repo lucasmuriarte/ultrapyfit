@@ -1,0 +1,85 @@
+tests package
+=============
+
+Submodules
+----------
+
+tests.test\_ExploreResults module
+---------------------------------
+
+.. automodule:: tests.test_ExploreResults
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_GlobExpParams module
+--------------------------------
+
+.. automodule:: tests.test_GlobExpParams
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_GlobalFitClass module
+---------------------------------
+
+.. automodule:: tests.test_GlobalFitClass
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_ModelCreator module
+-------------------------------
+
+.. automodule:: tests.test_ModelCreator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_PlotSVDClass module
+-------------------------------
+
+.. automodule:: tests.test_PlotSVDClass
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_PlotTransientClass module
+-------------------------------------
+
+.. automodule:: tests.test_PlotTransientClass
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_Preprocessing module
+--------------------------------
+
+.. automodule:: tests.test_Preprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_basicSpectrum module
+--------------------------------
+
+.. automodule:: tests.test_basicSpectrum
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_tools module
+------------------------
+
+.. automodule:: tests.test_tools
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: tests
+   :members:
+   :undoc-members:
+   :show-inheritance:
