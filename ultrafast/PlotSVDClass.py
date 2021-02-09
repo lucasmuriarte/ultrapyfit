@@ -8,7 +8,7 @@ from scipy.sparse.linalg import svds as svd
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.widgets import Slider, Button
-from ultrafast.outils import select_traces
+from ultrafast.tools import select_traces
 from copy import copy
 
 
@@ -42,7 +42,14 @@ class PlotSVD:
     V:
         Number of right singular vectors calculated.
     """
-    def __init__(self, x, data, wavelength, selected_traces=None, selected_wavelength=None):
+
+    def __init__(
+            self,
+            x,
+            data,
+            wavelength,
+            selected_traces=None,
+            selected_wavelength=None):
         self.data = data
         self.x = x
         self.wavelength = wavelength
@@ -77,7 +84,8 @@ class PlotSVD:
         wavelength = self.wavelength
         if self.S is None or len(self.S) != calculate:
             self.U, self.S, self.V = self._calculateSVD(vectors=15)
-        assert 0 < vectors < len(self.S), 'vector value should be between 1 and the number of calculated values'
+        assert 0 < vectors < len(
+            self.S), 'vector value should be between 1 and the number of calculated values'
         if vectors == 'all':
             vectors = len(self.S)
         self._fig, self._ax = plt.subplots(1, 3, figsize=(14, 6))
@@ -89,14 +97,19 @@ class PlotSVD:
         self._ax[1].set_title('Eingen values')
         self._ax[2].set_title('Right singular vectors')
         self._number_of_vectors_plot = vectors
-        self.vertical_SVD = self._ax[1].axvline(vectors, alpha=0.5, color='red', zorder=np.inf)
-        axspec = self._fig.add_axes([0.20, .02, 0.60, 0.01], facecolor='orange')
-        self._specSVD = Slider(axspec, 'curve number', 1, len(self.S), valstep=1, valinit=vectors)
+        self.vertical_SVD = self._ax[1].axvline(
+            vectors, alpha=0.5, color='red', zorder=np.inf)
+        axspec = self._fig.add_axes(
+            [0.20, .02, 0.60, 0.01], facecolor='orange')
+        self._specSVD = Slider(
+            axspec, 'curve number', 1, len(
+                self.S), valstep=1, valinit=vectors)
         self._specSVD.on_changed(self._updatePlotSVD)
         # self._fig.canvas.mpl_connect('close_event', self._close_svd_fig())
         if select:
             b_ax = plt.axes([0.85, 0.025, 0.1, 0.04])
-            self._button_svd_select = Button(b_ax, 'Select', color='tab:red', hovercolor='0.975')
+            self._button_svd_select = Button(
+                b_ax, 'Select', color='tab:red', hovercolor='0.975')
             self._button_svd_select.on_clicked(self._selectSVD)
         self._fig.show()
 
@@ -133,14 +146,23 @@ class PlotSVD:
             dat = self.selected_traces
         else:
             dat = self.data
-        svd_values = (np.linalg.svd(dat, full_matrices=False, compute_uv=False)) ** 2
+        svd_values = (
+            np.linalg.svd(
+                dat,
+                full_matrices=False,
+                compute_uv=False)) ** 2
         x = np.linspace(1, len(svd_values), len(svd_values))
         f, ax = plt.subplots(1)
         plt.plot(x, svd_values, marker='o', alpha=0.6, ms=4, ls='')
         plt.ylabel('Eigen values', size=size)
         plt.xlabel('number', size=size)
         plt.minorticks_on()
-        ax.tick_params(which='both', direction='in', top=True, right=True, labelsize=size)
+        ax.tick_params(
+            which='both',
+            direction='in',
+            top=True,
+            right=True,
+            labelsize=size)
         if log_scale:
             plt.yscale("log")
         return f, ax
@@ -151,28 +173,43 @@ class PlotSVD:
         """
         wavelength = self.wavelength
         value = int(round(self._specSVD.val))
-        colores = ['tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown',
-                   'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan', 'tab:blue']
+        colores = [
+            'tab:orange',
+            'tab:green',
+            'tab:red',
+            'tab:purple',
+            'tab:brown',
+            'tab:pink',
+            'tab:gray',
+            'tab:olive',
+            'tab:cyan',
+            'tab:blue']
         if value > self._number_of_vectors_plot:
             if value + 1 == self._number_of_vectors_plot:
                 value_c = value * 1.0
                 if value > 10:
                     value_c = value - 10 * (value // 10)
-                self._ax[0].plot(self.x, self.U[:, value], color=colores[value_c + 1])
-                self._ax[2].plot(wavelength, self.V[value, :], color=colores[value_c + 1])
+                self._ax[0].plot(self.x, self.U[:, value],
+                                 color=colores[value_c + 1])
+                self._ax[2].plot(wavelength, self.V[value, :],
+                                 color=colores[value_c + 1])
             else:
                 for i in range(int(self._number_of_vectors_plot), int(value)):
                     value_c = i
                     if i > 10:
                         value_c = i - 10 * (value // 10)
-                    self._ax[0].plot(self.x, self.U[:, i], color=colores[value_c - 1])
-                    self._ax[2].plot(wavelength, self.V[i, :], color=colores[value_c - 1])
+                    self._ax[0].plot(self.x, self.U[:, i],
+                                     color=colores[value_c - 1])
+                    self._ax[2].plot(wavelength, self.V[i, :],
+                                     color=colores[value_c - 1])
             self.vertical_SVD.remove()
-            self.vertical_SVD = self._ax[1].axvline(value, alpha=0.5, color='red', zorder=np.inf)
+            self.vertical_SVD = self._ax[1].axvline(
+                value, alpha=0.5, color='red', zorder=np.inf)
             self._number_of_vectors_plot = value * 1.0
         elif value < self._number_of_vectors_plot:
             self.vertical_SVD.remove()
-            self.vertical_SVD = self._ax[1].axvline(value, alpha=0.5, color='red', zorder=np.inf)
+            self.vertical_SVD = self._ax[1].axvline(
+                value, alpha=0.5, color='red', zorder=np.inf)
             for i in range(int(value), int(self._number_of_vectors_plot)):
                 del self._ax[0].lines[-1]
                 del self._ax[2].lines[-1]
@@ -224,8 +261,9 @@ class PlotSVD:
         Modifies the attributes selected_traces and selected_wavelength.
         """
         if points == 'all':
-            self.selected_traces, self.selected_wavelength = copy(self.data), copy(self.wavelength)
+            self.selected_traces, self.selected_wavelength = copy(
+                self.data), copy(self.wavelength)
         else:
-            self.selected_traces, self.selected_wavelength = select_traces(self.data, self.wavelength, points,
-                                                                           average, avoid_regions)
+            self.selected_traces, self.selected_wavelength = select_traces(
+                self.data, self.wavelength, points, average, avoid_regions)
         self._SVD_fit = False

@@ -5,7 +5,7 @@ Created on Sat Jan  9 18:06:54 2021
 @author: lucas
 """
 from numpy import mean
-from ultrafast.outils import LabBook, book_annotate, UnvariableContainer
+from ultrafast.tools import LabBook, book_annotate, UnvariableContainer
 
 # The lab book need to be created first
 book = LabBook(notes=None, name='Lab Book 1')

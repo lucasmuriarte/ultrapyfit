@@ -1,5 +1,5 @@
 import unittest
-from ultrafast.outils import readData, select_traces
+from ultrafast.tools import readData, select_traces
 from ultrafast.PlotSVDClass import PlotSVD
 import numpy as np
 from parameterized import parameterized
@@ -7,21 +7,29 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
-path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_gauss_denoised.csv'
+path = 'examples/data/denoised.csv'
 time, data, wave = readData(path, wave_is_row=True)
 data_select, wave_select = select_traces(data, wave, 'auto')
 svd_explorer = PlotSVD(time, data, wave, data_select, wave_select)
-full_svd_values = (np.linalg.svd(data, full_matrices=False, compute_uv=False)) ** 2
-select_svd_values = (np.linalg.svd(data_select, full_matrices=False, compute_uv=False)) ** 2
+full_svd_values = (
+    np.linalg.svd(
+        data,
+        full_matrices=False,
+        compute_uv=False)) ** 2
+select_svd_values = (
+    np.linalg.svd(
+        data_select,
+        full_matrices=False,
+        compute_uv=False)) ** 2
 
 
 def assertEqualArray(array1, array2):
     """
     returns "True" if all elements of two arrays are identical
     """
-    if type(array1) == list:
+    if isinstance(array1, list):
         array1 = np.array(array1)
-    if type(array2) == list:
+    if isinstance(array2, list):
         array2 = np.array(array2)
     value = (array1 == array2).all()
     return value
@@ -32,10 +40,19 @@ class MyTestCase(unittest.TestCase):
     def test_select_traces(self):
         svd_explorer.select_traces('all')
         self.assertTrue(assertEqualArray(svd_explorer.selected_traces, data))
-        self.assertTrue(assertEqualArray(svd_explorer.selected_wavelength, wave))
+        self.assertTrue(
+            assertEqualArray(
+                svd_explorer.selected_wavelength,
+                wave))
         svd_explorer.select_traces('auto')
-        self.assertTrue(assertEqualArray(svd_explorer.selected_traces, data_select))
-        self.assertTrue(assertEqualArray(svd_explorer.selected_wavelength, wave_select))
+        self.assertTrue(
+            assertEqualArray(
+                svd_explorer.selected_traces,
+                data_select))
+        self.assertTrue(
+            assertEqualArray(
+                svd_explorer.selected_wavelength,
+                wave_select))
 
     @parameterized.expand([[10],
                            [15],
@@ -68,7 +85,7 @@ class MyTestCase(unittest.TestCase):
         else:
             self.assertTrue((svd_explorer._button_svd_select is None))
         plt.close(svd_explorer._fig)
-    
+
     @parameterized.expand([[3],
                            [7],
                            [2]])
