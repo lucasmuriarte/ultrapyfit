@@ -1,0 +1,45 @@
+ultrafast.graphics package
+==========================
+
+Submodules
+----------
+
+ultrafast.graphics.ExploreData module
+-------------------------------------
+
+.. automodule:: ultrafast.graphics.ExploreData
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.graphics.ExploreResults module
+----------------------------------------
+
+.. automodule:: ultrafast.graphics.ExploreResults
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.graphics.MaptplotLibCursor module
+-------------------------------------------
+
+.. automodule:: ultrafast.graphics.MaptplotLibCursor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.graphics.PlotSVD module
+---------------------------------
+
+.. automodule:: ultrafast.graphics.PlotSVD
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: ultrafast.graphics
+   :members:
+   :undoc-members:
+   :show-inheritance:

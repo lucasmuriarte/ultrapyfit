@@ -4,4 +4,4 @@ ultrafast
 .. toctree::
    :maxdepth: 4
 
-   experiment
+   ultrafast

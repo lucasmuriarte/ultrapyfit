@@ -1,0 +1,45 @@
+ultrafast.fit package
+=====================
+
+Submodules
+----------
+
+ultrafast.fit.ExponentialFit module
+-----------------------------------
+
+.. automodule:: ultrafast.fit.ExponentialFit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.fit.GlobExpParams module
+----------------------------------
+
+.. automodule:: ultrafast.fit.GlobExpParams
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.fit.ModelCreator module
+---------------------------------
+
+.. automodule:: ultrafast.fit.ModelCreator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.fit.TargetFit module
+------------------------------
+
+.. automodule:: ultrafast.fit.TargetFit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: ultrafast.fit
+   :members:
+   :undoc-members:
+   :show-inheritance:

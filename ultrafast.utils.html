@@ -1,0 +1,1414 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>ultrafast.utils package &mdash; ultrafast 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="ultrafast.graphics package" href="ultrafast.graphics.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ultrafast
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Package documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ultrafast</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ultrafast.html">ultrafast package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ultrafast.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ultrafast.fit.html">ultrafast.fit package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ultrafast.graphics.html">ultrafast.graphics package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ultrafast.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ultrafast.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ultrafast.html#module-ultrafast.experiment">ultrafast.experiment module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ultrafast.html#module-ultrafast">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ultrafast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">ultrafast</a> &raquo;</li>
+        
+          <li><a href="ultrafast.html">ultrafast package</a> &raquo;</li>
+        
+      <li>ultrafast.utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/ultrafast.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ultrafast-utils-package">
+<h1>ultrafast.utils package<a class="headerlink" href="#ultrafast-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ultrafast.utils.ChirpCorrection">
+<span id="ultrafast-utils-chirpcorrection-module"></span><h2>ultrafast.utils.ChirpCorrection module<a class="headerlink" href="#module-ultrafast.utils.ChirpCorrection" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Nov 13 17:47:20 2020</p>
+<p>&#64;author: 79344</p>
+<dl class="py class">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.ChirpCorrection.</span></code><code class="sig-name descname"><span class="pre">ChripCorrection</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelenght</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.GVD">
+<code class="sig-name descname"><span class="pre">GVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CaF2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SiO2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BK7</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.GVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.GVDFromGrapth">
+<code class="sig-name descname"><span class="pre">GVDFromGrapth</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.GVDFromGrapth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.GVDFromPolynom">
+<code class="sig-name descname"><span class="pre">GVDFromPolynom</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.GVDFromPolynom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.buttonVerifiedGVD">
+<code class="sig-name descname"><span class="pre">buttonVerifiedGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.buttonVerifiedGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.correctGVD">
+<code class="sig-name descname"><span class="pre">correctGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verified</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.correctGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.dispersion">
+<code class="sig-name descname"><span class="pre">dispersion</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">landa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excitation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.dispersion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.finalGVD">
+<code class="sig-name descname"><span class="pre">finalGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.finalGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.find_nearest">
+<code class="sig-name descname"><span class="pre">find_nearest</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.find_nearest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.fitPolGVD">
+<code class="sig-name descname"><span class="pre">fitPolGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.fitPolGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.fprime">
+<code class="sig-name descname"><span class="pre">fprime</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.fprime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.getCorrectData">
+<code class="sig-name descname"><span class="pre">getCorrectData</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.getCorrectData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.indexDifraction">
+<code class="sig-name descname"><span class="pre">indexDifraction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.indexDifraction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.polynomi">
+<code class="sig-name descname"><span class="pre">polynomi</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.polynomi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.radioVerifiedGVD">
+<code class="sig-name descname"><span class="pre">radioVerifiedGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.radioVerifiedGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.updateGVD">
+<code class="sig-name descname"><span class="pre">updateGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.updateGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.ChripCorrection.verifiedGVD">
+<code class="sig-name descname"><span class="pre">verifiedGVD</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.ChripCorrection.verifiedGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="ultrafast.utils.ChirpCorrection.correctGVDSellmeier">
+<code class="sig-prename descclassname"><span class="pre">ultrafast.utils.ChirpCorrection.</span></code><code class="sig-name descname"><span class="pre">correctGVDSellmeier</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelenght</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.correctGVDSellmeier" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ultrafast.utils.Preprocessing">
+<span id="ultrafast-utils-preprocessing-module"></span><h2>ultrafast.utils.Preprocessing module<a class="headerlink" href="#module-ultrafast.utils.Preprocessing" title="Permalink to this headline">¶</a></h2>
+<p>Created on Sun Nov 22 12:52:02 2020</p>
+<p>&#64;author: lucas</p>
+<dl class="py exception">
+<dt id="ultrafast.utils.Preprocessing.ExperimentException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.Preprocessing.</span></code><code class="sig-name descname"><span class="pre">ExperimentException</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.Preprocessing.ExperimentException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>General Purpose Exception.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.Preprocessing.Preprocessing">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.Preprocessing.</span></code><code class="sig-name descname"><span class="pre">Preprocessing</span></code><a class="headerlink" href="#ultrafast.utils.Preprocessing.Preprocessing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class containing main preprocessing functions as static methods</p>
+<p>All methods assumes tha the data array pass has: 1) data is a 2darray that
+has no wavelength or time data points, time and wavelength are given as separate
+1d arrays. 2) In the original data set the number of rows shape is the time
+points and the number of columns the wavelength points. (Some functions work
+independently of the orientation of the data)</p>
+<dl>
+<dt>The transient data pass should be:</dt><dd><p>data 2d_arrays (time point rows and wavelength columns)
+time 1d_arrays
+wavelength 1d_arrays
+e.g.: data.shape = (50,250)</p>
+<blockquote>
+<div><p>data has 250 wavelength points and 50 time points</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="ultrafast.utils.Preprocessing.Preprocessing.average_time_points">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">average_time_points</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starting_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_dense</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.Preprocessing.Preprocessing.average_time_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Average time points collected (rows). This function can be use to average
+time points. Useful in multiprobe time-resolved experiments or flash-
+photolysis experiments recorded with a Photo multiplier tube where the number
+of time points is very long and are equally spaced.
+(The function assumes time vector is sorted from low to high values)</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>data</strong> (<em>ndarray</em>) – Normally in  the original data set the number of rows should be the
+time points and the number of columns the Columns points. Although
+this function works with transposes data sets</p>
+<blockquote>
+<div><dl class="simple">
+<dt>e.g.: data.shape = (50,250)</dt><dd><p>data has 250 wavelength points and 50 time points</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>time</strong> (<em>1darray or</em>) – time vector</p></li>
+<li><p><strong>starting_point</strong> (<em>int or float</em>) – time points higher than this the function will be applied</p></li>
+<li><p><strong>step</strong> (<em>int, float or None</em>) – step to consider for averaging data points</p></li>
+<li><p><strong>method</strong> (<em>‘log’ or ‘constant’ (default: ‘log’)</em>) – If constant: after starting_point the the function will return average
+time points between the step.</p>
+<p>If log the firsts step is step/grid_dense and the following points
+are (step/grid_dense)*n where n is point number</p>
+</li>
+<li><p><strong>grid_dense</strong> (<em>int or float higher than 1 (default: 5)</em>) – density of the log grid that will be applied. To high values will not
+have effect if: start_point + step/grid_dense is lower than the
+difference between the first two consecutive points higher than
+start_point. The higher the value the higher the grid dense will be.
+return.
+(only applicable if method is ‘log’)</p></li>
+<li><p><strong>e.g.</strong> – time [1,2,3,4 …. 70,71,72,73,74]
+step = 10
+starting_point = 5
+method ‘constant’</p>
+<blockquote>
+<div><p>time points return are [1,2,3,4,5,10,20,30,40…]</p>
+</div></blockquote>
+<dl class="simple">
+<dt>method ‘log’</dt><dd><p>time points return are [1,2,3,4,5,6,9,14,21,30,41,54,67.5]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>initial data and time vector averaged</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.Preprocessing.Preprocessing.baseline_substraction">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">baseline_substraction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_spec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_one</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.Preprocessing.Preprocessing.baseline_substraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subtract a initial spectrum or an average of initial spectra
+(normally before time = 0) to the entire data set.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>data</strong> (<em>ndarray</em>) – Original data set where the number of rows should be the time points
+and the number of columns the wavelength points</p>
+<blockquote>
+<div><dl class="simple">
+<dt>e.g.: data.shape = (50,250)</dt><dd><p>data has 250 wavelength points and 50 time points</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>number_spec</strong> (<em>int or list</em>) – This parameter defines the number of spectra to be subtracted.
+If int should be the index of the spectrum to be subtracted
+If list should be of length 2 and contain initial and final spectra
+index that want to be subtracted</p></li>
+<li><p><strong>only_one</strong> (<em>bool (default False)</em>) – if True only the spectrum (at index number_spec) is subtracted
+if False an average from the spectrum 0 to number_spec is subtracted
+(only applicable if number_spec is an int)</p></li>
+<li><p><strong>e.g.1</strong> (<em>number_spec = [2,5] an average from spectra 2 to 5 is subtracted</em>) – (where 2 and 5 are included)</p></li>
+<li><p><strong>e.g.2</strong> (<em>number_spec = 5 an average from spectra 0 to 5 is subtracted</em>) – if only_one = False; if not only spectrum 5 is subtracted</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray of size equal data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.Preprocessing.Preprocessing.correct_chrip">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">correct_chrip</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'selmeiller'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.Preprocessing.Preprocessing.correct_chrip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.Preprocessing.Preprocessing.cut_columns">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">cut_columns</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mini</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">innerdata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.Preprocessing.Preprocessing.cut_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cut columns of the data set and wavelength vector according to the closest
+values of mini and maxi margins given.
+(The function assumes column vector is sorted from low to high values)</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>data</strong> (<em>ndarray</em>) – Normally in  the original data set the number of rows should be the
+time points and the number of columns the Columns points. Although
+this function works with transposes data sets</p>
+<blockquote>
+<div><dl class="simple">
+<dt>e.g.: data.shape = (50,250)</dt><dd><p>data has 250 wavelength points and 50 time points</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>columns</strong> (<em>1darray or None</em>) – Wavelength vectors where regions are cut.
+If None an array from 0 to data number of columns is created and
+returned after cutting. The parameters mini and maxi should be given
+according to indexes</p></li>
+<li><p><strong>mini</strong> (<em>int, float or None (default: None)</em>) – data higher than this value is kept</p></li>
+<li><p><strong>maxi</strong> (<em>int, float or None (default: None)</em>) – data lower than this value is kept</p></li>
+<li><p><strong>innerdata</strong> (<em>cut or select (default: None)</em>) – Only need if both mini and right maxi are given
+indicates if data inside the mini and maxi limits should be cut or
+selected.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>initial data and columns vector cut in the areas indicated</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.Preprocessing.Preprocessing.cut_rows">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">cut_rows</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mini</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.Preprocessing.Preprocessing.cut_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cut rows of the data set and time vector according to the closest
+values of mini and maxi margins given. Contrary to cut_columns functions,
+inner cut are not available since in time resolved spectroscopy is not logical
+to cut a complete area of recorded times. Therefore, giving mini and maxi
+margins will result in selection of inner time values.
+(The function assumes rows vector is sorted from low to high values)</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>data</strong> (<em>ndarray</em>) – Normally in  the original data set the number of rows should be the
+time points and the number of columns the Columns points. Although
+this function works with transposes data sets</p>
+<blockquote>
+<div><dl class="simple">
+<dt>e.g.: data.shape = (50,250)</dt><dd><p>data has 250 wavelength points and 50 time points</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>rows</strong> (<em>1darray or</em>) – Normally time vector where regions are cut.</p></li>
+<li><p><strong>mini</strong> (<em>int, float or None (default: None)</em>) – data higher than this value is kept</p></li>
+<li><p><strong>maxi</strong> (<em>int, float or None (default: None)</em>) – data lower than this value is kept</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>initial data and rows vector cut in the areas indicated</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.Preprocessing.Preprocessing.del_points">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">del_points</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.Preprocessing.Preprocessing.del_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete rows or columns from the data set according to the closest values
+given in points to the values found in dimension_vector. The length of
+dimension_vector should be equivalent to one of the data dimensions.</p>
+<p>Notice that the function will automatically detect the dimension of the
+delete rows or columns in data if any of their dimensions is equal to the
+length of the dimension_vector. In case that both dimensions are the same
+the axis should be given, by default is 0, which is equivalent to the
+time dimension.</p>
+<p>i.e.:
+points = [3,5]
+dimension_vector = [0.7, 1.4, 2.1, 2.8, 3.5, 4.2, 4.9, 5.6]
+len(dimension_vector) &gt;&gt;&gt; 8
+data.shape &gt;&gt;&gt; (8, 10)</p>
+<dl class="simple">
+<dt>returns</dt><dd><p>return_data: data array where rows 3 and 6 are deleted
+return_data.shape &gt;&gt;&gt; (6, 10)
+return_dimension_vector &gt;&gt;&gt; [0.7, 1.4, 2.1, 3.5, 4.2, 5.6]</p>
+</dd>
+</dl>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>points</strong> (<em>int, list or None</em>) – estimate values of time, the closes values of dimension_vector to the points given
+will be deleted</p></li>
+<li><p><strong>data</strong> (<em>ndarray</em>) – Original data set where the number of rows should be the time points
+and the number of columns the wavelength points</p>
+<blockquote>
+<div><p>e.g.: data.shape = (50,250)
+data has 250 wavelength points and 50 time points</p>
+</div></blockquote>
+</li>
+<li><p><strong>dimension_vector</strong> (<em>1darray</em>) – wavelength or time vectors where points should be deleted</p></li>
+<li><p><strong>axis</strong> (<em>int, 0 or 1 (default: None)</em>) – indicates the axis where to cut in case data has identical number
+of rows and columns. (not needed in other cases)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>initial data ndarrays with rows or columns deleted and dimension_vector</em></p></li>
+<li><p><em>with points deleted.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.Preprocessing.Preprocessing.derivate_data">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">derivate_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deriv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mirror'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.Preprocessing.Preprocessing.derivate_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a Savitky-Golay filter to the data in the spectral range (rows).
+This function can be used to correct for baseline fluctuations and still
+perform a global fit or a single fit to obtain the decay times.  Uses
+scipy.signal.savgol_filter (check scipy documentation for more information)</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>data</strong> (<em>ndarray</em>) – Normally in  the original data set the number of rows should be the
+time points and the number of columns the Columns points. Although
+this function works with transposes data sets</p>
+<blockquote>
+<div><dl class="simple">
+<dt>e.g.: data.shape = (50,250)</dt><dd><p>data has 250 wavelength points and 50 time points</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>window_length</strong> (<em>odd int value (default: 25)</em>) – length defining the points for polynomial fitting</p></li>
+<li><p><strong>polyorder</strong> (<em>int or float (default: 3)</em>) – order of the polynomial fit</p></li>
+<li><p><strong>deriv</strong> (<em>int, float or None (default: 1)</em>) – order of the derivative after fitting</p></li>
+<li><p><strong>mode</strong> (<em>(default: ‘mirror’)</em>) – mode to evaluate bounders after derivation, check scipy.signal.savgol_filter
+for the different options</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>initial data and time vector averaged</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.Preprocessing.Preprocessing.shit_time">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">shit_time</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.Preprocessing.Preprocessing.shit_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shift the time vector by a value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>1darray</em>) – time vector</p></li>
+<li><p><strong>value</strong> (<em>int or float</em>) – value shifting the time vector</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>time value shifted</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.Preprocessing.Preprocessing.subtract_polynomial_baseline">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">subtract_polynomial_baseline</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.Preprocessing.Preprocessing.subtract_polynomial_baseline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit and subtract a polynomial to the data in the spectral range (rows).
+This function can be used to correct for baseline fluctuations typically
+found in time resolved IR spectroscopy.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>data</strong> (<em>ndarray</em>) – Normally in  the original data set the number of rows should be the
+time points and the number of columns the Columns points. Although
+this function works with transposes data sets</p>
+<blockquote>
+<div><dl class="simple">
+<dt>e.g.: data.shape = (50,250)</dt><dd><p>data has 250 wavelength points and 50 time points</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>wavelength</strong> (<em>1darray</em>) – wavelength vector</p></li>
+<li><p><strong>points</strong> (<em>list</em>) – list containing the wavelength values where the different transient
+spectra should be zero</p></li>
+<li><p><strong>order</strong> (<em>int or float (default: 3)</em>) – order of the polynomial fit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>initial data and time vector averaged</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ultrafast.utils.divers">
+<span id="ultrafast-utils-divers-module"></span><h2>ultrafast.utils.divers module<a class="headerlink" href="#module-ultrafast.utils.divers" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Nov 13 15:13:09 2020</p>
+<p>&#64;author: Lucas</p>
+<dl class="py class">
+<dt id="ultrafast.utils.divers.DataSetCreator">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">DataSetCreator</span></code><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that with static methods that can be use to generate examples
+of transient data, considering gaussian spectral shapes shapes. The
+output is a pandas dataFrame.
+example how to use (from DAS):
+——————-
+wave = DataSetCreator.generate_wavelength(350,700,500)
+time = DataSetCreator.generate_time(-2,500,120)
+shapes = DataSetCreator.generate_shape(5,wave, taus=[8, 30, 200], signe = 0, sigma = 50)
+data_set = DataSetCreator.generate_dataset(shapes, time, 0.12)
+After fitting the decay associated spectra should be equal to shapes, and the
+fitting times 8 30 and 200.
+example how to use (from SAS):
+——————-
+wave = DataSetCreator.generate_wavelength(400,700,500)
+peaks=[[470,550,650],[480,700],[500,600]]
+amplitudes=[[-10,-6,12],[-9,11],[-8,6]]
+fwhms=[[50,100,80],[40,70],[30,65]]
+shapes = DataSetCreator.generate_specific_shape(wave, taus=3, peaks=peaks, amplitudes=amplitudes, fwhms=fwhms)
+k1=1/5.0
+k2=1/20.0
+k3=1/100.0
+kmatrix = [[-k1,0,0],[k1/3,-k2,0],[2*k1/3,0,-k3]]
+initials = [1.0,0,0]
+profiles = DataSetCreator.generate_profiles(500.0,5000,initials,kmatrix)
+data_set_conv = DataSetCreator.generate_dataset(shapes, profiles, 1.2)
+new_times = DataSetCreator.generate_time(data_set_conv.index[0],data_set_conv.index[-1],120)
+data_set_conv_proj = DataSetCreator.timegrid_projection(data_set_conv, new_times)
+Above kmatrix represent model where species 1 bifurcates to species 2 and 3 (with 1/3 and 2/3 probablity, respectively),
+and each of them decay independently with 1/k2 and 1/k3.
+initials = [1/3.0, 1/3.0, 1/3.0]
+kmatrix = [[-k1,0,0],[0,-k2,0],[0,0,-k3]]
+Above kmatrix and initial conditions should generate just 3 exp decay (DAS equivalent)
+initials = [1.0,0,0]
+kmatrix = [[-k1,0,0],[k1,-k2,0],[0,k2,-k3]]
+Above kmatrix and initial conditions should generate sequential model (cascade, 1-&gt;2-&gt;3, EAS equivalent)
+Some comments about how to build kmatrix. It is just a matrix of rates, which when multiplied by concentration
+vector of given species results in derrivative of concentration vector of the same/other species by time.
+In other words, dc_i/dt = sum of k_ij * c_j . In general derrivative of vector of c-s = kmatrix * vector of c-s.
+So for example, first row of kmatrix are k-s of species which decay to first species (positive values),
+except first one (k[0,0]) which must be negative because it describes decay of species one.
+(1) diagonal k-s must be negative, because they describe decay of given species,
+(2) If you sum all kij*cj parts in all rows, it should yield zero for the sum of populations to be preserved.
+If this condition is not satisfied, then it is still okay, assuming that there is more negative values and you
+are aware with the fact that your sum of c-s decays to zero (typical to TR spectroscopy).
+(3) Firstly you can start with defining diagonal elements, which are negative reciprocals of lifetimes
+of given species
+(4) Then You decide to which species each species decay, and you balance this negative diagonal k in other
+species which has lower energy in energy ladder of states.
+(5) You can skip point 4 and just let given species decay to nothing (usually GS) or you can also divide
+any diagonal k to some portions in more than one different species. Then you have splitting (bifurcation),
+so one species decay to more than one species. In general it means, that in each column of kmatrix sum of
+k-s must be zero (concentration preserved over time) or negative (concentration goes down, so species decay
+to GS and TA signal goes to zero). After fitting the data parameters should reproduce model described by kmatrix.
+This class does not use graphical model generator, because its intention is to test all fitting code, so everything
+need to be implemented separately, and possibly in a different way to avoid mistake-compensation.
+There are still some minor problems (odeint function gives sometimes NaNs at output, but works if you run it again,
+so it seems that some SAS inputs are crashing it, needs to be checked),nevertheless usually works ok and gives
+reasonable results.</p>
+<p>Comment: It seems that when using generate_specific_shape instead of generate_shape there is no errors!</p>
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.add_noise">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">add_noise</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0005</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.add_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>add gaussian random noise to the data
+:Parameters: * <strong>data</strong> (<em>pandas DataFrame</em>) – dataFrame without noise</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>scale</strong> (<em>float (default 0.0005)</em>) – time vector</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas data frame equal size of data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.derrivatives">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">derrivatives</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kmatrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.derrivatives" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes derrivatives of concentrations over time, this is callback function for odeint
+:Parameters: * <strong>cs</strong> (<em>numpy array 1D</em>) – concentration of each population</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – given time point, does not contribute anyway</p></li>
+<li><p><strong>kamtrix</strong> (<em>numpy array 2D</em>) – matrix of k-s, shape[1] must match shape[0] of cs (to properly perform product of matrixes)</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>1D numpy array with shape[0] equal to cs.shape[0]. represents derrivatives of concentrations over time</em></p></li>
+<li><p><em>here is simple example</em></p></li>
+<li><p><em>[[k_11, k_12] [[c_1]</em></p></li>
+<li><p><em>[k_21, k_22]] [c_2]]</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.gauss">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">gauss</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.gauss" title="Permalink to this definition">¶</a></dt>
+<dd><p>basic gaussian function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.generate_dataset">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">generate_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.generate_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate the data set from the initial spectral shape form. The data has no noise. This
+can be added using the add_noise function.
+:Parameters: * <strong>shape</strong> (<em>pandas DataFrame</em>) – initial value of the output vector</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>time</strong> (<em>1darray or pd.DataFrame</em>) – time vector with delays will trigger generation from DAS (sums of exps)
+or pd.DataFrame generated by DataSetCreator.generate_profiles function will trigger generation from SAS</p></li>
+<li><p><strong>fwhm</strong> (<em>None or float</em>) – if None the time evolution will start instantly at time zero
+if positive float value, evolution will be convolved with gaussian of given FWHM</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas data frame.  data.shape() &gt;&gt;&gt; (len(time), shape.shape[1])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.generate_profiles">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">generate_profiles</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">final</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kmatrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.generate_profiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>SAS equivalent of DataSetCreator.generate_time function.
+It always starts from time zero and timegrid is linear (it has to be for odeint)
+Later one can project the data into another nonlinear grid, to reduce size of the data.
+:Parameters: * <strong>final</strong> (<em>np array</em>) – final value of the output vector</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>points</strong> (<em>int</em>) – length of output the array
+important note: array must dense enough to cover well even short delays (where rapid changes take place),
+otherwise differential equations may be solved unaccurately. later one can see reproject time grid and reduce it to reasonable size</p></li>
+<li><p><strong>initials</strong> (<em>numpy array 1D</em>) – initial (at time zero) concentration of each population</p></li>
+<li><p><strong>kmatrix</strong> (<em>numpy array 2D, dimensions equal to initials</em>) – matrix of k-s describes evolution of the system</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>1D numpy array with shape[0] equal to cs.shape[0]. represents derrivatives of concentrations over time</em></p></li>
+<li><p><em>here is simple example</em></p></li>
+<li><p><em>[[k_11, k_12] [[c_1]</em></p></li>
+<li><p><em>[k_21, k_22]] [c_2]]</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.generate_shape">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">generate_shape</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.25</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.generate_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>!WARNING: Sometimes this function generates NaNs instead values. Should be checked.
+function to generate the initial shape (DAS) of the data set. The number of taus
+defines the shape of the output. returns a pandasDataFrame where the index are
+taus and the columns the wavelength. The parameters of the curves are ramdomly
+generated.
+:Parameters: * <strong>number</strong> (<em>int</em>) – defines number of maxima/minima int the output shape. Should be greater than len(taus).</p>
+<blockquote>
+<div><blockquote>
+<div><p>e.g.: if number is 5 and taus=[8, 30, 200]. The output is a three row dataFrame, where
+two rows have two maxima/minima and the third only one (2+2+1 = 5)</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>wave</strong> (<em>np array</em>) – array containing the wavelength vector</p></li>
+<li><p><strong>taus</strong> (<em>list (for example [8, 30, 200]) or int</em>) – list containing the associated decay times of the data
+or number of DAS, but then DAS won’t be labelled by taus, still can be used as SAS</p></li>
+<li><p><strong>scale</strong> (<em>int (default 100)</em>) – controls the intensity of the output data</p></li>
+<li><p><strong>signe</strong> (<em>-1, 0 1</em>) – Defines the if the curve is positive or negative
+1: all positive
+0: can be positive or negative
+-1: all negative</p></li>
+<li><p><strong>sigma</strong> – default base sigma value of the Gaussian curves (The final is randomly attribute)</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas data frame.  data.shape() &gt;&gt;&gt; (len(taus), len(wave))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.generate_specific_shape">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">generate_specific_shape</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peaks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitudes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.generate_specific_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative function to generate the initial shape (DAS or SAS) of the data set.
+This is not-random replacement for generate_shape, where you specify every propery of spectra.
+Returns a pandasDataFrame where the index are taus or species number and the columns are the wavelength.
+:Parameters: * <strong>wave</strong> (<em>np array</em>) – array containing the wavelength vector</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>taus</strong> (<em>list (for example [8, 30, 200]) or int</em>) – list containing the associated decay times of the data
+or number of DAS, but then DAS won’t be labelled by taus, still can be used as SAS</p></li>
+<li><p><strong>peaks</strong> (<em>2D array / list of lists of floats</em>) – Defines positions of the peaks in generated spectra. First dimension enumerates number of spectrum and
+must be aligned with taus number/size. Second dimension dspecifies number of peak in given spectrum.
+Different spectra can have different number of peaks inside.</p></li>
+<li><p><strong>ampitudes</strong> (<em>2D array / list of lists of floats</em>) – The same as above, but specifies amplitudes of peaks (nonzero, positive or negative).
+Note that peaks are normal gauss, so area under will be abs(peaks[i][i])*1.0</p></li>
+<li><p><strong>fwhms</strong> (<em>2D array / list of lists of floats</em>) – The same as above, but specifies FWHMs (widths) of peaks (values must be positive).</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas data frame.  data.shape() &gt;&gt;&gt; (len(taus), len(wave))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.generate_time">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">generate_time</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lin-log'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.generate_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a vector that should be use as time. The points
+can be linear logarithmic or in a combined spaced way.
+:Parameters: * <strong>init</strong> (<em>int</em>) – initial value of the output vector</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>final</strong> (<em>np array</em>) – final value of the output vector</p></li>
+<li><p><strong>points</strong> (<em>int</em>) – length of output the array</p></li>
+<li><p><strong>space</strong> (<em>str; lin-log, linear or log (default lin-log)</em>) – linear: points are linearly spaced
+log: points are spaced log10 scale
+lin-log: linearly spaced for values &lt; 1 and log10 spaced for values &gt; 1</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1d array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.generate_wavelength">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">generate_wavelength</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.generate_wavelength" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a positive vector that should be use as wavelength. The points
+are equally spaced.
+:Parameters: * <strong>init</strong> (<em>int</em>) – initial value of the output vector</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>final</strong> (<em>np array</em>) – final value of the output vector</p></li>
+<li><p><strong>points</strong> (<em>int</em>) – length of output the array</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1d array (positive)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.norm_gauss">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">norm_gauss</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.norm_gauss" title="Permalink to this definition">¶</a></dt>
+<dd><p>just normal (area=1) gaussian distribution</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.DataSetCreator.timegrid_projection">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">timegrid_projection</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.DataSetCreator.timegrid_projection" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate the data set from another dataset, with changed grid of delays
+designed to reduce the number and distribution of timepoints after generation from target model
+this is interpolation-only algorithm, no bucket-averaging!
+:Parameters: * <strong>input_data</strong> (<em>pandas DataFrame</em>) – generated dataset from DataSetCreator.generate_dataset</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>time</strong> (<em>1darray or pd.DataFrame</em>) – time vector with delays, which will be used to reproject the data, generated by DataSetCreator.generate_time
+must be within existing time grid of input_data (otherwise error will be thrown!)</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas DataFrame, just input with exchanged tme grid</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.divers.FiguresFormating">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">FiguresFormating</span></code><a class="headerlink" href="#ultrafast.utils.divers.FiguresFormating" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class containing static methods for axis matplotlib formatting</p>
+<dl class="py method">
+<dt id="ultrafast.utils.divers.FiguresFormating.axis_labels">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">axis_labels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.FiguresFormating.axis_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>add labels to the axis ax</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>matplotlib axis</em>) – axis containing the figure</p></li>
+<li><p><strong>x_label</strong> (<em>str (default None)</em>) – string containing the x label,</p></li>
+<li><p><strong>y_label</strong> (<em>str (default None)</em>) – string containing the y label</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – size of the label</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.FiguresFormating.cover_excitation">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">cover_excitation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_vector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.FiguresFormating.cover_excitation" title="Permalink to this definition">¶</a></dt>
+<dd><p>add a white rectangle on top of an area in the figure. Typically use to cover
+the excitation of the laser in the spectra figure of a pump-probe UV-vis experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>matplotlib axis</em>) – axis containing the figure</p></li>
+<li><p><strong>x_range</strong> (<em>list or tupple of length 2</em>) – contains the initial and and final x values of x vector(normally wavelength)</p></li>
+<li><p><strong>x_vector</strong> (<em>array</em>) – the x vector plotted in the figure</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.FiguresFormating.format_figure">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">format_figure</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_tight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.FiguresFormating.format_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>format ax figures
+Always does:</p>
+<blockquote>
+<div><p>-add minor tick
+-set ticks directions in
+-add tick in top and left sides
+-set tick labels in scientific notations
+-add x = 0 horizontal line. line_style = (–)</p>
+</div></blockquote>
+<p>Set margins of the data figure in x and y directions according to the different parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>matplotlib axis</em>) – axis containing the figure</p></li>
+<li><p><strong>data</strong> (<em>np array</em>) – array containing the data plotted. Is used to get minimum and maximum values and
+adjust the y margins if set_ylim is True</p></li>
+<li><p><strong>x_vector</strong> (<em>array</em>) – the x vector plotted in the figure</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – size of the the tick labels</p></li>
+<li><p><strong>x_tight</strong> (<em>bool (default False)</em>) – If True, set tight the x axis
+If False set limits according to max(x_vector)/val</p></li>
+<li><p><strong>val</strong> (<em>int or float</em>) – value for adjusting x vector if x_tight is False</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.divers.LabBook">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">LabBook</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kws</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.LabBook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class object that can store in combination with book_annotate the
+functions ran names as attributes where the values are strings with
+the function parameters names and the values passed.</p>
+<dl class="py method">
+<dt id="ultrafast.utils.divers.LabBook.actions">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">actions</span></code><a class="headerlink" href="#ultrafast.utils.divers.LabBook.actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.LabBook.clean">
+<code class="sig-name descname"><span class="pre">clean</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.LabBook.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean the LabBook except name attribute if given</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.LabBook.delete">
+<code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.LabBook.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>method similar to delattr function. It deletes an entry on the lab according to key</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – name of the attribute</p></li>
+<li><p><strong>element</strong> (<em>“all” or int (default “all”)</em>) – if “all” all entries will be deleted
+if int the element of the list at this index is deleted</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.LabBook.print">
+<code class="sig-name descname"><span class="pre">print</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">creation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_protected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_line</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.LabBook.print" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print all attributes and their values as a Lab report</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>creation</strong> (<em>bool (default True)</em>) – If True prints the day and hour of the LabBook creation</p></li>
+<li><p><strong>print_protected</strong> (<em>bool (default False)</em>) – Define if protected attributes starting with “_” are printed</p></li>
+<li><p><strong>single_line</strong> (<em>bool (default False)</em>) – If True attributes that are not a list, the name and value will be printed in a single line</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.divers.ReadData">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">ReadData</span></code><a class="headerlink" href="#ultrafast.utils.divers.ReadData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="ultrafast.utils.divers.ReadData.readData">
+<code class="sig-name descname"><span class="pre">readData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_is_row</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.ReadData.readData" title="Permalink to this definition">¶</a></dt>
+<dd><p>similar parameters and explanations as in readData function</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.divers.TimeMultiplicator">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">TimeMultiplicator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="ultrafast.utils.divers.TimeMultiplicator.a">
+<code class="sig-name descname"><span class="pre">a</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1e-18</span></em><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator.a" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.TimeMultiplicator.chose">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">chose</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator.chose" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.utils.divers.TimeMultiplicator.f">
+<code class="sig-name descname"><span class="pre">f</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1e-15</span></em><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator.f" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.utils.divers.TimeMultiplicator.m">
+<code class="sig-name descname"><span class="pre">m</span></code><em class="property"> <span class="pre">=</span> <span class="pre">0.001</span></em><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator.m" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.utils.divers.TimeMultiplicator.n">
+<code class="sig-name descname"><span class="pre">n</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1e-09</span></em><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator.n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.utils.divers.TimeMultiplicator.p">
+<code class="sig-name descname"><span class="pre">p</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1e-12</span></em><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator.p" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.utils.divers.TimeMultiplicator.s">
+<code class="sig-name descname"><span class="pre">s</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1.0</span></em><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator.s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.utils.divers.TimeMultiplicator.y">
+<code class="sig-name descname"><span class="pre">y</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1e-24</span></em><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.utils.divers.TimeMultiplicator.z">
+<code class="sig-name descname"><span class="pre">z</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1e-21</span></em><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator.z" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.utils.divers.TimeMultiplicator.">
+<span id="ultrafast.utils.divers.TimeMultiplicator.μ"></span><code class="sig-name descname"><span class="pre">μ</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1e-06</span></em><a class="headerlink" href="#ultrafast.utils.divers.TimeMultiplicator." title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.divers.TimeUnitFormater">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">TimeUnitFormater</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">multiplicator:</span> <span class="pre">ultrafast.utils.divers.TimeMultiplicator</span> <span class="pre">=</span> <span class="pre">&lt;TimeMultiplicator.p:</span> <span class="pre">1e-12&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.TimeUnitFormater" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to format a time number in a string with the corresponding unit, after indicating the unit measure.</p>
+<dl>
+<dt>i.e.:</dt><dd><p>formater = TimeUnitFormater(“m”) # formater for milisecond measurement</p>
+<p>formater.value_formated(3046)
+&gt;&gt;&gt; ‘3.05 s’</p>
+<p>formater.value_formated(3046E-7)
+&gt;&gt;&gt; ‘0.30 μs’</p>
+<p>formater.value_formated(3046E3)
+&gt;&gt;&gt; ‘50.77 mins’</p>
+<p>formater.value_formated(3046E3, 4)
+&gt;&gt;&gt; ‘50.7667 mins’</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="ultrafast.utils.divers.TimeUnitFormater.multiplicator">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">multiplicator</span></code><a class="headerlink" href="#ultrafast.utils.divers.TimeUnitFormater.multiplicator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.divers.TimeUnitFormater.value_formated">
+<code class="sig-name descname"><span class="pre">value_formated</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.TimeUnitFormater.value_formated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to transform the number to string
+:Parameters: * <strong>value</strong> (<em>int or float</em>) – Value to be formatted</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>decimal</strong> (<em>int (default 2)</em>) – number of decimal numbers of the output string</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.divers.UnvariableContainer">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">UnvariableContainer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kws</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.UnvariableContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ultrafast.utils.divers.LabBook" title="ultrafast.utils.divers.LabBook"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.utils.divers.LabBook</span></code></a></p>
+<p>Object where once an attribute has been set cannot be modified if
+self.__frozen = False</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ultrafast.utils.divers.book_annotate">
+<code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">book_annotate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.book_annotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator with arguments. This decorator is working only with LabBook class,
+or an object with modified __setattr__ method.</p>
+<p>It is use to create a lab book where the functions names and parameters names and values given
+are saved in container (VariableContainer class). VariableContainer has a method print() for
+printing the lab book.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ultrafast.utils.divers.book_annotate_all_methods">
+<code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">book_annotate_all_methods</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">book</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.book_annotate_all_methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="ultrafast.utils.divers.define_weights">
+<code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">define_weights</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rango</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'constant'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.define_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a an array that can be apply  in global fit functions as weights.
+The weights can be use to define areas where the minimizing functions is
+not reaching a good results, or to define areas that are more important
+than others in the fit. The fit with weights can be inspect as any other
+fit with the residual plot. A small constant value is generally enough
+to achieve the desire goal.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>time</strong> (<em>1darray or None</em>) – time vectors. the weight vector will have the same length w</p></li>
+<li><p><strong>rango</strong> (<em>list (length 2)</em>) – list containing initial and final time values of the range
+where the weights will be applied</p></li>
+<li><p><strong>typo</strong> (<em>str (constant, exponential, r_exponential or exp_mix)</em>) – defines the type of weighting vector returned</p>
+<p>constant: constant weighting value in the range
+exponential: the weighting value increase exponentially
+r_exponential: the weighting value decrease exponentially
+mix_exp: the weighting value increase and then decrease exponentially</p>
+<blockquote>
+<div><p>constant value 5, [1,1,1,1,…5,5,5,5,5,….1,1,1,1,1]
+exponential for val= 2 [1,1,1,1,….2,4,9,16,25,….,1,1,1,]</p>
+<blockquote>
+<div><p>for val= 3 [1,1,1,1,….3,8,27,64,125,….,1,1,1,]</p>
+</div></blockquote>
+<p>r_exponential [1,1,1,1,…25,16,9,4,2,…1,1,1,]
+exp_mix [1,1,1,1,…2,4,9,4,2,…1,1,1,]</p>
+</div></blockquote>
+</li>
+<li><p><strong>val</strong> (<em>int (default 5)</em>) – value for defining the weights</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>a dictionary with the keys</strong> (<em>parameters pass plus “apply”: True</em>)</p></li>
+<li><p><strong>and “vector”</strong> (<em>weighting vector. The dictionary can be used as kwargs</em>)</p></li>
+<li><p><em>in the global fitting function. Notice that only if apply is set</em></p></li>
+<li><p><em>to True then the fitting will consider the weights vector.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ultrafast.utils.divers.froze_it">
+<code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">froze_it</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.froze_it" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="ultrafast.utils.divers.read_data">
+<code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">read_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_is_row</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.read_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a data file from the indicated path and returns three arrays with shapes
+uses in the ultrafast. The function is bases in pandas read_csv, and uses
+the ReadData class.</p>
+<p>For the rows or columns corresponding to the wavelength and time vectors
+the function deals with non numerical values such as units names (e.g.: ‘nm’
+‘ps’, ‘ns’), words and number in scientific notation E or e in any of the forms
+and combinations. For the rest of values (data values) the function assumes they
+are homogeneous. The function eliminates from the data rows or columns with non
+numerical numbers (Nan) in all the entries if not they are set to zero. It also sort
+the time points if these where non sorted as can be the case with some multi-probe
+experimental outputs data files.</p>
+<dl>
+<dt>The arrays return are:</dt><dd><p>time: 1darray of length equal to the number of rows in data</p>
+<dl class="simple">
+<dt>data: 2darray, where rows correspond to the time direction</dt><dd><p>and wavelength to the columns</p>
+</dd>
+<dt>wavelength: 1darray of length equal to the number of columns</dt><dd><p>in data</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – path to the data file</p></li>
+<li><p><strong>wavelength</strong> (<em>int (default 0)</em>) – defines the element where to find the wavelength vector in its direction
+which is defined by wave_is_row parameter. i.e.: if wavelength correspond
+to columns, wavelength=0 indicates is the first column of the data file
+if wavelength correspond to rows, then wavelength=0 is first row</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>time: int (default 0)</dt><dd><p>defines the element where to find the time vector in its direction
+which is defined by wave_is_row parameter. i.e.: if times correspond
+to columns, time=0 indicates is the first column of the data file</p>
+</dd>
+<dt>wave_is_row: bool (default False)</dt><dd><p>defines if in the original data set the wavelength correspond
+to the rows.</p>
+</dd>
+<dt>separator: str (default ‘,’)</dt><dd><p>defines the separator in the data (any value that can be used in pandas
+read_csv is valid. For tab uses</p>
+</dd>
+<dt>decimal: int (default ‘.’)</dt><dd><p>defines the decimal point in the data</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>3 arrays corresponding to time, data, and wavelength</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ultrafast.utils.divers.select_traces">
+<code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">select_traces</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avoid_regions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.select_traces" title="Permalink to this definition">¶</a></dt>
+<dd><p>select traces in the wavelength range</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>data</strong> (<em>ndarray</em>) – Normally in  the original data set the number of rows should be the
+time points and the number of columns the Columns points. Although
+this function works with transposes data sets</p>
+<blockquote>
+<div><dl class="simple">
+<dt>e.g.: data.shape = (50,250)</dt><dd><p>data has 250 wavelength points and 50 time points</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>wavelength</strong> (<em>1darray or None</em>) – Wavelength vectors where traces are selected. The len(wavelength), should
+be equal to the number of columns of data</p>
+<p>If None an array from 0 to data number of columns is created and
+returned after cutting. The parameters space should be given
+according to indexes</p>
+</li>
+<li><p><strong>space</strong> (<em>int or list or “auto” (default 10)</em>) – If type(space) = int: a series of traces separated by the value indicated
+will be selected.
+If type(space) = list: the traces in the list will be selected.
+If space = auto, the number of returned traces is 10 and equally spaced
+along the wavelength vector and points is set to 0</p></li>
+<li><p><strong>points</strong> (<em>int (default 1)</em>) – binning points surrounding the selected wavelengths.
+e. g.: if point is 1 trace = mean(index-1, index, index+1)</p></li>
+<li><p><strong>avoid_regions</strong> (<em>list of list (default None)</em>) – Defines wavelength regions that are avoided in the selection when space
+is an integer. The sub_list should have two elements defining the region
+to avoid in wavelength values
+i. e.: [[380,450],[520,530] traces with wavelength values between 380-450</p>
+<blockquote>
+<div><p>and 520-530 will not be selected</p>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>2d array with a selection of data traces, and 1darray with the corresponding</em></p></li>
+<li><p><em>wavelength values</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ultrafast.utils.divers.solve_kmatrix">
+<code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">solve_kmatrix</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.solve_kmatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve the k_matrix from a parameters object for a target fit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exp_no</strong> (<em>int</em>) – number of component of the K_matrix (diagonal elements)</p></li>
+<li><p><strong>params</strong> (<em>lmfit parameters object</em>) – object containing the parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Coefficients of each component eigenvalues and eigen matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ultrafast.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ultrafast.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="ultrafast.graphics.html" class="btn btn-neutral float-left" title="ultrafast.graphics package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Lucas Martinez Uriarte.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

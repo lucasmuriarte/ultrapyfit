@@ -1,0 +1,832 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>ultrafast.fit package &mdash; ultrafast 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ultrafast.graphics package" href="ultrafast.graphics.html" />
+    <link rel="prev" title="ultrafast package" href="ultrafast.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ultrafast
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Package documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ultrafast</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ultrafast.html">ultrafast package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ultrafast.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ultrafast.fit package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ultrafast.graphics.html">ultrafast.graphics package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ultrafast.utils.html">ultrafast.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ultrafast.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ultrafast.html#module-ultrafast.experiment">ultrafast.experiment module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ultrafast.html#module-ultrafast">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ultrafast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">ultrafast</a> &raquo;</li>
+        
+          <li><a href="ultrafast.html">ultrafast package</a> &raquo;</li>
+        
+      <li>ultrafast.fit package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/ultrafast.fit.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ultrafast-fit-package">
+<h1>ultrafast.fit package<a class="headerlink" href="#ultrafast-fit-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ultrafast.fit.ExponentialFit">
+<span id="ultrafast-fit-exponentialfit-module"></span><h2>ultrafast.fit.ExponentialFit module<a class="headerlink" href="#module-ultrafast.fit.ExponentialFit" title="Permalink to this headline">¶</a></h2>
+<p>Created on Thu Nov 12 21:00:23 2020</p>
+<p>&#64;author: lucas</p>
+<dl class="py class">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.fit.ExponentialFit.</span></code><code class="sig-name descname"><span class="pre">GlobalFitExponential</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deconv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GVD_corrected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.minimizer.Minimizer</span></code>, <a class="reference internal" href="#ultrafast.fit.ModelCreator.ModelCreator" title="ultrafast.fit.ModelCreator.ModelCreator"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.fit.ModelCreator.ModelCreator</span></code></a></p>
+<p>Class that does a global fit using exponential models. This class is uses by the function,
+globalfit_gauss_exponential and globalfit_exponential functions. A global fit evaluate the
+times from all the traces (taus are globally fitted), while the pre_exponential values
+(pre_exp) are estimated independently from each trace. The pre_exp values give later the
+decay associated spectra (DAS). The Class do not generates the parameters automatically.</p>
+<dl class="py attribute">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential.x">
+<code class="sig-name descname"><span class="pre">x</span></code><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>x-vector, normally time vector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>1darray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential.data">
+<code class="sig-name descname"><span class="pre">data</span></code><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>array containing the data, the number of rows should be equal to the len(x)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>2darray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential.exp_no">
+<code class="sig-name descname"><span class="pre">exp_no</span></code><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential.exp_no" title="Permalink to this definition">¶</a></dt>
+<dd><p>number of exponential that will be used to fit the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential.params">
+<code class="sig-name descname"><span class="pre">params</span></code><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>object containing the initial parameters values used to build an exponential model.
+These parameters are iteratively optimize to reduce the residual matrix formed by
+data-model (error matrix) using Levenberg-Marquardt algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>lmfit parameters object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential.deconv">
+<code class="sig-name descname"><span class="pre">deconv</span></code><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential.deconv" title="Permalink to this definition">¶</a></dt>
+<dd><p>If True the fitting functions will search for the deconvolution parameter (“fwhm”) in the
+params attribute, and the the model is a weighted sum of Gauss modified exponential functions.
+If False the the model is a weighted sum of exponential functions, and params should not contain
+the fwhm entrance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential.tau_inf">
+<code class="sig-name descname"><span class="pre">tau_inf</span></code><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential.tau_inf" title="Permalink to this definition">¶</a></dt>
+<dd><p>An extra decay time use to evaluate possible photoproduct. This should be used if the signal
+at long delay times is not completely recovered and if deconv is set to True. If the signal
+at long delay times is zero tau_inf should be set to None. (only affects if deconv is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float or int or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential.GVD_corrected">
+<code class="sig-name descname"><span class="pre">GVD_corrected</span></code><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential.GVD_corrected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines if the chrip or group velocity dispersion (GVD) has been corrected. If True t0 is globally
+optimized (faster). If False t0 is separately optimized for each trace (slower). Notice in some cases
+even if the chirp or GVD has been corrected, very small variations of t0 that might be imperceptible
+and small may generate problems in the fit, setting this parameter to False can help to acquire overcome
+this problem although the fit will take longer. (only affects if deconv is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential.weights">
+<code class="sig-name descname"><span class="pre">weights</span></code><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential.weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>This dictionary controls if the fitting weights are applied, the keys are:
+“apply”: Bool
+“vector”: weighting vector.
+‘type’: type of vector defined in the ,
+‘range’: time range according to x-vector of the weights that are different than 1
+‘value’: val weighting value
+The dictionary keys can be passes as kwargs when instantiating the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential.global_fit">
+<code class="sig-name descname"><span class="pre">global_fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vary_taus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential.global_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to fit the data to a model. Returns a modified lmfit result object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vary_taus</strong> (<em>bool or list of bool</em>) – If True or False all taus are optimized or fixed. If a list, should be a list of bool
+equal with len equal to the number of taus. Each entry defines if a initial taus
+should be optimized or not.</p></li>
+<li><p><strong>maxfev</strong> (<em>int (default 5000)</em>) – maximum number of iterations of the fit.</p></li>
+<li><p><strong>time_constraint</strong> (<em>bool (default False)</em>) – If True and there are more than one tau to optimized force tau2 &gt; tau1, tau3 &gt; tau2 and so on
+If self.deconv is True a Gaussian modified exponential model is applied and tau1 &gt; fwhm.</p></li>
+<li><p><strong>apply_weights</strong> (<em>bool (default False)</em>) – If True and weights have been defined, this will be applied in the fit (for defining weights) check
+the function define_weights.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.ExponentialFit.GlobalFitExponential.pre_fit">
+<code class="sig-name descname"><span class="pre">pre_fit</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ExponentialFit.GlobalFitExponential.pre_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that optimized the pre_exponential factors trace by trace without optimizing
+the decay times (taus). It is automatically ran before a global fit.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="ultrafast.fit.ExponentialFit.globalfit_exponential">
+<code class="sig-prename descclassname"><span class="pre">ultrafast.fit.ExponentialFit.</span></code><code class="sig-name descname"><span class="pre">globalfit_exponential</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">taus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ExponentialFit.globalfit_exponential" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that does a global fit of a weighted sum of exponential equal to the number
+of time constants (taus) pass. It gives a result object which is a modified object
+with added properties. The result can be evaluated with the explore result class.</p>
+<p>A global fit evaluate the times from all the traces (taus are globally fitted), while
+the pre_exponential values (pre_exp) are estimated independently from each trace. The
+pre_exp values give later the decay associated spectra (DAS). The function generates the
+parameters automatically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>1darray</em>) – x-vector, normally time vector</p></li>
+<li><p><strong>data</strong> (<em>2d array</em>) – Array containing the data, the number of rows should be equal to the len(x)</p></li>
+<li><p><strong>taus</strong> (<em>float or int</em>) – Initial estimates for the exponential decay times. There is no limit of tau numbers.
+each tau correspond to an exponential function. Is recommended to use the minimum
+number of exponential that correctly describe the data set.</p></li>
+<li><p><strong>vary</strong> (<em>bool or list of bool</em>) – If True or False all taus are optimized or fixed. If a list, should be a list of bool
+equal with len equal to the number of taus. Each entry defines if a initial taus
+should be optimized or not.</p></li>
+<li><p><strong>t0</strong> (<em>int</em>) – Initial time value where to start evaluating the function. Only x vector values
+higher than t0 will be take into consideration.</p></li>
+<li><p><strong>maxfev</strong> (<em>int (default 5000)</em>) – Maximum number of iterations of the fit.</p></li>
+<li><p><strong>kwargs</strong> – Related for applying weight to the fit. The dictionary obtained from the function
+define_weights can be directly pass as <a href="#id1"><span class="problematic" id="id2">*</span></a>+weights</p></li>
+<li><p><strong>e.g.1</strong> (<em>globalFitSumExponential(x, data, 8,30, 200, vary=True, t0=3)</em>) – A weighted sum of three exponential function will be fitted to the data set
+the initial estimates are 8, 30 and 200, where all will be optimized. The
+function is only evaluated from x values higher than 3</p></li>
+<li><p><strong>e.g.2</strong> (<em>globalFitSumExponential(x, data, 8,30, 200, vary=[True, False, True], t0=0)</em>) – A weighted sum of three exponential function will be fitted to the data set
+the initial estimates are 8, 30 and 200 where 8 and 200 are optimized and 30 is fixed.
+function is only evaluated from x values higher than 0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ultrafast.fit.ExponentialFit.globalfit_gauss_exponential">
+<code class="sig-prename descclassname"><span class="pre">ultrafast.fit.ExponentialFit.</span></code><code class="sig-name descname"><span class="pre">globalfit_gauss_exponential</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">taus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vary_t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vary_fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GVD_corrected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ExponentialFit.globalfit_gauss_exponential" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that does a global fit of a weighted sum of gaussian modified exponential
+equal to the number of time constants (taus) pass. It gives a result object which is a
+modified object with added properties. The result can be evaluated with the explore
+result class.</p>
+<p>A global fit evaluate the times from all the traces (taus are globally fitted), while
+the pre_exponential values (pre_exp) are estimated independently from each trace. The
+pre_exp values give later the decay associated spectra (DAS). The function generates the
+parameters automatically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>1darray</em>) – x-vector, normally time vector</p></li>
+<li><p><strong>data</strong> (<em>2d array</em>) – Array containing the data, the number of rows should be equal to the len(x)</p></li>
+<li><p><strong>taus</strong> (<em>float or int</em>) – Initial estimates for the exponential decay times. There is no limit of tau numbers.
+each tau correspond to an exponential function. Is recommended to use the minimum
+number of exponential that correctly describe the data set.</p></li>
+<li><p><strong>vary</strong> (<em>bool or list of bool</em>) – If True or False all taus are optimized or fixed. If a list, should be a list of bool
+equal with len equal to the number of taus. Each entry defines if a initial taus
+should be optimized or not.</p></li>
+<li><p><strong>fwhm</strong> (<em>int or float (default 0.12)</em>) – Full width half maximum of the laser pulse length use in the experiment. This value
+is used to to fit a modified gaussian exponential function, and can be determined
+with an external measurement or for example in case of TRUV-vis data fitting the stimulated
+raman signal of the solvent to a gaussian function.</p></li>
+<li><p><strong>tau_inf</strong> (<em>float or int or None (default 1E12)</em>) – An extra decay time use to evaluate possible photoproduct. This should be used if the signal
+at long delay times is not completely recovered. If the signal at long delay times is zero
+tau_inf should be set to None.</p></li>
+<li><p><strong>t0</strong> (<em>int (default 0)</em>) – t0 in a modified gaussian exponential fit defines the point where the signal start raising.
+This should be the 0, and is the time defining the time where the pump and probe overlaps
+(notice is different from the t0 in a simple exponential fit)</p></li>
+<li><p><strong>vary_t0</strong> (<em>bool (default True)</em>) – Defines if the t0 is optimized. We recommend to always set this value to true</p></li>
+<li><p><strong>vary_fwhm</strong> (<em>bool (default False)</em>) – Defines if the fwhm is optimized. We recommend to always set this value to False, and determine this
+value from an external measurement</p></li>
+<li><p><strong>GVD_corrected</strong> (<em>bool (defautl True)</em>) – Defines if the chrip or group velocity dispersion (GVD) has been corrected. If True t0 is globally
+optimized (faster). If False t0 is separately optimized for each trace (slower). Notice in some cases
+even if the chirp or GVD has been corrected, very small variations of t0 that might be imperceptible
+and small may generate problems in the fit, setting this parameter to False can help to acquire overcome
+this problem although the fit will take longer.</p></li>
+<li><p><strong>maxfev</strong> (<em>int (default 5000)</em>) – Maximum number of iterations of the fit.</p></li>
+<li><p><strong>kwargs</strong> – Related for applying weight to the fit. The dictionary obtained from the function
+define_weights can be directly pass as <a href="#id3"><span class="problematic" id="id4">*</span></a>+weights</p></li>
+<li><p><strong>e.g.1</strong> (<em>globalFitSumExponential(x, data, 8,30, 200, vary=True, fwhm=0.16)</em>) – A weighted sum of three exponential function will be fitted to the data set
+the initial estimates are 8, 30 and 200, where all will be optimized.he fwhm
+of the Gauss function is 0.16.</p></li>
+<li><p><strong>e.g.2</strong> (<em>globalFitSumExponential(x, data, 8,30, 200, vary=[True, False, True], fwhm=0.12)</em>) – A weighted sum of three Gauss modified exponential function will be fitted to the data set
+the initial estimates are 8, 30 and 200 where 8 and 200 are optimized and 30 is fixed. The fwhm
+of the Gauss function is 0.12.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ultrafast.fit.GlobExpParams">
+<span id="ultrafast-fit-globexpparams-module"></span><h2>ultrafast.fit.GlobExpParams module<a class="headerlink" href="#module-ultrafast.fit.GlobExpParams" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Nov 13 18:48:51 2020</p>
+<p>&#64;author: 79344</p>
+<dl class="py class">
+<dt id="ultrafast.fit.GlobExpParams.GlobExpParameters">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.fit.GlobExpParams.</span></code><code class="sig-name descname"><span class="pre">GlobExpParameters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_traces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taus</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.GlobExpParams.GlobExpParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class parameter generator global fitting</p>
+<dl class="py attribute">
+<dt id="ultrafast.fit.GlobExpParams.GlobExpParameters.taus">
+<code class="sig-name descname"><span class="pre">taus</span></code><a class="headerlink" href="#ultrafast.fit.GlobExpParams.GlobExpParameters.taus" title="Permalink to this definition">¶</a></dt>
+<dd><p>contains the value of the decay times</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.fit.GlobExpParams.GlobExpParameters.exp_no">
+<code class="sig-name descname"><span class="pre">exp_no</span></code><a class="headerlink" href="#ultrafast.fit.GlobExpParams.GlobExpParameters.exp_no" title="Permalink to this definition">¶</a></dt>
+<dd><p>is the number of exponential and equal to the len of taus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.fit.GlobExpParams.GlobExpParameters.number_traces">
+<code class="sig-name descname"><span class="pre">number_traces</span></code><a class="headerlink" href="#ultrafast.fit.GlobExpParams.GlobExpParameters.number_traces" title="Permalink to this definition">¶</a></dt>
+<dd><p>contains the number of data sets (traces) that should be globally fitted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.fit.GlobExpParams.GlobExpParameters.params">
+<code class="sig-name descname"><span class="pre">params</span></code><a class="headerlink" href="#ultrafast.fit.GlobExpParams.GlobExpParameters.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>contains the parameters for the fit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>lmFit Parameters class</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.GlobExpParams.GlobExpParameters.adjustParams">
+<code class="sig-name descname"><span class="pre">adjustParams</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vary_t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GVD_corrected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.GlobExpParams.GlobExpParameters.adjustParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>function to initialize parameters for global fitting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t0</strong> (<em>int or float</em>) – the t0 for the fitting</p></li>
+<li><p><strong>vary_t0</strong> (<em>bool (default True)</em>) – allows to optimize t0 when the sum of exponential is convolve with
+a gaussian. If there is no deconvolution t0 is always fix to the
+given value.</p></li>
+<li><p><strong>fwhm</strong> (<em>float or None (default 0.12)</em>) – FWHM of the the laser pulse use in the experiment
+If None. the deconvolution parameters will not be added</p></li>
+<li><p><strong>opt_fwhm</strong> (<em>bool (default False)</em>) – allows to optimized the FWHM.
+Theoretically this should be measured externally and be fix
+(only applicable if fwhm is given)</p></li>
+<li><p><strong>GVD_corrected</strong> (<em>bool (default True)</em>) – If True all traces will have same t0.
+If False t0 is independent of the trace</p></li>
+<li><p><strong>tau_inf</strong> (<em>int or float (default 1E12)</em>) – allows to add a constant decay value to the parameters.
+This modelled photoproducts formation with long decay times
+If None tau_inf is not added.
+(only applicable if fwhm is given)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ultrafast.fit.ModelCreator">
+<span id="ultrafast-fit-modelcreator-module"></span><h2>ultrafast.fit.ModelCreator module<a class="headerlink" href="#module-ultrafast.fit.ModelCreator" title="Permalink to this headline">¶</a></h2>
+<p>Created on Thu Nov 12 21:35:15 2020</p>
+<p>&#64;author: lucas</p>
+<dl class="py class">
+<dt id="ultrafast.fit.ModelCreator.ModelCreator">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.fit.ModelCreator.</span></code><code class="sig-name descname"><span class="pre">ModelCreator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ModelCreator.ModelCreator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class containing the simple exponential and sum of exponential functions (including modified
+Gaussian exponential). This functions are used to generate the model that is later fit to the
+data and the parameters optimized. The class has several static methods that returns the
+exponential functions from the parameters pass as well as methods that return exponential from
+the parameters inside an lmfit parameters object. This parameter lmfit object can be obtained from
+the GlobExpParameters class.</p>
+<p>exp1: single exponential decay function</p>
+<p>expN: weighted sum of exponential decay functions with an off-set</p>
+<p>ExpGauss: exponential modified Gaussian function</p>
+<p>ExpNGauss: weighted sum of exponential modified Gaussian decay functions with an off-set</p>
+<dl class="py method">
+<dt id="ultrafast.fit.ModelCreator.ModelCreator.exp1">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">exp1</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ModelCreator.ModelCreator.exp1" title="Permalink to this definition">¶</a></dt>
+<dd><p>single exponential decay function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>array type</em>) – the time vector</p></li>
+<li><p><strong>tau</strong> (<em>float or int</em>) – decay associated time value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.ModelCreator.ModelCreator.expGauss">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">expGauss</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ModelCreator.ModelCreator.expGauss" title="Permalink to this definition">¶</a></dt>
+<dd><p>exponential modified Gaussian function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>array type</em>) – the time vector</p></li>
+<li><p><strong>tau</strong> (<em>float or int</em>) – decay associated time value</p></li>
+<li><p><strong>sigma</strong> (<em>float or int</em>) – variance of the gaussian distribution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.ModelCreator.ModelCreator.expN">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">expN</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ModelCreator.ModelCreator.expN" title="Permalink to this definition">¶</a></dt>
+<dd><p>weighted sum of exponential decay functions with an off-set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>array type</em>) – the time vector</p></li>
+<li><p><strong>y0</strong> (<em>float or int</em>) – off-set value at the longest decay time</p></li>
+<li><p><strong>t0</strong> (<em>float or int</em>) – initial time from where the exponential value will be evaluated</p></li>
+<li><p><strong>values</strong> (<em>list of list</em>) – values should be a list of list containing the pre_exps and
+decay associated time values (taus)
+[[0.1,8],[0.001,30]]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.ModelCreator.ModelCreator.expNDataset">
+<code class="sig-name descname"><span class="pre">expNDataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ModelCreator.ModelCreator.expNDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate a weighted sum of exponential decay functions with an
+off-set from params for data set i using simple hardwired naming
+convention. This function can be used for datasets having different t0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.ModelCreator.ModelCreator.expNDatasetFast">
+<code class="sig-name descname"><span class="pre">expNDatasetFast</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expvects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ModelCreator.ModelCreator.expNDatasetFast" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate a weighted sum of exponential modified Gaussian decay
+functions with an off-set from params for data set i using simple
+hardwired naming convention and GlobExpParameters object. This
+function can only be used for datasets having identical t0.
+(is computationally faster than expNDataset)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+<li><p><strong>expvects</strong> (<em>1darray</em>) – sum of expN functions where time-vector should be: time-t0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1darray of size equal to expvects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.ModelCreator.ModelCreator.expNGauss">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">expNGauss</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ModelCreator.ModelCreator.expNGauss" title="Permalink to this definition">¶</a></dt>
+<dd><p>weighted sum of exponential modified Gaussian decay functions
+with an off-set</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>time</strong> (<em>array type</em>) – the time vector</p></li>
+<li><p><strong>y0</strong> (<em>float or int</em>) – off-set value at the shortest decay time
+(the off-set at long decay times can be evaluated</p>
+<blockquote>
+<div><p>adding to values a long decay associated time )</p>
+</div></blockquote>
+</li>
+<li><p><strong>t0</strong> (<em>float or int</em>) – initial time from where the exponential value will be evaluated</p></li>
+<li><p><strong>fwhm</strong> (<em>float or int</em>) – full width half maximum of the gaussian distribution</p></li>
+<li><p><strong>values</strong> (<em>list of list</em>) – values should be a list of list containing the pre_exps and
+decay associated time values (taus)
+[[0.1,8],[0.001,30]]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1darray of size equal to x attribute vector (time vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.ModelCreator.ModelCreator.expNGaussDataset">
+<code class="sig-name descname"><span class="pre">expNGaussDataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ModelCreator.ModelCreator.expNGaussDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate a weighted sum of exponential modified Gaussian decay
+functions with an off-set from params for data set i using simple
+hardwired naming convention. This function can be used for datasets
+having different t0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.ModelCreator.ModelCreator.expNGaussDatasetFast">
+<code class="sig-name descname"><span class="pre">expNGaussDatasetFast</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expvects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ModelCreator.ModelCreator.expNGaussDatasetFast" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate a weighted sum of exponential decay functions with an
+off-set from params for data set i using simple hardwired naming
+convention and GlobExpParameters object. This function can only be
+used for datasets having identical t0.
+(is computationally faster than expNGaussDataset)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+<li><p><strong>expvects</strong> (<em>1darray</em>) – sum of expN functions where time-vector should be: time-t0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1darray of size equal to expvects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.ModelCreator.ModelCreator.expNGaussDatasetTM">
+<code class="sig-name descname"><span class="pre">expNGaussDatasetTM</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cons_eigen</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.ModelCreator.ModelCreator.expNGaussDatasetTM" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate kinetic reaction model from params for data set i using
+simple hardwired naming convention and GlobTargetParameters object.
+(Automatically detects id all traces have identical t0)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+<li><p><strong>cons_eigen</strong> (<em>list</em>) – list containing eingen vectors, eigen values and eigenmatrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1darray of size equal to expvects</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ultrafast.fit.TargetFit">
+<span id="ultrafast-fit-targetfit-module"></span><h2>ultrafast.fit.TargetFit module<a class="headerlink" href="#module-ultrafast.fit.TargetFit" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Nov 13 13:12:36 2020</p>
+<p>&#64;author: 79344</p>
+<dl class="py class">
+<dt id="ultrafast.fit.TargetFit.GlobalFitTargetModel">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.fit.TargetFit.</span></code><code class="sig-name descname"><span class="pre">GlobalFitTargetModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deconv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SVD</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GVD_corrected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.TargetFit.GlobalFitTargetModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.minimizer.Minimizer</span></code>, <a class="reference internal" href="#ultrafast.fit.ModelCreator.ModelCreator" title="ultrafast.fit.ModelCreator.ModelCreator"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.fit.ModelCreator.ModelCreator</span></code></a></p>
+<dl class="py method">
+<dt id="ultrafast.fit.TargetFit.GlobalFitTargetModel.finalFit">
+<code class="sig-name descname"><span class="pre">finalFit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vary_taus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.TargetFit.GlobalFitTargetModel.finalFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.TargetFit.GlobalFitTargetModel.generateResidues">
+<code class="sig-name descname"><span class="pre">generateResidues</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">funtion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_para</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.TargetFit.GlobalFitTargetModel.generateResidues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.TargetFit.GlobalFitTargetModel.objectiveTagetFit">
+<code class="sig-name descname"><span class="pre">objectiveTagetFit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shared_t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.TargetFit.GlobalFitTargetModel.objectiveTagetFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.TargetFit.GlobalFitTargetModel.preFit">
+<code class="sig-name descname"><span class="pre">preFit</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.TargetFit.GlobalFitTargetModel.preFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.fit.TargetFit.GlobalFitTargetModel.singleFit">
+<code class="sig-name descname"><span class="pre">singleFit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.fit.TargetFit.GlobalFitTargetModel.singleFit" title="Permalink to this definition">¶</a></dt>
+<dd><p>does a fit of a single trace</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ultrafast.fit">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ultrafast.fit" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="ultrafast.graphics.html" class="btn btn-neutral float-right" title="ultrafast.graphics package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="ultrafast.html" class="btn btn-neutral float-left" title="ultrafast package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Lucas Martinez Uriarte.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

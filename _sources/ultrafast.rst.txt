@@ -1,0 +1,31 @@
+ultrafast package
+=================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ultrafast.fit
+   ultrafast.graphics
+   ultrafast.utils
+
+Submodules
+----------
+
+ultrafast.experiment module
+---------------------------
+
+.. automodule:: ultrafast.experiment
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: ultrafast
+   :members:
+   :undoc-members:
+   :show-inheritance:
