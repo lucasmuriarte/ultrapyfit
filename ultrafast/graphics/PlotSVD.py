@@ -8,7 +8,7 @@ from scipy.sparse.linalg import svds as svd
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.widgets import Slider, Button
-from chempyspec.ultrafast.utils.utils import select_traces
+from ultrafast.utils.utils import select_traces
 from copy import copy
 
 
