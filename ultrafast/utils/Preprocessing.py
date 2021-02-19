@@ -7,7 +7,7 @@ Created on Sun Nov 22 12:52:02 2020
 import pandas as pd
 import numpy as np
 from scipy.signal import savgol_filter as SF
-from chempyspec.ultrafast.ChirpCorrectionClass import ChripCorrection
+from ultrafast.utils.ChirpCorrection import ChripCorrection
 
 
 class ExperimentException(Exception):
@@ -117,13 +117,13 @@ class Preprocessing:
         Parameters
         ----------
         points: int, list or None
-          estimate values of time, the closes values of dimension_vector to the points given
-          will be deleted
+            estimate values of time, the closes values of dimension_vector to the points given
+            will be deleted
         
         data: ndarray
-          Original data set where the number of rows should be the time points
-          and the number of columns the wavelength points
-              e.g.: data.shape = (50,250)
+            Original data set where the number of rows should be the time points
+            and the number of columns the wavelength points
+                e.g.: data.shape = (50,250)
                 data has 250 wavelength points and 50 time points
         
         dimension_vector: 1darray
@@ -132,13 +132,7 @@ class Preprocessing:
         axis: int, 0 or 1 (default: None)
             indicates the axis where to cut in case data has identical number 
             of rows and columns. (not needed in other cases)            
-            
-        
-        e.g.1: number_spec = [2,5] an average from spectra 2 to 5 is subtracted
-        
-        e.g.2: number_spec = 5 an average from spectra 0 to 5 is subtracted
-                if only_one = False; if not only spectrum 5 is subtracted
-        
+
         Returns
         ----------
         initial data ndarrays with rows or columns deleted and dimension_vector
@@ -208,8 +202,8 @@ class Preprocessing:
         if columns is None:
             columns_res = np.array([i for i in range(len(data[1]))])
         if len(columns) != data.shape[1]:
-            statement_1 = 'The size of the columns vector is not equivalent with\
-                    the number of columns of data'
+            statement_1 = 'The size of the columns vector is not equivalent with ' \
+                          'the number of columns of data'
             raise ExperimentException(statement_1)
         if innerdata is not None:
             statement_3 = 'to select or cut data mini and maxi need to be given'
@@ -218,8 +212,8 @@ class Preprocessing:
             if maxi is None:
                 raise ExperimentException(statement_3)
         if mini is None and maxi is None:
-            statement_2 = 'please indicate only mini or maxi margins, or booth \
-            if data inside margins want to be cut or selected with innerdata'
+            statement_2 = 'please indicate only mini or maxi margins, or booth ' \
+                          'if data inside margins want to be cut or selected with innerdata'
             raise ExperimentException(statement_2)
         elif maxi is not None and mini is None:
             cut_index = (pd.Series(columns)-maxi).abs().sort_values().index[0]
@@ -247,8 +241,7 @@ class Preprocessing:
                 columns_res = np.append(columns[:cut_mini], columns[cut_maxi:])
                 data_res = np.concatenate((data[:, :cut_mini], data[:, cut_maxi:]), axis=1)
         else:
-            statement_4 = 'if mini and maxi margins are be given indicates \
-            that innerdata action either cut or select'
+            statement_4 = 'if mini and maxi margins are be given indicates that innerdata action either cut or select'
             raise ExperimentException(statement_4)
         return data_res, columns_res
     
@@ -256,12 +249,13 @@ class Preprocessing:
     def cut_rows(data, rows, mini=None, maxi=None):
         """
         Cut rows of the data set and time vector according to the closest
-        values of mini and maxi margins given. Contrary to cutColumns functions,
-        cut are not available since in time resolved spectroscopy is not logical
+        values of mini and maxi margins given. Contrary to cut_columns functions,
+        inner cut are not available since in time resolved spectroscopy is not logical
         to cut a complete area of recorded times. Therefore, giving mini and maxi
         margins will result in selection of inner time values.
         (The function assumes rows vector is sorted from low to high values)
-        
+
+
         Parameters
         ----------     
         data: ndarray
@@ -400,13 +394,13 @@ class Preprocessing:
         return data_res, time_res
     
     @staticmethod
-    def derivate_space(data, window_length=25, polyorder=3, deriv=1, mode='mirror'):
+    def derivate_data(data, window_length=25, polyorder=3, deriv=1, mode='mirror'):
         """
         Apply a Savitky-Golay filter to the data in the spectral range (rows).
         This function can be used to correct for baseline fluctuations and still 
         perform a global fit or a single fit to obtain the decay times.  Uses 
         scipy.signal.savgol_filter (check scipy documentation for more information)
-        
+
         
         Parameters
         ----------     
@@ -444,7 +438,7 @@ class Preprocessing:
     def shit_time(time, value):
         """
         Shift the time vector by a value
-        
+
         
         Parameters
         ----------     
@@ -461,7 +455,7 @@ class Preprocessing:
         return time - value
     
     @staticmethod
-    def substract_polynom_baseline(data, wavelength, points, order=3):
+    def subtract_polynomial_baseline(data, wavelength, points, order=3):
         """
         Fit and subtract a polynomial to the data in the spectral range (rows).
         This function can be used to correct for baseline fluctuations typically
@@ -494,14 +488,15 @@ class Preprocessing:
         if len(points) > order:
             statement = 'The number of points need to be higher than the polynomial order'
             raise ExperimentException(statement)
-        n_r, n_c = data.shape
-        index = [np.argmin(abs(wavelength-i)) for i in points]
-        data_corr = data*1.0
-        for i in range(n_r):
-            print(i)
-            polynom = np.poly1d(np.polyfit(wavelength[index], data[i, index], order))
-            data_corr[i, :] = data[i, :] - polynom(wavelength)
-        return data_corr
+        else:
+            n_r, n_c = data.shape
+            index = [np.argmin(abs(wavelength-i)) for i in points]
+            data_corr = data*1.0
+            for i in range(n_r):
+                print(i)
+                polynom = np.poly1d(np.polyfit(wavelength[index], data[i, index], order))
+                data_corr[i, :] = data[i, :] - polynom(wavelength)
+            return data_corr
 
     @staticmethod
     def correct_chrip(data, wavelength, time, method='selmeiller', return_details=False):

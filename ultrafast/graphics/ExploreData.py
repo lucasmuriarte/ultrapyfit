@@ -7,12 +7,13 @@ Created on Thu Nov 12 21:18:25 2020
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import Normalize
-from chempyspec.ultrafast.outils import select_traces, FiguresFormating, TimeUnitFormater, TimeMultiplicator
-from chempyspec.ultrafast.PreprocessingClass import ExperimentException
-from chempyspec.ultrafast.MaptplotLibCursor import SnaptoCursor
+from ultrafast.utils.divers import select_traces, FiguresFormating, TimeUnitFormater
+from ultrafast.utils.Preprocessing import ExperimentException
+from ultrafast.graphics.MaptplotLibCursor import SnaptoCursor
 import pandas as pd
-from chempyspec.ultrafast.PlotSVDClass import PlotSVD
+from ultrafast.graphics.PlotSVD import PlotSVD
 from copy import copy
+import matplotlib.cm as cm
 
 
 class ExploreData(PlotSVD):
@@ -43,13 +44,17 @@ class ExploreData(PlotSVD):
     selected_wavelength: 1darray
         sub dataset of wavelength
 
-    units: dictionary
-        This dictionary contains the strings of the units to format axis labels and legends automatically:
-        "time_unit": str of the unit. >>> e.g.: 'ps' for picosecond
-        "wavelength_unit": wavelength unit
-        The dictionary keys can be passes as kwargs when instantiating the object
+    time_unit: str (default ps)
+        Contains the strings of the time units to format axis labels and legends automatically:
+        time_unit str of the unit. >>> e.g.: 'ps' for picosecond
+        Can be passes as kwargs when instantiating the object
 
-    color_map: str
+    wavelength_unit: str (default nm)
+        Contains the strings of the wavelength units to format axis labels and legends automatically:
+        wavelength_unit str of the unit: >>> e.g.: 'nm' for nanometers
+        Can be passes as kwargs when instantiating the object
+
+    cmap: str
         Contains the name of a matplotlib color map
     """
     def __init__(self, x, data, wavelength, selected_traces=None, selected_wavelength=None, cmap='viridis', **kwargs):
@@ -73,7 +78,7 @@ class ExploreData(PlotSVD):
         selected_wavelength: 1darray (default None)
             sub dataset of wavelength
 
-        color_map: str
+        cmap: str
             defines the general color map
 
         kwargs:
@@ -85,29 +90,68 @@ class ExploreData(PlotSVD):
         self.wavelength = wavelength
         if selected_traces is None:
             self.selected_traces = data
-            self.selected_wavelength = None
+            self.selected_wavelength = wavelength
         else:
             self.selected_traces = selected_traces
             self.selected_wavelength = selected_wavelength
-        self.units = units
+        self._units = units
         self._SVD_fit = False
-        self._unit_formater = TimeUnitFormater(self.units['time_unit'])
-        self._cursor = None
-        self._fig_select = None
-        self.color_map = cmap
+        self._unit_formater = TimeUnitFormater(self._units['time_unit'])
+        # self.cursor = None
+        # self.fig = None
+        self._color_map = cmap
         super().__init__(self.x, self.data, self.wavelength, self.selected_traces, self.selected_wavelength)
-        # PlotSVD.__init__(self.x, self.data, self.wavelength, self.selected_traces, self.selected_wavelength)
-        
-    def plot_traces(self, auto=False, size=14):
+
+    @property
+    def cmap(self):
+        return self._color_map
+
+    @cmap.setter
+    def cmap(self, val: str):
+        if val in cm.__dict__.keys():
+            self._color_map = val
+        else:
+            msg = 'Not a valid color map, check matplotlib for valid names'
+            raise ExperimentException(msg)
+
+    @property
+    def time_unit(self):
+        return f'{self._unit_formater._multiplicator.name}s'
+
+    @property
+    def wavelength_unit(self):
+        return self._units['wavelength_unit']
+
+    @time_unit.setter
+    def time_unit(self, val: str):
+        try:
+            val = val.lower()
+            self._units['time_unit'] = val
+            self._unit_formater.multiplicator = val
+        except Exception:
+            msg = 'An unknown time unit cannot be set'
+            raise ExperimentException(msg)
+
+    @wavelength_unit.setter
+    def wavelength_unit(self, val: str):
+        val = val.lower()
+        if 'nanom' in val or 'wavelen' in val:
+            val = 'nm'
+        if 'centim' in val or 'wavenum' in val or 'cm' in val:
+            val = 'cm-1'
+        self._units['wavelength_unit'] = val
+
+    def plot_traces(self, traces='select', size=14):
         """
         Plots either the selected traces or 9-10 trace equally space in the wavelength range.
         If less than 10 (included) traces are plotted a legend will be display.
 
         Parameters
         ----------
-        auto: bool (default False)
-            If True between 9 and 10 traces equally spaced in the wavelength range will be plotted.
-            If False the selected traces will be plotted
+        traces: auto, select or a list conatining the traces wave values (default select)
+            If auto between 9 and 10 traces equally spaced in the wavelength range will be plotted.
+            If select the selected traces will be plotted
+            If a list
 
         size: int (default 14)
             size of the figure text labels including tick labels axis labels and legend
@@ -116,28 +160,34 @@ class ExploreData(PlotSVD):
         ----------
         Figure and axes matplotlib objects
         """
-        if auto:
+        if traces == 'auto':
             values = [i for i in range(len(self.wavelength))[::len(self.wavelength)//10]]
-        else:
-            if self.selected_wavelength is not None:
+            data = self.data
+        elif traces == 'select':
+            data = self.selected_traces
+            if self.selected_wavelength is not None and self._SVD_fit is False:
                 values = np.where(np.in1d(self.wavelength, self.selected_wavelength))
             else:
-                values = [i for i in range(self.data.shape[1])]
-        if len(values) <= 10 or auto:
-            if self._SVD_fit:
+                values = [i for i in range(data.shape[1])]
+        elif type(traces) ==  list:
+            values = [np.argmin(abs(self.wavelength-i)) for i in traces]
+            data = self.data
+        if len(values) <= 10 or traces == 'auto':
+            if self._SVD_fit and traces != 'auto' :
                 legenda = ['left SV %i' % i for i in range(1, self.data.shape[1]+1)]
             elif self.selected_wavelength is not None:
-                legenda = [f'{round(i)} {self.units["wavelength_unit"]}' for i in self.wavelength[values]]
+                val = 'cm$^{-1}$' if self._units['wavelength_unit'] == 'cm-1' else self._units['wavelength_unit']
+                legenda = [f'{round(i)} {val}' for i in self.wavelength[values]]
             else:
                 legenda = [f'curve {i}' for i in range(self.data.shape[1])]
         fig, ax = plt.subplots(1, figsize=(11, 6))
         alpha = 0.60
         for i in values:
-            ax.plot(self.x, self.data[:, i], marker='o', alpha=alpha, ms=4, ls='')
-        if self.data.shape[1] <= 10 or auto:
+            ax.plot(self.x, data[:, i], marker='o', alpha=alpha, ms=4, ls='')
+        if len(values) <= 10 or traces == 'auto':
             ax.legend(legenda, loc='best', ncol=2)
-        FiguresFormating.format_figure(ax, self.data, self.x, size=size)
-        FiguresFormating.axis_labels(ax, f'Time ({self.units["time_unit"]})', '$\Delta$A', size=size)
+        FiguresFormating.format_figure(ax, data, self.x, set_ylim=False, size=size)
+        FiguresFormating.axis_labels(ax, f'Time ({self._units["time_unit"]})', '$\Delta$A', size=size)
         return fig, ax
     
     def plot_spectra(self, times='all', rango=None, n_points=0, cover_range=None, from_max_to_min=True,
@@ -213,7 +263,7 @@ class ExploreData(PlotSVD):
         """
         if times == 'all' or times == 'auto' or type(times) == list:
             if cmap is None:
-                cmap = self.color_map
+                cmap = self.cmap
             data = self.data
             wavelength = self.wavelength if self.wavelength is not None else np.array([i for i in range(len(data[1]))])
             if data.shape[0] > 250 and times == 'all':
@@ -246,7 +296,7 @@ class ExploreData(PlotSVD):
                 cnorm = Normalize(vmin=times[0], vmax=times[-1])
                 cpickmap = plt.cm.ScalarMappable(norm=cnorm, cmap=cmap)
                 cpickmap.set_array([])
-                plt.colorbar(cpickmap).set_label(label='Time ('+self.units["time_unit"]+')', size=15)
+                plt.colorbar(cpickmap).set_label(label='Time (' + self._units["time_unit"] + ')', size=15)
             if cover_range is not None:
                 FiguresFormating.cover_excitation(ax, cover_range, self.wavelength)
             return fig, ax
@@ -278,21 +328,21 @@ class ExploreData(PlotSVD):
         Figure and axes matplotlib objects
         """
         if cmap is None:
-            cmap = self.color_map
+            cmap = self.cmap
         X = self.x
         Z = self.data.transpose()
         Y = self.wavelength
-        if self.units["wavelength_unit"] == 'cm-1':
+        if self._units["wavelength_unit"] == 'cm-1':
             xlabel = 'Wavenumber (cm$^{-1}$)'
         else:
-            xlabel = f'Wavelength ({self.units["wavelength_unit"]})'
+            xlabel = f'Wavelength ({self._units["wavelength_unit"]})'
         X, Y = np.meshgrid(X, Y)
         fig = plt.figure(figsize=(8, 4))
         ax = fig.gca(projection='3d')
         surf = ax.plot_surface(X, Y, Z, cmap=cmap,
                                linewidth=0, antialiased=False)
         ax.set_zlim(np.min(Z), np.max(Z))
-        ax.set_xlabel(f'Time ({self.units["time_unit"]})')
+        ax.set_xlabel(f'Time ({self._units["time_unit"]})')
         ax.set_ylabel(xlabel)
         ax.set_zlabel('$\Delta$A')
         fig.colorbar(surf, shrink=0.5, aspect=5)
@@ -333,7 +383,7 @@ class ExploreData(PlotSVD):
             self.selected_traces, self.selected_wavelength = select_traces(self.data, self.wavelength, points,
                                                                            average, avoid_regions)
     
-    def select_traces_graph(self, points=-1, average = 0):
+    def select_traces_graph(self, points=-1, average=0):
         """
         Function to select traces graphically
 
@@ -342,13 +392,14 @@ class ExploreData(PlotSVD):
         points: int (default -1)
             Defines the number of traces that can be selected. If -1 an infinitive number of traces can be selected
         """
-        self._fig_select, ax = self.plot_spectra()
-        self._cursor = SnaptoCursor(ax, self.wavelength, self.wavelength * 0.0, points)
-        plt.connect('axes_enter_event', self._cursor.onEnterAxes)
-        plt.connect('axes_leave_event', self._cursor.onLeaveAxes)
-        plt.connect('motion_notify_event', self._cursor.mouseMove)
-        plt.connect('button_press_event', self._cursor.onClick)
-        self._fig_select.canvas.mpl_connect('close_event', self.select_traces(self._cursor.datax, average))
+        fig, ax = self.plot_spectra()
+        cursor = SnaptoCursor(ax, self.wavelength, self.wavelength * 0.0, points)
+        plt.connect('axes_enter_event', cursor.onEnterAxes)
+        plt.connect('axes_leave_event', cursor.onLeaveAxes)
+        plt.connect('motion_notify_event', cursor.mouseMove)
+        plt.connect('button_press_event', cursor.onClick)
+        fig.canvas.mpl_connect('close_event', lambda event: self.select_traces(cursor.datax, average))
+        return fig, cursor
     
     def _time_to_real_times(self, times, rango, include_max, from_max_to_min):
         """
@@ -387,10 +438,10 @@ class ExploreData(PlotSVD):
         """
         if self.wavelength is None:
             xlabel = 'pixel'
-        elif self.units['wavelength_unit'] == 'cm-1':
+        elif self._units['wavelength_unit'] == 'cm-1':
             xlabel = 'Wavenumber (cm$^{-1}$)'
         else:
-            xlabel = f'Wavelength ({self.units["wavelength_unit"]})'
+            xlabel = f'Wavelength ({self._units["wavelength_unit"]})'
         return xlabel
         
     def _get_auto_points(self, spectra=8, wave=None, rango=None, include_rango_max=True, decrease=True):

@@ -1,18 +1,18 @@
 import unittest
-from chempyspec.ultrafast.GlobalFitClass import globalfit_exponential, globalfit_gauss_exponential
-from chempyspec.ultrafast.outils import readData, select_traces
+from chempyspec.ultrafast.fit.ExponentialFit import globalfit_exponential, globalfit_gauss_exponential
+from chempyspec.ultrafast.utils.utils import read_data, select_traces
 import numpy as np
 
 
 path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2.csv'
-path2 = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_gauss_denoised.csv'
+path2 = 'C:/Users/lucas/git project/ultrafast/examples/3_exp_data_gauss_denoised.csv'
 
 original_taus = [8, 30, 200]
 
-time, data, wave = readData(path, wave_is_row=True)
+time, data, wave = read_data(path, wave_is_row=True)
 data_select, wave_select = select_traces(data, wave, 'auto')
 
-time_gauss, data_gauss, wave_gauss = readData(path2, wave_is_row=True)
+time_gauss, data_gauss, wave_gauss = read_data(path2, wave_is_row=True)
 data_select_gauss, wave_select_gauss = select_traces(data_gauss, wave_gauss, 10)
 
 

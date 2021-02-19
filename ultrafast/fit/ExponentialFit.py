@@ -6,8 +6,8 @@ Created on Thu Nov 12 21:00:23 2020
 """
 import numpy as np
 import lmfit
-from chempyspec.ultrafast.ModelCreatorClass import ModelCreator
-from chempyspec.ultrafast.GlobExpParams import GlobExpParameters
+from ultrafast.fit.ModelCreator import ModelCreator
+from ultrafast.fit.GlobExpParams import GlobExpParameters
 
 
 def globalfit_exponential(x, data, *taus, vary=True, t0=0, maxfev=5000, **kwargs):
@@ -68,7 +68,7 @@ def globalfit_exponential(x, data, *taus, vary=True, t0=0, maxfev=5000, **kwargs
     params = GlobExpParameters(n_traces, taus)
     params.adjustParams(t0, False, None)
     fit = GlobalFitExponential(x, data, exp_no, params.params, deconv=False, **kwargs)
-    results = fit.finalFit(vary_taus=vary, maxfev=maxfev)
+    results = fit.global_fit(vary_taus=vary, maxfev=maxfev)
     return results
 
 
@@ -159,7 +159,7 @@ def globalfit_gauss_exponential(x, data, *taus, vary=True, fwhm=0.12, tau_inf=1E
     params.adjustParams(t0, vary_t0, fwhm, vary_fwhm, GVD_corrected, tau_inf)
     fit = GlobalFitExponential(x, data, exp_no, params.params, vary=True, deconv=True,
                                tau_inf=tau_inf, GVD_corrected=GVD_corrected, **kwargs)
-    results = fit.finalFit(vary_taus=vary, maxfev=maxfev)
+    results = fit.global_fit(vary_taus=vary, maxfev=maxfev)
     return results
 
 
@@ -268,10 +268,10 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         ModelCreator.__init__(self, self.exp_no, self.x, self.tau_inf)
         lmfit.Minimizer.__init__(self, self._objectiveExponential, params, nan_policy='propagate')
 
-    def preFit(self):
+    def pre_fit(self):
         """
         Method that optimized the pre_exponential factors trace by trace without optimizing
-        the decay times (taus). It is automatically ran before the final fit.
+        the decay times (taus). It is automatically ran before a global fit.
         """
         fit_params = self.params.copy()
         ndata, nx = self.data.shape
@@ -307,7 +307,7 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
             self.params = fit_params
             self._prefit_done = True
 
-    def finalFit(self, vary_taus=True, maxfev=None, time_constraint=False, apply_weights=False):
+    def global_fit(self, vary_taus=True, maxfev=None, time_constraint=False, apply_weights=False):
         """
         Method to fit the data to a model. Returns a modified lmfit result object.
 
@@ -334,7 +334,7 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
             vary_taus = [vary_taus for i in range(self.exp_no)]
         self.fit_completed = False
         if self._prefit_done is False:
-            self.preFit()
+            self.pre_fit()
         # self.type_fit is important to know if we are doing an exponential or target fit
         # this is used later for exploring the results
         fit_condition = [maxfev, time_constraint, 'Exponential']

@@ -8,4 +8,4 @@ Created on Tue Nov 24 16:35:35 2020
 # setup.py
 import setuptools
 
-setuptools.setup(name="chempyspec", packages=setuptools.find_packages())
+setuptools.setup(name="ultrafast", packages=setuptools.find_packages())

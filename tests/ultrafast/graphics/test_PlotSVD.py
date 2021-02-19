@@ -1,14 +1,13 @@
 import unittest
-from chempyspec.ultrafast.outils import readData, select_traces
-from chempyspec.ultrafast.PlotSVDClass import PlotSVD
+from chempyspec.ultrafast.utils.utils import read_data, select_traces
+from chempyspec.ultrafast.graphics.PlotSVDClass import PlotSVD
 import numpy as np
 from parameterized import parameterized
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
 path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_gauss_denoised.csv'
-time, data, wave = readData(path, wave_is_row=True)
+time, data, wave = read_data(path, wave_is_row=True)
 data_select, wave_select = select_traces(data, wave, 'auto')
 svd_explorer = PlotSVD(time, data, wave, data_select, wave_select)
 full_svd_values = (np.linalg.svd(data, full_matrices=False, compute_uv=False)) ** 2

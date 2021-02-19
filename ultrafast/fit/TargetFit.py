@@ -6,7 +6,7 @@ Created on Fri Nov 13 13:12:36 2020
 """
 import numpy as np
 import lmfit
-from ModelCreatorClass import  ModelCreator
+from ultrafast.fit.ModelCreator import ModelCreator
 
 
 class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):

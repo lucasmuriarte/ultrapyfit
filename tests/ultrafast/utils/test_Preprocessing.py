@@ -7,7 +7,7 @@ Created on Tue Jan  5 16:00:33 2021
 
 import unittest
 import numpy as np
-from chempyspec.ultrafast.PreprocessingClass import Preprocessing, ExperimentException
+from chempyspec.ultrafast.utils.PreprocessingClass import Preprocessing, ExperimentException
 from parameterized import parameterized
 
 data_wave = np.ones((75, 150))

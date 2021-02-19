@@ -1,9 +1,9 @@
 import unittest
 from unittest import mock
-from chempyspec.ultrafast.ExploreResultsClass import ExploreResults
+from chempyspec.ultrafast.graphics.ExploreResults import ExploreResults
 import pickle
 from parameterized import parameterized
-from chempyspec.ultrafast.outils import readData, select_traces
+from chempyspec.ultrafast.utils.utils import read_data, select_traces
 import numpy as np
 
 
@@ -11,7 +11,7 @@ path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2.csv
 
 original_taus = [8, 30, 200]
 
-time, data, wave = readData(path, wave_is_row=True)
+time, data, wave = read_data(path, wave_is_row=True)
 data_select, wave_select = select_traces(data, wave, 'auto')
 
 file = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2_results.res'

@@ -4,27 +4,11 @@ Created on Sat Jan  9 18:06:54 2021
 
 @author: lucas
 """
-from numpy import mean
-from chempyspec.ultrafast.outils import LabBook, book_annotate, UnvariableContainer
+from ultrafast.utils.divers import LabBook, book_annotate
 
 # The lab book need to be created first
 book = LabBook(notes=None, name='Lab Book 1')
 
-def dump_args(func):
-     """
-     This decorator dumps out the arguments passed to a function before calling it
-     """
-     @wraps(func)
-     def echo_func(*args, **kwargs):
-         argnames = func.__code__.co_varnames[:func.__code__.co_argcount]
-         valores = dict(zip(argnames, args), **kwargs)
-         defaults = dict(zip(argnames[-len(func.__defaults__):] ,func.__defaults__))  
-         for i in defaults.keys():
-             if i not in valores.keys():
-                 valores[i] = defaults[i]
-         print(valores)
-         return func(*args, **kwargs)
-     return echo_func
 
 @book_annotate(book, True)
 def square(x):
@@ -37,7 +21,6 @@ def mul_3(x):
 
 
 @book_annotate(book, True)
-@dump_args
 def suma(a, b=5):
     return a + b
 
@@ -55,7 +38,6 @@ def resta(a, b):
 
 # step 1: redefine the function with decorator
 resta = book_annotate(book, True)(resta)
-
 
 square(4)
 square(5)

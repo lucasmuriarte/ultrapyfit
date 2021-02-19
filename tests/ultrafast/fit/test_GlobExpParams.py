@@ -6,11 +6,8 @@ Created on Mon Nov 23 11:10:17 2020
 """
 
 import unittest
-import numpy as np
-from chempyspec.ultrafast.GlobExpParams import GlobExpParameters
+from chempyspec.ultrafast.fit.GlobExpParams import GlobExpParameters
 from parameterized import parameterized
-import sys
-
 
 taus=[8,30,200]
 number_traces=5

@@ -5,12 +5,9 @@ Created on Mon Nov 16 10:15:21 2020
 @author: 79344
 """
 
-from PyQt5.QtWidgets import QMainWindow,QWidget,QVBoxLayout,QMenuBar,QLabel,QApplication,\
-QLineEdit,QPushButton,QComboBox,QTableWidget,QMdiArea,QProgressBar,QCheckBox,QAction,\
-QSpinBox,QMdiSubWindow,QGridLayout,QSlider,QHBoxLayout,QFileDialog,QInputDialog,QTextEdit,\
-QTableWidgetItem,QMessageBox,QButtonGroup,QRadioButton, QSplashScreen
-from PyQt5.QtGui import QPixmap, QIcon, QBrush, QPainter,QColor #QFont
-from  PyQt5.QtCore  import QThread, QObject, pyqtSignal, QPoint, QSize, QEvent, pyqtSlot, QCoreApplication, Qt #QTimer
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QApplication,\
+                            QLineEdit, QPushButton
+from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot
 
 import time
 
