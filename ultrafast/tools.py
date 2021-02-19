@@ -19,15 +19,15 @@ from decimal import Decimal
 
 
 class TimeMultiplicator(Enum):
-    y = 1E-24
-    z = 1E-21
-    a = 1E-18  # ato
-    f = 1E-15  # femto
-    p = 1E-12  # pico
-    n = 1E-9  # nano
-    µ = 1E-6  # micro
-    m = 1E-3  # mili
-    s = 1E0  # one
+    y = 1e-24
+    z = 1e-21
+    a = 1e-18  # ato
+    f = 1e-15  # femto
+    p = 1e-12  # pico
+    n = 1e-9  # nano
+    µ = 1e-6  # micro
+    m = 1e-3  # mili
+    s = 1e0  # one
 
     @staticmethod
     def chose(value):
@@ -35,7 +35,8 @@ class TimeMultiplicator(Enum):
             return TimeMultiplicator(TimeMultiplicator._member_map_[value[0]])
         except BaseException:
             raise ExperimentException(
-                "the value should start by one of the letters in TimeUnitMultiplicator")
+                "the value should start by one of the letters in TimeUnitMultiplicator"
+            )
 
 
 class TimeUnitFormater:
@@ -98,8 +99,8 @@ class TimeUnitFormater:
         negative = False
         if value == 0:
             inter = 0
-            name = f'{self._multiplicator.name}s'
-            if name == 'ss':
+            name = f"{self._multiplicator.name}s"
+            if name == "ss":
                 name = name[0]
         else:
             turns = 0
@@ -108,27 +109,28 @@ class TimeUnitFormater:
             inter = abs(value)
             # print(value, inter)
             if abs(value) > 999.9:
-                multi = 1E3
+                multi = 1e3
                 while inter > 999.9:
-                    inter /= 1E3
+                    inter /= 1e3
                     turns += 1
             elif abs(value) < 0.01:
-                multi = 1E-3
+                multi = 1e-3
                 while inter < 0.01:
-                    inter *= 1E3
+                    inter *= 1e3
                     turns += 1
             else:
                 multi = 1
-            val = self._multiplicator.value * multi**turns
+            val = self._multiplicator.value * multi ** turns
             # print(val, inter)
 
-            if 1 >= val >= 1E-24:
+            if 1 >= val >= 1e-24:
                 name = TimeMultiplicator(
                     TimeMultiplicator(
-                        self._multiplicator.value *
-                        multi**turns))
+                        self._multiplicator.value * multi ** turns
+                    )
+                )
                 if name.name != "s":
-                    name = f'{name.name}s'
+                    name = f"{name.name}s"
                 else:
                     name = "s"
             elif self._multiplicator.value == 1.0 and value > 999.9 or val > 1:
@@ -143,21 +145,21 @@ class TimeUnitFormater:
                     name = "mins"
             else:
                 raise ExperimentException(
-                    "time units are smaller than 1E-24, this cannot be handeled")
+                    "time units are smaller than 1E-24, this cannot be handeled"
+                )
         formated = Decimal(inter)
         if negative:
-            return f"-{str(formated.quantize(Decimal(10) ** - decimal))} {name}"
+            return (
+                f"-{str(formated.quantize(Decimal(10) ** - decimal))} {name}"
+            )
         else:
             return f"{str(formated.quantize(Decimal(10) ** - decimal))} {name}"
 
 
 def select_traces(
-        data,
-        wavelength=None,
-        space=10,
-        points=1,
-        avoid_regions=None):
-    """ select traces in the wavelength range
+    data, wavelength=None, space=10, points=1, avoid_regions=None
+):
+    """select traces in the wavelength range
 
     Parameters
     ----------
@@ -201,109 +203,148 @@ def select_traces(
 
     """
     dat = pd.DataFrame(data)
-    if type(space) == int or type(space) == list or space == 'auto':
+    if type(space) == int or type(space) == list or space == "auto":
         if wavelength is None:
             wavelengths = pd.Series([float(i) for i in range(dat.shape[1])])
         else:
             wavelengths = pd.Series(wavelength)
-        if space == 'auto':
+        if space == "auto":
             values = [
-                i for i in range(
-                    len(wavelength))[
-                    ::round(
-                        len(wavelength) /
-                        11)]]
+                i
+                for i in range(len(wavelength))[:: round(len(wavelength) / 11)]
+            ]
             selected_traces = values[1:]
             points = 0
         elif type(space) is int:
             if wavelength is not None:
-                wavelength_unit = 1 / \
-                    ((wavelength[-1] - wavelength[0]) / len(wavelength))
+                wavelength_unit = 1 / (
+                    (wavelength[-1] - wavelength[0]) / len(wavelength)
+                )
                 if wavelength_unit >= 1:
                     space = round(space * wavelength_unit)
             first = wavelengths.iloc[0 + points]
-            values = [first + space * i for i in range(
-                len(wavelengths)) if first + space * i < wavelengths.iloc[-1]]
+            values = [
+                first + space * i
+                for i in range(len(wavelengths))
+                if first + space * i < wavelengths.iloc[-1]
+            ]
             selected_traces = [
-                (wavelengths -
-                 values[i]).abs().sort_values().index[0] for i in range(
-                    len(values))]
+                (wavelengths - values[i]).abs().sort_values().index[0]
+                for i in range(len(values))
+            ]
         else:
             selected_traces = [np.argmin(abs(wavelength - i)) for i in space]
         avoid_regions_index = []
         if avoid_regions is not None:
-            assert type(
-                avoid_regions) is list, 'Please regions should be indicated as a list'
+            assert (
+                type(avoid_regions) is list
+            ), "Please regions should be indicated as a list"
             if type(avoid_regions[0]) is not list:
                 avoid_regions = [avoid_regions]
             for i in avoid_regions:
-                assert len(
-                    i) == 2, 'Please indicate 2 number to declare a region'
+                assert (
+                    len(i) == 2
+                ), "Please indicate 2 number to declare a region"
                 i = sorted(i)
                 avoid_wavelength = np.where(
-                    (wavelength > i[0]) & (
-                        wavelength < i[1]))[0]
+                    (wavelength > i[0]) & (wavelength < i[1])
+                )[0]
                 if len(avoid_wavelength) > 0:
                     avoid_regions_index.append(
-                        [avoid_wavelength[0], avoid_wavelength[-1]])
+                        [avoid_wavelength[0], avoid_wavelength[-1]]
+                    )
                 selected_traces = [
-                    i for i in selected_traces if i not in avoid_wavelength]
+                    i for i in selected_traces if i not in avoid_wavelength
+                ]
 
         if avoid_regions is None:
             if points == 0:
-                dat_res = pd.DataFrame(data=[dat.iloc[:, i] for i in selected_traces],
-                                       columns=dat.index,
-                                       index=[str(i + wavelengths[0]) for i in selected_traces]).transpose()
+                dat_res = pd.DataFrame(
+                    data=[dat.iloc[:, i] for i in selected_traces],
+                    columns=dat.index,
+                    index=[str(i + wavelengths[0]) for i in selected_traces],
+                ).transpose()
             else:
                 if type(space) is list:
                     indexes = []
                     for i in selected_traces:
                         mini = 0 if i - points < 0 else i - points
-                        maxi = len(wavelength) if i + \
-                            points > len(wavelength) else i + points + 1
+                        maxi = (
+                            len(wavelength)
+                            if i + points > len(wavelength)
+                            else i + points + 1
+                        )
                         indexes.append([mini, maxi])
-                    dat_res = pd.DataFrame(data=[dat.iloc[:, i[0]:i[1]].mean(axis=1) for i in indexes],
-                                           columns=dat.index,
-                                           index=[str(i + wavelengths[0]) for i in selected_traces]).transpose()
+                    dat_res = pd.DataFrame(
+                        data=[
+                            dat.iloc[:, i[0]: i[1]].mean(axis=1)
+                            for i in indexes
+                        ],
+                        columns=dat.index,
+                        index=[
+                            str(i + wavelengths[0]) for i in selected_traces
+                        ],
+                    ).transpose()
                 else:
                     dat_res = pd.DataFrame(
-                        data=[dat.iloc[:, i - points:i + points + 1].mean(axis=1) for i in selected_traces],
+                        data=[
+                            dat.iloc[:, i - points: i + points + 1].mean(
+                                axis=1
+                            )
+                            for i in selected_traces
+                        ],
                         columns=dat.index,
-                        index=[str(i + wavelengths[0]) for i in selected_traces]).transpose()
-            wavelength_res = np.array([wavelengths.iloc[i]
-                                       for i in selected_traces])
+                        index=[
+                            str(i + wavelengths[0]) for i in selected_traces
+                        ],
+                    ).transpose()
+            wavelength_res = np.array(
+                [wavelengths.iloc[i] for i in selected_traces]
+            )
         else:
             min_indexes = []
             max_indexes = []
             for trace in selected_traces:
                 min_index = [
-                    sub_region[1] if sub_region[0] < trace -
-                    points < sub_region[1] else trace -
-                    points for sub_region in avoid_regions_index]
+                    sub_region[1]
+                    if sub_region[0] < trace - points < sub_region[1]
+                    else trace - points
+                    for sub_region in avoid_regions_index
+                ]
                 if min_index[0] < 0:
                     min_index[0] = 0
                 min_indexes.append(min_index[0])
                 max_index = [
-                    sub_region[0] if sub_region[0] < trace +
-                    points < sub_region[1] else trace +
-                    points for sub_region in avoid_regions_index]
+                    sub_region[0]
+                    if sub_region[0] < trace + points < sub_region[1]
+                    else trace + points
+                    for sub_region in avoid_regions_index
+                ]
                 max_indexes.append(min(max_index))
-            dat_res = pd.DataFrame(data=[dat.iloc[:,
-                                                  min_index:max_index + 1].mean(axis=1) for min_index,
-                                         max_index in zip(min_indexes,
-                                                          max_indexes)],
-                                   columns=dat.index,
-                                   index=[str(i + wavelengths[0]) for i in selected_traces]).transpose()
-            wavelength_res = np.array([wavelengths.iloc[min_index:max_index + 1].mean()
-                                       for min_index, max_index in zip(min_indexes, max_indexes)])
+            dat_res = pd.DataFrame(
+                data=[
+                    dat.iloc[:, min_index: max_index + 1].mean(axis=1)
+                    for min_index, max_index in zip(min_indexes, max_indexes)
+                ],
+                columns=dat.index,
+                index=[str(i + wavelengths[0]) for i in selected_traces],
+            ).transpose()
+            wavelength_res = np.array(
+                [
+                    wavelengths.iloc[min_index: max_index + 1].mean()
+                    for min_index, max_index in zip(min_indexes, max_indexes)
+                ]
+            )
 
         return dat_res.values, wavelength_res
     else:
-        statement_3 = 'space should be: "auto", an integer or a list of integers/floats'
+        statement_3 = (
+            'space should be: "auto", an integer or a list of integers/floats'
+        )
         raise ExperimentException(statement_3)
 
 
-def define_weights(time, rango, typo='constant', val=5):
+def define_weights(time, rango, typo="constant", val=5):
     """
     Returns a an array that can be apply  in global fit functions as weights.
     The weights can be use to define areas where the minimizing functions is
@@ -350,45 +391,66 @@ def define_weights(time, rango, typo='constant', val=5):
 
     time = time * 1.0
     rango = sorted(rango)
-    if typo in ['constant', 'exponential', 'r_exponential', 'mix_exp']:
-        if typo == 'constant':
+    if typo in ["constant", "exponential", "r_exponential", "mix_exp"]:
+        if typo == "constant":
             weight = [val if rango[0] < i < rango[1] else 1 for i in time]
         else:
             mini = int(np.argmin([abs(i - rango[0]) for i in time]))
             maxi = int(np.argmin([abs(i - rango[1]) for i in time]))
-            if typo == 'exponential':
-                weight = [1 for i in time[:mini]] + [i ** val for i in range(
-                    1, maxi - mini + 2)] + [1 for i in time[maxi + 1:]]
+            if typo == "exponential":
+                weight = (
+                    [1 for i in time[:mini]]
+                    + [i ** val for i in range(1, maxi - mini + 2)]
+                    + [1 for i in time[maxi + 1:]]
+                )
                 weight[mini] = val
-            elif typo == 'r_exponential':
-                weight = [1 for i in time[:mini]] + [i ** val for i in range(
-                    maxi - mini + 1, 1, -1)] + [1 for i in time[maxi:]]
+            elif typo == "r_exponential":
+                weight = (
+                    [1 for i in time[:mini]]
+                    + [i ** val for i in range(maxi - mini + 1, 1, -1)]
+                    + [1 for i in time[maxi:]]
+                )
                 weight[maxi] = val
             else:
                 if (maxi - mini) % 2 == 0:
-                    weight = [1 for i in time[:mini]] + [i ** val for i in range(
-                        1, (maxi - mini + 2) // 2)] + [i ** 2 for i in range(
-                                                       (maxi - mini + 2) // 2, 1, -1)] + [1 for i in time[maxi:]]
+                    weight = (
+                        [1 for i in time[:mini]]
+                        + [i ** val for i in range(1, (maxi - mini + 2) // 2)]
+                        + [
+                            i ** 2
+                            for i in range((maxi - mini + 2) // 2, 1, -1)
+                        ]
+                        + [1 for i in time[maxi:]]
+                    )
                 else:
-                    weight = [1 for i in time[:mini]] + [i ** val for i in range(
-                        1, (maxi - mini + 3) // 2)] + [i ** 2 for i in range(
-                                                       (maxi - mini + 2) // 2, 1, -1)] + [1 for i in time[maxi:]]
+                    weight = (
+                        [1 for i in time[:mini]]
+                        + [i ** val for i in range(1, (maxi - mini + 3) // 2)]
+                        + [
+                            i ** 2
+                            for i in range((maxi - mini + 2) // 2, 1, -1)
+                        ]
+                        + [1 for i in time[maxi:]]
+                    )
                 weight[mini] = val
                 weight[maxi] = val
-        return {'apply': True, 'vector': np.array(weight),
-                'type': typo, 'range': rango, 'value': val}
+        return {
+            "apply": True,
+            "vector": np.array(weight),
+            "type": typo,
+            "range": rango,
+            "value": val,
+        }
     else:
-        statement_3 = 'typo should be: constant, exponential, r_exponential or  mix_exp'
+        statement_3 = (
+            "typo should be: constant, exponential, r_exponential or  mix_exp"
+        )
         raise ExperimentException(statement_3)
 
 
 def readData(
-        path,
-        wavelength=0,
-        time=0,
-        wave_is_row=False,
-        separator=',',
-        decimal='.'):
+    path, wavelength=0, time=0, wave_is_row=False, separator=",", decimal="."
+):
     """
     Read a data file from the indicated path and returns three arrays with shapes
     uses in the chempyspec. The function is bases in pandas read_csv, and uses
@@ -447,7 +509,13 @@ def readData(
     """
     reader = ReadData()
     time, data, wavelength = reader.readData(
-        path, wavelength=wavelength, time=time, wave_is_row=wave_is_row, separator=separator, decimal=decimal)
+        path,
+        wavelength=wavelength,
+        time=time,
+        wave_is_row=wave_is_row,
+        separator=separator,
+        decimal=decimal,
+    )
     return time, data, wavelength
 
 
@@ -462,53 +530,81 @@ class ReadData:
         try:
             column = np.array([float(i) for i in pandas.columns.values])
         except BaseException:
-            column = np.array([float((re.findall(r'[-+]?\d*\.\d*[eE]?[-+]?\d*|[-+]?\d+', i))[0])
-                               for i in pandas.columns.values]).flatten()
+            column = np.array(
+                [
+                    float(
+                        (
+                            re.findall(
+                                r"[-+]?\d*\.\d*[eE]?[-+]?\d*|[-+]?\d+", i
+                            )
+                        )[0]
+                    )
+                    for i in pandas.columns.values
+                ]
+            ).flatten()
         if type(pandas.index[0]) == str:
-            row = np.array([float((re.findall(r'[-+]?\d*\.\d*[eE]?[-+]?\d*|[-+]?\d+', i))[0])
-                            for i in pandas.index.values]).flatten()
+            row = np.array(
+                [
+                    float(
+                        (
+                            re.findall(
+                                r"[-+]?\d*\.\d*[eE]?[-+]?\d*|[-+]?\d+", i
+                            )
+                        )[0]
+                    )
+                    for i in pandas.index.values
+                ]
+            ).flatten()
         else:
             row = np.array([float(ii) for ii in pandas.index.values])
         return row, column
 
     def readData(
-            self,
-            path,
-            wavelength=0,
-            time=0,
-            wave_is_row=True,
-            separator=',',
-            decimal='.'):
+        self,
+        path,
+        wavelength=0,
+        time=0,
+        wave_is_row=True,
+        separator=",",
+        decimal=".",
+    ):
         """
         similar parameters and explanations as in readData function
         """
         if wave_is_row:
-            data_frame = pd.read_csv(
-                path,
-                sep=separator,
-                index_col=wavelength,
-                skiprows=time,
-                decimal=decimal).dropna(
-                how='all').dropna(
-                how='all',
-                axis=1)
+            data_frame = (
+                pd.read_csv(
+                    path,
+                    sep=separator,
+                    index_col=wavelength,
+                    skiprows=time,
+                    decimal=decimal,
+                )
+                .dropna(how="all")
+                .dropna(how="all", axis=1)
+            )
             data_frame = data_frame.transpose()
         else:
-            data_frame = pd.read_csv(
-                path,
-                sep=separator,
-                index_col=time,
-                skiprows=wavelength,
-                decimal=decimal).dropna(
-                how='all').dropna(
-                how='all',
-                axis=1)
+            data_frame = (
+                pd.read_csv(
+                    path,
+                    sep=separator,
+                    index_col=time,
+                    skiprows=wavelength,
+                    decimal=decimal,
+                )
+                .dropna(how="all")
+                .dropna(how="all", axis=1)
+            )
         data_frame.fillna(0, inplace=True)
         wavelength_dimension, time_dimension = self._readPandas(data_frame)
         time_dimension = sorted(time_dimension)
         data_frame.set_index(time_dimension).sort_index()
-        return np.array(time_dimension), data_frame.transpose(
-        ).values, wavelength_dimension
+        return (
+            np.array(time_dimension),
+            data_frame.transpose().values,
+            wavelength_dimension,
+        )
 
 
 def solve_kmatrix(exp_no, params):
@@ -527,9 +623,13 @@ def solve_kmatrix(exp_no, params):
     Coefficients of each component eigenvalues and eigen matrix
     """
     ksize = exp_no
-    kmatrix = np.array([[params['k_%i%i' % (i + 1, j + 1)
-                                ].value for j in range(ksize)] for i in range(ksize)])
-    cinitials = [params['c_%i' % (i + 1)].value for i in range(ksize)]
+    kmatrix = np.array(
+        [
+            [params["k_%i%i" % (i + 1, j + 1)].value for j in range(ksize)]
+            for i in range(ksize)
+        ]
+    )
+    cinitials = [params["c_%i" % (i + 1)].value for i in range(ksize)]
     # do the eigens value decomposition
     eigs, vects = np.linalg.eig(kmatrix)
     # eigenmatrix = np.array([[vects[j][i] for j in range(len(eigs))] for i in range(len(eigs))])
@@ -579,8 +679,11 @@ def froze_it(cls):
             x = np.random.RandomState(code)
             val = x.randint(10000, size=1)[0]
         if self.__frozen and hasattr(self, key) and val != 2603:
-            print("Class {} is frozen. Cannot modified {} = {}"
-                  .format(cls.__name__, key, value))
+            print(
+                "Class {} is frozen. Cannot modified {} = {}".format(
+                    cls.__name__, key, value
+                )
+            )
         else:
             object.__setattr__(self, key, value)
 
@@ -623,8 +726,8 @@ def book_annotate(container, extend=True):
         """
         This decorator dumps out the arguments passed to a function before calling it
         """
-        argnames = func.__code__.co_varnames[:func.__code__.co_argcount]
-        if argnames[0] == 'self':
+        argnames = func.__code__.co_varnames[: func.__code__.co_argcount]
+        if argnames[0] == "self":
             argnames = argnames[1:]
         fname = func.__name__
 
@@ -633,16 +736,16 @@ def book_annotate(container, extend=True):
         def echo_func(*args, **kwargs):
             valores = dict(zip(argnames, args), **kwargs)
             defaults = dict(
-                zip(argnames[-len(func.__defaults__):], func.__defaults__))
+                zip(argnames[-len(func.__defaults__):], func.__defaults__)
+            )
             for i in defaults.keys():
                 if i not in valores.keys():
                     valores[i] = defaults[i]
             container.__setattr__(
                 fname,
-                ', '.join(
-                    '%s = %r' %
-                    entry for entry in valores.items()),
-                extend)
+                ", ".join("%s = %r" % entry for entry in valores.items()),
+                extend,
+            )
             return func(*args, **kwargs)
 
         return echo_func
@@ -660,7 +763,9 @@ class LabBook(object):
     def __init__(self, **kws):
         for key, val in kws.items():
             setattr(self, key, val)
-        self.creation = datetime.datetime.now().strftime("day: %d %b %Y | hour: %H:%M:%S")
+        self.creation = datetime.datetime.now().strftime(
+            "day: %d %b %Y | hour: %H:%M:%S"
+        )
 
     def __setattr__(self, key, val, extend=False):
         """
@@ -685,8 +790,9 @@ class LabBook(object):
 
     @property
     def actions(self):
-        actions = [i for i in self.__dict__.keys() if i not in [
-            "name", "creation"]]
+        actions = [
+            i for i in self.__dict__.keys() if i not in ["name", "creation"]
+        ]
         return actions
 
     def clean(self):
@@ -694,11 +800,13 @@ class LabBook(object):
         Clean the LabBook except name attribute if given
         """
         for key, value in self.__dict__.items():
-            if key != 'name' and key != 'creation':
+            if key != "name" and key != "creation":
                 self.delete(key)
-        self.creation = datetime.datetime.now().strftime("day: %d %b %Y | hour: %H:%M:%S")
+        self.creation = datetime.datetime.now().strftime(
+            "day: %d %b %Y | hour: %H:%M:%S"
+        )
 
-    def delete(self, key, element='all'):
+    def delete(self, key, element="all"):
         """
         method similar to delattr function. It deletes an entry on the lab according to key
 
@@ -712,7 +820,7 @@ class LabBook(object):
                 if int the element of the list at this index is deleted
         """
         prev_val = getattr(self, key)
-        if element == 'all' or type(prev_val) != list:
+        if element == "all" or type(prev_val) != list:
             delattr(self, key)
         else:
             if type(element) == int:
@@ -722,7 +830,12 @@ class LabBook(object):
                 statement = 'element should be "all" or a integer'
                 raise ExperimentException(statement)
 
-    def print(self, creation=True, print_protected=False, single_line=False,):
+    def print(
+        self,
+        creation=True,
+        print_protected=False,
+        single_line=False,
+    ):
         """
         Print all attributes and their values as a Lab report
 
@@ -735,21 +848,26 @@ class LabBook(object):
                 Define if protected attributes starting wiht "_" are printed
 
         """
-        if hasattr(self, 'name'):
-            name = getattr(self, 'name')
-            print(f'\t {name}')
-            print(''.join(['-' for i in range(len(name) + 10)]))
+        if hasattr(self, "name"):
+            name = getattr(self, "name")
+            print(f"\t {name}")
+            print("".join(["-" for i in range(len(name) + 10)]))
         for key, value in self.__dict__.items():
-            if key != 'notes' and key != 'name' and key != 'creation' and key[0] != "_":
+            if (
+                key != "notes"
+                and key != "name"
+                and key != "creation"
+                and key[0] != "_"
+            ):
                 self._print_attribute(key, single_line, False)
-        if hasattr(self, 'notes'):
-            self._print_attribute('notes', False, False)
+        if hasattr(self, "notes"):
+            self._print_attribute("notes", False, False)
         if print_protected:
             for key, value in self.__dict__.items():
                 if key[0] == "_":
                     self._print_attribute(key, single_line, True)
         if creation:
-            self._print_attribute('creation')
+            self._print_attribute("creation")
 
     def _print_attribute(self, key, single_line=True, protected=True):
         """
@@ -757,19 +875,19 @@ class LabBook(object):
         """
         value = getattr(self, key)
         if protected:
-            val = f'(p) {key}'
+            val = f"(p) {key}"
         else:
-            val = ' '.join(key.split('_'))
+            val = " ".join(key.split("_"))
         if type(value) == list:
-            print(f'\t {val}:')
+            print(f"\t {val}:")
             for i in value:
-                print(f'\t\t {i}')
+                print(f"\t\t {i}")
         else:
             if single_line:
-                print(f'\t {val}: {value}')
+                print(f"\t {val}: {value}")
             else:
-                print(f'\t {val}:\n\t\t {value}')
-        print('')
+                print(f"\t {val}:\n\t\t {value}")
+        print("")
 
 
 @froze_it
@@ -811,17 +929,13 @@ class FiguresFormating:
         mini = np.argmin([abs(x_range[0] - i) for i in x_vector])
         maxi = np.argmin([abs(x_range[1] - i) for i in x_vector])
         rect = Rectangle(
-            (x_vector[mini] -
-             1,
-             ymin),
-            width=x_vector[maxi] -
-            x_vector[mini] +
-            2,
-            height=abs(ymax) +
-            abs(ymin),
+            (x_vector[mini] - 1, ymin),
+            width=x_vector[maxi] - x_vector[mini] + 2,
+            height=abs(ymax) + abs(ymin),
             fill=True,
-            color='white',
-            zorder=np.inf)
+            color="white",
+            zorder=np.inf,
+        )
         ax.add_patch(rect)
 
     @staticmethod
@@ -844,21 +958,16 @@ class FiguresFormating:
             size of the label
         """
         if x_label is None:
-            x_label = 'X vector'
+            x_label = "X vector"
         if y_label is None:
-            y_label = 'Y vector'
+            y_label = "Y vector"
         ax.set_ylabel(y_label, size=size)
         ax.set_xlabel(x_label, size=size)
 
     @staticmethod
     def format_figure(
-            ax,
-            data,
-            x_vector,
-            size=14,
-            x_tight=False,
-            set_ylim=True,
-            val=50):
+        ax, data, x_vector, size=14, x_tight=False, set_ylim=True, val=50
+    ):
         """
         format ax figures
         Always does:
@@ -895,22 +1004,23 @@ class FiguresFormating:
         if val < 1:
             val = 1
         if set_ylim:
-            ax.set_ylim(np.min(data) - abs(np.min(data) * 0.1),
-                        np.max(data) + np.max(data) * 0.1)
+            ax.set_ylim(
+                np.min(data) - abs(np.min(data) * 0.1),
+                np.max(data) + np.max(data) * 0.1,
+            )
         if x_tight:
             ax.set_xlim(x_vector[0], x_vector[-1])
         else:
-            ax.set_xlim(x_vector[0] - x_vector[-1] / val,
-                        x_vector[-1] + x_vector[-1] / val)
-        ax.axhline(linewidth=1, linestyle='--', color='k')
-        ax.ticklabel_format(style='sci', axis='y')
+            ax.set_xlim(
+                x_vector[0] - x_vector[-1] / val,
+                x_vector[-1] + x_vector[-1] / val,
+            )
+        ax.axhline(linewidth=1, linestyle="--", color="k")
+        ax.ticklabel_format(style="sci", axis="y")
         ax.minorticks_on()
         ax.axes.tick_params(
-            which='both',
-            direction='in',
-            top=True,
-            right=True,
-            labelsize=size)
+            which="both", direction="in", top=True, right=True, labelsize=size
+        )
 
 
 class DataSetCreator:
@@ -982,7 +1092,7 @@ class DataSetCreator:
         """
         basic gaussian function
         """
-        return amp * np.exp(-(x - cen) ** 2 / (2. * sigma ** 2))
+        return amp * np.exp(-((x - cen) ** 2) / (2.0 * sigma ** 2))
 
     @staticmethod
     def norm_gauss(x, fwhm, x0=0.0):
@@ -990,8 +1100,11 @@ class DataSetCreator:
         just normal (area=1) gaussian distribution
         """
         sigma = fwhm / 2.355
-        return 1 / (sigma * np.sqrt(2 * np.pi)) * \
-            np.exp(-(x - x0) * (x - x0) / (2 * sigma * sigma))
+        return (
+            1
+            / (sigma * np.sqrt(2 * np.pi))
+            * np.exp(-(x - x0) * (x - x0) / (2 * sigma * sigma))
+        )
 
     @staticmethod
     def generate_shape(number, wave, taus, scale=100, signe=1, sigma=2.25):
@@ -1032,7 +1145,9 @@ class DataSetCreator:
         ----------
         pandas data frame.  data.shape() >>> (len(taus), len(wave))
         """
-        if(type(taus) == int):  # useful for target model usage, because then tau values are useless, only number of species is required
+        if (
+            type(taus) == int
+        ):  # useful for target model usage, because then tau values are useless, only number of species is required
             taus = [x + 1 for x in range(taus)]
 
         if number >= len(taus):
@@ -1043,44 +1158,53 @@ class DataSetCreator:
             elif signe == 0:
                 a, b = -9, 9
             else:
-                raise ExperimentException('signe should be either -1, 0, 1')
+                raise ExperimentException("signe should be either -1, 0, 1")
             rango = (wave[-1] - wave[0] - 100) / 2
             gausianas = number
             # generate random values for N (number) gausians
             amp = [
-                0.60 +
-                0.50 *
-                np.random.randint(
-                    a,
-                    b) for i in range(gausianas)]
-            cen = [wave[0] + 50 + i * rango /
-                   (number * 0.5) for i in range(gausianas)]
+                0.60 + 0.50 * np.random.randint(a, b) for i in range(gausianas)
+            ]
+            cen = [
+                wave[0] + 50 + i * rango / (number * 0.5)
+                for i in range(gausianas)
+            ]
             sig = [sigma + 6 * np.random.rand() for i in range(gausianas)]
             # create gaussians with params
-            datag = [(DataSetCreator.gauss(wave, amp, cen, sig))
-                     for amp, cen, sig in zip(amp, cen, sig)]
+            datag = [
+                (DataSetCreator.gauss(wave, amp, cen, sig))
+                for amp, cen, sig in zip(amp, cen, sig)
+            ]
             # divide by a number to adjust to scale
             gaus = [i / scale for i in datag]
             if number > len(taus):
-                tauss = [np.random.choice(taus, replace=False) for i in range(len(taus))] + \
-                        [np.random.choice(taus) for i in range(gausianas - len(taus))]
+                tauss = [
+                    np.random.choice(taus, replace=False)
+                    for i in range(len(taus))
+                ] + [
+                    np.random.choice(taus)
+                    for i in range(gausianas - len(taus))
+                ]
             else:
                 tauss = [
-                    np.random.choice(
-                        taus,
-                        replace=False) for i in range(
-                        len(taus))]
+                    np.random.choice(taus, replace=False)
+                    for i in range(len(taus))
+                ]
             das = np.ones((len(taus), len(wave)))
             for i, tau in enumerate(taus):
-                tau1 = np.mean([ii for i, ii in enumerate(
-                    gaus) if tauss[i] == tau], axis=0)
+                tau1 = np.mean(
+                    [ii for i, ii in enumerate(gaus) if tauss[i] == tau],
+                    axis=0,
+                )
                 das[i, :] = tau1
-            das = pd.DataFrame(data=das, columns=[str(
-                round(i, 1)) for i in wave], index=taus)
+            das = pd.DataFrame(
+                data=das, columns=[str(round(i, 1)) for i in wave], index=taus
+            )
             return das
         else:
             raise ExperimentException(
-                'number should be >= than the number of taus')
+                "number should be >= than the number of taus"
+            )
 
     @staticmethod
     def generate_specific_shape(wave, taus, peaks, amplitudes, fwhms):
@@ -1114,30 +1238,42 @@ class DataSetCreator:
         ----------
         pandas data frame.  data.shape() >>> (len(taus), len(wave))
         """
-        if(type(taus) == int):  # useful for target model usage, because then tau values are useless, only number of species is required
+        if (
+            type(taus) == int
+        ):  # useful for target model usage, because then tau values are useless, only number of species is required
             taus = [x + 1 for x in range(taus)]
 
-        if(len(taus) != len(peaks) or len(peaks) != len(amplitudes) or len(amplitudes) != len(fwhms)):
+        if (
+            len(taus) != len(peaks)
+            or len(peaks) != len(amplitudes)
+            or len(amplitudes) != len(fwhms)
+        ):
             raise ExperimentException(
-                'Check if taus/peaks/amplitudes/fwhms have the same dimension and represent same number of DAS/SAS!')
+                "Check if taus/peaks/amplitudes/fwhms have the same dimension and represent same number of DAS/SAS!"
+            )
 
         das = np.zeros([len(taus), len(wave)])
 
         for i in range(len(taus)):
-            if(len(peaks[i]) != len(amplitudes[i]) or len(amplitudes[i]) != len(fwhms[i])):
+            if len(peaks[i]) != len(amplitudes[i]) or len(
+                amplitudes[i]
+            ) != len(fwhms[i]):
                 raise ExperimentException(
-                    'Check if peaks/amplitudes/fwhms[' +
+                    "Check if peaks/amplitudes/fwhms[" +
                     str(i) +
-                    '] have the same second dimension and represent same number of peaks!')
+                    "] have the same second dimension and represent same number of peaks!")
             for j in range(len(peaks[i])):
-                if(fwhms[i][j] <= 0.0):
+                if fwhms[i][j] <= 0.0:
                     raise ExperimentException(
-                        'Check if all FWHMs are positive!')
-                das[i, :] += amplitudes[i][j] * \
-                    DataSetCreator.norm_gauss(wave, fwhms[i][j], x0=peaks[i][j])
+                        "Check if all FWHMs are positive!"
+                    )
+                das[i, :] += amplitudes[i][j] * DataSetCreator.norm_gauss(
+                    wave, fwhms[i][j], x0=peaks[i][j]
+                )
 
-        return pd.DataFrame(data=das, columns=[str(
-            round(i, 1)) for i in wave], index=taus)
+        return pd.DataFrame(
+            data=das, columns=[str(round(i, 1)) for i in wave], index=taus
+        )
 
     @staticmethod
     def generate_wavelength(init, final, points):
@@ -1163,7 +1299,7 @@ class DataSetCreator:
         return np.linspace(abs(init), abs(final), points)
 
     @staticmethod
-    def generate_time(init, final, points, space='lin-log'):
+    def generate_time(init, final, points, space="lin-log"):
         """
         returns a vector that should be use as time. The points
         can be linear logarithmic or in a combined spaced way.
@@ -1188,33 +1324,34 @@ class DataSetCreator:
         -------
         1d array
         """
-        if space in ['linear', 'log', 'lin-log']:
-            if space == 'lin-log':
+        if space in ["linear", "log", "lin-log"]:
+            if space == "lin-log":
                 if init > 1:
-                    space = 'log'
+                    space = "log"
                 else:
-                    return np.append(np.linspace(init,
-                                                 1,
-                                                 round(points / 3) + 1)[:-1],
-                                     np.logspace(np.log10(1),
-                                                 np.log10(final),
-                                                 round(2 * points / 3)))
-            elif space == 'log':
+                    return np.append(
+                        np.linspace(init, 1, round(points / 3) + 1)[:-1],
+                        np.logspace(
+                            np.log10(1), np.log10(final), round(2 * points / 3)
+                        ),
+                    )
+            elif space == "log":
                 if init < 1:
-                    return np.logspace(
-                        0,
-                        np.log10(
-                            final + abs(init) + 1),
-                        points) + init - 1
+                    return (
+                        np.logspace(0, np.log10(final + abs(init) + 1), points)
+                        + init
+                        - 1
+                    )
                 else:
                     return np.logspace(
-                        np.log10(init), np.log10(
-                            final + abs(init)), points)
+                        np.log10(init), np.log10(final + abs(init)), points
+                    )
             else:
                 return np.linspace(init, final, points)
         else:
             raise ExperimentException(
-                'space should be either "linear" "log" or "lin-log"')
+                'space should be either "linear" "log" or "lin-log"'
+            )
 
     @staticmethod
     def generate_dataset(shape, time, fwhm=None):
@@ -1239,28 +1376,37 @@ class DataSetCreator:
         -------
         pandas data frame.  data.shape() >>> (len(time), shape.shape[1])
         """
-        if(type(time) == pd.DataFrame):  # generate dataset from SAS and concentration profiles (from model)
-            if(fwhm is not None):  # because profiles start with time=0, i need to add negative times due to gaussian IRF
+        if (
+            type(time) == pd.DataFrame
+        ):  # generate dataset from SAS and concentration profiles (from model)
+            # because profiles start with time=0, i need to add negative times
+            # due to gaussian IRF
+            if (fwhm is not None):
                 t_min = -6 * fwhm
                 times = time.index.to_numpy()
-                if(times[0] != 0):
+                if times[0] != 0:
                     raise ExperimentException(
-                        "Timegrid for dataset generation from SAS should start from zero!")
+                        "Timegrid for dataset generation from SAS should start from zero!"
+                    )
                 # add some negative times which are reflection of positive ones
-                addtimes = -times[1:np.argmin(np.abs(times + t_min))]
+                addtimes = -times[1: np.argmin(np.abs(times + t_min))]
                 addtimes_sorted = np.sort(addtimes)
 
                 t_min_g = -3 * fwhm
-                times_g = times[1:np.argmin(np.abs(times + t_min_g))]
+                times_g = times[1: np.argmin(np.abs(times + t_min_g))]
                 times_g_neg = np.sort(-times_g)
                 # this is time grid around 0 used to build gauss function to do
                 # convolution
                 gauss_x = np.append(np.append(times_g_neg, [0.0]), times_g)
                 gauss_y = DataSetCreator.norm_gauss(
-                    gauss_x, fwhm)  # build gauss function for convolution
+                    gauss_x, fwhm
+                )  # build gauss function for convolution
 
-                newdf = pd.DataFrame(data=np.zeros(
-                    [addtimes_sorted.shape[0], time.shape[1]]), index=addtimes_sorted, columns=time.columns)
+                newdf = pd.DataFrame(
+                    data=np.zeros([addtimes_sorted.shape[0], time.shape[1]]),
+                    index=addtimes_sorted,
+                    columns=time.columns,
+                )
                 # now we have also negative time values with zero signal
                 time = newdf.append(time)
 
@@ -1269,19 +1415,22 @@ class DataSetCreator:
                 gauss_len = gauss_x.shape[0]
                 dx = (profile_x[5] - profile_x[0]) / 5
 
-                new_profile_x = [profile_x[p + int((gauss_len - 1) / 2)]
-                                 for p in range(0, profile_x.shape[0] - gauss_len + 1)]
+                new_profile_x = [
+                    profile_x[p + int((gauss_len - 1) / 2)]
+                    for p in range(0, profile_x.shape[0] - gauss_len + 1)
+                ]
                 time_after_conv = pd.DataFrame(
-                    index=new_profile_x, columns=time.columns)
+                    index=new_profile_x, columns=time.columns
+                )
 
                 # this is not very fast, but does not have to be, and
                 # bug-freedom is priority one. later we can speed up.
                 for i in range(time.columns.shape[0]):
                     profile_y = time.values[:, i]
-                    time_after_conv.values[:,
-                                           i] = [np.trapz(gauss_y * profile_y[p:p + gauss_len],
-                                                          dx=dx) for p in range(0,
-                                                                                profile_x.shape[0] - gauss_len + 1)]
+                    time_after_conv.values[:, i] = [
+                        np.trapz(gauss_y * profile_y[p: p + gauss_len], dx=dx)
+                        for p in range(0, profile_x.shape[0] - gauss_len + 1)
+                    ]
                 time = time_after_conv
 
             time.columns = [i + 1 for i in range(time.shape[1])]
@@ -1289,28 +1438,26 @@ class DataSetCreator:
             return time.dot(shape)
         else:  # generated dataset from DAS
             taus = shape.index
-            values = [[[shape.values[i][ii], taus[i]] for i in range(
-                shape.shape[0])] for ii in range(shape.shape[1])]
+            values = [
+                [[shape.values[i][ii], taus[i]] for i in range(shape.shape[0])]
+                for ii in range(shape.shape[1])
+            ]
             if fwhm is None:
                 spectra = [
-                    ModelCreator.expN(
-                        time,
-                        0,
-                        time[0],
-                        values[i]) for i in range(
-                        len(values))]
+                    ModelCreator.expN(time, 0, time[0], values[i])
+                    for i in range(len(values))
+                ]
             else:
                 spectra = [
-                    ModelCreator.expNGauss(
-                        time,
-                        0,
-                        0,
-                        fwhm,
-                        values[i]) for i in range(
-                        len(values))]
+                    ModelCreator.expNGauss(time, 0, 0, fwhm, values[i])
+                    for i in range(len(values))
+                ]
             # convert to a pandas data frame
-            spectra_final = pd.DataFrame(data=spectra, columns=[str(
-                round(i, 4)) for i in time], index=shape.columns).dropna(axis=1)
+            spectra_final = pd.DataFrame(
+                data=spectra,
+                columns=[str(round(i, 4)) for i in time],
+                index=shape.columns,
+            ).dropna(axis=1)
             spectra_final = spectra_final.transpose()
             return spectra_final
 
@@ -1335,42 +1482,47 @@ class DataSetCreator:
         pandas DataFrame, just input with exchanged tme grid
         """
         old_time = input_data.index.to_numpy()
-        if(old_time[0] > time[0]):
+        if old_time[0] > time[0]:
             raise ExperimentException(
-                "New timegrid must start with later delay than start of old timegrid!")
-        if(old_time[-1] < time[-1]):
+                "New timegrid must start with later delay than start of old timegrid!"
+            )
+        if old_time[-1] < time[-1]:
             raise ExperimentException(
-                "New timegrid must end with earlier delay than end of old timegrid!")
+                "New timegrid must end with earlier delay than end of old timegrid!"
+            )
 
         closest_p = [
-            np.argmin(
-                np.abs(
-                    old_time -
-                    time[x])) for x in range(
-                time.shape[0])]  # vector of closest points on old grid
+            np.argmin(np.abs(old_time - time[x])) for x in range(time.shape[0])
+        ]  # vector of closest points on old grid
         # search for closest point on other side of new grid point
         opposite_p = closest_p + np.sign(time - old_time[closest_p])
         # if two point overlap, move one
         opposite_p = opposite_p + (np.abs(np.sign(opposite_p - closest_p)) - 1)
-        if(opposite_p[0] < 0):
+        if opposite_p[0] < 0:
             # except first, it needs to be moved foward not back
             opposite_p[0] + 2
         opposite_p = opposite_p.astype(int)
 
         # only argument dependent eq part
-        eq_mult = (time - old_time[closest_p]) / \
-            (old_time[closest_p] - old_time[opposite_p])
+        eq_mult = (time - old_time[closest_p]) / (
+            old_time[closest_p] - old_time[opposite_p]
+        )
 
         old_kinetic = input_data.values
-        new_kinetic = np.transpose(np.array([old_kinetic[closest_p,
-                                                         w] + (old_kinetic[closest_p,
-                                                                           w] - old_kinetic[opposite_p,
-                                                                                            w]) * eq_mult for w in range(old_kinetic.shape[1])]))
+        new_kinetic = np.transpose(
+            np.array(
+                [
+                    old_kinetic[closest_p, w]
+                    + (old_kinetic[closest_p, w] - old_kinetic[opposite_p, w])
+                    * eq_mult
+                    for w in range(old_kinetic.shape[1])
+                ]
+            )
+        )
 
         return pd.DataFrame(
-            data=new_kinetic,
-            columns=input_data.columns,
-            index=time)
+            data=new_kinetic, columns=input_data.columns, index=time
+        )
 
     @staticmethod
     def add_noise(data, scale=0.0005):
@@ -1392,8 +1544,9 @@ class DataSetCreator:
         spectra_final_noise = data * 0.0
         for i in range(spectra_final_noise.shape[0]):
             # add white noise to data
-            spectra_final_noise.iloc[i, :] = data.iloc[i, :] + \
-                np.random.normal(size=data.shape[0], scale=scale)
+            spectra_final_noise.iloc[i, :] = data.iloc[
+                i, :
+            ] + np.random.normal(size=data.shape[0], scale=scale)
         return spectra_final_noise
 
     @staticmethod
@@ -1453,16 +1606,19 @@ class DataSetCreator:
         """
         initials = np.array(initials)
         kmatrix = np.array(kmatrix)
-        if(kmatrix.shape[0] != kmatrix.shape[1] or kmatrix.shape[1] != initials.shape[0]):
+        if (
+            kmatrix.shape[0] != kmatrix.shape[1]
+            or kmatrix.shape[1] != initials.shape[0]
+        ):
             raise ExperimentException(
-                'Check if kmatrix and initials have proper dimensions!')
+                "Check if kmatrix and initials have proper dimensions!"
+            )
         timegrid = np.linspace(0, final, points)
         profiles = odeint(
-            DataSetCreator.derrivatives,
-            initials,
-            timegrid,
-            args=(
-                kmatrix,
-            ))
-        return pd.DataFrame(data=profiles, columns=[str(
-            i + 1) for i in range(initials.shape[0])], index=timegrid)
+            DataSetCreator.derrivatives, initials, timegrid, args=(kmatrix,)
+        )
+        return pd.DataFrame(
+            data=profiles,
+            columns=[str(i + 1) for i in range(initials.shape[0])],
+            index=timegrid,
+        )

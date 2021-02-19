@@ -7,7 +7,12 @@ Created on Thu Nov 12 21:18:25 2020
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import Normalize
-from ultrafast.tools import select_traces, FiguresFormating, TimeUnitFormater, TimeMultiplicator
+from ultrafast.tools import (
+    select_traces,
+    FiguresFormating,
+    TimeUnitFormater,
+    TimeMultiplicator,
+)
 from ultrafast.PreprocessingClass import ExperimentException
 from ultrafast.MaptplotLibCursor import SnaptoCursor
 import pandas as pd
@@ -54,14 +59,15 @@ class ExploreData(PlotSVD):
     """
 
     def __init__(
-            self,
-            x,
-            data,
-            wavelength,
-            selected_traces=None,
-            selected_wavelength=None,
-            cmap='viridis',
-            **kwargs):
+        self,
+        x,
+        data,
+        wavelength,
+        selected_traces=None,
+        selected_wavelength=None,
+        cmap="viridis",
+        **kwargs,
+    ):
         """
         Constructor
 
@@ -88,7 +94,7 @@ class ExploreData(PlotSVD):
         kwargs:
             units attribute keys
         """
-        units = dict({'time_unit': 'ps', 'wavelength_unit': 'nm'}, **kwargs)
+        units = dict({"time_unit": "ps", "wavelength_unit": "nm"}, **kwargs)
         self.data = data
         self.x = x
         self.wavelength = wavelength
@@ -100,7 +106,7 @@ class ExploreData(PlotSVD):
             self.selected_wavelength = selected_wavelength
         self.units = units
         self._SVD_fit = False
-        self._unit_formater = TimeUnitFormater(self.units['time_unit'])
+        self._unit_formater = TimeUnitFormater(self.units["time_unit"])
         self._cursor = None
         self._fig_select = None
         self.color_map = cmap
@@ -109,7 +115,8 @@ class ExploreData(PlotSVD):
             self.data,
             self.wavelength,
             self.selected_traces,
-            self.selected_wavelength)
+            self.selected_wavelength,
+        )
         # PlotSVD.__init__(self.x, self.data, self.wavelength, self.selected_traces, self.selected_wavelength)
 
     def plot_traces(self, auto=False, size=14):
@@ -131,57 +138,59 @@ class ExploreData(PlotSVD):
         Figure and axes matplotlib objects
         """
         if auto:
-            values = [i for i in range(len(self.wavelength))[
-                ::len(self.wavelength) // 10]]
+            values = [
+                i
+                for i in range(len(self.wavelength))[
+                    :: len(self.wavelength) // 10
+                ]
+            ]
         else:
             if self.selected_wavelength is not None:
                 values = np.where(
-                    np.in1d(
-                        self.wavelength,
-                        self.selected_wavelength))
+                    np.in1d(self.wavelength, self.selected_wavelength)
+                )
             else:
                 values = [i for i in range(self.data.shape[1])]
         if len(values) <= 10 or auto:
             if self._SVD_fit:
                 legenda = [
-                    'left SV %i' %
-                    i for i in range(
-                        1,
-                        self.data.shape[1] +
-                        1)]
+                    "left SV %i" % i for i in range(1, self.data.shape[1] + 1)
+                ]
             elif self.selected_wavelength is not None:
                 legenda = [
-                    f'{round(i)} {self.units["wavelength_unit"]}' for i in self.wavelength[values]]
+                    f'{round(i)} {self.units["wavelength_unit"]}'
+                    for i in self.wavelength[values]
+                ]
             else:
-                legenda = [f'curve {i}' for i in range(self.data.shape[1])]
+                legenda = [f"curve {i}" for i in range(self.data.shape[1])]
         fig, ax = plt.subplots(1, figsize=(11, 6))
         alpha = 0.60
         for i in values:
-            ax.plot(self.x, self.data[:, i],
-                    marker='o', alpha=alpha, ms=4, ls='')
+            ax.plot(
+                self.x, self.data[:, i], marker="o", alpha=alpha, ms=4, ls=""
+            )
         if self.data.shape[1] <= 10 or auto:
-            ax.legend(legenda, loc='best', ncol=2)
+            ax.legend(legenda, loc="best", ncol=2)
         FiguresFormating.format_figure(ax, self.data, self.x, size=size)
         FiguresFormating.axis_labels(
-            ax,
-            f'Time ({self.units["time_unit"]})',
-            '$\\Delta$A',
-            size=size)
+            ax, f'Time ({self.units["time_unit"]})', "$\\Delta$A", size=size
+        )
         return fig, ax
 
     def plot_spectra(
-            self,
-            times='all',
-            rango=None,
-            n_points=0,
-            cover_range=None,
-            from_max_to_min=True,
-            legend=True,
-            legend_decimal=2,
-            ncol=1,
-            cmap=None,
-            size=14,
-            include_rango_max=True):
+        self,
+        times="all",
+        rango=None,
+        n_points=0,
+        cover_range=None,
+        from_max_to_min=True,
+        legend=True,
+        legend_decimal=2,
+        ncol=1,
+        cmap=None,
+        size=14,
+        include_rango_max=True,
+    ):
         """
         Function to plot spectra
 
@@ -251,24 +260,30 @@ class ExploreData(PlotSVD):
         ----------
         Figure and axes matplotlib objects
         """
-        if times == 'all' or times == 'auto' or isinstance(times, list):
+        if times == "all" or times == "auto" or isinstance(times, list):
             if cmap is None:
                 cmap = self.color_map
             data = self.data
-            wavelength = self.wavelength if self.wavelength is not None else np.array(
-                [i for i in range(len(data[1]))])
-            if data.shape[0] > 250 and times == 'all':
-                times = 'auto'
+            wavelength = (
+                self.wavelength
+                if self.wavelength is not None
+                else np.array([i for i in range(len(data[1]))])
+            )
+            if data.shape[0] > 250 and times == "all":
+                times = "auto"
                 print(
-                    'More than 250 spectra cannot be plotted or your computer risk of running out of memory')
-            elif times == 'all':
+                    "More than 250 spectra cannot be plotted or your computer risk of running out of memory"
+                )
+            elif times == "all":
                 legend = False
                 n_points = 0
             times = self._time_to_real_times(
-                times, rango, include_rango_max, from_max_to_min)
+                times, rango, include_rango_max, from_max_to_min
+            )
             legenda = [
-                self._unit_formater.value_formated(
-                    i, legend_decimal) for i in times]
+                self._unit_formater.value_formated(i, legend_decimal)
+                for i in times
+            ]
             a = np.linspace(0, 1, len(times))
             c = plt.cm.ScalarMappable(norm=None, cmap=cmap)
             colors = c.to_rgba(a, norm=False)
@@ -277,31 +292,47 @@ class ExploreData(PlotSVD):
             for i in range(len(times)):
                 index = (tiempo - times[i]).abs().sort_values().index[0]
                 if n_points != 0:
-                    ax.plot(wavelength, np.mean(
-                        data[index - n_points:index + n_points, :], axis=0), c=colors[i], label=legenda[i])
+                    ax.plot(
+                        wavelength,
+                        np.mean(
+                            data[index - n_points: index + n_points, :],
+                            axis=0,
+                        ),
+                        c=colors[i],
+                        label=legenda[i],
+                    )
                 else:
-                    ax.plot(wavelength, data[index, :],
-                            c=colors[i], label=legenda[i])
+                    ax.plot(
+                        wavelength,
+                        data[index, :],
+                        c=colors[i],
+                        label=legenda[i],
+                    )
             FiguresFormating.format_figure(
-                ax, data, wavelength, size=size, x_tight=True, set_ylim=False)
+                ax, data, wavelength, size=size, x_tight=True, set_ylim=False
+            )
             FiguresFormating.axis_labels(
-                ax, self._get_wave_label(), '$\\Delta$A', size=size)
+                ax, self._get_wave_label(), "$\\Delta$A", size=size
+            )
 
             if legend:
-                leg = plt.legend(loc='best', ncol=ncol, prop={'size': size})
+                leg = plt.legend(loc="best", ncol=ncol, prop={"size": size})
                 leg.set_zorder(np.inf)
             else:
                 cnorm = Normalize(vmin=times[0], vmax=times[-1])
                 cpickmap = plt.cm.ScalarMappable(norm=cnorm, cmap=cmap)
                 cpickmap.set_array([])
                 plt.colorbar(cpickmap).set_label(
-                    label='Time (' + self.units["time_unit"] + ')', size=15)
+                    label="Time (" + self.units["time_unit"] + ")", size=15
+                )
             if cover_range is not None:
                 FiguresFormating.cover_excitation(
-                    ax, cover_range, self.wavelength)
+                    ax, cover_range, self.wavelength
+                )
             return fig, ax
         else:
-            statement = 'times should be either "all" or "auto" \n \
+            statement = (
+                'times should be either "all" or "auto" \n \
             or a list with selected point to plot \n \
             or a list this form ["auto", number of spectra(optional; int), wavelength to select spectra(optional; int)] \n \
             if times is a list and the first element is "auto" then spectra will be auto plotted \n \
@@ -310,8 +341,9 @@ class ExploreData(PlotSVD):
             with three possible options:\n\
             1 -->if only ["auto"] 8 spectra will be plotted equally spaced at the maximum for all wavelengths\n \
             2 -->if ["auto",n_number_spec] n_number spectra will be plotted equally spaced at the maximum for all wavelengths\n \
-            3 -->if ["auto",n_number_spec,wavelength] n_number spectra will be plotted equally spaced at the selected ' \
-                        'wavelength'
+            3 -->if ["auto",n_number_spec,wavelength] n_number spectra will be plotted equally spaced at the selected '
+                "wavelength"
+            )
             raise ExperimentException(statement)
 
     def plot3D(self, cmap=None):
@@ -332,19 +364,20 @@ class ExploreData(PlotSVD):
         X = self.x
         Z = self.data.transpose()
         Y = self.wavelength
-        if self.units["wavelength_unit"] == 'cm-1':
-            xlabel = 'Wavenumber (cm$^{-1}$)'
+        if self.units["wavelength_unit"] == "cm-1":
+            xlabel = "Wavenumber (cm$^{-1}$)"
         else:
             xlabel = f'Wavelength ({self.units["wavelength_unit"]})'
         X, Y = np.meshgrid(X, Y)
         fig = plt.figure(figsize=(8, 4))
-        ax = fig.gca(projection='3d')
-        surf = ax.plot_surface(X, Y, Z, cmap=cmap,
-                               linewidth=0, antialiased=False)
+        ax = fig.gca(projection="3d")
+        surf = ax.plot_surface(
+            X, Y, Z, cmap=cmap, linewidth=0, antialiased=False
+        )
         ax.set_zlim(np.min(Z), np.max(Z))
         ax.set_xlabel(f'Time ({self.units["time_unit"]})')
         ax.set_ylabel(xlabel)
-        ax.set_zlabel('$\\Delta$A')
+        ax.set_zlabel("$\\Delta$A")
         fig.colorbar(surf, shrink=0.5, aspect=5)
         return fig, ax
 
@@ -377,12 +410,15 @@ class ExploreData(PlotSVD):
         ----------
         Modifies the attributes selected_traces and selected_wavelength.
         """
-        if points == 'all':
-            self.selected_traces, self.selected_wavelength = copy(
-                self.data), copy(self.wavelength)
+        if points == "all":
+            self.selected_traces, self.selected_wavelength = (
+                copy(self.data),
+                copy(self.wavelength),
+            )
         else:
             self.selected_traces, self.selected_wavelength = select_traces(
-                self.data, self.wavelength, points, average, avoid_regions)
+                self.data, self.wavelength, points, average, avoid_regions
+            )
 
     def select_traces_graph(self, points=-1, average=0):
         """
@@ -395,38 +431,42 @@ class ExploreData(PlotSVD):
         """
         self._fig_select, ax = self.plot_spectra()
         self._cursor = SnaptoCursor(
-            ax, self.wavelength, self.wavelength * 0.0, points)
-        plt.connect('axes_enter_event', self._cursor.onEnterAxes)
-        plt.connect('axes_leave_event', self._cursor.onLeaveAxes)
-        plt.connect('motion_notify_event', self._cursor.mouseMove)
-        plt.connect('button_press_event', self._cursor.onClick)
+            ax, self.wavelength, self.wavelength * 0.0, points
+        )
+        plt.connect("axes_enter_event", self._cursor.onEnterAxes)
+        plt.connect("axes_leave_event", self._cursor.onLeaveAxes)
+        plt.connect("motion_notify_event", self._cursor.mouseMove)
+        plt.connect("button_press_event", self._cursor.onClick)
         self._fig_select.canvas.mpl_connect(
-            'close_event', self.select_traces(
-                self._cursor.datax, average))
+            "close_event", self.select_traces(self._cursor.datax, average)
+        )
 
     def _time_to_real_times(self, times, rango, include_max, from_max_to_min):
         """
         Method to read the passed argument times and pass this argument to _getAutoPoints
         """
-        if times[0] == 'auto':
+        if times[0] == "auto":
             if len(times) == 1:
                 times = self._get_auto_points(
                     rango=rango,
                     include_rango_max=include_max,
-                    decrease=from_max_to_min)
+                    decrease=from_max_to_min,
+                )
             elif len(times) == 2:
                 times = self._get_auto_points(
                     spectra=times[1],
                     rango=rango,
                     include_rango_max=include_max,
-                    decrease=from_max_to_min)
+                    decrease=from_max_to_min,
+                )
             elif len(times) == 3:
                 times = self._get_auto_points(
                     times[1],
                     times[2],
                     rango=rango,
                     include_rango_max=include_max,
-                    decrease=from_max_to_min)
+                    decrease=from_max_to_min,
+                )
             else:
                 print(
                     'if first element is "auto" then spectra will be auto plotted \n \
@@ -437,13 +477,14 @@ class ExploreData(PlotSVD):
                     'wavelengths\n \
                       if ["auto",15,wavelength] 15 spectra will be plotted equally spaced at the selected wavelength')
 
-        elif times == 'all':
+        elif times == "all":
             times = self.x
-        elif times == 'auto':
+        elif times == "auto":
             times = self._get_auto_points(
                 rango=rango,
                 include_rango_max=include_max,
-                decrease=from_max_to_min)
+                decrease=from_max_to_min,
+            )
         else:
             times = self.x[[np.argmin(abs(self.x - i)) for i in times]]
         times = sorted(list(set(times)))
@@ -454,20 +495,21 @@ class ExploreData(PlotSVD):
         Returns a formatted string from the units attribute
         """
         if self.wavelength is None:
-            xlabel = 'pixel'
-        elif self.units['wavelength_unit'] == 'cm-1':
-            xlabel = 'Wavenumber (cm$^{-1}$)'
+            xlabel = "pixel"
+        elif self.units["wavelength_unit"] == "cm-1":
+            xlabel = "Wavenumber (cm$^{-1}$)"
         else:
             xlabel = f'Wavelength ({self.units["wavelength_unit"]})'
         return xlabel
 
     def _get_auto_points(
-            self,
-            spectra=8,
-            wave=None,
-            rango=None,
-            include_rango_max=True,
-            decrease=True):
+        self,
+        spectra=8,
+        wave=None,
+        rango=None,
+        include_rango_max=True,
+        decrease=True,
+    ):
         """
         Returns list of time points (spectra) equally spaced spectra in amplitude at the wavelength (wave)
         in the time ranges (rango). If include_rango_max the last time point corresponds to the high limit
@@ -481,42 +523,67 @@ class ExploreData(PlotSVD):
         x = self.x
         if rango is not None:
             if isinstance(rango, list) and len(rango) != 2:
-                statement = 'rango should be None or a list containing the minimum and maximum value of the range ' \
-                            'to select points'
+                statement = (
+                    "rango should be None or a list containing the minimum and maximum value of the range "
+                    "to select points")
                 raise ExperimentException(statement)
             rango = sorted(rango)
             mini = np.argmin([abs(i - rango[0]) for i in x])
             maxi = np.argmin([abs(i - rango[1]) for i in x])
-            x = x[mini:maxi + 1]
-            data = data[mini:maxi + 1, :]
+            x = x[mini: maxi + 1]
+            data = data[mini: maxi + 1, :]
         if wave is None:
             idx = np.unravel_index(np.argmax(abs(data), axis=None), data.shape)
             # get points from the maximum of the trace (at the maximum
             # wavelenght) to the end
             if decrease and rango is None:
-                point = [idx[0] + np.argmin(abs(data[idx[0]:, idx[1]] - i)) for i in np.linspace(
-                    np.min(data[idx[0]:, idx[1]]), np.max(data[idx[0]:, idx[1]]), spectra)]
+                point = [
+                    idx[0] + np.argmin(abs(data[idx[0]:, idx[1]] - i))
+                    for i in np.linspace(
+                        np.min(data[idx[0]:, idx[1]]),
+                        np.max(data[idx[0]:, idx[1]]),
+                        spectra,
+                    )
+                ]
             else:
                 # get points from the minimum of the trace (at the maximum
                 # wavelength) to the maximum
-                point = [0 + np.argmin(abs(data[:, idx[1]] - i)) for i in np.linspace(
-                    np.min(data[:, idx[1]]), np.max(data[:, idx[1]]), spectra)]
+                point = [
+                    0 + np.argmin(abs(data[:, idx[1]] - i))
+                    for i in np.linspace(
+                        np.min(data[:, idx[1]]),
+                        np.max(data[:, idx[1]]),
+                        spectra,
+                    )
+                ]
                 if 0 not in point:
                     point[np.argmin(point)] = 0
             if rango is not None and include_rango_max:
                 point[np.argmax(point)] = -1
-#           print (wavelength[idx[1]])
+            #           print (wavelength[idx[1]])
             return np.sort(np.array(x)[point])
         else:
             if wavelength is not None:
                 wave_idx = np.argmin(abs(np.array(wavelength) - wave))
                 idx = np.argmax(abs(data[:, wave_idx]))
                 if decrease and rango is None:
-                    point = [idx + np.argmin(abs(data[idx:, wave_idx] - i)) for i in np.linspace(
-                        np.min(data[idx:, wave_idx]), np.max(data[idx:, wave_idx]), spectra)]
+                    point = [
+                        idx + np.argmin(abs(data[idx:, wave_idx] - i))
+                        for i in np.linspace(
+                            np.min(data[idx:, wave_idx]),
+                            np.max(data[idx:, wave_idx]),
+                            spectra,
+                        )
+                    ]
                 else:
-                    point = [0 + np.argmin(abs(data[:, wave_idx] - i)) for i in np.linspace(
-                        np.min(data[:, wave_idx]), np.max(data[:, wave_idx]), spectra)]
+                    point = [
+                        0 + np.argmin(abs(data[:, wave_idx] - i))
+                        for i in np.linspace(
+                            np.min(data[:, wave_idx]),
+                            np.max(data[:, wave_idx]),
+                            spectra,
+                        )
+                    ]
                     if 0 not in point:
                         point[np.argmin(point)] = 0
                 if rango is not None and include_rango_max:
@@ -524,4 +591,4 @@ class ExploreData(PlotSVD):
                 print(wavelength[wave_idx])
                 return np.sort(np.array(x)[point])
             else:
-                print('Wavelength is not defined')
+                print("Wavelength is not defined")

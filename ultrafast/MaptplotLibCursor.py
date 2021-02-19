@@ -9,15 +9,16 @@ import numpy as np
 
 class SnaptoCursor(object):
     def __init__(
-            self,
-            ax,
-            x,
-            y,
-            number_click=-1,
-            vertical_draw=True,
-            draw='snap',
-            color=False,
-            single_line=True):
+        self,
+        ax,
+        x,
+        y,
+        number_click=-1,
+        vertical_draw=True,
+        draw="snap",
+        color=False,
+        single_line=True,
+    ):
         if number_click == -1:
             self.number_click = np.inf
         else:
@@ -51,25 +52,28 @@ class SnaptoCursor(object):
             texto_x = 1
         else:
             try:
-                texto_x = [True if i == '0' else False for i in str(x).split('.')[
-                    1]].index(False) + 1
+                texto_x = [
+                    True if i == "0" else False for i in str(x).split(".")[1]
+                ].index(False) + 1
             except BaseException:
                 texto_x = 3
         if abs(y) >= 0.1:
             texto_y = 1
         else:
             try:
-                texto_y = [True if i == '0' else False for i in str(y).split('.')[
-                    1]].index(False) + 1
+                texto_y = [
+                    True if i == "0" else False for i in str(y).split(".")[1]
+                ].index(False) + 1
             except BaseException:
                 texto_y = 3
         if self.similar.all() == False:
             self.lx.set_ydata(y)
-            self.txt.set_text('x=' + str(round(x, texto_x)) +
-                              ', y=' + str(round(y, texto_y)))
+            self.txt.set_text(
+                "x=" + str(round(x, texto_x)) + ", y=" + str(round(y, texto_y))
+            )
             self.txt.set_position((x, y))
         else:
-            self.txt.set_text('x=' + str(round(x, texto_x)))
+            self.txt.set_text("x=" + str(round(x, texto_x)))
         self.txt.set_position((x, y))
         self.ax.figure.canvas.draw_idle()
 
@@ -80,26 +84,34 @@ class SnaptoCursor(object):
             # print(self.number_click)
             if len(self.datax) < self.number_click:
                 x, y = event.xdata, event.ydata
-                if self.draw == 'snap':
+                if self.draw == "snap":
                     indx = np.searchsorted(self.x, [x])[0]
                     x = self.x[indx]
                     y = self.y[indx]
                 self.datax.append(x)
                 self.datay.append(y)
-#                print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
-#                      ('double' if event.dblclick else 'single', event.button,
-#                       event.x, event.y, event.xdata, event.ydata))
+                #                print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+                #                      ('double' if event.dblclick else 'single', event.button,
+                # event.x, event.y, event.xdata, event.ydata))
                 if self.vertical_draw:
-                    self.scat.append(self.ax.axvline(
-                        self.datax[-1], alpha=0.5, color='red', zorder=np.inf))
+                    self.scat.append(
+                        self.ax.axvline(
+                            self.datax[-1],
+                            alpha=0.5,
+                            color="red",
+                            zorder=np.inf,
+                        )
+                    )
                 else:
                     self.scat.append(
                         self.ax.scatter(
                             self.datax,
                             self.datay,
-                            color='red',
-                            marker='x',
-                            zorder=np.inf))
+                            color="red",
+                            marker="x",
+                            zorder=np.inf,
+                        )
+                    )
             else:
                 pass
             self.ax.figure.canvas.draw_idle()
@@ -121,7 +133,7 @@ class SnaptoCursor(object):
         except BaseException:
             pass
         if self.similar.all() == False:
-            self.lx = self.ax.axhline(color='k', alpha=0.2)  # the horiz line
+            self.lx = self.ax.axhline(color="k", alpha=0.2)  # the horiz line
         if self.single_line:
             try:
                 line = self.ax.lines[0]
@@ -130,10 +142,11 @@ class SnaptoCursor(object):
                     self.y = line.get_ydata()
             except BaseException:
                 pass
-        self.ly = self.ax.axvline(color='k', alpha=0.2)  # the vert line
-        self.marker, = self.ax.plot(
-            [0], [0], marker="o", color="crimson", zorder=3)
-        self.txt = self.ax.text(0.7, 0.9, '')
+        self.ly = self.ax.axvline(color="k", alpha=0.2)  # the vert line
+        (self.marker,) = self.ax.plot(
+            [0], [0], marker="o", color="crimson", zorder=3
+        )
+        self.txt = self.ax.text(0.7, 0.9, "")
         if self.color is not False:
             event.inaxes.patch.set_facecolor(self.color)
         event.canvas.draw()
@@ -141,11 +154,11 @@ class SnaptoCursor(object):
     def onLeaveAxes(self, event):
         if not event.inaxes:
             return
-        #print ('leave_axes', event.inaxes)
+        # print ('leave_axes', event.inaxes)
         self.marker.remove()
         self.ly.remove()
         self.txt.remove()
         if self.similar.all() == False:
             self.lx.remove()
-        event.inaxes.patch.set_facecolor('white')
+        event.inaxes.patch.set_facecolor("white")
         event.canvas.draw()

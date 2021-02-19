@@ -86,7 +86,8 @@ class Preprocessing:
                 mean = np.mean(data[:number_spec, :], axis=0)
             elif isinstance(number_spec, list) and len(number_spec) == 2:
                 mean = np.mean(
-                    data[number_spec[0]:number_spec[1] + 1, :], axis=0)
+                    data[number_spec[0]: number_spec[1] + 1, :], axis=0
+                )
         for i in range(len(data)):
             data_return[i, :] = data[i, :] - mean
         return data_return
@@ -153,7 +154,7 @@ class Preprocessing:
         index = [np.argmin(abs(dimension_vector - i)) for i in points]
         if ndata == nx:
             if axis not in [0, 1]:
-                exception = 'axis should be 0 (time) or 1 (wavelength)'
+                exception = "axis should be 0 (time) or 1 (wavelength)"
                 raise ExperimentException(exception)
             data_return = np.delete(data, index, axis=axis)
         elif ndata == len(dimension_vector):
@@ -161,9 +162,9 @@ class Preprocessing:
         elif nx == len(dimension_vector):
             data_return = np.delete(data, index, axis=1)
         else:
-            exception = 'The length of the vector pass is not coincident with \
-                        any of the data dimensions'
-            print('exception')
+            exception = "The length of the vector pass is not coincident with \
+                        any of the data dimensions"
+            print("exception")
             raise ExperimentException(exception)
         dimension_vector = np.delete(dimension_vector, index)
         return data_return, dimension_vector
@@ -209,52 +210,55 @@ class Preprocessing:
         if columns is None:
             columns_res = np.array([i for i in range(len(data[1]))])
         if len(columns) != data.shape[1]:
-            statement_1 = 'The size of the columns vector is not equivalent with\
-                    the number of columns of data'
+            statement_1 = "The size of the columns vector is not equivalent with\
+                    the number of columns of data"
             raise ExperimentException(statement_1)
         if innerdata is not None:
-            statement_3 = 'to select or cut data mini and maxi need to be given'
+            statement_3 = (
+                "to select or cut data mini and maxi need to be given"
+            )
             if mini is None:
                 raise ExperimentException(statement_3)
             if maxi is None:
                 raise ExperimentException(statement_3)
         if mini is None and maxi is None:
-            statement_2 = 'please indicate only mini or maxi margins, or booth \
-            if data inside margins want to be cut or selected with innerdata'
+            statement_2 = "please indicate only mini or maxi margins, or booth \
+            if data inside margins want to be cut or selected with innerdata"
             raise ExperimentException(statement_2)
         elif maxi is not None and mini is None:
             cut_index = (
-                pd.Series(columns) -
-                maxi).abs().sort_values().index[0]
+                (pd.Series(columns) - maxi).abs().sort_values().index[0]
+            )
             if columns[cut_index] < maxi:
                 cut_index += 1
             columns_res = columns[:cut_index]
             data_res = data[:, :cut_index]
         elif mini is not None and maxi is None:
             cut_index = (
-                pd.Series(columns) -
-                mini).abs().sort_values().index[0]
+                (pd.Series(columns) - mini).abs().sort_values().index[0]
+            )
             if columns[cut_index] < mini:
                 cut_index += 1
             columns_res = columns[cut_index:]
             data_res = data[:, cut_index:]
-        elif innerdata == 'select' or innerdata == 'cut':
+        elif innerdata == "select" or innerdata == "cut":
             cut_maxi = (pd.Series(columns) - maxi).abs().sort_values().index[0]
             cut_mini = (pd.Series(columns) - mini).abs().sort_values().index[0]
             if columns[cut_mini] < mini:
                 cut_mini += 1
             if columns[cut_maxi] < maxi:
                 cut_maxi += 1
-            if innerdata == 'select':
+            if innerdata == "select":
                 columns_res = columns[cut_mini:cut_maxi]
                 data_res = data[:, cut_mini:cut_maxi]
             else:
                 columns_res = np.append(columns[:cut_mini], columns[cut_maxi:])
                 data_res = np.concatenate(
-                    (data[:, :cut_mini], data[:, cut_maxi:]), axis=1)
+                    (data[:, :cut_mini], data[:, cut_maxi:]), axis=1
+                )
         else:
-            statement_4 = 'if mini and maxi margins are be given indicates \
-            that innerdata action either cut or select'
+            statement_4 = "if mini and maxi margins are be given indicates \
+            that innerdata action either cut or select"
             raise ExperimentException(statement_4)
         return data_res, columns_res
 
@@ -300,16 +304,17 @@ class Preprocessing:
             min_index = np.argmin([abs(i - mini) for i in rows])
             maxi_index = np.argmin([abs(i - maxi) for i in rows])
         if maxi_index is not None:
-            rows_res = rows[min_index:maxi_index + 1]
-            data_res = data[min_index:maxi_index + 1, :]
+            rows_res = rows[min_index: maxi_index + 1]
+            data_res = data[min_index: maxi_index + 1, :]
         else:
             rows_res = rows[min_index:]
             data_res = data[min_index:, :]
         return data_res, rows_res
 
     @staticmethod
-    def average_time_points(data, time, starting_point, step,
-                            method='log', grid_dense=5):
+    def average_time_points(
+        data, time, starting_point, step, method="log", grid_dense=5
+    ):
         """
         Average time points collected (rows). This function can be use to average
         time points. Useful in multiprobe time-resolved experiments or flash-
@@ -364,7 +369,7 @@ class Preprocessing:
         ----------
         initial data and time vector averaged
         """
-        if method not in ['log', 'constant']:
+        if method not in ["log", "constant"]:
             statement = 'Method should be "log" or "constant"'
             raise ExperimentException(statement)
         point = np.argmin([abs(i - starting_point) for i in time])
@@ -373,18 +378,19 @@ class Preprocessing:
         index = []
         it = point
         log = 1
-        if method == 'log':
+        if method == "log":
             if grid_dense <= 1:
-                statement = 'grid_dense should be higher than 1'
+                statement = "grid_dense should be higher than 1"
                 raise ExperimentException(statement)
             value /= grid_dense
         number = time_points[point] + value
         while number < time_points[-1]:
             time_average = [
-                i for i in range(
-                    it + 1,
-                    len(time_points)) if time_points[i] <= number]
-            if method == 'log':
+                i
+                for i in range(it + 1, len(time_points))
+                if time_points[i] <= number
+            ]
+            if method == "log":
                 log += 1
             number += value * log
             if len(time_average) >= 1:
@@ -394,27 +400,25 @@ class Preprocessing:
                 log += 1
         index.append([i for i in range(index[-1][-1] + 1, len(time_points))])
 
-        data_res = data[:point + 1, :]
-        time_res = time[:point + 1]
+        data_res = data[: point + 1, :]
+        time_res = time[: point + 1]
         for i in range(len(index)):
-            if method == 'log' and len(index[i]) == 1:
+            if method == "log" and len(index[i]) == 1:
                 column = (data[index[i][0], :]).reshape(1, data.shape[1])
                 timin = time[index[i][0]]
             else:
-                column = np.mean(data[index[i][0]:index[i][-1], :],
-                                 axis=0).reshape(1, data.shape[1])
-                timin = np.mean(time[index[i][0]:index[i][-1]])
+                column = np.mean(
+                    data[index[i][0]: index[i][-1], :], axis=0
+                ).reshape(1, data.shape[1])
+                timin = np.mean(time[index[i][0]: index[i][-1]])
             data_res = np.concatenate((data_res, column), axis=0)
             time_res = np.append(time_res, timin)
         return data_res, time_res
 
     @staticmethod
     def derivate_space(
-            data,
-            window_length=25,
-            polyorder=3,
-            deriv=1,
-            mode='mirror'):
+        data, window_length=25, polyorder=3, deriv=1, mode="mirror"
+    ):
         """
         Apply a Savitky-Golay filter to the data in the spectral range (rows).
         This function can be used to correct for baseline fluctuations and still
@@ -450,8 +454,13 @@ class Preprocessing:
         """
         data2 = 0.0 * data
         for i in range(len(data)):
-            data2[i, :] = SF(data[i, :], window_length=window_length,
-                             polyorder=polyorder, deriv=deriv, mode=mode)
+            data2[i, :] = SF(
+                data[i, :],
+                window_length=window_length,
+                polyorder=polyorder,
+                deriv=deriv,
+                mode=mode,
+            )
         return data2
 
     @staticmethod
@@ -506,35 +515,33 @@ class Preprocessing:
         initial data and time vector averaged
         """
         if len(points) > order:
-            statement = 'The number of points need to be higher than the polynomial order'
+            statement = "The number of points need to be higher than the polynomial order"
             raise ExperimentException(statement)
         n_r, n_c = data.shape
         index = [np.argmin(abs(wavelength - i)) for i in points]
         data_corr = data * 1.0
         for i in range(n_r):
             print(i)
-            polynom = np.poly1d(np.polyfit(
-                wavelength[index], data[i, index], order))
+            polynom = np.poly1d(
+                np.polyfit(wavelength[index], data[i, index], order)
+            )
             data_corr[i, :] = data[i, :] - polynom(wavelength)
         return data_corr
 
     @staticmethod
     def correct_chrip(
-            data,
-            wavelength,
-            time,
-            method='selmeiller',
-            return_details=False):
-        if method == 'selmeiller':
+        data, wavelength, time, method="selmeiller", return_details=False
+    ):
+        if method == "selmeiller":
             GVD = ChripCorrection(data, wavelength, time)
             correct_data = GVD.GVDFromGrapth()
-            details = f'\t\tCorrected with selmeiller equation: {round(GVD.GVD_offset,2)} offset,\
+            details = f"\t\tCorrected with selmeiller equation: {round(GVD.GVD_offset,2)} offset,\
             \n\t\tSiO2:{round(GVD.SiO2,2)} mm, \
-            CaF2:{round(GVD.CaF2,2)} mm BK7:{round(GVD.BK7,2)} mm'
-        elif method == 'polynomial':
+            CaF2:{round(GVD.CaF2,2)} mm BK7:{round(GVD.BK7,2)} mm"
+        elif method == "polynomial":
             # to be coded
             pass
-        elif method == 'exponential':
+        elif method == "exponential":
             # to be coded
             pass
         if return_details:

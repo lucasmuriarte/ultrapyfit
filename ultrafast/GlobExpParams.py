@@ -39,9 +39,11 @@ class GlobExpParameters:
             list containing the initial estimates for the exponential functions
         """
 
-        self.taus = [taus] if isinstance(
-            taus, float) or isinstance(
-            taus, int) else taus
+        self.taus = (
+            [taus]
+            if isinstance(taus, float) or isinstance(taus, int)
+            else taus
+        )
         self.exp_no = len(self.taus)
         self.number_traces = number_traces
         self.params = Parameters()
@@ -53,28 +55,71 @@ class GlobExpParameters:
         """
         for iy in range(self.number_traces):
             self.params.add_many(
-                ('y0_' + str(iy + 1), 0, True, None, None, None, None),
-                ('t0_' + str(iy + 1), t0, vary_t0, 0, None, None, None))
+                ("y0_" + str(iy + 1), 0, True, None, None, None, None),
+                ("t0_" + str(iy + 1), t0, vary_t0, 0, None, None, None),
+            )
 
             for i in range(self.exp_no):
                 # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
                 self.params.add_many(
-                    ('pre_exp%i_' % (i + 1) + str(iy + 1), 0.1 * 10**(-i), True, None, None, None, None),
-                    ('tau%i_' % (i + 1) + str(iy + 1), self.taus[i], True, 0.00000001, None, None, None))
+                    (
+                        "pre_exp%i_" % (i + 1) + str(iy + 1),
+                        0.1 * 10 ** (-i),
+                        True,
+                        None,
+                        None,
+                        None,
+                        None,
+                    ),
+                    (
+                        "tau%i_" % (i + 1) + str(iy + 1),
+                        self.taus[i],
+                        True,
+                        0.00000001,
+                        None,
+                        None,
+                        None,
+                    ),
+                )
 
-    def _add_deconvolution(self, fwhm, opt_fwhm, tau_inf=1E12):
+    def _add_deconvolution(self, fwhm, opt_fwhm, tau_inf=1e12):
         """
         add the deconvolution parameters to a sum of "exp_no" exponential decay
         """
         for iy in range(self.number_traces):
             self.params.add_many(
-                ('fwhm_' + str(iy + 1), fwhm, opt_fwhm, 0.000001, None, None, None))
+                (
+                    "fwhm_" + str(iy + 1),
+                    fwhm,
+                    opt_fwhm,
+                    0.000001,
+                    None,
+                    None,
+                    None,
+                )
+            )
             if tau_inf is not None:
                 self.params.add_many(
-                    ('yinf_' + str(iy + 1), 0.001, True, None, None, None, None))
+                    (
+                        "yinf_" + str(iy + 1),
+                        0.001,
+                        True,
+                        None,
+                        None,
+                        None,
+                        None,
+                    )
+                )
 
-    def adjustParams(self, t0, vary_t0=True, fwhm=0.12, opt_fwhm=False,
-                     GVD_corrected=True, tau_inf=1E12):
+    def adjustParams(
+        self,
+        t0,
+        vary_t0=True,
+        fwhm=0.12,
+        opt_fwhm=False,
+        GVD_corrected=True,
+        tau_inf=1e12,
+    ):
         """
         function to initialize parameters for global fitting
 
@@ -109,15 +154,16 @@ class GlobExpParameters:
         """
         self._generateParams(t0, vary_t0)
         for iy in range(2, self.number_traces + 1):
-            self.params['t0_%i' % iy].expr = 't0_1'
+            self.params["t0_%i" % iy].expr = "t0_1"
             for i in range(self.exp_no):
-                self.params['tau%i_' %
-                            (i + 1) + str(iy)].expr = 'tau%i_1' % (i + 1)
+                self.params["tau%i_" % (i + 1) + str(iy)].expr = "tau%i_1" % (
+                    i + 1
+                )
         if fwhm is not None:
             self._add_deconvolution(fwhm, opt_fwhm, tau_inf=tau_inf)
             if not GVD_corrected:
                 for iy in range(2, self.number_traces + 1):
-                    self.params['t0_%i' % iy].expr = None
-                    self.params['t0_%i' % iy].vary = True
+                    self.params["t0_%i" % iy].expr = None
+                    self.params["t0_%i" % iy].vary = True
         else:
-            self.params['t0_1'].vary = False
+            self.params["t0_1"].vary = False

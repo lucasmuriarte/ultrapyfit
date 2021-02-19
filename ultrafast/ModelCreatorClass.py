@@ -28,7 +28,7 @@ class ModelCreator:
     ExpNGauss: weighted sum of exponential modified Gaussian decay functions with an off-set
     """
 
-    def __init__(self, exp_no, time, tau_inf=1E+12):
+    def __init__(self, exp_no, time, tau_inf=1e12):
         """
         Constructor
 
@@ -93,8 +93,12 @@ class ModelCreator:
         ----------
         1darray of size equal to time-vector
         """
-        return y0 + sum([pre_exp * ModelCreator.exp1(time - t0, tau)
-                         for pre_exp, tau in values])
+        return y0 + sum(
+            [
+                pre_exp * ModelCreator.exp1(time - t0, tau)
+                for pre_exp, tau in values
+            ]
+        )
 
     @staticmethod
     def expGauss(time, tau, sigma):
@@ -117,8 +121,11 @@ class ModelCreator:
         1darray of size equal to time-vector
         """
         inv_tau = 1 / tau
-        return 0.5 * np.exp(-inv_tau * time + sigma**2 * inv_tau**2 / 2) * \
-            (1 + erf((time - sigma**2 * inv_tau) / (sigma * 2**0.5)))
+        return (
+            0.5
+            * np.exp(-inv_tau * time + sigma ** 2 * inv_tau ** 2 / 2)
+            * (1 + erf((time - sigma ** 2 * inv_tau) / (sigma * 2 ** 0.5)))
+        )
 
     @staticmethod
     def expNGauss(time, y0, t0, fwhm, values):
@@ -151,8 +158,12 @@ class ModelCreator:
         ----------
         1darray of size equal to x attribute vector (time vector)
         """
-        return y0 + sum([pre_exp * ModelCreator.expGauss(time - \
-                        t0, tau, fwhm / 2.35482) for pre_exp, tau in values])
+        return y0 + sum(
+            [
+                pre_exp * ModelCreator.expGauss(time - t0, tau, fwhm / 2.35482)
+                for pre_exp, tau in values
+            ]
+        )
 
     def expNGaussDataset(self, params, i):
         """
@@ -176,14 +187,18 @@ class ModelCreator:
         1darray of size equal to time-vector
         """
 
-        y0 = params['y0_%i' % (i + 1)].value
-        t0 = params['t0_%i' % (i + 1)].value
-        fwhm = params['fwhm_%i' % (i + 1)].value
-        values = [[params['pre_exp%i_' %
-                          (ii + 1) + str(i + 1)].value, params['tau%i_' %
-                                                               (ii + 1) + str(i + 1)].value] for ii in range(self.exp_no)]
+        y0 = params["y0_%i" % (i + 1)].value
+        t0 = params["t0_%i" % (i + 1)].value
+        fwhm = params["fwhm_%i" % (i + 1)].value
+        values = [
+            [
+                params["pre_exp%i_" % (ii + 1) + str(i + 1)].value,
+                params["tau%i_" % (ii + 1) + str(i + 1)].value,
+            ]
+            for ii in range(self.exp_no)
+        ]
         if self.tau_inf is not None:
-            yinf = params['yinf_%i' % (i + 1)].value
+            yinf = params["yinf_%i" % (i + 1)].value
             values.append([yinf, self.tau_inf])
         return self.expNGauss(self.x, y0, t0, fwhm, values)
 
@@ -207,12 +222,16 @@ class ModelCreator:
         ----------
         1darray of size equal to time-vector
         """
-        y0 = params['y0_%i' % (i + 1)].value
-        t0 = params['t0_%i' % (i + 1)].value
+        y0 = params["y0_%i" % (i + 1)].value
+        t0 = params["t0_%i" % (i + 1)].value
         index = np.argmin([abs(i - t0) for i in self.x])
-        values = [[params['pre_exp%i_' %
-                          (ii + 1) + str(i + 1)].value, params['tau%i_' %
-                                                               (ii + 1) + str(i + 1)].value] for ii in range(self.exp_no)]
+        values = [
+            [
+                params["pre_exp%i_" % (ii + 1) + str(i + 1)].value,
+                params["tau%i_" % (ii + 1) + str(i + 1)].value,
+            ]
+            for ii in range(self.exp_no)
+        ]
         return self.expN(self.x[index:], y0, t0, values)
 
     def expNDatasetFast(self, params, i, expvects):
@@ -239,11 +258,14 @@ class ModelCreator:
         ----------
         1darray of size equal to expvects
         """
-        y0 = params['y0_%i' % (i + 1)].value
-        pre_exp = [params['pre_exp%i_' %
-                          (ii + 1) + str(i + 1)].value for ii in range(self.exp_no)]
-        return y0 + sum([pre_exp[iii] * expvects[iii]
-                         for iii in range(self.exp_no)])
+        y0 = params["y0_%i" % (i + 1)].value
+        pre_exp = [
+            params["pre_exp%i_" % (ii + 1) + str(i + 1)].value
+            for ii in range(self.exp_no)
+        ]
+        return y0 + sum(
+            [pre_exp[iii] * expvects[iii] for iii in range(self.exp_no)]
+        )
 
     def expNGaussDatasetFast(self, params, i, expvects):
         """
@@ -270,16 +292,27 @@ class ModelCreator:
         ----------
         1darray of size equal to expvects
         """
-        y0 = params['y0_%i' % (i + 1)].value
-        pre_exp = [params['pre_exp%i_' %
-                          (ii + 1) + str(i + 1)].value for ii in range(self.exp_no)]
+        y0 = params["y0_%i" % (i + 1)].value
+        pre_exp = [
+            params["pre_exp%i_" % (ii + 1) + str(i + 1)].value
+            for ii in range(self.exp_no)
+        ]
         if self.tau_inf is not None:
-            yinf = params['yinf_%i' % (i + 1)].value
-            return y0 + sum([pre_exp[iii] * expvects[iii]
-                             for iii in range(self.exp_no)]) + yinf * expvects[-1]
+            yinf = params["yinf_%i" % (i + 1)].value
+            return (
+                y0
+                + sum(
+                    [
+                        pre_exp[iii] * expvects[iii]
+                        for iii in range(self.exp_no)
+                    ]
+                )
+                + yinf * expvects[-1]
+            )
         else:
-            return y0 + sum([pre_exp[iii] * expvects[iii]
-                             for iii in range(self.exp_no)])
+            return y0 + sum(
+                [pre_exp[iii] * expvects[iii] for iii in range(self.exp_no)]
+            )
 
     def expNGaussDatasetTM(self, params, i, cons_eigen):
         """
@@ -306,23 +339,29 @@ class ModelCreator:
         exp_no = self.exp_no
         x = self.x
         deconv = self.deconv
-        y0 = params['y0_%i' % (i + 1)].value
-        t0 = params['t0_%i' % (i + 1)].value
-        pre_exp = [params['pre_exp%i_' %
-                          (ii + 1) + str(i + 1)].value for ii in range(exp_no)]
+        y0 = params["y0_%i" % (i + 1)].value
+        t0 = params["t0_%i" % (i + 1)].value
+        pre_exp = [
+            params["pre_exp%i_" % (ii + 1) + str(i + 1)].value
+            for ii in range(exp_no)
+        ]
         coeffs, eigs, eigenmatrix = cons_eigen[0], cons_eigen[1], cons_eigen[2]
         if deconv:
-            fwhm = params['fwhm_%i' % (i + 1)].value
-            expvects = [coeffs[val] *
-                        self.expGauss(x -
-                                      t0, -
-                                      1 /
-                                      eigs[val], fwhm /
-                                      2.35482) for val in range(len(eigs))]
+            fwhm = params["fwhm_%i" % (i + 1)].value
+            expvects = [
+                coeffs[val]
+                * self.expGauss(x - t0, -1 / eigs[val], fwhm / 2.35482)
+                for val in range(len(eigs))
+            ]
         else:
             expvects = [
-                coeffs[val] * self.exp1(x - t0, -1 / eigs[val]) for val in range(len(eigs))]
-        concentrations = [sum([eigenmatrix[i, j] * expvects[j]
-                               for j in range(len(eigs))]) for i in range(len(eigs))]
-        return y0 + sum([pre_exp[iii] * concentrations[iii]
-                         for iii in range(exp_no)])
+                coeffs[val] * self.exp1(x - t0, -1 / eigs[val])
+                for val in range(len(eigs))
+            ]
+        concentrations = [
+            sum([eigenmatrix[i, j] * expvects[j] for j in range(len(eigs))])
+            for i in range(len(eigs))
+        ]
+        return y0 + sum(
+            [pre_exp[iii] * concentrations[iii] for iii in range(exp_no)]
+        )
