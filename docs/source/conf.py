@@ -12,7 +12,10 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../../ultrafast'))
+sys.path.insert(0, os.path.abspath('../../ultrafast/fit'))
+sys.path.insert(0, os.path.abspath('../../ultrafast/graphics'))
+sys.path.insert(0, os.path.abspath('../../ultrafast/utils'))
 
 
 # -- Project information -----------------------------------------------------
