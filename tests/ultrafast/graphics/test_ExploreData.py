@@ -1,8 +1,8 @@
 import unittest
 from unittest import mock
-from chempyspec.ultrafast.outils import readData
-from chempyspec.ultrafast.PlotTransientClass import ExploreData
-from chempyspec.ultrafast.outils import select_traces
+from chempyspec.ultrafast.utils.utils import read_data
+from chempyspec.ultrafast.graphics.ExploreData import ExploreData
+from chempyspec.ultrafast.utils.utils import select_traces
 import numpy as np
 from parameterized import parameterized 
 import matplotlib as mpl
@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 
 
 path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_gauss_denoised.csv'
-time, data, wave = readData(path, wave_is_row=True)
+time, data, wave = read_data(path, wave_is_row=True)
 data_select, wave_select = select_traces(data, wave, 'auto')
 explorer = ExploreData(time, data, wave, data_select, wave_select)
-explorer.units['wavelength_unit'] = 'nm'
+explorer._units['wavelength_unit'] = 'nm'
 
 
 @mock.patch("%s.my_module.plt" % __name__)
@@ -126,10 +126,10 @@ class TestPlotTransientClass(unittest.TestCase):
     def test__getWaveLabel(self):
         text = explorer._get_wave_label()
         self.assertEqual(text, 'Wavelength (nm)')
-        explorer.units['wavelength_unit'] = 'cm-1'
+        explorer._units['wavelength_unit'] = 'cm-1'
         text = explorer._get_wave_label()
         self.assertEqual(text, 'Wavenumber (cm$^{-1}$)')
-        explorer.units['wavelength_unit'] = 'nm'
+        explorer._units['wavelength_unit'] = 'nm'
         
     @parameterized.expand([[["auto", 8], None, False, False],
                            [["auto", 8, 302], None, True, False],

@@ -1,11 +1,10 @@
 import io
-import unittest
 import unittest.mock
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.axis import Tick 
 from parameterized import parameterized
-from chempyspec.ultrafast.outils import *
+from chempyspec.ultrafast.utils.utils import *
 
 
 data_wave = np.ones((75, 150))

@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'chempyspec'
+project = 'ultrafast'
 copyright = '2020, Lucas M. Uriarte and Luc Labarriere'
 author = 'Lucas M. Uriarte and Luc Labarriere'
 

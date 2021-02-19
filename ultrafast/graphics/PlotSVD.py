@@ -8,7 +8,7 @@ from scipy.sparse.linalg import svds as svd
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.widgets import Slider, Button
-from chempyspec.ultrafast.outils import select_traces
+from chempyspec.ultrafast.utils.utils import select_traces
 from copy import copy
 
 
@@ -181,16 +181,26 @@ class PlotSVD:
             pass
         self._fig.canvas.draw_idle()
 
-    def _selectSVD(self, val):
+    def select_SVD_vectors(self, val):
         """
         function to select the left singular vectors as selected traces. This allows to
         perform a fit to the singular vector which is much faster than a global fit, since
         the number of singular vector is lower.
+        Parameters
+        ----------
+        val: int
+            indicate the number of singular vectors to select
+        """
+        self.selected_traces = self.U[:, :val]
+        self._SVD_fit = True
+        self.selected_wavelength = np.linspace(1, val, val)
+
+    def _selectSVD(self, val):
+        """
+        function to select the left singular vectors as selected traces from the SVD plot.
         """
         value = int(round(self._specSVD.val))
-        self.selected_traces = self.U[:, :value]
-        self.selected_wavelength = np.linspace(1, value, value)
-        self._SVD_fit = True
+        self.select_SVD_vectors(value)
         plt.close(self._fig)
         self._close_svd_fig()
 
@@ -218,10 +228,6 @@ class PlotSVD:
             to avoid in wavelength values
             i. e.: [[380,450],[520,530] traces with wavelength values between 380-450
                    and 520-530 will not be selected
-
-        Returns
-        ----------
-        Modifies the attributes selected_traces and selected_wavelength.
         """
         if points == 'all':
             self.selected_traces, self.selected_wavelength = copy(self.data), copy(self.wavelength)
