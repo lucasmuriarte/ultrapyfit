@@ -13,7 +13,7 @@ import scipy.integrate as integral
 from matplotlib.widgets import Slider
 
 
-class ExploreResults(FiguresFormating):
+class ExploreResults():
     def __init__(self, fits, **kwargs):
         units = dict({'time_unit': 'ps', 'wavelength_unit': 'nm'}, **kwargs)
         if type(fits) == dict:

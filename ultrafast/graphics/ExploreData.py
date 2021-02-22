@@ -265,7 +265,10 @@ class ExploreData(PlotSVD):
             if cmap is None:
                 cmap = self.cmap
             data = self.data
-            wavelength = self.wavelength if self.wavelength is not None else np.array([i for i in range(len(data[1]))])
+            if self.wavelength is not None:
+                wavelength = self.wavelength
+            else:
+                np.array([i for i in range(len(data[1]))])
             if data.shape[0] > 250 and times == 'all':
                 times = 'auto'
                 print('More than 250 spectra cannot be plotted or your computer risk of running out of memory')
@@ -348,41 +351,6 @@ class ExploreData(PlotSVD):
         fig.colorbar(surf, shrink=0.5, aspect=5)
         return fig, ax
     
-    def select_traces(self, points=10, average=1, avoid_regions=None):
-        """
-        Method to select traces from the data attribute ande defines a subset of traces
-        in the selected_traces attribute
-
-        Parameters
-        ----------
-        points: int or list or "auto" (default 10)
-            If type(space) =int: a series of traces separated by the value indicated
-            will be selected.
-            If type(space) = list: the traces in the list will be selected.
-            If space = auto, the number of returned traces is 10 and equally spaced
-            along the wavelength vector and points is set to 0
-
-        average: int (default 1)
-            Binning points surrounding the selected wavelengths.
-            e. g.: if point is 1 trace = mean(index-1, index, index+1)
-
-        avoid_regions: list of list (default None)
-            Defines wavelength regions that are avoided in the selection when space
-            is an integer. The sub_list should have two elements defining the region
-            to avoid in wavelength values
-            i. e.: [[380,450],[520,530] traces with wavelength values between 380-450
-                   and 520-530 will not be selected
-
-        Returns
-        ----------
-        Modifies the attributes selected_traces and selected_wavelength.
-        """
-        if points == 'all':
-            self.selected_traces, self.selected_wavelength = copy(self.data), copy(self.wavelength)
-        else:
-            self.selected_traces, self.selected_wavelength = select_traces(self.data, self.wavelength, points,
-                                                                           average, avoid_regions)
-    
     def select_traces_graph(self, points=-1, average=0):
         """
         Function to select traces graphically
@@ -391,6 +359,10 @@ class ExploreData(PlotSVD):
         ----------
         points: int (default -1)
             Defines the number of traces that can be selected. If -1 an infinitive number of traces can be selected
+
+        average: int (default 1)
+            Binning points surrounding the selected wavelengths.
+            e. g.: if point is 1 trace = mean(index-1, index, index+1)
         """
         fig, ax = self.plot_spectra()
         cursor = SnaptoCursor(ax, self.wavelength, self.wavelength * 0.0, points)
@@ -403,9 +375,10 @@ class ExploreData(PlotSVD):
     
     def _time_to_real_times(self, times, rango, include_max, from_max_to_min):
         """
-        Method to read the passed argument times and pass this argument to _getAutoPoints
+        Method to read the passed argument times to the plot_spectra method
+        and pass this argument to _getAutoPoints
         """
-        if times[0] == 'auto':
+        if times[0] == 'auto' or times == 'auto':
             if len(times) == 1:
                 times = self._get_auto_points(rango=rango, include_rango_max=include_max, decrease=from_max_to_min)
             elif len(times) == 2:
@@ -415,8 +388,8 @@ class ExploreData(PlotSVD):
                 times = self._get_auto_points(times[1], times[2], rango=rango, include_rango_max=include_max,
                                               decrease=from_max_to_min)
             else:
-                print('if first element is "auto" then spectra will be auto plotted \n \
-                      then the list can be only   ["auto"] or:\n\
+                print('if first element pass to the argument time is "auto" then 8 spectra will be auto plotted \n \
+                      If is a lis os passed then the list can be only   ["auto"] or:\n\
                       ["auto", number of spectra(optional; int),  wavelength to select spectra(optional; int)],\n \
                       if only ["auto"] 8 spectra will be plotted equally spaced at the maximum for all wavelengths\n \
                       if ["auto",n_number_spec] n_number spectra will be plotted equally spaced at the maximum for all '
@@ -425,8 +398,6 @@ class ExploreData(PlotSVD):
         
         elif times == 'all':
             times = self.x
-        elif times == 'auto':
-            times = self._get_auto_points(rango=rango, include_rango_max=include_max, decrease=from_max_to_min)
         else:
             times = self.x[[np.argmin(abs(self.x-i)) for i in times]]
         times = sorted(list(set(times)))
@@ -470,8 +441,10 @@ class ExploreData(PlotSVD):
             idx = np.unravel_index(np.argmax(abs(data), axis=None), data.shape)
             # get points from the maximum of the trace (at the maximum wavelenght) to the end
             if decrease and rango is None:
-                point = [idx[0]+np.argmin(abs(data[idx[0]:, idx[1]]-i)) for i in
-                         np.linspace(np.min(data[idx[0]:, idx[1]]), np.max(data[idx[0]:, idx[1]]), spectra)]
+                # define equally spaced point between max a min points in data
+                equally_spaced = np.linspace(np.min(data[idx[0]:, idx[1]]), np.max(data[idx[0]:, idx[1]]), spectra)
+                # look for closest points in data to those defined in equally_spaced
+                point = [idx[0]+np.argmin(abs(data[idx[0]:, idx[1]]-i)) for i in equally_spaced]
             else:
                 # get points from the minimum of the trace (at the maximum wavelength) to the maximum
                 point = [0+np.argmin(abs(data[:, idx[1]]-i)) for i in
@@ -499,4 +472,4 @@ class ExploreData(PlotSVD):
                 print(wavelength[wave_idx])
                 return np.sort(np.array(x)[point])
             else:
-                print('Wavelength is not defined')
+                raise ExperimentException('Wavelength is not defined')
