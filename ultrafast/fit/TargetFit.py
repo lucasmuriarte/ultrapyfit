@@ -9,27 +9,29 @@ import lmfit
 from ultrafast.fit.ModelCreator import ModelCreator
 
 
-class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
-    def __init__(self, x, data, exp_no, params,deconv=True,SVD=False,GVD_corrected=True,**kwargs):
-        weights=dict({'apply':False,'vector':None,'range':[],'type':'constant','value':2},**kwargs)
-        self.weights=weights
-        self.x=x
-        self.data=data
-        self.params=params
-        self.SVD_fit=SVD
-        self.deconv=deconv
-        self.exp_no=exp_no
-        self.GVD_corrected=GVD_corrected
-        self._number_it=0
-        ModelCreator.__init__(self,self.exp_no,self.x,None)
-        lmfit.Minimizer.__init__(self,self.objectiveTagetFit, params, nan_policy='propagate')
+class GlobalFitTargetModel(lmfit.Minimizer, ModelCreator):
+    def __init__(self, x, data, exp_no, params, deconv=True, SVD=False, GVD_corrected=True, **kwargs):
+        weights = dict({'apply': False, 'vector': None, 'range': [],
+                      'type': ' constant', 'value': 2}, **kwargs)
+        self.weights = weights
+        self.x = x
+        self.data = data
+        self.params = params
+        self.SVD_fit = SVD
+        self.deconv = deconv
+        self.exp_no = exp_no
+        self.GVD_corrected = GVD_corrected
+        self._number_it = 0
+        ModelCreator.__init__(self, self.exp_no, self.x, None)
+        lmfit.Minimizer.__init__(self, self.objectiveTagetFit, params,
+                                 nan_policy='propagate')
     
-    def singleFit(self,params,function,i,extra_params):
+    def singleFit(self, params, function, i, extra_params):
         """does a fit of a single trace"""
         if self.deconv:
             return self.data[:, i] - function(params, i, extra_params)
         else:
-            t0 = params['t0_%i'%(i+1)].value
+            t0 = params['t0_%i' % (i+1)].value
             index=np.argmin([abs(i-t0) for i in self.x])
             return self.data[index:, i] - function(params, i, extra_params)
     
@@ -61,15 +63,15 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
             print(sum(np.abs(resid.flatten())))
         return resid.flatten()
     
-    def generateResidues(self,funtion,params,extra_para):
+    def generateResidues(self, function, params, extra_param):
         ndata, nx = self.data.shape
-        data=self.data[:]
-        resid= 0.0*data[:]
+        data = self.data[:]
+        resid = 0.0*data[:]
         if extra_param is not None:
             for i in range(nx):
-                resid[:, i] = data[:, i] - funct(params, i, extra_param) 
+                resid[:, i] = data[:, i] - function(params, i, extra_param)
         if self.weights['apply']==True: 
-            resid[:, i]=resid[:, i]*self.weights['vector']
+            resid[:, i] = resid[:, i]*self.weights['vector']
         return resid
     
     def preFit(self):
@@ -90,7 +92,7 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
             print(iy)
             single_param=lmfit.Parameters()
             for i in range(self.exp_no):
-                single_param['pre_exp%i_' %(i+1) +str (iy+1)]=fit_params['pre_exp%i_' %(i+1) +str (iy+1)]
+                single_param['pre_exp%i_' %(i+1) +str(iy+1)]=fit_params['pre_exp%i_' %(i+1) +str (iy+1)]
             single_param['y0_%i' %(iy+1)]=fit_params['y0_%i' %(iy+1)]
             single_param.add(('t0_%i' %(iy+1)), value=fit_params['t0_1'].value,expr=None,vary=self.t0_vary)
             if self.deconv:
