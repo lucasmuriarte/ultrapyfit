@@ -725,7 +725,6 @@ class FiguresFormating:
     """
     Class containing static methods for axis matplotlib formatting
     """
-
     @staticmethod
     def cover_excitation(ax, x_range, x_vector):
         """

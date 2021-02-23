@@ -130,24 +130,11 @@ class GlobalTargetModel:
     def adjustParams(self, t0, vary_t0=True, fwhm=0.12, opt_fwhm=False,
                      GVD_corrected=True):
         # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
-        self._add_preexp_t0_y0(t0, vary_t0, GVD_corrected)
         if fwhm is not None:
+            self._add_preexp_t0_y0(t0, vary_t0, GVD_corrected)
             self._add_deconvolution(fwhm, opt_fwhm)
-        for iy in range(2, self.data.shape[1] + 1):
-            if self.deconv:
-                if GVD_corrected != True:
-                    self.initial_params['t0_%i' % iy].expr = None
-                    self.initial_params['t0_%i' % iy].vary = True
-                    self.initial_params['t0_%i' % iy].value = t0
-                    self.t0_vary = True
-                else:
-                    self.t0_vary = vary_t0
-                    self.initial_params['t0_%i' % iy].expr = 't0_1'
-            else:
-                self.initial_params['t0_%i' % iy].vary = False
-                self.initial_params['t0_%i' % iy].expr = 't0_1'
-                self.t0_vary = False
-
+        else:
+            self._add_preexp_t0_y0(t0, False, True)
 
     def _add_deconvolution(self, fwhm, opt_fwhm):
         """
@@ -161,12 +148,14 @@ class GlobalTargetModel:
 
     def _add_preexp_t0_y0(self, t0, vary_t0, GVD_corrected):
         for iy in range(self.number_traces):
-            if iy > 0:
-                expres =
+            if iy > 0 and GVD_corrected:
+                expres = 't0_1'
+            else:
+                expres = None
             self.params.add_many(
                 ('y0_' + str(iy + 1), 0, True, None, None, None, None),
                 # i fixed, may unfix later
-                ('t0_' + str(iy + 1), t0, vary_t0, None, None, None,
+                ('t0_' + str(iy + 1), t0, vary_t0, None, None, expres,
                  None))
 
             for i in range(self.exp_no):
