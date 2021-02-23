@@ -5,6 +5,7 @@ Created on Fri Nov 13 18:48:51 2020
 @author: 79344
 """
 from lmfit import Parameters
+import numpy as np
 
 
 class GlobExpParameters:
@@ -67,7 +68,9 @@ class GlobExpParameters:
             self.params.add_many(('fwhm_' + str(iy+1), fwhm, opt_fwhm, 0.000001, None, None, None))
             if tau_inf is not None:            
                 self.params.add_many(('yinf_' + str(iy+1), 0.001, True, None, None, None, None))
-    
+            if iy > 0:
+                self.initial_params['fwhm_%i' % (iy+1)].expr = 'fwhm_1'
+
     def adjustParams(self, t0, vary_t0=True, fwhm=0.12, opt_fwhm=False,
                      GVD_corrected=True, tau_inf=1E12):
         """
@@ -115,3 +118,68 @@ class GlobExpParameters:
                     self.params['t0_%i' % iy].vary = True
         else:
             self.params['t0_1'].vary = False
+
+
+class GlobalTargetModel:
+    def __init__(self, number_traces, model):
+        self.model = model
+        self.params = model.params()
+        self.exp_no = self.params.exp_no
+        self.number_traces = number_traces
+
+    def adjustParams(self, t0, vary_t0=True, fwhm=0.12, opt_fwhm=False,
+                     GVD_corrected=True):
+        # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
+        self._add_preexp_t0_y0(t0, vary_t0, GVD_corrected)
+        if fwhm is not None:
+            self._add_deconvolution(fwhm, opt_fwhm)
+        for iy in range(2, self.data.shape[1] + 1):
+            if self.deconv:
+                if GVD_corrected != True:
+                    self.initial_params['t0_%i' % iy].expr = None
+                    self.initial_params['t0_%i' % iy].vary = True
+                    self.initial_params['t0_%i' % iy].value = t0
+                    self.t0_vary = True
+                else:
+                    self.t0_vary = vary_t0
+                    self.initial_params['t0_%i' % iy].expr = 't0_1'
+            else:
+                self.initial_params['t0_%i' % iy].vary = False
+                self.initial_params['t0_%i' % iy].expr = 't0_1'
+                self.t0_vary = False
+
+
+    def _add_deconvolution(self, fwhm, opt_fwhm):
+        """
+        add the deconvolution parameters to a sum of "exp_no" exponential decay
+        """
+        for iy in range(self.number_traces):
+            self.params.add_many(('fwhm_' + str(iy+1), fwhm, opt_fwhm, 0.000001,
+                                  None, None, None))
+            if iy > 0:
+                self.initial_params['fwhm_%i' % (iy+1)].expr = 'fwhm_1'
+
+    def _add_preexp_t0_y0(self, t0, vary_t0, GVD_corrected):
+        for iy in range(self.number_traces):
+            if iy > 0:
+                expres =
+            self.params.add_many(
+                ('y0_' + str(iy + 1), 0, True, None, None, None, None),
+                # i fixed, may unfix later
+                ('t0_' + str(iy + 1), t0, vary_t0, None, None, None,
+                 None))
+
+            for i in range(self.exp_no):
+                # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
+                self.params.add('pre_exp%i_' % (i + 1) + str(iy + 1),
+                                0.1 * 10 ** (-i), True, None, None, None, None)
+
+        for i in range(self.exp_no):
+            if (self.params['k_%i%i' % (i + 1, i + 1)].value != 0):
+                self.params.add('tau%i_1' % (i + 1),
+                                1/self.params['k_%i%i' % (i + 1, i + 1)].value,
+                                vary=False)
+            else:
+                self.params.add('tau%i_1' % (i + 1),
+                                np.inf,
+                                vary=False)
