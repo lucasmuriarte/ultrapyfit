@@ -20,6 +20,14 @@ ultrafast.fit.GlobExpParams module
    :undoc-members:
    :show-inheritance:
 
+ultrafast.fit.GlobalFitBootstarp module
+---------------------------------------
+
+.. automodule:: ultrafast.fit.GlobalFitBootstarp
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 ultrafast.fit.ModelCreator module
 ---------------------------------
 
