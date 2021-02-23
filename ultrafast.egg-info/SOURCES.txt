@@ -1,5 +1,0 @@
-setup.py
-ultrafast.egg-info/PKG-INFO
-ultrafast.egg-info/SOURCES.txt
-ultrafast.egg-info/dependency_links.txt
-ultrafast.egg-info/top_level.txt
