@@ -36,6 +36,14 @@ ultrafast.graphics.PlotSVD module
    :undoc-members:
    :show-inheritance:
 
+ultrafast.graphics.targetmodel module
+-------------------------------------
+
+.. automodule:: ultrafast.graphics.targetmodel
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
