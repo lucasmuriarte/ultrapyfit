@@ -4,7 +4,7 @@ Created on Tue Feb 16 17:42:19 2021
 
 @author: lucas
 """
-from ultrafast.utils.divers import read_data
+from ultrafast.utils.divers import read_data, select_traces
 from ultrafast.experiment import Experiment
 
 
@@ -97,7 +97,7 @@ experiment.wave_unit
 # Since we dont have the signal raising. Then the initial guess for the fit are given.
 # The SVD reveled that 3 component where needed, and values are given after plotting 
 # several traces.
-#                           (t0, fwhm, t1, t2, t3)
+#                               (t0, fwhm, t1, t2, t3)
 experiment.initialize_exp_params(0, None, 4, 60, 500)
 
 # now we are ready to fit the data with "final_fit" method, this will previously

@@ -70,7 +70,7 @@ class GlobExpParameters:
             if tau_inf is not None:            
                 self.params.add_many(('yinf_' + str(iy+1), 0.001, True, None, None, None, None))
             if iy > 0:
-                self.initial_params['fwhm_%i' % (iy+1)].expr = 'fwhm_1'
+                self.params['fwhm_%i' % (iy+1)].expr = 'fwhm_1'
 
     def adjustParams(self, t0, vary_t0=True, fwhm=0.12, opt_fwhm=False,
                      GVD_corrected=True, tau_inf=1E12):
@@ -153,7 +153,7 @@ class GlobalTargetParams:
         """
         self.model = model
         self.params = model.genParameters()
-        self.exp_no = self.params.exp_no
+        self.exp_no = self.params['exp_no'].value
         self.number_traces = number_traces
 
     def adjustParams(self, t0, vary_t0=True, fwhm=0.12, opt_fwhm=False,
@@ -196,10 +196,10 @@ class GlobalTargetParams:
         add the deconvolution parameters to a sum of "exp_no" exponential decay
         """
         for iy in range(self.number_traces):
-            self.params.add_many(('fwhm_' + str(iy+1), fwhm, opt_fwhm, 0.000001,
-                                  None, None, None))
+            self.params.add_many(('fwhm_' + str(iy+1), fwhm, opt_fwhm, 
+                                  0.000001, None, None, None))
             if iy > 0:
-                self.initial_params['fwhm_%i' % (iy+1)].expr = 'fwhm_1'
+                self.params['fwhm_%i' % (iy+1)].expr = 'fwhm_1'
 
     def _add_preexp_t0_y0(self, t0, vary_t0, GVD_corrected):
         """
