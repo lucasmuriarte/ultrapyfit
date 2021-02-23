@@ -963,7 +963,8 @@ class Model:
     def save(self, filename):
         with open(filename, "wb") as f:
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
-        
+
+    @staticmethod
     def load(filename): #this is static method intentionally
         with open(filename, "rb") as f:
             loaded = pickle.load(f)
