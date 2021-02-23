@@ -369,33 +369,35 @@ class ExploreResults(FiguresFormating):
             self._get_values(fit_number=fit_number)
 
         if type_fit == 'Exponential':
-            return 'This function is only available for target fit'
-        else:
-            xlabel = 'Time (' + self._units['time_unit'] + ')'
-            maxi_tau = -1 / params['k_%i%i' % (exp_no - 1, exp_no - 1)].value
-            if maxi_tau > x[-1]:
-                maxi_tau = x[-1]
-            # size of the matrix = no of exponenses = no of species
-            coeffs, eigs, eigenmatrix = solve_kmatrix(exp_no, params)
-            t0 = params['t0_1'].value
-            fwhm = params['fwhm_1'].value
-            expvects = [coeffs[i] * ModelCreator.expGauss(x - t0, -eigs[i], fwhm / 2.35482) for i in range(len(eigs))]
-            concentrations = [sum([eigenmatrix[i, j] * expvects[j] for j in range(len(eigs))]) for i in
-                              range(len(eigs))]
-            if names is None or len(names) != exp_no:
-                names = [f'Specie {i}' for i in range(exp_no)]
-            fig, ax = plt.subplots(1, figsize=(8, 6))
-            for i in range(len(eigs)):
-                ax.plot(x, concentrations[i], label=names[i])
-            if plot_total_c:
-                allc = sum(concentrations)
-                ax.plot(x, allc, label='Total concentration')  # sum of all for checking => should be unity
-            if legend:
-                plt.legend(loc='best')
-            FiguresFormating.format_figure(ax, concentrations, x, x_tight=True, set_ylim=False)
-            FiguresFormating.axis_labels(ax, xlabel, 'Concentration (A.U.)', size=size)
-            plt.xlim(-3, round(maxi_tau * 7))
-            return fig, ax
+            msg = 'This function is only available for target fit'
+            raise ExperimentException(msg)
+        xlabel = 'Time (' + self._units['time_unit'] + ')'
+        maxi_tau = -1 / params['k_%i%i' % (exp_no - 1, exp_no - 1)].value
+        if maxi_tau > x[-1]:
+            maxi_tau = x[-1]
+        # size of the matrix = no of exponenses = no of species
+        coeffs, eigs, eigenmatrix = solve_kmatrix(exp_no, params)
+        t0 = params['t0_1'].value
+        fwhm = params['fwhm_1'].value/2.35482
+        expvects = [coeffs[i] * ModelCreator.expGauss(x - t0, -1/eigs[i], fwhm)
+                    for i in range(len(eigs))]
+        concentrations = [sum([eigenmatrix[i, j] * expvects[j]
+                               for j in range(len(eigs))])
+                          for i in range(len(eigs))]
+        if names is None or len(names) != exp_no:
+            names = [f'Specie {i}' for i in range(exp_no)]
+        fig, ax = plt.subplots(1, figsize=(8, 6))
+        for i in range(len(eigs)):
+            ax.plot(x, concentrations[i], label=names[i])
+        if plot_total_c:
+            allc = sum(concentrations)
+            ax.plot(x, allc, label='Total concentration')  # sum of all for checking => should be unity
+        if legend:
+            plt.legend(loc='best')
+        FiguresFormating.format_figure(ax, concentrations, x, x_tight=True, set_ylim=False)
+        FiguresFormating.axis_labels(ax, xlabel, 'Concentration (A.U.)', size=size)
+        plt.xlim(-3, round(maxi_tau * 7))
+        return fig, ax
     
     def print_results(self, fit_number=None):
         """
