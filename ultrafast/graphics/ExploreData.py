@@ -169,7 +169,7 @@ class ExploreData(PlotSVD):
                 values = np.where(np.in1d(self.wavelength, self.selected_wavelength))
             else:
                 values = [i for i in range(data.shape[1])]
-        elif type(traces) ==  list:
+        elif type(traces) == list:
             values = [np.argmin(abs(self.wavelength-i)) for i in traces]
             data = self.data
         if len(values) <= 10 or traces == 'auto':
@@ -262,10 +262,8 @@ class ExploreData(PlotSVD):
         Figure and axes matplotlib objects
         """
         if times == 'all' or times == 'auto' or type(times) == list:
-            if cmap is None:
-                cmap = self.cmap
             data = self.data
-            wavelength = self.wavelength if self.wavelength is not None else np.array([i for i in range(len(data[1]))])
+            wavelength = self._get_wavelength()
             if data.shape[0] > 250 and times == 'all':
                 times = 'auto'
                 print('More than 250 spectra cannot be plotted or your computer risk of running out of memory')
@@ -274,31 +272,18 @@ class ExploreData(PlotSVD):
                 n_points = 0
             times = self._time_to_real_times(times, rango, include_rango_max, from_max_to_min)
             legenda = [self._unit_formater.value_formated(i, legend_decimal) for i in times]
-            a = np.linspace(0, 1, len(times))
-            c = plt.cm.ScalarMappable(norm=None, cmap=cmap)
-            colors = c.to_rgba(a, norm=False)
+            colors = self._get_color(times, cmap)
             fig, ax = plt.subplots(1, figsize=(11, 6))
             tiempo = pd.Series(self.x)
             for i in range(len(times)):
                 index = (tiempo-times[i]).abs().sort_values().index[0]
                 if n_points != 0:
-                    ax.plot(wavelength, np.mean(data[index-n_points:index+n_points, :], axis=0), c=colors[i],
-                            label=legenda[i])
+                    trace = np.mean(data[index-n_points:index+n_points, :], axis=0)
                 else:
-                    ax.plot(wavelength, data[index, :], c=colors[i], label=legenda[i])
-            FiguresFormating.format_figure(ax, data, wavelength, size=size, x_tight=True, set_ylim=False)
-            FiguresFormating.axis_labels(ax, self._get_wave_label(), '$\Delta$A', size=size)
-
-            if legend:
-                leg = plt.legend(loc='best', ncol=ncol, prop={'size': size})
-                leg.set_zorder(np.inf)
-            else:
-                cnorm = Normalize(vmin=times[0], vmax=times[-1])
-                cpickmap = plt.cm.ScalarMappable(norm=cnorm, cmap=cmap)
-                cpickmap.set_array([])
-                plt.colorbar(cpickmap).set_label(label='Time (' + self._units["time_unit"] + ')', size=15)
-            if cover_range is not None:
-                FiguresFormating.cover_excitation(ax, cover_range, self.wavelength)
+                    trace = data[index, :]
+                ax.plot(wavelength, trace, c=colors[i], label=legenda[i])
+            self._format_spectra_figure(ax, data, wavelength, size, cover_range)
+            self._legend_spectra_figure(legend, ncol, size, cmap, times)
             return fig, ax
         else:
             statement = 'times should be either "all" or "auto" \n \
@@ -400,7 +385,40 @@ class ExploreData(PlotSVD):
         plt.connect('button_press_event', cursor.onClick)
         fig.canvas.mpl_connect('close_event', lambda event: self.select_traces(cursor.datax, average))
         return fig, cursor
-    
+
+    def _legend_spectra_figure(self, legend, ncol, size, cmap, times):
+        if legend:
+            leg = plt.legend(loc='best', ncol=ncol, prop={'size': size})
+            leg.set_zorder(np.inf)
+        else:
+            cnorm = Normalize(vmin=times[0], vmax=times[-1])
+            cpickmap = plt.cm.ScalarMappable(norm=cnorm, cmap=cmap)
+            cpickmap.set_array([])
+            plt.colorbar(cpickmap).set_label(
+                label='Time (' + self._units["time_unit"] + ')', size=15)
+
+    def _get_wavelength(self):
+        if self.wavelength is not None:
+            wavelength = self.wavelength
+        else:
+            wavelength = np.array([i for i in range(len(self.data[1]))])
+        return wavelength
+
+    def _get_cmap(self, cmap):
+        if cmap is None:
+            cmap = self.cmap
+        return cmap
+
+    def _get_color(self, times, cmap=None):
+        """
+        return colors to use in a plot
+        """
+        cmap = self._get_cmap(cmap)
+        a = np.linspace(0, 1, len(times))
+        c = plt.cm.ScalarMappable(norm=None, cmap=cmap)
+        colors = c.to_rgba(a, norm=False)
+        return colors
+
     def _time_to_real_times(self, times, rango, include_max, from_max_to_min):
         """
         Method to read the passed argument times and pass this argument to _getAutoPoints
@@ -431,7 +449,16 @@ class ExploreData(PlotSVD):
             times = self.x[[np.argmin(abs(self.x-i)) for i in times]]
         times = sorted(list(set(times)))
         return times
-    
+
+    def _format_spectra_figure(self, ax, data, wavelength, size, cover_range):
+        FiguresFormating.format_figure(ax, data, wavelength,
+                                       size=size, x_tight=True,
+                                       set_ylim=False)
+        FiguresFormating.axis_labels(ax, self._get_wave_label(),
+                                     '$\Delta$A', size=size)
+        if cover_range is not None:
+            FiguresFormating.cover_excitation(ax, cover_range, self.wavelength)
+
     def _get_wave_label(self):
         """
         Returns a formatted string from the units attribute
