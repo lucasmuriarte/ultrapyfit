@@ -232,7 +232,7 @@ class Experiment(ExploreData, ExploreResults):
         print('\n\t units')
         print('-' * (len('units') + 10))
         print(f'\tTime unit: {self.time_unit}')
-        print(f'\tWavelength unit: {self.wave_unit}')
+        print(f'\tWavelength unit: {self.wavelength_unit}')
 
     def print_results(self, fit_number=None):
         """

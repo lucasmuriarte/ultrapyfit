@@ -189,8 +189,8 @@ class BootStrap:
 
         Returns
         -------
-        A pandas dataFrame with the calculated confidence intervals for 1-sigma,
-        2-sigma and 3-sigma
+        A pandas dataFrame with the calculated confidence intervals for:
+        1-sigma, 2-sigma and 3-sigma
         """
         names = [i for i in data.keys() if 'final' in i]
         values = [0.27, 4.55, 31.7, -1, 68.27, 95.45, 99.73]
@@ -294,8 +294,8 @@ class BootStrap:
     
     def _data_sets_from_data(self, n_boots):
         """
-        Method for generating simulated data sets from the data (shuffling). The
-        method used numpy.ramdom.choice  with replcement
+        Method for generating simulated data sets from the data (shuffling). 
+        The method used numpy.ramdom.choice  with replcement
 
         Parameters
         ----------
@@ -353,8 +353,8 @@ class BootStrap:
 
     def _get_division_number(self, size):
         """
-        Returns the saffling number for residual data sets calculation according
-        to the percentage of data to be shuffle.
+        Returns the saffling number for residual data sets calculation 
+        according to the percentage of data to be shuffle.
         """
         if size not in [10, 15, 20, 25, 33, 50]:
             msg = 'Size should be either 10, 15, 20, 25, 33, this is ' \
