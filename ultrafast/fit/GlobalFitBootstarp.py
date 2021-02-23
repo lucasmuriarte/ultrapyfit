@@ -77,8 +77,36 @@ class BootStrap:
         self.datas = None
         self.fitter, self.params = self._get_original_fitter()
 
-    def generate_data_sets(self, n_boots, size=25, data_from='residues', 
+    def generate_data_sets(self,
+                           n_boots: int,
+                           size=25,
+                           data_from='residues',
                            return_data=False):
+        """
+        Method for generating simulated data sets from the data (shuffling), or
+        from the residues. The las t approach shuffles the residues with the
+        fitted model to generate the simulated data sets
+
+        Parameters
+        ----------
+        n_boots: int
+            Defines the number of samples that will be generated, we recommend
+            to start with a low number, for example 5, fit this data and if
+            everything is working simulate the rest and fit them.
+
+        size: int (default 25)
+            Only important if the data_from is residues, defines the percentage
+            of residues that will be shuffle. can be 10, 15, 20, 25, 33 or 50.
+            We recommend to uses 25 or 33.
+
+        data_from: str (default residues)
+            If "residues" data are simulated shuffling residues with the model
+            If "data" data are simulated random selection of original data
+            traces with replacement.
+
+        return_data: bool (default False)
+            If True the data set will be return
+        """
         if self.data_simulated is not None:
             if data_from != self.data_simulated:
                 msg = f'Cannot add new {data_from} ' \
@@ -103,6 +131,16 @@ class BootStrap:
             return data
 
     def fit_bootstrap(self, cal_conf=True):
+        """
+        Fit the simulated data sets with the same model used to obtain the
+        fit_results passed to instatiate the obaject.
+
+        Parameters
+        ----------
+        cal_conf: bool, (default True
+            If True the confidence intervals will be calculated after all fits
+            have been completed
+        """
         data_sets = self.datas
         if data_sets is None:
             msg = 'Generate the data sets before'
@@ -139,6 +177,21 @@ class BootStrap:
 
     @staticmethod
     def bootConfInterval(data):
+        """
+        Static method to calculate the confidence intervals from a dataFrame
+        object obatined with the BootStrap class
+
+        Parameters
+        ----------
+        data: dataFrame
+            dataFrame containing the results of the fits to the simulated
+            data sets
+
+        Returns
+        -------
+        A pandas dataFrame with the calculated confidence intervals for 1-sigma,
+        2-sigma and 3-sigma
+        """
         names = [i for i in data.keys() if 'final' in i]
         values = [0.27, 4.55, 31.7, -1, 68.27, 95.45, 99.73]
         table = pd.DataFrame(columns=['99.73%', '95.45%', '68.27%', '_BEST_', 
@@ -151,7 +204,18 @@ class BootStrap:
             table.loc[i.split(' ')[0]] = line
         return table
 
-    def plotBootStrapResults(self, param, kde=False):
+    def plotBootStrapResults(self, param, kde=True):
+        """
+        Plot the bootstarp histogram of the paramter calculated
+        (WARNING: In future will be taken out of the class)
+
+        Parameters
+        ----------
+        param: str
+            name of the parameter to be plotted
+        kde: bool (default True)
+            Defines if the kernel density estimation is plotted
+        """
         fig, axes = plt.subplots(1, 1)
         bootstrap = self.bootstrap_result
         names = [i.split(' ')[0] for i in bootstrap.keys() if 'final' in i]
@@ -190,6 +254,23 @@ class BootStrap:
         return fig, axes
 
     def _data_sets_from_residues(self, n_boots, size=25):
+        """
+        Method for generating simulated data sets from  the residues.
+        The function shuffles the residues with the fitted model to
+        generate the simulated data sets
+
+        Parameters
+        ----------
+        n_boots: int
+            Defines the number of samples that will be generated, we recommend
+            to start with a low number, for example 5, fit this data and if
+            everything is working simulate the rest and fit them.
+
+        size: int (default 25)
+            Only important if the data_from is residues, defines the percentage
+            of residues that will be shuffle. can be 10, 15, 20, 25, 33 or 50.
+            We recommend to uses 25 or 33.
+        """
         div = self._get_division_number(size)
         resultados = self.fit_results
         data = resultados.data
@@ -212,6 +293,18 @@ class BootStrap:
         return residue_set_boot
     
     def _data_sets_from_data(self, n_boots):
+        """
+        Method for generating simulated data sets from the data (shuffling). The
+        method used numpy.ramdom.choice  with replcement
+
+        Parameters
+        ----------
+        n_boots: int
+            Defines the number of samples that will be generated, we recommend
+            to start with a low number, for example 5, fit this data and if
+            everything is working simulate the rest and fit them.
+
+        """
         data = self.fit_results.data
         data_set_boot = data*1.0
         for boot in range(n_boots):
@@ -223,10 +316,17 @@ class BootStrap:
         return data_set_boot[:, :, 1:]
     
     def _get_variations(self, names, exp_no):
+        """
+        returns which parameter where varied in the original fit
+        """
         variation = [self.fit_results.params[name].vary for name in names]
         return variation[-exp_no:]
     
     def _get_original_fitter(self):
+        """
+        returns which fitter was used in the original fit.
+        Either GlobalFitTargetModel or GlobalFitExponential
+        """
         exp_no, type_fit, deconv, maxfev, tau_inf = self._details()
         initial_prams = deepcopy(self.fit_results.params)
         for i in initial_prams:
@@ -241,6 +341,9 @@ class BootStrap:
         return fitter_obj, initial_prams
 
     def _details(self):
+        """
+        returns the detail of the original fit.
+        """
         exp_no = self.fit_results.details['exp_no']
         type_fit = self.fit_results.details['type']
         deconv = self.fit_results.details['deconv']
@@ -249,7 +352,11 @@ class BootStrap:
         return exp_no, type_fit, deconv, maxfev, tau_inf
 
     def _get_division_number(self, size):
-        if size not in [10, 15, 20, 25, 33]:
+        """
+        Returns the saffling number for residual data sets calculation according
+        to the percentage of data to be shuffle.
+        """
+        if size not in [10, 15, 20, 25, 33, 50]:
             msg = 'Size should be either 10, 15, 20, 25, 33, this is ' \
                   'the values in percentage that will be randomly changed'
             raise ExperimentException(msg)
@@ -261,12 +368,17 @@ class BootStrap:
             div = 5
         elif size == 25:
             div = 4
-        else:
+        elif size == 33:
             div = 3
+        else:
+            div = 2
         return div
     
     @staticmethod
     def _get_fit_params_names(type_fit, exp_no, deconv):
+        """
+        Returns the names of important parameters from the previous fit
+        """
         if type_fit == 'Exponential':
             if deconv:
                 names = ['t0_1', 'fwhm_1'] + ['tau%i_1' % (i + 1)
@@ -286,6 +398,10 @@ class BootStrap:
         return names
 
     def _generate_pandas_results_dataframe(self):
+        """
+        Generates an empty Pandas dataFrame with important name values from the
+        original fit, for time constant that where optimized
+        """
         resultados = self.fit_results
         result_explorer = ExploreResults(resultados)
         x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, \
@@ -304,6 +420,11 @@ class BootStrap:
 
     @staticmethod
     def _initial_final_values(params, names, only_vary=True):
+        """
+        Returns the initial and final values of a parameters object according to
+        the names passed. If only vary is True, only those that were optimized
+        are return
+        """
         if only_vary:
             initial_values = [params[name].init_value for name in names 
                               if params[name].vary]
@@ -315,6 +436,10 @@ class BootStrap:
         return initial_values, final_values
 
     def _append_results_pandas_dataframe(self, data_frame, results, names):
+        """
+        Appends the results of the fit done to the simulated data sets
+        to the pandas dataFrame containing the bootstrap results
+        """
         params = results.params
         type_fit = results.details['type']
         key = data_frame.shape[0] + 1
