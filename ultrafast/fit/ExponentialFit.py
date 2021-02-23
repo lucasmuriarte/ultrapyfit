@@ -10,7 +10,13 @@ from ultrafast.fit.ModelCreator import ModelCreator
 from ultrafast.fit.GlobExpParams import GlobExpParameters
 
 
-def globalfit_exponential(x, data, *taus, vary=True, t0=0, maxfev=5000, **kwargs):
+def globalfit_exponential(x,
+                          data,
+                          *taus,
+                          vary=True,
+                          t0=0,
+                          maxfev=5000,
+                          **kwargs):
     """
     Function that does a global fit of a weighted sum of exponential equal to
     the number of time constants (taus) pass. It gives a result object which is
@@ -470,7 +476,7 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         if not self.weights['apply']:
             resultados.weights = False
         else:
-            self.weights
+            resultados.weights = self.weights
         return resultados
 
     def _singleFit(self, params, function, i):
@@ -522,17 +528,16 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
 
     def _generateResidues(self, function, params, extra_param=None):
         """
-        Generate a single residue for one trace (used by finalfit)
+        Generate a single residue for one trace (used by global_fit)
         """
         ndata, nx = self.data.shape
         data = self.data[:]
         resid = data * 1.0
-        if extra_param is not None:
-            for i in range(nx):
+        for i in range(nx):
+            if extra_param is not None:
                 resid[:, i] = data[:, i] - function(params, i, extra_param)
-        else:
-            for i in range(nx):
+            else:
                 resid[:, i] = data[:, i] - function(params, i)
-        if self.weights['apply']:
-            resid[:, i] = resid[:, i] * self.weights['vector']
+            if self.weights['apply']:
+                resid[:, i] = resid[:, i] * self.weights['vector']
         return resid
