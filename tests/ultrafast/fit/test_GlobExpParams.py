@@ -6,7 +6,7 @@ Created on Mon Nov 23 11:10:17 2020
 """
 
 import unittest
-from ultrafast.fit.GlobExpParams import GlobExpParameters
+from ultrafast.fit.GlobalParams import GlobExpParameters
 from parameterized import parameterized
 
 taus = [8, 30, 200]
@@ -80,6 +80,9 @@ class TestGlobExpParameters(unittest.TestCase):
             # verify if there is no deconvolution t0 is fixed
             self.assertFalse(params.params['t0_1'].vary)
         self.assertEqual(len(params.params), number)
+
+
+class TestGlobExpParameters(unittest.TestCase):
 
 
 if __name__ == '__main__':
