@@ -11,37 +11,92 @@ from matplotlib.offsetbox import AnchoredText
 
 
 class BootStrap:
+    """
+    Class used to calculate confidence intervals (CI) from a bootstrap of
+    either the residues or the original data to obtain a more robust CI
+    value than those obtain by inverting the  the second derivative error
+    matrix. The bootstrap calculations takes long, since we recommend a minimum
+    of 200 bootstrap fit samples to have an correct estimation of the parameters
+    CI and correlations between the parameters.
+
+    Attributes
+    ----------
+    fit_results: lmfit results Object
+        Should be an lmfit result object obtained either from
+        GlobalFitTargetModel, GlobalFitExponential or Experiment classes
+
+    bootstrap_result: pandas dataFrame (default None)
+        Pandas data frame containing where the bootstrap results are appended
+        initially can be None, which will imply creating a new one from zero.
+        Alternatively the results of a previous bootstrap may be passed to
+        increase the number of analysis.
+
+    data_simulated: string
+        contain the type of data sets simulated: "data" if they are simulated by
+        random shuffling the data, or residues if they are obtained by random
+        shuffling a part of the residuals .
+
+    confidence_interval: lmfit parameters object
+        contains the confidence interval for the decay times calculated from the
+        bootstrap_result dataFrame
+
+    datas: numpy array
+        contain the simulated data sets for fitting produced either directly
+        from the sample or from the residues.
+
+    fitter: GlobalFitTargetModel / GlobalFitExponential
+        Contains the fitter used to obtained the fit_results passed
+
+    params: lmfit Parameter object
+        Contains the parameters used to obtained the fit_results passed
+    """
     def __init__(self, fit_results, bootstrap_result=None):
+        """
+        constructor function:
+
+        Parameters
+        ----------
+        fit_results: lmfit results Object
+            Should be an lmfit result object obtained either from
+            GlobalFitTargetModel, GlobalFitExponential or Experiment classes
+
+        bootstrap_result: pandas dataFrame (default None)
+            Pandas data frame containing where the bootstrap results are
+            appended initially can be None, which will imply creating a new one
+            from zero. Alternatively the results of a previous bootstrap may be
+            passed to increase the number of analysis.
+        """
         self.fit_results = fit_results
         if bootstrap_result is None:
             self.bootstrap_result = self._generate_pandas_results_dataframe()
             self.data_simulated = None
         else:
             self.bootstrap_result = bootstrap_result
-            self.data_simulated = bootstrap_result.bootstrap_type
+            self.data_simulated = bootstrap_result._type
         self.confidence_interval = None
         self.datas = None
-        self.fitter, self.params =  self._get_original_fitter()
+        self.fitter, self.params = self._get_original_fitter()
 
     def generate_data_sets(self, n_boots, size=25, data_from='residues', 
                            return_data=False):
         if self.data_simulated is not None:
             if data_from != self.data_simulated:
-                msg = f'Cannot add new {data_from} analysis of a {self.data_simulated} type'
+                msg = f'Cannot add new {data_from} ' \
+                      f'analysis of a {self.data_simulated} type'
                 raise ExperimentException(msg)
         if data_from == 'residues':               
             if hasattr(self.bootstrap_result, '_size'):
                 size = self.bootstrap_result._size
             data = self._data_sets_from_residues(n_boots, size)
-            self.bootstrap_type = 'residues'
-            self.bootstrap_type._size = size
+            self.bootstrap_result._type = 'residues'
+            self.bootstrap_result._size = size
             self.data_simulated = 'residues'
         elif data_from == 'data':
             data = self._data_sets_from_residues(n_boots)
             self.data_simulated = 'data'
-            data.bootstrap_type = 'data'
+            data.bootstrap_result._type = 'data'
         else:
-            msg ='data_from should be "residues" or "data"'
+            msg = 'data_from should be "residues" or "data"'
             raise ExperimentException(msg)
         self.datas = data
         if return_data:
@@ -72,15 +127,15 @@ class BootStrap:
                 fitter.weights = weight
                 
             reults = fitter.global_fit(variations, maxfev=maxfev,
-                                      time_constraint=time_constraint,
-                                      apply_weights=apply_weight)
+                                       time_constraint=time_constraint,
+                                       apply_weights=apply_weight)
             
             self._append_results_pandas_dataframe(self.bootstrap_result,
                                                   reults, names)
 
             print(f'the number of boots is: {boot}')
         if cal_conf:
-            self.bootConfInterval(data=self.bootstrap_residues_result)
+            self.bootConfInterval(data=self.bootstrap_result)
 
     @staticmethod
     def bootConfInterval(data):
@@ -96,27 +151,29 @@ class BootStrap:
             table.loc[i.split(' ')[0]] = line
         return table
 
-    def plotBootStrapResults(self, fit_number, param, kde=False):
+    def plotBootStrapResults(self, param, kde=False):
         fig, axes = plt.subplots(1, 1)
-        bootsTrap = self.bootstrap_result
-        names = [i.split(' ')[0] for i in bootsTrap.keys() if 'final' in i]
-        stats = bootsTrap.describe()
+        bootstrap = self.bootstrap_result
+        names = [i.split(' ')[0] for i in bootstrap.keys() if 'final' in i]
+        stats = bootstrap.describe()
         stats_values = {}
         for name in names:
-            stats_values[name + ' mean'] = round(stats[name + ' final']['mean'], 4)
-            stats_values[name + ' std'] = round(stats[name + ' final']['std'], 4)
-        axes = distplot(bootsTrap[param + ' final'].values, 
+            stats_values[name + ' mean'] = \
+                round(stats[name + ' final']['mean'], 4)
+            stats_values[name + ' std'] = \
+                round(stats[name + ' final']['std'], 4)
+        axes = distplot(bootstrap[param + ' final'].values,
                         rug=False, 
                         norm_hist=False, kde=kde,
                         hist_kws=dict(edgecolor="k",
                                       linewidth=2))
         plt.xlabel(f'Time ({self.time_unit})')
-        maxi = bootsTrap[param + ' final'].max()
-        mini = bootsTrap[param + ' final'].min()
-        mean = bootsTrap[param + ' final'].mean()
+        maxi = bootstrap[param + ' final'].max()
+        mini = bootstrap[param + ' final'].min()
+        mean = bootstrap[param + ' final'].mean()
         dif_max = abs(maxi - mean)
         dif_min = abs(mini - mean)
-        if kde == False:
+        if not kde:
             plt.ylabel('Counts')
             plt.xlim(mini - maxi * 0.1, maxi + maxi * 0.1)
         else:
@@ -127,8 +184,8 @@ class BootStrap:
             pos = 2
         mean = stats_values[param + ' mean']
         std = stats_values[param + ' std']
-        text = f'$\mu={mean}$ {self.time_unit}\n $\sigma={std}$ {self.time_unit}'
-        texto = AnchoredText(s=text, loc=pos)
+        tex = f'$\mu={mean}$ {self.time_unit}\n $\sigma={std}$ {self.time_unit}'
+        texto = AnchoredText(s=tex, loc=pos)
         axes.add_artist(texto)
         return fig, axes
 
@@ -162,7 +219,7 @@ class BootStrap:
             index = np.random.choice(np.linspace(0, len(data[1]) - 1, 
                                                  len(data[1])), len(data[1]))
             for i, ii in enumerate(index):
-                new_data[:, i] = self.data[:, int(ii)]
+                new_data[:, i] = data[:, int(ii)]
         return data_set_boot[:, :, 1:]
     
     def _get_variations(self, names, exp_no):
@@ -173,7 +230,7 @@ class BootStrap:
         exp_no, type_fit, deconv, maxfev, tau_inf = self._details()
         initial_prams = deepcopy(self.fit_results.params)
         for i in initial_prams:
-            initial_prams[i].value=initial_prams[i].init_value
+            initial_prams[i].value = initial_prams[i].init_value
         if type_fit == 'Exponential':
             fitter_obj = GlobalFitExponential     
         elif type_fit == 'Target':
@@ -204,7 +261,7 @@ class BootStrap:
             div = 5
         elif size == 25:
             div = 4
-        elif size == 33:
+        else:
             div = 3
         return div
     
@@ -235,7 +292,6 @@ class BootStrap:
             type_fit, derivative_space = result_explorer._get_values(1)
         names = self._get_fit_params_names(type_fit, exp_no, deconv)
         initial_variations = [params[name].vary for name in names]
-
         # next 3 lines are for generate string names for the pandas data frame
         fit_names = [i[:-2] if 'k' not in i else i for ii, i in enumerate(names) 
                      if initial_variations[ii]]
@@ -263,10 +319,11 @@ class BootStrap:
         type_fit = results.details['type']
         key = data_frame.shape[0] + 1
         initial_values,  final_values = self._initial_final_values(params, 
-                                                                    names)
+                                                                   names)
         if type_fit == 'Target':
             # convert possible negative k value in positive
-            # k values for a target fit may be negative because are disappearance of a component
+            # k values for a target fit may be negative because are
+            # disappearance of a component
             final_values = [abs(ii) if i >= 1 else ii for i, ii 
                             in enumerate(final_values)]
             initial_values = [abs(ii) if i >= 1 else ii for i, ii 
