@@ -79,7 +79,8 @@ class ExploreResults(FiguresFormating):
             If is not an SVD fit this parameter is not applicable
         """
         x, data, wavelength, result_params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space,  = \
-            self._get_values(fit_number=fit_number, verify_svd_fit=verify_svd_fit)
+            self._get_values(fit_number=fit_number,
+                             verify_svd_fit=verify_svd_fit)
         model = ModelCreator(exp_no, x, tau_inf)
         ndata, nx = data.shape
         if type_fit == 'Exponential':
@@ -97,7 +98,11 @@ class ExploreResults(FiguresFormating):
             coeffs, eigs, eigenmatrix = solve_kmatrix(exp_no, result_params)
             curve_resultados = data * 0.0
             for i in range(nx):
-                curve_resultados[:, i] = model.expNGaussDatasetTM(result_params, i, [coeffs, eigs, eigenmatrix])
+                curve_resultados[:, i] = model.expNGaussDatasetTM(result_params,
+                                                                  i,
+                                                                  [coeffs,
+                                                                   eigs,
+                                                                   eigenmatrix])
         return curve_resultados
 
     def plot_fit(self, fit_number=None, selection=None, plot_residues=True, size=14,):
@@ -149,7 +154,6 @@ class ExploreResults(FiguresFormating):
             t0 = params['t0_1'].value
             index = np.argmin([abs(i - t0) for i in x])
             residues = data[index:, :] - fittes
-        #        plt.axhline(linewidth=1,linestyle='--', color='k')
         alpha, s = 0.80, 8
         for i in puntos:
             if plot_residues:
@@ -495,12 +499,6 @@ class ExploreResults(FiguresFormating):
         """
         if fit_number is None:
             fit_number = max(self._fits.keys())
-        # if self.all_fit[fit_number].details['svd_fit']:
-        #     params = self.all_fit[fit_number][11]
-        #     data = self.all_fit[fit_number][10]
-        # else:
-        #     params = self.all_fit[fit_number].params
-        #     data = self.all_fit[fit_number].data
         params = self._fits[fit_number].params
         data = self._fits[fit_number].data
         x = self._fits[fit_number].x

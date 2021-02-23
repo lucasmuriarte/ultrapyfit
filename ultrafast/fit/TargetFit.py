@@ -37,7 +37,9 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
                                  params, nan_policy='propagate')
     
     def _single_fit(self, params, function, i, extra_params):
-        """does a fit of a single trace"""
+        """
+        does a fit of a single trace
+        """
         if self.deconv:
             return self.data[:, i] - function(params, i, extra_params)
         else:
@@ -83,22 +85,19 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
         data = self.data[:]
         resid = 0.0*data[:]
         for i in range(nx):
-            if extra_param is not None:
-                resid[:, i] = data[:, i] - funtion(params, i, extra_param)
-            else:
-                resid[:, i] = data[:, i] - funtion(params, i)
+            resid[:, i] = data[:, i] - funtion(params, i, extra_param)
             if self.weights['apply']:
                 resid[:, i] = resid[:, i]*self.weights['vector']
         return resid
     
     def preFit(self):
-        # initiate self.data_before_last_Fit copying from self.data which will be used to fit
+        # initiate self.data_before_last_Fit copying from self.data which
+        # will be used to fit
         # parameters have been created with lenght of self.data
         # this allow to keep after the fit a copy of the data that was fitted
         fit_params = self.params.copy()
         ndata, nx = self.data.shape
         coeffs, eigs, eigenmatrix = solve_kmatrix(self.exp_no, fit_params)
-
         for iy in range(nx):
             print(iy)
             single_param = lmfit.Parameters()
@@ -127,9 +126,7 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
             self.params = fit_params
         self._prefit_done = True
 
-    def finalFit(self, vary_taus=True, maxfev=None, apply_weights=False):
-        if type(vary_taus) == bool:
-            vary_taus = [vary_taus for i in range(self.exp_no)]
+    def finalFit(self, maxfev=None, apply_weights=False):
         self.fit_completed = False
         if not self._prefit_done:
             self.preFit()
@@ -147,7 +144,7 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
         resultados = self._addToResultados(resultados, fit_condition)
         self._number_it = 0
         self.fit_completed = True
-        if type(fit_condition[3]) == dict:
+        if self.weights['apply']:
             self.weights['apply'] = False
         return resultados
 
