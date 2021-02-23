@@ -7,7 +7,7 @@ Created on Thu Nov 12 21:00:23 2020
 import numpy as np
 import lmfit
 from ultrafast.fit.ModelCreator import ModelCreator
-from ultrafast.fit.GlobExpParams import GlobExpParameters
+from ultrafast.fit.GlobalParams import GlobExpParameters
 
 
 def globalfit_exponential(x,
