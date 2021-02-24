@@ -168,32 +168,9 @@ class ExploreData:
         ----------
         Figure and axes matplotlib objects
         """
-        if traces == 'auto':
-            number_traces = len(self.wavelength)//10
-            values = [i for i in range(len(self.wavelength))[::number_traces]]
-            data = self.data
-        elif traces == 'select':
-            data = self.selected_traces
-            if self.selected_wavelength is not None and self._SVD_fit is False:
-                values = np.where(np.in1d(self.wavelength,
-                                          self.selected_wavelength))
-            else:
-                values = [i for i in range(data.shape[1])]
-        elif type(traces) == list:
-            values = [np.argmin(abs(self.wavelength-i)) for i in traces]
-            data = self.data
+        data, values = self._get_traces_values(traces)
         if len(values) <= 10 or traces == 'auto':
-            if self._SVD_fit and traces != 'auto':
-                legenda = ['left SV %i' % i
-                           for i in range(1, self.data.shape[1]+1)]
-            elif self.selected_wavelength is not None:
-                if self.wavelength_unit == 'cm-1':
-                    val = 'cm$^{-1}$'
-                else:
-                    val = self.wavelength_unit
-                legenda = [f'{round(i)} {val}' for i in self.wavelength[values]]
-            else:
-                legenda = [f'curve {i}' for i in range(self.data.shape[1])]
+            legenda = self._traces_legend(traces, values)
         fig, ax = plt.subplots(1, figsize=(11, 6))
         alpha = 0.60
         for i in values:
@@ -304,40 +281,28 @@ class ExploreData:
         ----------
         Figure and axes matplotlib objects
         """
-        if times == 'all' or times == 'auto' or type(times) == list:
-            data = self.data
-            wavelength = self._get_wavelength()
-            if data.shape[0] > 250 and times == 'all':
-                times = 'auto'
-                msg = 'More than 250 spectra cannot be plotted or your ' \
-                      'computer risk of running out of memory'
-                print(msg)
-            elif times == 'all':
-                legend = False
-                average = 0
-            times = self._time_to_real_times(times, rango, include_rango_max,
-                                             from_max_to_min)
-            legenda = [self._unit_formater.value_formated(i, legend_decimal)
-                       for i in times]
-            colors = self._get_color(times, cmap)
-            fig, ax = plt.subplots(1, figsize=(11, 6))
-            tiempo = pd.Series(self.x)
-            for i in range(len(times)):
-                index = (tiempo-times[i]).abs().sort_values().index[0]
-                if average != 0:
-                    trace = np.mean(data[index - average:index + average, :],
-                                    axis=0)
-                else:
-                    trace = data[index, :]
-                ax.plot(wavelength, trace, c=colors[i], label=legenda[i])
-            self._format_spectra_figure(ax, data, wavelength, size, cover_range)
-            self._legend_spectra_figure(legend, ncol, size, cmap, times)
-            return fig, ax
-        else:
-            statement = 'times should be either: 1-->"all" \n 2-->"auto" \n \
-            3-->list with selected point to plot \n \
-            4--> list this form ["auto", Nº spectra, wavelength]'
-            raise ExperimentException(statement)
+        data = self.data
+        wavelength = self._get_wavelength()
+        times, legend, average = self._verify_plot_spectra(times, data, 
+                                                           legend, average)
+        times = self._time_to_real_times(times, rango, include_rango_max,
+                                         from_max_to_min)
+        legenda = [self._unit_formater.value_formated(i, legend_decimal)
+                   for i in times]
+        colors = self._get_color(times, cmap)
+        fig, ax = plt.subplots(1, figsize=(11, 6))
+        tiempo = pd.Series(self.x)
+        for i in range(len(times)):
+            index = (tiempo-times[i]).abs().sort_values().index[0]
+            if average != 0:
+                trace = np.mean(data[index - average:index + average, :],
+                                axis=0)
+            else:
+                trace = data[index, :]
+            ax.plot(wavelength, trace, c=colors[i], label=legenda[i])
+        self._format_spectra_figure(ax, data, wavelength, size, cover_range)
+        self._legend_spectra_figure(legend, ncol, size, cmap, times)
+        return fig, ax
     
     def plot3D(self, cmap=None):
         """
@@ -409,7 +374,61 @@ class ExploreData:
             self.selected_traces, self.selected_wavelength = \
                 select_traces(self.data, self.wavelength, points,
                               average, avoid_regions)
-    
+
+    def _verify_plot_spectra(self, times, data, legend, average):
+        """
+        check plot spectra conditions
+        """
+        if times == 'all' or times == 'auto' or type(times) == list:
+            if data.shape[0] > 250 and times == 'all':
+                times = 'auto'
+                msg = 'More than 250 spectra cannot be plotted or your ' \
+                      'computer risk of running out of memory'
+                print(msg)
+            elif times == 'all':
+                legend = False
+                average = 0
+            return times, legend, average
+        else:
+            statement = 'times should be either: 1-->"all" \n 2-->"auto" \n \
+                        3-->list with selected point to plot \n \
+                        4--> list this form ["auto", Nº spectra, wavelength]'
+            raise ExperimentException(statement)
+
+    def _get_traces_values(self, traces):
+        if traces == 'auto':
+            number_traces = len(self.wavelength)//10
+            values = [i for i in range(len(self.wavelength))[::number_traces]]
+            data = self.data
+        elif traces == 'select':
+            data = self.selected_traces
+            if self.selected_wavelength is not None and self._SVD_fit is False:
+                values = np.where(np.in1d(self.wavelength,
+                                          self.selected_wavelength))
+            else:
+                values = [i for i in range(data.shape[1])]
+        elif type(traces) == list:
+            values = [np.argmin(abs(self.wavelength-i)) for i in traces]
+            data = self.data
+        return data, values
+
+    def _traces_legend(self, traces, values):
+        """
+        return the formatted legend for trace pltting
+        """
+        if self._SVD_fit and traces != 'auto':
+            legenda = ['left SV %i' % i
+                       for i in range(1, self.data.shape[1] + 1)]
+        elif self.selected_wavelength is not None:
+            if self.wavelength_unit == 'cm-1':
+                val = 'cm$^{-1}$'
+            else:
+                val = self.wavelength_unit
+            legenda = [f'{round(i)} {val}' for i in self.wavelength[values]]
+        else:
+            legenda = [f'curve {i}' for i in range(self.data.shape[1])]
+        return legenda
+
     def select_traces_graph(self, points=-1, average=0):
         """
         Function to select traces graphically
@@ -468,6 +487,8 @@ class ExploreData:
         to _getAutoPoints
         """
         if times[0] == 'auto' or times == 'auto':
+            if times == 'auto':
+                times = ['auto']
             if len(times) == 1:
                 times = self._get_auto_points(rango=rango,
                                               include_rango_max=include_max,
