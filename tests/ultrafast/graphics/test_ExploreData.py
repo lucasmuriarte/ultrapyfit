@@ -1,8 +1,7 @@
 import unittest
 from unittest import mock
-from chempyspec.ultrafast.utils.utils import read_data
-from chempyspec.ultrafast.graphics.ExploreData import ExploreData
-from chempyspec.ultrafast.utils.utils import select_traces
+from ultrafast.utils.divers import read_data, select_traces
+from ultrafast.graphics.ExploreData import ExploreData
 import numpy as np
 from parameterized import parameterized 
 import matplotlib as mpl

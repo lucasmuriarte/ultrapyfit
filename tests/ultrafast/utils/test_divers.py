@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.axis import Tick 
 from parameterized import parameterized
-from chempyspec.ultrafast.utils.utils import *
+from ultrafast.utils.divers import *
 
 
 data_wave = np.ones((75, 150))
