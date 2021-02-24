@@ -8,7 +8,6 @@ Created on Mon Nov 23 11:10:17 2020
 import unittest
 from ultrafast.fit.GlobalParams import GlobExpParameters, GlobalTargetParams
 from parameterized import parameterized
-# from ultrafast.graphics.targetmodel import Model
 from targetmodel import Model
 
 
