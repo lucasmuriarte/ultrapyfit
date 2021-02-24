@@ -287,6 +287,11 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         exp_no: int
             Number of exponential that will be used to fit the data
 
+        params: lmfit parameter object
+            parameters object containing the initial estimations values for all
+            the parameters together with the minimum maximum and constraints.
+            This object can easily be generated with GlobExpParameters class.
+
         deconv: bool (default True)
             If True the fitting functions will search for the deconvolution
             parameter ("fwhm") in the params attribute, and the the model is a

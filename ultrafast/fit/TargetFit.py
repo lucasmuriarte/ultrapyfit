@@ -9,23 +9,122 @@ import lmfit
 from ultrafast.fit.ModelCreator import ModelCreator
 from ultrafast.utils.divers import solve_kmatrix
 
+
 class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
+    """
+    Class that does a global target fit to a kinetic model. This class is uses
+    a global fit evaluate the times from all the traces (kinetic constants are
+    globally fitted), while the pre_exponential values (pre_exp) are estimated
+    independently from each trace. The pre_exp values give later the species
+    associated spectra (SAS). The Class do not generates the parameters
+    automatically.
+
+    Attributes
+    ----------
+    x: 1darray
+       x-vector, normally time vector
+
+    data: 2darray
+       array containing the data, the number of rows should be equal to the
+       len(x)
+
+    exp_no: int
+       number of exponential that will be used to fit the data.
+
+    params: lmfit parameters object
+       object containing the initial parameters values used to build an
+       exponential model. These parameters are iteratively optimize to
+       reduce the residual matrix formed by data-model (error matrix)
+       using Levenberg-Marquardt algorithm.
+
+    deconv: bool
+       If True the fitting functions will search for the deconvolution
+       parameter ("fwhm") in the params attribute, and the the model is a
+       weighted sum of Gauss modified exponential functions. If False the
+       the model is a weighted sum of exponential functions, and params
+       should not contain the fwhm entrance.
+
+    GVD_corrected: bool
+       Defines if the chrip or group velocity dispersion (GVD) has been
+       corrected. If True t0 is globally optimized (faster). If False t0 is
+       separately optimized for each trace (slower). Notice in some cases
+       even if the chirp or GVD has been corrected, very small variations
+       of t0 that might be imperceptible and small may generate problems in
+       the fit, setting this parameter to False can help to acquire
+       overcome this problem although the fit will take longer.
+       (only affects if deconv is True)
+
+    weights: dictionary
+       This dictionary controls if the fitting weights are applied,
+       the keys are:
+       "apply": Bool
+       "vector": weighting vector.
+       'type': type of vector defined in the ,
+       'range': time range according to x-vector of the weights that are
+                different than 1
+       'value': val weighting value
+
+       The dictionary keys can be passes as kwargs when instantiating the
+       object
+    """
+
     def __init__(self,
                  x,
                  data,
                  exp_no,
                  params,
                  deconv=True,
-                 SVD=False,
                  GVD_corrected=True,
                  **kwargs):
+        """
+        constructor function:
+
+        Parameters
+        ----------
+        x: 1darray
+            x-vector, normally time vector
+
+        data: 2darray
+            Array containing the data, the number of rows should be equal to
+            the len(x)
+
+        exp_no: int
+            Number of exponential that will be used to fit the data
+
+        params: lmfit parameter object
+            parameters object containing the initial estimations values for all
+            the parameters together with the minimum maximum and constraints.
+            This object can easily be generated with GlobalTargetParams class,
+            and the target Model class.
+
+        deconv: bool (default True)
+            If True the fitting functions will search for the deconvolution
+            parameter ("fwhm") in the params attribute, and the the model is a
+            weighted sum of Gauss modified exponential functions. If False the
+            the model is a weighted sum of exponential functions, and params
+            should not contain the fwhm entrance.
+
+        GVD_corrected: bool (defautl True)
+            Defines if the chrip or group velocity dispersion (GVD) has been
+            corrected. If True t0 is globally optimized (faster). If False t0 is
+            separately optimized for each trace (slower). Notice in some cases
+            even if the chirp or GVD has been corrected, very small variations
+            of t0 that might be imperceptible and small may generate problems in
+            the fit, setting this parameter to False can help to overcome this
+            problem although the fit will take longer.
+            (only affects if deconv is True)
+
+        kwargs:
+            Related for applying weight to the fit. The dictionary obtained from
+            the function define_weights can be directly pass as *+weights
+        """
         weights = dict({'apply': False, 'vector': None, 'range': [],
                         'type': 'constant', 'value': 2}, **kwargs)
         self.weights = weights
         self.x = x
         self.data = data
         self.params = params
-        self.SVD_fit = SVD
+        self.SVD_fit = False
         self.deconv = deconv
         self.exp_no = exp_no
         self.GVD_corrected = GVD_corrected
@@ -36,61 +135,12 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
         lmfit.Minimizer.__init__(self, self._objectiveTarget,
                                  params, nan_policy='propagate')
     
-    def _single_fit(self, params, function, i, extra_params):
-        """
-        does a fit of a single trace
-        """
-        if self.deconv:
-            return self.data[:, i] - function(params, i, extra_params)
-        else:
-            t0 = params['t0_%i' % (i+1)].value
-            index = np.argmin([abs(i-t0) for i in self.x])
-            return self.data[index:, i] - function(params, i, extra_params)
-    
-    def _objectiveTarget(self, params, shared_t0=True):
-        # size of the matrix = no of exponenses = no of species
-        ksize = self.exp_no
-        coeffs, eigs, eigenmatrix = solve_kmatrix(ksize, params)
-        if self.deconv:
-            if shared_t0:
-                t0 = params['t0_1'].value
-                fwhm = params['fwhm_1'].value/2.35482
-                expvects = [coeffs[i]*self.expGauss(self.x-t0, -1/eigs[i], fwhm)
-                            for i in range(len(eigs))]
-                concentrations = [sum([eigenmatrix[i, j]*expvects[j]
-                                       for j in range(len(eigs))])
-                                  for i in range(len(eigs))]
-                resid = self._generate_residues(self.expNGaussDatasetFast,
-                                                params, concentrations)
-            else: 
-                resid = self._generate_residues(self.expNGaussDatasetTM,
-                                                params,
-                                                (coeffs, eigs, eigenmatrix))
-        else:
-            t0 = params['t0_1'].value
-            index = np.argmin([abs(i-t0) for i in self.x])
-            values = [params['tau%i_1' % (ii+1)].value
-                      for ii in range(self.exp_no)]
-            expvects = [self.exp1(self.x-t0, tau) for tau in values]
-            resid = self._generate_residues(self.expNGaussDatasetTM, params,
-                                            (coeffs, eigs, eigenmatrix))[index:, :]
-        self._number_it = self._number_it+1
-        if self._number_it % 100 == 0:
-            print(self._number_it)
-            print(sum(np.abs(resid.flatten())))
-        return resid.flatten()
-    
-    def _generate_residues(self, funtion, params, extra_param):
-        ndata, nx = self.data.shape
-        data = self.data[:]
-        resid = 0.0*data[:]
-        for i in range(nx):
-            resid[:, i] = data[:, i] - funtion(params, i, extra_param)
-            if self.weights['apply']:
-                resid[:, i] = resid[:, i]*self.weights['vector']
-        return resid
-    
     def preFit(self):
+        """
+        Method that optimized the pre_exponential factors trace by trace without
+        optimizing the kinetic constants times. It is automatically ran before a
+        global fit.
+        """
         # initiate self.data_before_last_Fit copying from self.data which
         # will be used to fit
         # parameters have been created with lenght of self.data
@@ -126,7 +176,20 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
             self.params = fit_params
         self._prefit_done = True
 
-    def finalFit(self, maxfev=None, apply_weights=False):
+    def global_fit(self, maxfev=None, apply_weights=False):
+        """
+        Method to fit the data to a model. Returns a modified lmfit result
+        object.
+
+        Parameters
+        ----------
+        maxfev: int (default 5000)
+            maximum number of iterations of the fit.
+
+        apply_weights: bool (default False)
+            If True and weights have been defined, this will be applied in the
+            fit (for defining weights) check the function define_weights.
+        """
         self.fit_completed = False
         if not self._prefit_done:
             self.preFit()
@@ -174,3 +237,67 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
         else:
             resultados.weights = self.weights
         return resultados
+
+    def _single_fit(self, params, function, i, extra_params):
+        """
+        does a fit of a single trace use by preFit method
+        """
+        if self.deconv:
+            return self.data[:, i] - function(params, i, extra_params)
+        else:
+            t0 = params['t0_%i' % (i + 1)].value
+            index = np.argmin([abs(i - t0) for i in self.x])
+            return self.data[index:, i] - function(params, i, extra_params)
+
+    def _objectiveTarget(self, params, shared_t0=True):
+        """
+        The optimizing function that is minimized. Is constructed to return a
+        flat array  of residues, which corresponds to the data minus the
+        kinetic target model.
+        """
+        # size of the matrix = no of exponenses = no of species
+        ksize = self.exp_no
+        coeffs, eigs, eigenmatrix = solve_kmatrix(ksize, params)
+        if self.deconv:
+            if shared_t0:
+                t0 = params['t0_1'].value
+                fwhm = params['fwhm_1'].value / 2.35482
+                expvects = [
+                    coeffs[i] * self.expGauss(self.x - t0, -1 / eigs[i], fwhm)
+                    for i in range(len(eigs))]
+                concentrations = [sum([eigenmatrix[i, j] * expvects[j]
+                                       for j in range(len(eigs))])
+                                  for i in range(len(eigs))]
+                resid = self._generate_residues(self.expNGaussDatasetFast,
+                                                params, concentrations)
+            else:
+                resid = self._generate_residues(self.expNGaussDatasetTM,
+                                                params,
+                                                (coeffs, eigs, eigenmatrix))
+        else:
+            t0 = params['t0_1'].value
+            index = np.argmin([abs(i - t0) for i in self.x])
+            values = [params['tau%i_1' % (ii + 1)].value
+                      for ii in range(self.exp_no)]
+            expvects = [self.exp1(self.x - t0, tau) for tau in values]
+            resid = self._generate_residues(self.expNGaussDatasetTM, params,
+                                            (coeffs, eigs, eigenmatrix))[index:, :]
+        self._number_it = self._number_it + 1
+        if self._number_it % 100 == 0:
+            print(self._number_it)
+            print(sum(np.abs(resid.flatten())))
+        return resid.flatten()
+
+    def _generate_residues(self, funtion, params, extra_param):
+        """
+        Generate a single residue for one trace (used by global_fit)
+        """
+        ndata, nx = self.data.shape
+        data = self.data[:]
+        resid = 0.0 * data[:]
+        for i in range(nx):
+            resid[:, i] = data[:, i] - funtion(params, i, extra_param)
+            if self.weights['apply']:
+                resid[:, i] = resid[:, i] * self.weights['vector']
+        return resid
+
