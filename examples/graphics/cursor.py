@@ -9,12 +9,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 #generate data for ploting
-x = np.linspace(1,10,101)
-y=np.sin(x)
+x = np.linspace(1, 10, 101)
+y = np.sin(x)
 
-fig,ax=plt.subplots(1,figsize=(18,6))
-ax.plot(x,y)
-cursor = SnaptoCursor(ax, x,y)
+fig, ax = plt.subplots(1, figsize=(18, 6))
+ax.plot(x, y)
+cursor = SnaptoCursor(ax, x, y)
 plt.connect('axes_enter_event', cursor.onEnterAxes)
 plt.connect('axes_leave_event', cursor.onLeaveAxes)
 plt.connect('motion_notify_event', cursor.mouseMove)
