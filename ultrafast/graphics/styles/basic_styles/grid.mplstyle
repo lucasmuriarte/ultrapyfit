@@ -1,0 +1,5 @@
+# GRID
+axes.grid : True
+grid.alpha : 0.7
+grid.linestyle : --
+grid.linewidth : 0.6

@@ -15,5 +15,6 @@ data_select, wave_select = select_traces(data, wave, 'auto')
 result = globalfit_exponential(time, data_select, 4, 40, 400)
 params_result = result.params
 
-final_taus = [params_result['tau1_1'], params_result['tau2_1'], params_result['tau3_1']]
+final_taus = [params_result['tau1_1'], params_result['tau2_1'],
+              params_result['tau3_1']]
 

@@ -95,7 +95,7 @@ class BasicSpectrum:
         elif high_index<low_index:
             return high_index,low_index
         else:
-            raise 'low and high are same values'
+            raise Exception('low and high are same values')
         
     def calculateArea(self,low=None,high=None,Print=False):
         low_index,high_index=self.minMaxIndex(low,high)
