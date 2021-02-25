@@ -179,30 +179,29 @@
 </div>
 <div class="section" id="module-ultrafast.graphics.ExploreData">
 <span id="ultrafast-graphics-exploredata-module"></span><h2>ultrafast.graphics.ExploreData module<a class="headerlink" href="#module-ultrafast.graphics.ExploreData" title="Permalink to this headline">¶</a></h2>
-<p>Created on Thu Nov 12 21:18:25 2020</p>
-<p>&#64;author: lucas</p>
+<p>Created on Thu Nov 12 21:18:25 2020
+&#64;author: lucas</p>
 <dl class="py class">
 <dt id="ultrafast.graphics.ExploreData.ExploreData">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.graphics.ExploreData.</span></code><code class="sig-name descname"><span class="pre">ExploreData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_traces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ultrafast.graphics.PlotSVD.PlotSVD" title="ultrafast.graphics.PlotSVD.PlotSVD"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.graphics.PlotSVD.PlotSVD</span></code></a></p>
-<p>Class to explore a time resolved data set and easily create figures already formatted.
-The class inherits PlotSVD therefore all methods for plotting and exploring the SVD
-space are available.</p>
-<dl class="py attribute">
-<dt id="ultrafast.graphics.ExploreData.ExploreData.x">
-<code class="sig-name descname"><span class="pre">x</span></code><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.x" title="Permalink to this definition">¶</a></dt>
-<dd><p>x-vector, normally time vector</p>
+<p>Class to explore a time resolved data set and easily create figures already
+formatted. The class inherits PlotSVD therefore all methods for plotting and
+exploring the SVD space are available.
+.. attribute:: x</p>
+<blockquote>
+<div><p>x-vector, normally time vector</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">type</dt>
 <dd class="field-odd"><p>1darray</p>
 </dd>
 </dl>
-</dd></dl>
-
+</div></blockquote>
 <dl class="py attribute">
 <dt id="ultrafast.graphics.ExploreData.ExploreData.data">
 <code class="sig-name descname"><span class="pre">data</span></code><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>array containing the data, the number of rows should be equal to the len(x)</p>
+<dd><p>array containing the data, the number of rows should be equal to
+the len(x)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>2darray</p>
@@ -217,19 +216,6 @@ space are available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>1darray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="ultrafast.graphics.ExploreData.ExploreData.params">
-<code class="sig-name descname"><span class="pre">params</span></code><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.params" title="Permalink to this definition">¶</a></dt>
-<dd><p>object containing the initial parameters values used to build an exponential model.
-These parameters are iteratively optimize to reduce the residual matrix formed by
-data-model (error matrix) using Levenberg-Marquardt algorithm.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>lmfit parameters object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -259,7 +245,8 @@ data-model (error matrix) using Levenberg-Marquardt algorithm.</p>
 <dl class="py attribute">
 <dt id="ultrafast.graphics.ExploreData.ExploreData.time_unit">
 <code class="sig-name descname"><span class="pre">time_unit</span></code><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.time_unit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contains the strings of the time units to format axis labels and legends automatically:
+<dd><p>Contains the strings of the time units to format axis labels and legends
+automatically:
 time_unit str of the unit. &gt;&gt;&gt; e.g.: ‘ps’ for picosecond
 Can be passes as kwargs when instantiating the object</p>
 <dl class="field-list simple">
@@ -272,7 +259,8 @@ Can be passes as kwargs when instantiating the object</p>
 <dl class="py attribute">
 <dt id="ultrafast.graphics.ExploreData.ExploreData.wavelength_unit">
 <code class="sig-name descname"><span class="pre">wavelength_unit</span></code><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.wavelength_unit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contains the strings of the wavelength units to format axis labels and legends automatically:
+<dd><p>Contains the strings of the wavelength units to format axis labels and
+legends automatically:
 wavelength_unit str of the unit: &gt;&gt;&gt; e.g.: ‘nm’ for nanometers
 Can be passes as kwargs when instantiating the object</p>
 <dl class="field-list simple">
@@ -301,82 +289,101 @@ Can be passes as kwargs when instantiating the object</p>
 <dl class="py method">
 <dt id="ultrafast.graphics.ExploreData.ExploreData.plot3D">
 <code class="sig-name descname"><span class="pre">plot3D</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.plot3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the data in 3D</p>
+<dd><p>Plot the data in 3D
+:Parameters: <strong>cmap</strong> (<em>str or None</em>) –</p>
+<blockquote>
+<div><dl class="simple">
+<dt>name of matplotlib color map if None the attribute color_map will</dt><dd><p>be use</p>
+</dd>
+</dl>
+</div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cmap</strong> (<em>str or None</em>) – name of matplotlib color map if None the attribute color_map will be use</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Figure and axes matplotlib objects</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Figure and axes matplotlib objects</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="ultrafast.graphics.ExploreData.ExploreData.plot_spectra">
-<code class="sig-name descname"><span class="pre">plot_spectra</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rango</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cover_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_max_to_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_decimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_rango_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.plot_spectra" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to plot spectra</p>
-<dl class="field-list">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul>
-<li><p><strong>times</strong> (<em>list or “all” or “auto” (default “all”)</em>) –</p>
-<dl class="simple">
-<dt>“all”: all spectra will be plotted if they are less than 250 spectra (if there are more than 250 the output</dt><dd><p>is the same as auto</p>
-</dd>
-</dl>
-<p>“auto”: 8 spectra equally spaced at the wavelength where the data has maximum amplitude will be displayed</p>
-<dl>
-<dt>list: (option 1)</dt><dd><p>list containing a number of time points, then the closest points in x vector to those in the list
-will be plotted</p>
-</dd>
-<dt>list: (Option 2)</dt><dd><p>a list of either length 2 or 3 elements where the structure should follow this sequence:
-times=[“auto”, number_of_spectra(optional; int),  wavelength_to_select_spectra(optional; int)],</p>
-<p>with three possible options:
-1 –&gt;if only [“auto”] 8 spectra will be plotted equally spaced at the maximum for all wavelengths</p>
-<blockquote>
-<div><p>same as “auto”  as string</p>
-</div></blockquote>
-<dl class="simple">
-<dt>2 –&gt;if [“auto”, n_number_spec] n_number spectra will be plotted equally spaced at the maximum for all</dt><dd><p>wavelengths</p>
-</dd>
-<dt>3 –&gt;if [“auto”, n_number_spec, wavelength] n_number spectra will be plotted equally spaced at the</dt><dd><p>selected wavelength</p>
-</dd>
-</dl>
-<p>e.g.1: [“auto”, 10, 350] &gt;&gt;&gt; 10 spectra equally spaced at wavelength 350
-e.g.2: [“auto”, 10] &gt;&gt;&gt; 10 spectra equally spaced at data wavelength were signal is</p>
+<code class="sig-name descname"><span class="pre">plot_spectra</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rango</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cover_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_max_to_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_decimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_rango_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.plot_spectra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to plot spectra
+:Parameters: * <strong>times</strong> (<em>list or “all” or “auto” (default “all”)</em>) –</p>
 <blockquote>
 <div><blockquote>
-<div><p>maximum amplitude (absolute value)</p>
+<div><dl>
+<dt>“all”: all spectra will be plotted if they are less than 250</dt><dd><p>spectra (if there are more than 250 the output is the same
+as “auto”)</p>
+</dd>
+<dt>“auto”: 8 spectra equally spaced at the wavelength where the data</dt><dd><p>has maximum amplitude will be displayed</p>
+</dd>
+<dt>list: (option 1)</dt><dd><p>list containing a number of time points, then the closest points
+in x vector to those in the list will be plotted</p>
+</dd>
+<dt>list: (Option 2) –&gt; modifies auto plotting</dt><dd><p>a list of either length 2 or 3 elements where the structure
+should follow this sequence:
+mode = “auto”
+number_of_spectra = (optional; int)
+wavelength_to_select_spectra = (optional; int)
+times=[“auto”, number_of_spectra,  wavelength_to_select_spectra]
+with three possible options:
+1 –&gt;if only [“auto”] 8 spectra will be plotted equally spaced</p>
+<blockquote>
+<div><p>at the maximum for all wavelengths same as “auto”
+as string</p>
 </div></blockquote>
-<p>e.g.3: [“auto”, 6, 480] &gt;&gt;&gt; 6 spectra equally spaced at wavelength 480</p>
+<dl>
+<dt>2 –&gt;if [“auto”, n_number_spec] n_number spectra will be plotted</dt><dd><p>equally spaced at the maximum for all wavelengths</p>
+</dd>
+<dt>3 –&gt;if [“auto”, n_number_spec, wavelength] n_number spectra</dt><dd><p>will be plotted equally spaced at the selected wavelength</p>
+</dd>
+<dt>e.g.1: [“auto”, 10, 350] &gt;&gt;&gt; 10 spectra equally spaced at</dt><dd><p>wavelength 350</p>
+</dd>
+<dt>e.g.2: [“auto”, 10] &gt;&gt;&gt; 10 spectra equally spaced at data</dt><dd><blockquote>
+<div><p>wavelength were signal is maximum
+amplitude (absolute value)</p>
 </div></blockquote>
+<dl class="simple">
+<dt>e.g.3: [“auto”, 6, 480] &gt;&gt;&gt; 6 spectra equally spaced at w</dt><dd><p>avelength 480</p>
 </dd>
 </dl>
-</li>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<ul class="simple">
 <li><p><strong>rango</strong> (<em>List of length 2 or None (default None)</em>) – Defines a time range where to auto select spectra</p></li>
-<li><p><strong>n_points</strong> (<em>int (default 0)</em>) – Number of points to average the spectra. Is recommended to be zero except for special cases</p></li>
-<li><p><strong>cover_range</strong> (<em>List of length 2 or None (default None)</em>) – Defines a range in wavelength that will be cover in white. This can be use to cut the excitation
-wavelength range</p></li>
-<li><p><strong>from_max_to_min</strong> (<em>bool (default True)</em>) – In case the rango is None. Generally the data sets have a time point where the transient signal is maximum.
-If from_max_to_min is True the range will be given from the time point where the data amplitude is maximum
-to the end. If False from the initial time to the maximum in amplitude of the data.</p></li>
-<li><p><strong>legend</strong> (<em>bool (default True)</em>) – If True a legend will be display, If False color-bar with the times will be display</p></li>
+<li><p><strong>average</strong> (<em>int (default 0)</em>) – Number of points to average the spectra. Is recommended to be zero
+except for special cases</p></li>
+<li><p><strong>cover_range</strong> (<em>List of length 2 or None (default None)</em>) – Defines a range in wavelength that will be cover in white. This can
+be use to cut the excitation wavelength range</p></li>
+<li><p><strong>from_max_to_min</strong> (<em>bool (default True)</em>) – In case the rango is None. Generally the data sets have a time point
+where the transient signal is maximum. If from_max_to_min is True
+the range will be given from the time point where the data amplitude
+is maximum to the end. If False from the initial time to the maximum
+in amplitude of the data.</p></li>
+<li><p><strong>legend</strong> (<em>bool (default True)</em>) – If True a legend will be display, If False color-bar with the times
+will be display</p></li>
 <li><p><strong>legend_decimal</strong> (<em>int (default 2)</em>) – number of decimal values in the legend names</p></li>
 <li><p><strong>ncol</strong> (<em>int (default 1)</em>) – Number of legend columns</p></li>
-<li><p><strong>cmap</strong> (<em>str or None (default None)</em>) – Name of matplotlib color map if None the attribute color_map will be use</p></li>
-<li><p><strong>size</strong> (<em>int (default 14)</em>) – size of the figure text labels including tick labels axis labels and legend</p></li>
-<li><p><strong>include_rango_max</strong> (<em>bool (default True)</em>) – If True, spectra are auto-plotted in a given range the last spectrum plotted will be the
-closest to the range limit</p></li>
+<li><p><strong>cmap</strong> (<em>str or None (default None)</em>) – Name of matplotlib color map if None the attribute color_map will
+be use</p></li>
+<li><p><strong>size</strong> (<em>int (default 14)</em>) – size of the figure text labels including tick labels axis labels
+and legend</p></li>
+<li><p><strong>include_rango_max</strong> (<em>bool (default True)</em>) – If True, spectra are auto-plotted in a given range the last spectrum
+plotted will be the closest to the range limit</p></li>
 </ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Figure and axes matplotlib objects</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Figure and axes matplotlib objects</p>
 </dd>
 </dl>
 </dd></dl>
@@ -384,22 +391,30 @@ closest to the range limit</p></li>
 <dl class="py method">
 <dt id="ultrafast.graphics.ExploreData.ExploreData.plot_traces">
 <code class="sig-name descname"><span class="pre">plot_traces</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">traces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'select'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.plot_traces" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots either the selected traces or 9-10 trace equally space in the wavelength range.
-If less than 10 (included) traces are plotted a legend will be display.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>traces</strong> (<em>auto, select or a list conatining the traces wave values (default select)</em>) – If auto between 9 and 10 traces equally spaced in the wavelength range will be plotted.
-If select the selected traces will be plotted
-If a list</p></li>
-<li><p><strong>size</strong> (<em>int (default 14)</em>) – size of the figure text labels including tick labels axis labels and legend</p></li>
+<dd><p>Plots either the selected traces or 9-10 trace equally space in the
+wavelength range. If less than 10 (included) traces are plotted a
+legend will be display.
+:Parameters: * <strong>traces</strong> (<em>auto, select or a list  (default select)</em>) –</p>
+<blockquote>
+<div><blockquote>
+<div><dl class="simple">
+<dt>1–&gt; If auto between 9 and 10 traces equally spaced in the</dt><dd><p>wavelength range will be plotted.</p>
+</dd>
+</dl>
+<p>2–&gt; If select the selected traces will be plotted
+3–&gt; If a list conatining the traces wave values</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>size</strong> (<em>int (default 14)</em>) – size of the figure text labels including tick labels axis labels
+and legend</p></li>
 </ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Figure and axes matplotlib objects</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Figure and axes matplotlib objects</p>
 </dd>
 </dl>
 </dd></dl>
@@ -407,33 +422,35 @@ If a list</p></li>
 <dl class="py method">
 <dt id="ultrafast.graphics.ExploreData.ExploreData.select_traces">
 <code class="sig-name descname"><span class="pre">select_traces</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avoid_regions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.select_traces" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to select traces from the data attribute ande defines a subset of traces
-in the selected_traces attribute</p>
-<dl class="field-list">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul>
-<li><p><strong>points</strong> (<em>int or list or “auto” (default 10)</em>) – If type(space) =int: a series of traces separated by the value indicated
-will be selected.
+<dd><p>Method to select traces from the data attribute and defines a subset
+of traces in the selected_traces attribute.
+:Parameters: * <strong>points</strong> (<em>int or list or “auto” (default 10)</em>) – If type(space) =int: a series of traces separated by the value</p>
+<blockquote>
+<div><blockquote>
+<div><p>indicated will be selected.
 If type(space) = list: the traces in the list will be selected.
-If space = auto, the number of returned traces is 10 and equally spaced
-along the wavelength vector and points is set to 0</p></li>
+If space = auto, the number of returned traces is 10 and equally
+spaced along the wavelength vector and points is set to 0</p>
+</div></blockquote>
+<ul>
 <li><p><strong>average</strong> (<em>int (default 1)</em>) – Binning points surrounding the selected wavelengths.
 e. g.: if point is 1 trace = mean(index-1, index, index+1)</p></li>
-<li><p><strong>avoid_regions</strong> (<em>list of list (default None)</em>) – Defines wavelength regions that are avoided in the selection when space
-is an integer. The sub_list should have two elements defining the region
-to avoid in wavelength values
-i. e.: [[380,450],[520,530] traces with wavelength values between 380-450</p>
+<li><p><strong>avoid_regions</strong> (<em>list of list (default None)</em>) – Defines wavelength regions that are avoided in the selection when
+space is an integer. The sub_list should have two elements defining
+the region to avoid in wavelength values
+i. e.: [[380,450],[520,530] traces with wavelength values</p>
 <blockquote>
-<div><p>and 520-530 will not be selected</p>
+<div><p>between 380-450 and 520-530 will not be selected</p>
 </div></blockquote>
 </li>
 </ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Modifies the attributes selected_traces and selected_wavelength.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Modifies the attributes selected_traces and selected_wavelength.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -441,12 +458,11 @@ i. e.: [[380,450],[520,530] traces with wavelength values between 380-450</p>
 <dl class="py method">
 <dt id="ultrafast.graphics.ExploreData.ExploreData.select_traces_graph">
 <code class="sig-name descname"><span class="pre">select_traces_graph</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.select_traces_graph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to select traces graphically</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>points</strong> (<em>int (default -1)</em>) – Defines the number of traces that can be selected. If -1 an infinitive number of traces can be selected</p>
-</dd>
-</dl>
+<dd><p>Function to select traces graphically
+:Parameters: <strong>points</strong> (<em>int (default -1)</em>) – Defines the number of traces that can be selected. If -1 an</p>
+<blockquote>
+<div><p>infinitive number of traces can be selected</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -469,7 +485,7 @@ i. e.: [[380,450],[520,530] traces with wavelength values between 380-450</p>
 <dl class="py class">
 <dt id="ultrafast.graphics.ExploreResults.ExploreResults">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.graphics.ExploreResults.</span></code><code class="sig-name descname"><span class="pre">ExploreResults</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fits</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ultrafast.utils.html#ultrafast.utils.divers.FiguresFormating" title="ultrafast.utils.divers.FiguresFormating"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.utils.divers.FiguresFormating</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt id="ultrafast.graphics.ExploreResults.ExploreResults.DAS">
 <code class="sig-name descname"><span class="pre">DAS</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.DAS" title="Permalink to this definition">¶</a></dt>

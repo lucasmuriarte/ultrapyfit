@@ -12,18 +12,18 @@ ultrafast.fit.ExponentialFit module
    :undoc-members:
    :show-inheritance:
 
-ultrafast.fit.GlobExpParams module
-----------------------------------
-
-.. automodule:: ultrafast.fit.GlobExpParams
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 ultrafast.fit.GlobalFitBootstarp module
 ---------------------------------------
 
 .. automodule:: ultrafast.fit.GlobalFitBootstarp
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.fit.GlobalParams module
+---------------------------------
+
+.. automodule:: ultrafast.fit.GlobalParams
    :members:
    :undoc-members:
    :show-inheritance:
