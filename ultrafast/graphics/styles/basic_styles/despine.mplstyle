@@ -1,0 +1,13 @@
+# AXES
+axes.spines.top : False
+axes.spines.right : False
+axes.spines.bottom : False
+axes.spines.left : False
+
+# TICKS
+xtick.minor.visible  : False
+xtick.top            : False
+xtick.bottom         : False
+ytick.left           : False
+ytick.right          : False
+ytick.minor.visible  : False

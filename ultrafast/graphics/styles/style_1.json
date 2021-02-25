@@ -1,0 +1,7 @@
+{   
+    "utf_style": true,
+    "name": "style_1",
+    "styles": ["basic_utf", "grid", "minor_ticks", "ticks_in", "x_snap", "label_size_14", "fig_size_1", "dark"],
+    "function": "plot_axhline",
+    "function_arguments": {"ls":"--", "c":"k"}
+}
