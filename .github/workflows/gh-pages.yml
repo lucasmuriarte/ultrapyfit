@@ -1,0 +1,42 @@
+
+name: "Build and deploy Github pages"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: "Install Python dependencies"
+        run: |
+          pip3 install setuptools
+          pip3 install sphinx sphinx-rtd-theme
+          pip3 install m2r2
+          pip3 install -r requirements.txt
+
+      - name: "Build Sphinx Doc"
+        run: |
+          sphinx-apidoc -o docs/source ultrafast 
+          make -C docs html
+
+      - name: "Deploy Github Pages"
+        uses: JamesIves/github-pages-deploy-action@4.0.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.token }}
+          BRANCH: gh-pages
+          FOLDER: docs/build/html/

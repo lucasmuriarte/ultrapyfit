@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Nov 13 13:12:36 2020
-
 @author: 79344
 """
 import numpy as np
@@ -10,7 +9,7 @@ from ultrafast.fit.ModelCreator import ModelCreator
 from ultrafast.utils.divers import solve_kmatrix
 
 
-class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
+class GlobalFitTargetModel(lmfit.Minimizer, ModelCreator):
     """
     Class that does a global target fit to a kinetic model. This class is uses
     a global fit evaluate the times from all the traces (kinetic constants are
@@ -18,32 +17,26 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
     independently from each trace. The pre_exp values give later the species
     associated spectra (SAS). The Class do not generates the parameters
     automatically.
-
     Attributes
     ----------
     x: 1darray
        x-vector, normally time vector
-
     data: 2darray
        array containing the data, the number of rows should be equal to the
        len(x)
-
     exp_no: int
        number of exponential that will be used to fit the data.
-
     params: lmfit parameters object
        object containing the initial parameters values used to build an
        exponential model. These parameters are iteratively optimize to
        reduce the residual matrix formed by data-model (error matrix)
        using Levenberg-Marquardt algorithm.
-
     deconv: bool
        If True the fitting functions will search for the deconvolution
        parameter ("fwhm") in the params attribute, and the the model is a
        weighted sum of Gauss modified exponential functions. If False the
        the model is a weighted sum of exponential functions, and params
        should not contain the fwhm entrance.
-
     GVD_corrected: bool
        Defines if the chrip or group velocity dispersion (GVD) has been
        corrected. If True t0 is globally optimized (faster). If False t0 is
@@ -53,7 +46,6 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
        the fit, setting this parameter to False can help to acquire
        overcome this problem although the fit will take longer.
        (only affects if deconv is True)
-
     weights: dictionary
        This dictionary controls if the fitting weights are applied,
        the keys are:
@@ -63,7 +55,6 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
        'range': time range according to x-vector of the weights that are
                 different than 1
        'value': val weighting value
-
        The dictionary keys can be passes as kwargs when instantiating the
        object
     """
@@ -78,32 +69,26 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
                  **kwargs):
         """
         constructor function:
-
         Parameters
         ----------
         x: 1darray
             x-vector, normally time vector
-
         data: 2darray
             Array containing the data, the number of rows should be equal to
             the len(x)
-
         exp_no: int
             Number of exponential that will be used to fit the data
-
         params: lmfit parameter object
             parameters object containing the initial estimations values for all
             the parameters together with the minimum maximum and constraints.
             This object can easily be generated with GlobalTargetParams class,
             and the target Model class.
-
         deconv: bool (default True)
             If True the fitting functions will search for the deconvolution
             parameter ("fwhm") in the params attribute, and the the model is a
             weighted sum of Gauss modified exponential functions. If False the
             the model is a weighted sum of exponential functions, and params
             should not contain the fwhm entrance.
-
         GVD_corrected: bool (defautl True)
             Defines if the chrip or group velocity dispersion (GVD) has been
             corrected. If True t0 is globally optimized (faster). If False t0 is
@@ -113,7 +98,6 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
             the fit, setting this parameter to False can help to overcome this
             problem although the fit will take longer.
             (only affects if deconv is True)
-
         kwargs:
             Related for applying weight to the fit. The dictionary obtained from
             the function define_weights can be directly pass as *+weights
@@ -134,7 +118,7 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
         ModelCreator.__init__(self, self.exp_no, self.x, None)
         lmfit.Minimizer.__init__(self, self._objectiveTarget,
                                  params, nan_policy='propagate')
-    
+
     def preFit(self):
         """
         Method that optimized the pre_exponential factors trace by trace without
@@ -152,13 +136,14 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
             print(iy)
             single_param = lmfit.Parameters()
             for i in range(self.exp_no):
-                single_param['pre_exp%i_' % (i+1) + str(iy+1)] =\
-                    fit_params['pre_exp%i_' % (i+1) + str(iy+1)]
-            single_param['y0_%i' % (iy+1)] = fit_params['y0_%i' % (iy+1)]
-            single_param.add(('t0_%i' % (iy+1)), value=fit_params['t0_1'].value,
+                single_param['pre_exp%i_' % (i + 1) + str(iy + 1)] = \
+                    fit_params['pre_exp%i_' % (i + 1) + str(iy + 1)]
+            single_param['y0_%i' % (iy + 1)] = fit_params['y0_%i' % (iy + 1)]
+            single_param.add(('t0_%i' % (iy + 1)),
+                             value=fit_params['t0_1'].value,
                              expr=None, vary=fit_params['t0_1'].vary)
             if self.deconv:
-                single_param.add(('fwhm_%i' % (iy+1)),
+                single_param.add(('fwhm_%i' % (iy + 1)),
                                  value=fit_params['fwhm_1'].value,
                                  expr=None,
                                  vary=fit_params['fwhm_1'].vary)
@@ -169,10 +154,11 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
                                           [coeffs, eigs, eigenmatrix]),
                                     nan_policy='propagate')
             if not self.GVD_corrected and self.deconv:
-                fit_params['t0_%i' % (iy+1)] = result.params['t0_%i' % (iy+1)]
+                fit_params['t0_%i' % (iy + 1)] = result.params[
+                    't0_%i' % (iy + 1)]
             for i in range(self.exp_no):
-                fit_params['pre_exp%i_' % (i+1) + str(iy+1)] = \
-                    result.params['pre_exp%i_' % (i+1) + str(iy+1)]
+                fit_params['pre_exp%i_' % (i + 1) + str(iy + 1)] = \
+                    result.params['pre_exp%i_' % (i + 1) + str(iy + 1)]
             self.params = fit_params
         self._prefit_done = True
 
@@ -180,12 +166,10 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
         """
         Method to fit the data to a model. Returns a modified lmfit result
         object.
-
         Parameters
         ----------
         maxfev: int (default 5000)
             maximum number of iterations of the fit.
-
         apply_weights: bool (default False)
             If True and weights have been defined, this will be applied in the
             fit (for defining weights) check the function define_weights.
@@ -281,7 +265,8 @@ class GlobalFitTargetModel(lmfit.Minimizer,ModelCreator):
                       for ii in range(self.exp_no)]
             expvects = [self.exp1(self.x - t0, tau) for tau in values]
             resid = self._generate_residues(self.expNGaussDatasetTM, params,
-                                            (coeffs, eigs, eigenmatrix))[index:, :]
+                                            (coeffs, eigs, eigenmatrix))[index:,
+                    :]
         self._number_it = self._number_it + 1
         if self._number_it % 100 == 0:
             print(self._number_it)
