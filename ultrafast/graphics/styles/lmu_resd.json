@@ -1,0 +1,7 @@
+{   
+    "utf_style": true,
+    "name": "lmu_spec",
+    "styles": ["lmu", "fig_size_2", "grid", "dark"],
+    "function": "plot_axhline",
+    "function_arguments": {"ls":"--", "c":"w"}
+}

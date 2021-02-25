@@ -1,0 +1,4 @@
+# FIGURE OUTPUT 
+figure.figsize  : 9, 5
+figure.dpi : 150
+savefig.dpi : 300

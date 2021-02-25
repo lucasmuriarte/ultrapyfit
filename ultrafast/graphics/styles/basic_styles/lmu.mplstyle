@@ -1,0 +1,37 @@
+# To check more avaialble options see:
+# https://matplotlib.org/tutorials/introductory/customizing.html
+
+text.color : (0.2,0.2,0.2)
+
+# AXES
+axes.titlesize : 16
+axes.labelsize : 14
+axes.edgecolor : (0.1,0.1,0.1) #Normalized RGB colours (from 0 to 1 instead of 0 to 255)
+axes.labelcolor : (0.1,0.1,0.1)
+axes.linewidth : 1
+axes.spines.top : True
+axes.spines.right : True
+axes.spines.bottom : True
+axes.spines.left : True
+
+# LINES
+axes.prop_cycle : cycler('color', [ '0046b8', '2464c9', '4d87e3', '7899cf', '8ea1bf']) #hex colours
+lines.linewidth : 1.5
+lines.markeredgewidth : 0.0
+
+# SCATTER PLOT
+scatter.marker : o
+
+# TICKS
+xtick.labelsize : 13
+xtick.color : (0.2,0.2,0.2)
+xtick.direction : in
+xtick.minor.visible  : True
+xtick.top            : True   # draw ticks on the top side
+xtick.bottom         : True
+ytick.labelsize : 13
+ytick.color : (0.2,0.2,0.2)
+ytick.direction : in
+ytick.minor.visible  : True
+ytick.left           : True   # draw ticks on the left side
+ytick.right          : True

@@ -14,9 +14,12 @@ import pandas as pd
 from ultrafast.graphics.PlotSVD import PlotSVD
 from copy import copy
 import matplotlib.cm as cm
+from  ultrafast.graphics.styles.set_styles import *
+from  ultrafast.graphics.styles.plot_base_functions import *
 
 
-class ExploreData:
+
+class ExploreData(PlotSVD):
     """
     Class to explore a time resolved data set and easily create figures already
     formatted. The class inherits PlotSVD therefore all methods for plotting and
@@ -169,20 +172,19 @@ class ExploreData:
         Figure and axes matplotlib objects
         """
         data, values = self._get_traces_values(traces)
-        if len(values) <= 10 or traces == 'auto':
-            legenda = self._traces_legend(traces, values)
         fig, ax = plt.subplots(1, figsize=(11, 6))
         alpha = 0.60
         for i in values:
             ax.plot(self.x, data[:, i], marker='o', alpha=alpha, ms=4, ls='')
         if len(values) <= 10 or traces == 'auto':
+            legenda = self._traces_legend(traces, values)
             ax.legend(legenda, loc='best', ncol=2)
         FiguresFormating.format_figure(ax, data, self.x, set_ylim=False,
                                        size=size)
         FiguresFormating.axis_labels(ax, f'Time ({self._units["time_unit"]})',
                                      '$\Delta$A', size=size)
         return fig, ax
-    
+
     def plot_spectra(self,
                      times='all',
                      rango=None,
@@ -521,9 +523,9 @@ class ExploreData:
         return times
 
     def _format_spectra_figure(self, ax, data, wavelength, size, cover_range):
-        FiguresFormating.format_figure(ax, data, wavelength,
-                                       size=size, x_tight=True,
-                                       set_ylim=False)
+        # FiguresFormating.format_figure(ax, data, wavelength,
+        #                                size=size, x_tight=True,
+        #                                set_ylim=False)
         FiguresFormating.axis_labels(ax, self._get_wave_label(),
                                      '$\Delta$A', size=size)
         if cover_range is not None:
