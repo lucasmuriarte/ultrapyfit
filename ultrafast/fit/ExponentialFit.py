@@ -7,7 +7,7 @@ Created on Thu Nov 12 21:00:23 2020
 import numpy as np
 import lmfit
 from ultrafast.fit.ModelCreator import ModelCreator
-from ultrafast.fit.GlobExpParams import GlobExpParameters
+from ultrafast.fit.GlobalParams import GlobExpParameters
 
 
 def globalfit_exponential(x,
@@ -286,6 +286,11 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
 
         exp_no: int
             Number of exponential that will be used to fit the data
+
+        params: lmfit parameter object
+            parameters object containing the initial estimations values for all
+            the parameters together with the minimum maximum and constraints.
+            This object can easily be generated with GlobExpParameters class.
 
         deconv: bool (default True)
             If True the fitting functions will search for the deconvolution

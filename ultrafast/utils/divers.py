@@ -464,7 +464,8 @@ def solve_kmatrix(exp_no, params):
     """
     ksize = exp_no
     kmatrix = np.array(
-        [[params['k_%i%i' % (i + 1, j + 1)].value for j in range(ksize)] for i in range(ksize)])
+        [[params['k_%i%i' % (i + 1, j + 1)].value for j in range(ksize)]
+         for i in range(ksize)])
     cinitials = [params['c_%i' % (i + 1)].value for i in range(ksize)]
     # do the eigens value decomposition
     eigs, vects = np.linalg.eig(kmatrix)
@@ -507,8 +508,8 @@ def froze_it(cls):
 
     def frozen_setattr(self, key, value, code=None):
         """
-        Function that allow to only set an attribute it is new. It can be modified only
-        if the code is correct.
+        Function that allow to only set an attribute it is new. It can be
+        modified only if the code is correct.
         """
         val = 1
         if code is not None:
@@ -557,7 +558,8 @@ def book_annotate(container, extend=True):
 
     def dump_args(func):
         """
-        This decorator dumps out the arguments passed to a function before calling it
+        This decorator dumps out the arguments passed to a function before
+        calling it
         """
         argnames = func.__code__.co_varnames[:func.__code__.co_argcount]
         if argnames[0] == 'self':
@@ -568,10 +570,12 @@ def book_annotate(container, extend=True):
         @wraps(func)
         def echo_func(*args, **kwargs):
             valores = dict(zip(argnames, args), **kwargs)
-            defaults = dict(zip(argnames[-len(func.__defaults__):],func.__defaults__))
-            for i in defaults.keys():
-                if i not in valores.keys():
-                    valores[i] = defaults[i]
+            if func.__defaults__ is not None:
+                defaults = dict(zip(argnames[-len(func.__defaults__):],
+                                    func.__defaults__))
+                for i in defaults.keys():
+                    if i not in valores.keys():
+                        valores[i] = defaults[i]
             try:
                 result = func(*args, **kwargs)
             except Exception as exception:
@@ -579,8 +583,10 @@ def book_annotate(container, extend=True):
                 return exception.__str__()
             else:
 
-                container.__setattr__(fname, ', '.join('%s = %r' % entry
-                                                       for entry in valores.items()), extend)
+                container.__setattr__(fname,
+                                      ', '.join('%s = %r' % entry
+                                                for entry in valores.items()),
+                                      extend)
                 return result
 
         return echo_func
@@ -725,6 +731,7 @@ class FiguresFormating:
     """
     Class containing static methods for axis matplotlib formatting
     """
+
     @staticmethod
     def cover_excitation(ax, x_range, x_vector):
         """

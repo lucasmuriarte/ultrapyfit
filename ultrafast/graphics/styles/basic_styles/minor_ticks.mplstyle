@@ -1,0 +1,4 @@
+# TICKS
+xtick.minor.visible  : True
+ytick.minor.visible  : True
+

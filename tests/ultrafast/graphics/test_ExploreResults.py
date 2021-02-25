@@ -1,9 +1,9 @@
 import unittest
 from unittest import mock
-from chempyspec.ultrafast.graphics.ExploreResults import ExploreResults
+from ultrafast.graphics.ExploreResults import ExploreResults
 import pickle
 from parameterized import parameterized
-from chempyspec.ultrafast.utils.utils import read_data, select_traces
+from ultrafast.utils.divers import read_data, select_traces
 import numpy as np
 
 

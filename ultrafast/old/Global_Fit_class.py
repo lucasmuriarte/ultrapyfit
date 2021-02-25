@@ -346,7 +346,7 @@ class GlobalFit(lmfit.Minimizer):
         self.single_fits={}
         self.fit_number=0
         self.curve_resultados=0.0*self.data[:]
-        self.time_unit='ps'
+        self.time_unit = 'ps'
         self.time_unit_high='ns'
         self.time_unit_low='fs'
         self.wavelength_unit='nm'
@@ -371,7 +371,8 @@ class GlobalFit(lmfit.Minimizer):
         self.V=None
         self.U=None
         self.SVD_fit=False
-        self.weights={'apply':False,'vector':None,'range':[],'type':'constant','value':2}
+        self.weights={'apply':False,'vector':None,'range':[],
+                      'type':'constant','value':2}
         if self.wavelength is not None:
             general_cal='None'
         else:

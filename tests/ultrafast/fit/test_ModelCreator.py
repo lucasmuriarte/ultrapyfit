@@ -6,8 +6,8 @@ Created on Mon Jan  4 13:26:45 2021
 """
 import unittest
 import numpy as np
-from chempyspec.ultrafast.fit.ModelCreator import ModelCreator
-from chempyspec.ultrafast.fit.GlobExpParams import GlobExpParameters
+from ultrafast.fit.ModelCreator import ModelCreator
+from ultrafast.fit.GlobalParams import GlobExpParameters
 from parameterized import parameterized
 from math import e as euler
 from scipy.special import erfc

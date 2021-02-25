@@ -13,7 +13,7 @@ import scipy.integrate as integral
 from matplotlib.widgets import Slider
 
 
-class ExploreResults(FiguresFormating):
+class ExploreResults():
     def __init__(self, fits, **kwargs):
         units = dict({'time_unit': 'ps', 'wavelength_unit': 'nm'}, **kwargs)
         if type(fits) == dict:
@@ -79,7 +79,8 @@ class ExploreResults(FiguresFormating):
             If is not an SVD fit this parameter is not applicable
         """
         x, data, wavelength, result_params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space,  = \
-            self._get_values(fit_number=fit_number, verify_svd_fit=verify_svd_fit)
+            self._get_values(fit_number=fit_number,
+                             verify_svd_fit=verify_svd_fit)
         model = ModelCreator(exp_no, x, tau_inf)
         ndata, nx = data.shape
         if type_fit == 'Exponential':
@@ -97,7 +98,11 @@ class ExploreResults(FiguresFormating):
             coeffs, eigs, eigenmatrix = solve_kmatrix(exp_no, result_params)
             curve_resultados = data * 0.0
             for i in range(nx):
-                curve_resultados[:, i] = model.expNGaussDatasetTM(result_params, i, [coeffs, eigs, eigenmatrix])
+                curve_resultados[:, i] = model.expNGaussDatasetTM(result_params,
+                                                                  i,
+                                                                  [coeffs,
+                                                                   eigs,
+                                                                   eigenmatrix])
         return curve_resultados
 
     def plot_fit(self, fit_number=None, selection=None, plot_residues=True, size=14,):
@@ -149,7 +154,6 @@ class ExploreResults(FiguresFormating):
             t0 = params['t0_1'].value
             index = np.argmin([abs(i - t0) for i in x])
             residues = data[index:, :] - fittes
-        #        plt.axhline(linewidth=1,linestyle='--', color='k')
         alpha, s = 0.80, 8
         for i in puntos:
             if plot_residues:
@@ -365,33 +369,35 @@ class ExploreResults(FiguresFormating):
             self._get_values(fit_number=fit_number)
 
         if type_fit == 'Exponential':
-            return 'This function is only available for target fit'
-        else:
-            xlabel = 'Time (' + self._units['time_unit'] + ')'
-            maxi_tau = -1 / params['k_%i%i' % (exp_no - 1, exp_no - 1)].value
-            if maxi_tau > x[-1]:
-                maxi_tau = x[-1]
-            # size of the matrix = no of exponenses = no of species
-            coeffs, eigs, eigenmatrix = solve_kmatrix(exp_no, params)
-            t0 = params['t0_1'].value
-            fwhm = params['fwhm_1'].value
-            expvects = [coeffs[i] * ModelCreator.expGauss(x - t0, -eigs[i], fwhm / 2.35482) for i in range(len(eigs))]
-            concentrations = [sum([eigenmatrix[i, j] * expvects[j] for j in range(len(eigs))]) for i in
-                              range(len(eigs))]
-            if names is None or len(names) != exp_no:
-                names = [f'Specie {i}' for i in range(exp_no)]
-            fig, ax = plt.subplots(1, figsize=(8, 6))
-            for i in range(len(eigs)):
-                ax.plot(x, concentrations[i], label=names[i])
-            if plot_total_c:
-                allc = sum(concentrations)
-                ax.plot(x, allc, label='Total concentration')  # sum of all for checking => should be unity
-            if legend:
-                plt.legend(loc='best')
-            FiguresFormating.format_figure(ax, concentrations, x, x_tight=True, set_ylim=False)
-            FiguresFormating.axis_labels(ax, xlabel, 'Concentration (A.U.)', size=size)
-            plt.xlim(-3, round(maxi_tau * 7))
-            return fig, ax
+            msg = 'This function is only available for target fit'
+            raise ExperimentException(msg)
+        xlabel = 'Time (' + self._units['time_unit'] + ')'
+        maxi_tau = -1 / params['k_%i%i' % (exp_no - 1, exp_no - 1)].value
+        if maxi_tau > x[-1]:
+            maxi_tau = x[-1]
+        # size of the matrix = no of exponenses = no of species
+        coeffs, eigs, eigenmatrix = solve_kmatrix(exp_no, params)
+        t0 = params['t0_1'].value
+        fwhm = params['fwhm_1'].value/2.35482
+        expvects = [coeffs[i] * ModelCreator.expGauss(x - t0, -1/eigs[i], fwhm)
+                    for i in range(len(eigs))]
+        concentrations = [sum([eigenmatrix[i, j] * expvects[j]
+                               for j in range(len(eigs))])
+                          for i in range(len(eigs))]
+        if names is None or len(names) != exp_no:
+            names = [f'Specie {i}' for i in range(exp_no)]
+        fig, ax = plt.subplots(1, figsize=(8, 6))
+        for i in range(len(eigs)):
+            ax.plot(x, concentrations[i], label=names[i])
+        if plot_total_c:
+            allc = sum(concentrations)
+            ax.plot(x, allc, label='Total concentration')  # sum of all for checking => should be unity
+        if legend:
+            plt.legend(loc='best')
+        FiguresFormating.format_figure(ax, concentrations, x, x_tight=True, set_ylim=False)
+        FiguresFormating.axis_labels(ax, xlabel, 'Concentration (A.U.)', size=size)
+        plt.xlim(-3, round(maxi_tau * 7))
+        return fig, ax
     
     def print_results(self, fit_number=None):
         """
@@ -495,12 +501,6 @@ class ExploreResults(FiguresFormating):
         """
         if fit_number is None:
             fit_number = max(self._fits.keys())
-        # if self.all_fit[fit_number].details['svd_fit']:
-        #     params = self.all_fit[fit_number][11]
-        #     data = self.all_fit[fit_number][10]
-        # else:
-        #     params = self.all_fit[fit_number].params
-        #     data = self.all_fit[fit_number].data
         params = self._fits[fit_number].params
         data = self._fits[fit_number].data
         x = self._fits[fit_number].x
