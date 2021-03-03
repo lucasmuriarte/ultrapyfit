@@ -7,10 +7,9 @@ from pathlib import Path
 import re
 import os
 from os.path import join, dirname, realpath
-import matplotlib.pyplot as plt
 import json
 from functools import wraps
-from  ultrafast.graphics.styles.plot_base_functions import *
+from ultrafast.graphics.styles.plot_base_functions import *
 
 UTF_STYLE_DIR = dirname(__file__)
 UTF_BASIC_STYLES = realpath(join(UTF_STYLE_DIR, 'basic_styles'))
@@ -24,61 +23,23 @@ utf = plt.style.core.read_style_directory(UTF_BASIC_STYLES)
 library = {**base_update, **utf}
 
 
-def check_utf_style(name: str):
-    styles = os.listdir(UTF_STYLE_DIR)
-    check = [i for i in styles if name in i and 'json' in i]
-    if len(check) == 1:
-         return check[0] 
-    else:
-        index = [i for i in check if i.split(".")[0] == name]
-        if len(index) == 1:
-            return index[0] 
-        else:
-            return None
-
-
-def is_utf_style(name: str):
-    val = check_utf_style(name)
-    if val is not None:
-        path = realpath(join(UTF_STYLE_DIR, val))
-        with open(path, 'r') as f:
-            data = json.load(f)
-            if "utf_style" in data.keys():
-                return data
-            else:
-                False
-
-
 def check_if_valid_style(name: str):
+    """
+    Return True if the name pass is a key of the matplotlib library containing
+    all available styles
+    """
     return True if name in library.keys() else False
 
 
-def get_utf_style(name: str):
-    data = is_utf_style(name)
-    if data is not False:
-        styles = data["styles"]
-        style = get_combined_style(styles)
-        funct, funct_arg = _get_utf_style_function(data)
-        return style, funct, funct_arg
-    else:
-        msg = 'Not a valid ultrafast style'
-        raise Exception(msg)
-
-
-def _get_utf_style_function(data):
-    if "function" in data.keys():
-        funct = data["function"]
-        if "function_arguments" in data.keys():
-            funct_arg = data["function_arguments"]
-        else:
-            funct_arg = None
-    else:
-        funct = None
-        funct_arg = None
-    return funct, funct_arg
-
-
 def get_combined_style(styles):
+    """
+    Combined several matplotlib styles in a single combine style
+
+    Parameters
+    ----------
+    styles: list
+    List containing the names of the matplotlib styles to be combined
+    """
     if type(styles) == str:
         if check_if_valid_style(styles):
             return library[styles]
@@ -95,19 +56,82 @@ def get_combined_style(styles):
             return style
 
 
-def get_global_style(style_name):
-    style = is_utf_style(style_name)
-    if style is None:
-        check = check_if_valid_style(style_name)
-        if check:
-            return library[style_name], None, None
-        else:
-            msg = 'Not a valid ultrafast style'
-            raise Exception(msg)
-    else:
-        style, func, func_arg = get_utf_style(style_name)
-        return style, func, func_arg
+class FigureStyle:
+    STYLE_DIR = None
 
+    def __init__(self, name):
+        self.name = name
+
+    def get_style(self):
+        pass
+
+
+class MplFigureStyle(FigureStyle):
+    def get_style(self):
+        check = check_if_valid_style(self.name)
+        if check:
+            return library[self.name], None, None
+        else:
+            return None
+
+
+class UtfFigureStyle(FigureStyle):
+    def get_style(self):
+        data = self._get_file()
+        if data is not False:
+            styles = data["styles"]
+            style = get_combined_style(styles)
+            funct, funct_arg = self._get_utf_style_function(data)
+            return style, funct, funct_arg
+        else:
+            return None
+
+    def _get_file(self):
+        val = self._get_file_name()
+        if val is not None:
+            path = realpath(join(UTF_STYLE_DIR, val))
+            with open(path, 'r') as f:
+                data = json.load(f)
+                if "utf_style" in data.keys():
+                    return data
+                else:
+                    return False
+
+    def _get_file_name(self):
+        styles = os.listdir(UTF_STYLE_DIR)
+        check = [i for i in styles if self.name in i and 'json' in i]
+        if len(check) == 1:
+            return check[0]
+        else:
+            index = [i for i in check if i.split(".")[0] == self.name]
+            if len(index) == 1:
+                return index[0]
+            else:
+                return None
+
+    def _get_utf_style_function(self, data):
+        if "function" in data.keys():
+            funct = data["function"]
+            if "function_arguments" in data.keys():
+                funct_arg = data["function_arguments"]
+            else:
+                funct_arg = None
+        else:
+            funct = None
+            funct_arg = None
+        return funct, funct_arg
+
+
+def get_global_style(style_name):
+    stl = MplFigureStyle(style_name)
+    style = stl.get_style()
+    if style is None:
+        stl = UtfFigureStyle(style_name)
+        style = stl.get_style()
+    if style is None:
+        raise Exception('Not a valid matplotlib or utf styles')
+    else:
+        return style[0], style[1], style[2]
 
 
 def use_style(func):
@@ -130,7 +154,6 @@ def use_style(func):
             for i in defaults.keys():
                 if i not in valores.keys():
                     valores[i] = defaults[i]
-        print(valores)
         if "style" in valores.keys():
             try:
                 style = valores["style"]
@@ -141,7 +164,7 @@ def use_style(func):
                     print('style applied')
                     res = func(*args, **kwargs)
             except Exception:
-                res = None
+                res,  = None
                 print('style not applied')
                 return func(*args, **kwargs)
             finally:
