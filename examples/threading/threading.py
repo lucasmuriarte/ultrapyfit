@@ -7,6 +7,7 @@ Created on Mon Nov 16 10:15:21 2020
 
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QApplication,\
                             QLineEdit, QPushButton, QProgressBar
+
 from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot
 
 import time

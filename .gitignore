@@ -1,6 +1,7 @@
 __pycache__
 .idea
 ultrafast.egg-info
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -133,4 +134,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
->>>>>>> master

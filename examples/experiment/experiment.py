@@ -133,5 +133,3 @@ experiment.plot_fit()
 # finally the Decay Associated Spectra (DAS) can be plotted with the plot_DAS method
 experiment.plot_DAS()
 
-
-STYLE_DIR = realpath(join(dirname(__file__), "styles"))
