@@ -241,8 +241,8 @@ class Experiment(ExploreData, ExploreResults):
         Parameters
         ----------
         fit_number: int or None (default None)
-            defines the fit number of the results all_fit dictionary. If None the last fit in  will
-            be considered.
+            defines the fit number of the results all_fit dictionary. If None
+            the last fit in  will be considered.
         """
         if fit_number is None:
             fit_number = max(self._fits.keys())
@@ -350,11 +350,12 @@ class Experiment(ExploreData, ExploreResults):
 
     def cut_time(self, mini=None, maxi=None):
         """
-        Cut time point of the data set according to the closest values of mini and
-        maxi margins given to the time vector. Contrary to cut_wavelength function,
-        inner cut are not available since in time resolved spectroscopy is not logical
-        to cut a complete area of recorded times. Therefore, giving mini and maxi
-        margins will result in selection of inner time values.
+        Cut time point of the data set according to the closest values of mini
+        and maxi margins given to the time vector. Contrary to cut_wavelength
+        function, inner cut are not available since in time resolved
+        spectroscopy is not logical to cut a complete area of recorded times.
+        Therefore, giving mini and maxi margins will result in selection of
+        inner time values.
         (The function assumes rows vector is sorted from low to high values)
 
 
@@ -455,8 +456,8 @@ class Experiment(ExploreData, ExploreResults):
 
     def cut_wavelength(self, mini=None, maxi=None, innerdata=None):
         """
-        Cut columns of the data set and wavelength vector according to the closest
-        values of mini and maxi margins given.
+        Cut columns of the data set and wavelength vector according to the
+        closest values of mini and maxi margins given.
         (The function assumes column vector is sorted from low to high values)
 
         Parameters
@@ -473,7 +474,9 @@ class Experiment(ExploreData, ExploreResults):
             selected.
         """
         self._add_to_data_set("before_cut_wavelength")
-        new_data, new_wave = Preprocessing.cut_columns(self.data, self.wavelength, mini, maxi, innerdata)
+        new_data, new_wave = Preprocessing.cut_columns(self.data,
+                                                       self.wavelength,
+                                                       mini, maxi, innerdata)
         # no need to work on selected data set
         self.data, self.wavelength = new_data, new_wave
         self._add_action("cut wavelength")
@@ -485,10 +488,10 @@ class Experiment(ExploreData, ExploreResults):
         dimension_vector should be equivalent to one of the data dimensions.
 
         Notice that the function will automatically detect the dimension of the
-        delete rows or columns in data if any of their dimensions is equal to the
-        length of the dimension_vector. In case that both dimensions are the same
-        the axis should be given, by default is 0, which is equivalent to the
-        time dimension.
+        delete rows or columns in data if any of their dimensions is equal to
+        the length of the dimension_vector. In case that both dimensions are the
+        same the axis should be given, by default is 0, which is equivalent to
+        the time dimension.
 
         i.e.:
         points = [3,5]
@@ -499,26 +502,32 @@ class Experiment(ExploreData, ExploreResults):
         Parameters
         ----------
         points: int, list or None
-            estimate values of time, the closes values of dimension_vector to the points given
-            will be deleted
+            estimate values of time, the closes values of dimension_vector to t
+            he points given will be deleted
 
         dimension: str (default "time")
-                can be "wavelength" or "time" indicate where points should be deleted
+                can be "wavelength" or "time" indicate where points should be
+                eleted
         """
         self._add_to_data_set("before_del_points")
         if dimension == 'time':
-            new_data, new_x = Preprocessing.del_points(points, self.data, self.x, 0)
-            select_data, _ = Preprocessing.del_points(points, self.selected_traces, self.x, 0)
+            new_data, new_x = Preprocessing.del_points(points, self.data,
+                                                       self.x, 0)
+            select_data, _ = Preprocessing.del_points(points,
+                                                      self.selected_traces,
+                                                      self.x, 0)
             self.data, self.x = new_data, new_x
             self.selected_traces = select_data
             self._add_action(f"delete point {dimension}")
         elif dimension == 'wavelength':
-            new_data, new_wave = Preprocessing.del_points(points, self.data, self.wavelength, 1)
+            new_data, new_wave = Preprocessing.del_points(points, self.data,
+                                                          self.wavelength, 1)
             # no need to work on selected data set
             self.data, self.wavelength = new_data, new_wave
             self._add_action(f"delete point {dimension}")
         else:
-            raise ExperimentException('dimension should be "time" or "wavelength"')
+            msg = 'dimension should be "time" or "wavelength"'
+            raise ExperimentException(msg)
 
     def shit_time(self, value):
         """
@@ -555,7 +564,8 @@ class Experiment(ExploreData, ExploreResults):
             constant: constant weighting value in the range
             exponential: the weighting value increase exponentially
             r_exponential: the weighting value decrease exponentially
-            mix_exp: the weighting value increase and then decrease exponentially
+            mix_exp: the weighting value increase and then decrease
+            exponentially
 
             example:
             ----------
@@ -713,16 +723,16 @@ class Experiment(ExploreData, ExploreResults):
             (only applicable if fwhm is given)
 
         vary: bool or list of bool
-            If True or False all taus are optimized or fixed. If a list, should be a list of bool
-            equal with len equal to the number of taus. Each entry defines if a initial taus
-            should be optimized or not.
+            If True or False all taus are optimized or fixed. If a list, should
+            be a list of bool equal with len equal to the number of taus.
+            Each entry defines if a initial taus should be optimized or not.
 
         maxfev: int (default 5000)
             maximum number of iterations of the fit.
 
         apply_weights: bool (default False)
-            If True and weights have been defined, this will be applied in the fit (for defining weights) check
-            the function define_weights.
+            If True and weights have been defined, this will be applied in the
+            fit (for defining weights) check the function define_weights.
 
         plot: bool (default True)
             If True the results are automatically plotted
@@ -730,8 +740,10 @@ class Experiment(ExploreData, ExploreResults):
         taus = list(taus)
         print(taus)
         trace, wave = select_traces(self.data, self.wavelength, [wave], average)
-        results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary, tau_inf=tau_inf, maxfev=maxfev,
-                                      apply_weights=apply_weights, opt_fwhm=opt_fwhm)
+        results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary,
+                                      tau_inf=tau_inf, maxfev=maxfev,
+                                      apply_weights=apply_weights,
+                                      opt_fwhm=opt_fwhm)
         results.wavelenght = wave
         key = len(self.fit_records.single_fits) + 1
         self.fit_records.single_fits[key] = results
@@ -788,7 +800,7 @@ class Experiment(ExploreData, ExploreResults):
         plot: bool (default True)
             If True the results are automatically plotted
         """
-        taus= list(taus)
+        taus = list(taus)
         indexes = [np.argmax(abs(self.wavelength-wave_range[0])), np.argmax(abs(self.wavelength-wave_range[1]))]
         trace = np.array([np.trapz(self.data[i,indexes[0]:indexes[1]], x=self.wavelength[indexes[0]:indexes[1]])
                           for i in range(len(self.data))])
@@ -818,26 +830,30 @@ class Experiment(ExploreData, ExploreResults):
 
     def plot_single_fit(self, fit_number=None, details=True):
         """
-        Function that generates a figure with the results of the fit stored in the single_fits
+        Function that generates a figure with the results of the fit stored in
+        the single_fits
 
         Parameters
         ----------
         fit_number: int or None (default None)
-            defines the fit number of the results single_fits dictionary. If None the last fit in  will
-            be considered
+            defines the fit number of the results single_fits dictionary. If
+            None the last fit in  will e considered
 
         details: bool (default True)
-            If True the decay times obtained in the fit are included in the figure
+            If True the decay times obtained in the fit are included in the
+            figure
         """
         if fit_number in self.fit_records.single_fits.keys():
-            return self._plot_single_trace_fit(self.fit_records.single_fits, fit_number, details)
+            return self._plot_single_trace_fit(self.fit_records.single_fits,
+                                               fit_number, details)
         else:
             msg = 'Fit number not in records'
             raise ExperimentException(msg)
 
     def plot_integral_band_fit(self, fit_number=None, details=True):
         """
-        Function that generates a figure with the results of the fit stored in the integral_band_fits
+        Function that generates a figure with the results of the fit stored in
+        the integral_band_fits
 
         Parameters
         ----------
@@ -846,7 +862,8 @@ class Experiment(ExploreData, ExploreResults):
             If None the last fit in  will be considered
 
         details: bool (default True)
-            If True the decay times obtained in the fit are included in the figure
+            If True the decay times obtained in the fit are included in the
+            figure
         """
         if fit_number is None:
             fit_number = len(self.fit_records.integral_band_fits)
@@ -895,7 +912,7 @@ class Experiment(ExploreData, ExploreResults):
             minimizer = GlobalFitExponential(self.x, self.selected_traces, exp_no, params_fit,
                                              deconv, tau_inf, False)
             minimizer.pre_fit()
-        ## To do
+        ## Todo
 
         pass
 

@@ -37,12 +37,15 @@ class TimeMultiplicator(Enum):
                 value = 'μ'
             return TimeMultiplicator(TimeMultiplicator._member_map_[value[0]])
         except Exception:
-            raise ExperimentException("the value should start by one of the letters in TimeMultiplicator")
+            msg = "the value should start by one of the letters in " \
+                  "TimeMultiplicator"
+            raise ExperimentException(msg)
 
 
 class TimeUnitFormater:
     """
-    Class to format a time number in a string with the corresponding unit, after indicating the unit measure.
+    Class to format a time number in a string with the corresponding unit, after
+    indicating the unit measure.
     
     
     i.e.:
@@ -67,7 +70,9 @@ class TimeUnitFormater:
             try:
                 self.multiplicator = multiplicator
             except Exception:
-                msg = "TimeMultiplicator instantiation error. Pass a TimeMultiplicator name as a string or a TimeMultiplicator object"
+                msg = "TimeMultiplicator instantiation error. Pass a " \
+                      "TimeMultiplicator name as a string or a " \
+                      "TimeMultiplicator object"
                 raise ExperimentException(msg)
     
     @property    
@@ -138,7 +143,8 @@ class TimeUnitFormater:
                 else:
                     name = "mins"  
             else:
-                raise ExperimentException("time units are smaller than 1E-24, this cannot be handle")
+                msg = "time units are smaller than 1E-24, this cannot be handle"
+                raise ExperimentException(msg)
         formatted = Decimal(inter)
         if negative:
             return f"-{str(formatted.quantize(Decimal(10) ** - decimal))} {name}"
@@ -159,16 +165,16 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
                   data has 250 wavelength points and 50 time points
 
     wavelength: 1darray or None
-        Wavelength vectors where traces are selected. The len(wavelength), should 
-        be equal to the number of columns of data
+        Wavelength vectors where traces are selected. The len(wavelength),
+        should be equal to the number of columns of data
         
         If None an array from 0 to data number of columns is created and
         returned after cutting. The parameters space should be given
         according to indexes
             
     space: int or list or "auto" (default 10)
-        If type(space) = int: a series of traces separated by the value indicated
-        will be selected.
+        If type(space) = int: a series of traces separated by the value
+        indicated will be selected.
         If type(space) = list: the traces in the list will be selected.
         If space = auto, the number of returned traces is 10 and equally spaced
         along the wavelength vector and points is set to 0
@@ -181,8 +187,8 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
         Defines wavelength regions that are avoided in the selection when space
         is an integer. The sub_list should have two elements defining the region
         to avoid in wavelength values
-        i. e.: [[380,450],[520,530] traces with wavelength values between 380-450 
-               and 520-530 will not be selected
+        i. e.: [[380,450],[520,530] traces with wavelength values between
+                380-450 and 520-530 will not be selected
                
     Returns 
     ----------
@@ -222,6 +228,8 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
                 if len(avoid_wavelength) > 0:
                     avoid_regions_index.append([avoid_wavelength[0], avoid_wavelength[-1]])
                 selected_traces = [i for i in selected_traces if i not in avoid_wavelength]
+
+        selected_traces = list(set(selected_traces))
 
         if avoid_regions is None:
             if points == 0:
