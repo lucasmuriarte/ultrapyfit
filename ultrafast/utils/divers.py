@@ -230,6 +230,7 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
                 selected_traces = [i for i in selected_traces if i not in avoid_wavelength]
 
         selected_traces = list(set(selected_traces))
+        selected_traces.sort()
 
         if avoid_regions is None:
             if points == 0:
