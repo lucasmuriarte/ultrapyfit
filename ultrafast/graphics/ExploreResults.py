@@ -150,16 +150,18 @@ class ExploreResults():
         fittes = self.results(fit_number=fit_number)
         if deconv:
             residues = data - fittes
+            x_residues = x*1.0
         else:
             t0 = params['t0_1'].value
             index = np.argmin([abs(i - t0) for i in x])
             residues = data[index:, :] - fittes
+            x_residues = x[index:]
         alpha, s = 0.80, 8
         for i in puntos:
             if plot_residues:
-                ax[0].scatter(x, residues[:, i], marker='o', alpha=alpha, s=s)
+                ax[0].scatter(x_residues, residues[:, i], marker='o', alpha=alpha, s=s)
             ax[1].scatter(x, data[:, i], marker='o', alpha=alpha, s=s)
-            ax[1].plot(x, fittes[:, i], '-', color='r', alpha=0.5, lw=1.5)
+            ax[1].plot(x_residues, fittes[:, i], '-', color='r', alpha=0.5, lw=1.5)
             if len(puntos) <= 10:
                 legenda = self._legend_plot_fit(data, wavelength, svd_fit, puntos)
                 ax[1].legend(legenda, loc='best', ncol=1 if svd_fit else 2)
@@ -287,20 +289,21 @@ class ExploreResults():
         xlabel = 'Time (' + self._units['time_unit'] + ')'
         self._fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10, 8), gridspec_kw={'height_ratios': [1, 5]})
         self._fittes = self.results(fit_number=None)
+        self._x_verivefit = x * 1.0
         if deconv:
             self._residues = self._data_fit - self._fittes
-            self._x_verivefit = x * 1.0
+            self._x_verivefit_residues = x * 1.0
         else:
             t0 = params['t0_1'].value
             index = np.argmin([abs(i - t0) for i in x])
-            self._x_verivefit = x[index:]
+            self._x_verivefit_residues = x[index:]
             self._residues = self._data_fit[index:, :] - self._fittes
         initial_i = self._data_fit.shape[1] // 5
         self._l = ax[1].plot(self._x_verivefit, self._data_fit[:, initial_i], marker='o', ms=3, linestyle=None,
                              label='raw data')[0]
-        self._lll = ax[0].plot(self._x_verivefit, self._residues[:, initial_i], marker='o', ms=3, linestyle=None,
+        self._lll = ax[0].plot(self._x_verivefit_residues, self._residues[:, initial_i], marker='o', ms=3, linestyle=None,
                                label='residues')[0]
-        self._ll = ax[1].plot(self._x_verivefit, self._fittes[:, initial_i], alpha=0.5, lw=1.5, color='r', label='fit')[0]
+        self._ll = ax[1].plot(self._x_verivefit_residues, self._fittes[:, initial_i], alpha=0.5, lw=1.5, color='r', label='fit')[0]
         delta_f = 1.0
         _, maxi = self._data_fit.shape
         axcolor = 'orange'
