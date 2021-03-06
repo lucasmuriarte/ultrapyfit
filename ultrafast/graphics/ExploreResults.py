@@ -201,6 +201,9 @@ class ExploreResults():
                   for ii in range(exp_no)]
         if deconv and tau_inf is not None:
             values.append([params['yinf_' + str(i + 1)].value for i in range(data.shape[1])])
+        elif not deconv:
+            values.append([params['y0_' + str(i + 1)].value for i in
+                           range(data.shape[1])])
         if number != 'all':
             assert type(number) == list, \
                 'Number should be "all" or a list containing the desired species if tau inf include -1 in the list'
@@ -211,7 +214,9 @@ class ExploreResults():
             das = np.array(values)
         return das
 
-    def plot_DAS(self, fit_number=None, number='all', precision=2, size=14, cover_range=None,
+    def plot_DAS(self, fit_number=None, number='all', plot_offset=True,
+                 precision=2, size=14,
+                 cover_range=None,
                  plot_integrated_DAS=False):
         """
         Function that generates a figure with the decay associated spectra (DAS) of the fit stored in
@@ -259,9 +264,13 @@ class ExploreResults():
         if type(derivative_space) == dict and plot_integrated_DAS:
             das = np.array([integral.cumtrapz(das[i, :], wavelength, initial=0) for i in range(len(das))])
         fig, ax = plt.subplots(1, figsize=(11, 6))
-        for i in range(das.shape[0]):
-            ax.plot(wavelength, das[i, :], label=legenda[i])
-            plt.xlim(wavelength[0], wavelength[-1])
+        n_das = das.shape[0]
+        for i in range(n_das):
+            if i == n_das and not deconv and plot_offset:
+                ax.plot(wavelength, das[i, :], label=legenda[i])
+            else:
+                ax.plot(wavelength, das[i, :], label=legenda[i])
+        plt.xlim(wavelength[0], wavelength[-1])
         leg = ax.legend(prop={'size': size})
         leg.set_zorder(np.inf)
         FiguresFormating.format_figure(ax, das, wavelength, x_tight=True, set_ylim=False)
@@ -470,6 +479,8 @@ class ExploreResults():
                 legenda.append(self._unit_formater.value_formated(tau_inf, precision))
             else:
                 legenda.append(r'$\tau$ = inf')
+        elif not deconv:
+            legenda.append(r'Offset')
         return legenda
 
     def _legend_plot_fit(self, data, wavelength, svd_fit, puntos):
