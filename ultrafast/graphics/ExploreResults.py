@@ -266,8 +266,8 @@ class ExploreResults():
         fig, ax = plt.subplots(1, figsize=(11, 6))
         n_das = das.shape[0]
         for i in range(n_das):
-            if i == n_das and not deconv and plot_offset:
-                ax.plot(wavelength, das[i, :], label=legenda[i])
+            if i == n_das-1 and not deconv and not plot_offset:
+                pass
             else:
                 ax.plot(wavelength, das[i, :], label=legenda[i])
         plt.xlim(wavelength[0], wavelength[-1])
