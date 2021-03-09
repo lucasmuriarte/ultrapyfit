@@ -6,6 +6,7 @@ Created on Sun Nov 15 18:35:41 2020
 """
 from ultrafast.utils.divers import FiguresFormating, solve_kmatrix, TimeUnitFormater
 from ultrafast.utils.Preprocessing import ExperimentException
+from ultrafast.graphics.styles.set_styles import use_style
 import matplotlib.pyplot as plt
 import numpy as np
 from ultrafast.fit.ModelCreator import ModelCreator
@@ -70,13 +71,14 @@ class ExploreResults():
         Parameters
         ----------
         fit_number: int or None (default None)
-            defines the fit number of the results all_fit dictionary. If None the last fit in  will
-            be considered
+            defines the fit number of the results all_fit dictionary. If None
+            the last fit in  will be considered
 
         verify_svd_fit: bool (default  False)
-            If True it will return the single fit perform to every trace of the spectra after an svd fit
-            If false and the fit is an SVD, the values return are the fit to the svd
-            If is not an SVD fit this parameter is not applicable
+            If True it will return the single fit perform to every trace of the
+            spectra after an svd fit. If false and the fit is an SVD, the
+            values return are the fit to the svd If is not an SVD fit this
+            parameter is not applicable
         """
         x, data, wavelength, result_params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space,  = \
             self._get_values(fit_number=fit_number,
@@ -105,26 +107,33 @@ class ExploreResults():
                                                                    eigenmatrix])
         return curve_resultados
 
-    def plot_fit(self, fit_number=None, selection=None, plot_residues=True, size=14,):
+    @use_style
+    def plot_fit(self, fit_number=None, selection=None,
+                 plot_residues=True, style='lmu_res',):
         """
-        Function that generates a figure with the results of the fit stored in the all_fit attributes
-        If less than 10 traces are fitted or selected a legend will be displayed
+        Function that generates a figure with the results of the fit stored in
+        the all_fit attributes.  If less than 10 traces are fitted or selected
+        a legend will be displayed
         
         Parameters
         ----------
         fit_number: int or None (default None)
-            defines the fit number of the results all_fit dictionary. If None the last fit in  will
-            be considered
+            defines the fit number of the results all_fit dictionary. If None
+            the last fit in  will be considered
         
         selection: list or None (default None)    
-            If None all the traces fitted will be plotted, if not only those selected in the lis
+            If None all the traces fitted will be plotted, if not only those
+            selected in the lis
         
         plot_residues: Bool (default True)
-            If True the Figure returned will contain two axes a top one with the residues, and the bottom one
-            with the fit and data
+            If True the Figure returned will contain two axes a top one with
+            the residues, and the bottom one with the fit and data
             
-        size: int (default 14)
-            size of the figure text labels including tick labels axis labels and legend
+        style: style valid name (default 'lmu_res')
+            defines the style to format the output figure, it can be any defined
+            matplotlib style, any ultrafast style (utf) or any user defined
+            style that follows matplotlib or utf styles and is saved in the
+            correct folder. Check styles for more information.
         
         Returns
         ----------
@@ -146,7 +155,8 @@ class ExploreResults():
             fig, ax = plt.subplots(figsize=(8, 6))
             ax = ['_', ax]
         else:
-            fig, ax = plt.subplots(2, 1, sharex=True, figsize=(8, 6), gridspec_kw={'height_ratios': [1, 5]})
+            fig, ax = plt.subplots(2, 1, sharex=True, figsize=(8, 6),
+                                   gridspec_kw={'height_ratios': [1, 5]})
         fittes = self.results(fit_number=fit_number)
         if deconv:
             residues = data - fittes
@@ -166,28 +176,31 @@ class ExploreResults():
                 legenda = self._legend_plot_fit(data, wavelength, svd_fit, puntos)
                 ax[1].legend(legenda, loc='best', ncol=1 if svd_fit else 2)
         if plot_residues:
-            FiguresFormating.format_figure(ax[0], residues, x, size=size)
-            ax[0].set_ylabel('Residues', size=size)
-        FiguresFormating.format_figure(ax[1], data, x, size=size)
-        FiguresFormating.axis_labels(ax[1], xlabel, r'$\Delta$A', size=size)
+            # FiguresFormating.format_figure(ax[0], residues, x, size=size)
+            ax[0].set_ylabel('Residues')
+        # iguresFormating.format_figure(ax[1], data, x)
+        FiguresFormating.axis_labels(ax[1], xlabel, r'$\Delta$A')
         plt.subplots_adjust(left=0.145, right=0.95)
         return fig, ax
 
     def DAS(self, number='all', fit_number=None):
         """
-        returns an array of the Decay associated spectra. The number of rows is the number of species
-        and the number of columns correspond to the wavelength vector.
+        returns an array of the Decay associated spectra. The number of rows is
+        the number of species and the number of columns correspond to the
+        wavelength vector.
 
         Parameters
         ----------
         number: list of inst or 'all'
-            Defines the DAS spectra wanted, if there is tau_inf include -1 in the list
-            e.g.: for a fit with three exponential, if the last two are wanted; number = [1, 2]
+            Defines the DAS spectra wanted, if there is tau_inf include -1 in
+            the list:
+            e.g.: for a fit with three exponential, if the last two are wanted;
+                   number = [1, 2]
             e.g.2: the last two exponential plus tau_inf; number = [1, 2, -1]
 
         fit_number: int or None (default None)
-            defines the fit number of the results all_fit dictionary. If None the last fit in  will
-            be considered
+            defines the fit number of the results all_fit dictionary.
+            If None the last fit in  will be considered
 
         Returns
         ----------
@@ -214,37 +227,44 @@ class ExploreResults():
             das = np.array(values)
         return das
 
+    @use_style
     def plot_DAS(self, fit_number=None, number='all', plot_offset=True,
-                 precision=2, size=14,
+                 precision=2, style='lmu_spec',
                  cover_range=None,
                  plot_integrated_DAS=False):
         """
-        Function that generates a figure with the decay associated spectra (DAS) of the fit stored in
-        the all_fit attributes
+        Function that generates a figure with the decay associated spectra (DAS)
+         of the fit stored in the all_fit attributes
         
         Parameters
         ----------
         fit_number: int or None (default None)
-            defines the fit number of the results all_fit dictionary. If None the last fit in  will
-            be considered.
+            defines the fit number of the results all_fit dictionary. If None
+            the last fit in  will be considered.
         
         number: list of inst or 'all'
-            Defines the DAS spectra wanted, if there is tau_inf include -1 in the list
-            e.g.: for a fit with three exponential, if the last two are wanted; number = [1, 2]
+            Defines the DAS spectra wanted, if there is tau_inf include -1 in
+            the list:
+            e.g.: for a fit with three exponential, if the last two are wanted;
+                  number = [1, 2]
             e.g.2: the last two exponential plus tau_inf; number = [1, 2, -1]
         
         precision: int (default 2)
             Defines the number of decimal places of the legend legend
         
-        size: int (default 14)
-            size of the figure text labels including tick labels axis labels and legend
+        style: style valid name (default 'lmu_spec')
+            defines the style to format the output figure, it can be any defined
+            matplotlib style, any ultrafast style (utf) or any user defined
+            style that follows matplotlib or utf styles and is saved in the
+            correct folder. Check styles for more information.
         
         cover_range: List of length 2 or None (default None)
-            Defines a range in wavelength that will be cover in white. This can be use to cut the excitation
-            wavelength range   
+            Defines a range in wavelength that will be cover in white. This can
+            be use to cut the excitation wavelength range
         
         plot_integrated_DAS: bool (default False)
-            Defines in case if data has been derivate, to directly integrate the DAS
+            Defines in case if data has been derivate, to directly integrate
+            the DAS.
             
         Returns
         ----------
@@ -271,23 +291,24 @@ class ExploreResults():
             else:
                 ax.plot(wavelength, das[i, :], label=legenda[i])
         plt.xlim(wavelength[0], wavelength[-1])
-        leg = ax.legend(prop={'size': size})
+        leg = ax.legend()
         leg.set_zorder(np.inf)
-        FiguresFormating.format_figure(ax, das, wavelength, x_tight=True, set_ylim=False)
-        FiguresFormating.axis_labels(ax, xlabel, r'$\Delta$A', size=size)
+        # FiguresFormating.format_figure(ax, das, wavelength, x_tight=True, set_ylim=False)
+        FiguresFormating.axis_labels(ax, xlabel, r'$\Delta$A')
         if cover_range is not None:
             FiguresFormating.cover_excitation(ax, cover_range, wavelength)
         return fig, ax
 
     def verify_fit(self, fit_number=None):
         """
-        Function that generates a figure with a slider to evaluate every single trace fitted independently
+        Function that generates a figure with a slider to evaluate every single
+        trace fitted independently.
         
         Parameters
         ----------
         fit_number: int or None (default None)
-            defines the fit number of the results all_fit dictionary. If None the last fit in  will
-            be considered.
+            defines the fit number of the results all_fit dictionary. If None
+            the last fit in  will be considered.
             
         Returns
         ----------

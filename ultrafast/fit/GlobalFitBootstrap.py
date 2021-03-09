@@ -97,8 +97,8 @@ class BootStrap:
         """
         if self.data_simulated is not None:
             if data_from != self.data_simulated:
-                msg = f'Cannot add new {data_from} ' \
-                      f'analysis of a {self.data_simulated} type'
+                msg = f'Cannot add new generated data from{data_from} ' \
+                      f'to analysis of a {self.data_simulated} type'
                 raise ExperimentException(msg)
         if data_from == 'residues':
             if hasattr(self.bootstrap_result, '_size'):
@@ -110,7 +110,7 @@ class BootStrap:
         elif data_from == 'data':
             data = self._data_sets_from_residues(n_boots)
             self.data_simulated = 'data'
-            data.bootstrap_result._type = 'data'
+            self.bootstrap_result._type = 'data'
         else:
             msg = 'data_from should be "residues" or "data"'
             raise ExperimentException(msg)
@@ -304,6 +304,7 @@ class BootStrap:
                                                  len(data[1])), len(data[1]))
             for i, ii in enumerate(index):
                 new_data[:, i] = data[:, int(ii)]
+            data_set_boot = np.dstack((data_set_boot, new_data))
         return data_set_boot[:, :, 1:]
 
     def _get_variations(self, names, exp_no):

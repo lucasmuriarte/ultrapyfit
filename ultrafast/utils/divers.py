@@ -768,7 +768,7 @@ class FiguresFormating:
         ax.add_patch(rect)
 
     @staticmethod
-    def axis_labels(ax, x_label=None, y_label=None, size=14):
+    def axis_labels(ax, x_label=None, y_label=None):
         """
         add labels to the axis ax
 
@@ -782,20 +782,20 @@ class FiguresFormating:
 
         y_label: str (default None)
             string containing the y label
-
-        size: int
-            size of the label
         """
         if x_label is None:
             x_label = 'X vector'
         if y_label is None:
             y_label = 'Y vector'
-        ax.set_ylabel(y_label, size=size)
-        ax.set_xlabel(x_label, size=size)
+        ax.set_ylabel(y_label)
+        ax.set_xlabel(x_label)
 
     @staticmethod
     def format_figure(ax, data, x_vector, size=14, x_tight=False, set_ylim=True, val=50):
         """
+        Deprecated function, style in combination with use_style decorator
+        should be use to format figures.
+
         format ax figures
         Always does:
             -add minor tick
@@ -840,6 +840,9 @@ class FiguresFormating:
         ax.ticklabel_format(style='sci', axis='y')
         ax.minorticks_on()
         ax.axes.tick_params(which='both', direction='in', top=True, right=True, labelsize=size)
+        msg = 'Deprecated function, style in combination with use_style ' \
+              'decorator should be use to format figures.'
+        print(msg)
 
 
 class DataSetCreator:
