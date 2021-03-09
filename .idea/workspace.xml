@@ -5,48 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.github/workflows/gh-pages.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/chempyspec.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/Makefile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/make.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/source/conf.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/source/index.rst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/graphics/select_traces_graph.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/graphics/svd.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/graphics/verify_fit.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ultrafast/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ultrafast/fit/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ultrafast/graphics/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ultrafast/utils/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/3_exp_data_denoised.csv" beforeDir="false" afterPath="$PROJECT_DIR$/examples/data/denoised.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/3_exp_data_denoised_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/examples/data/denoised_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/3_exp_data_denoised_2_results.res" beforeDir="false" afterPath="$PROJECT_DIR$/examples/data/denoised_2.res" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/3_exp_data_gauss_denoised.csv" beforeDir="false" afterPath="$PROJECT_DIR$/examples/data/gauss_denoised.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/BasicSpectrumClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/experiment/spectrum.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/example exponentialFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_fit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/example lab_book.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/labbook/labbook.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/example matplotLibCursor.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/graphics/cursor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/example threading.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/threading/threading.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/example_experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/experiment/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/example_styles.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/examples - Acceso directo.lnk" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstarp.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstarp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/TargetFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/TargetFit.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitBootstrap.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/experiment/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/experiment/experiment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/experiment/spectrum.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_fit.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_fit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/graphics/example_styles.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/graphics/example_styles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstarp.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/old/Global_Fit_class.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/old/Global_Fit_class.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/styles/basic_styles/lmu.mplstyle" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/styles/basic_styles/lmu.mplstyle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,8 +26,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Unit Test" />
         <option value="Python Script" />
+        <option value="Python Unit Test" />
       </list>
     </option>
   </component>
@@ -223,7 +193,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/ultrafast/fit/TargetFit.py</url>
-          <line>1</line>
+          <line>5</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

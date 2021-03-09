@@ -97,8 +97,8 @@ class BootStrap:
         """
         if self.data_simulated is not None:
             if data_from != self.data_simulated:
-                msg = f'Cannot add new {data_from} ' \
-                      f'analysis of a {self.data_simulated} type'
+                msg = f'Cannot add new generated data from{data_from} ' \
+                      f'to analysis of a {self.data_simulated} type'
                 raise ExperimentException(msg)
         if data_from == 'residues':
             if hasattr(self.bootstrap_result, '_size'):
@@ -110,7 +110,7 @@ class BootStrap:
         elif data_from == 'data':
             data = self._data_sets_from_residues(n_boots)
             self.data_simulated = 'data'
-            data.bootstrap_result._type = 'data'
+            self.bootstrap_result._type = 'data'
         else:
             msg = 'data_from should be "residues" or "data"'
             raise ExperimentException(msg)
@@ -255,21 +255,32 @@ class BootStrap:
         """
         div = self._get_division_number(size)
         resultados = self.fit_results
+        params = resultados.params
         data = resultados.data
+        x = resultados.x
+        deconv = resultados.details['deconv']
         result_explorer = ExploreResults(resultados)
         fittes = result_explorer.results()
         residue_set_boot = resultados.data.copy()
         for boot in range(n_boots):
             residues = 0.0 * data
             for ii in range(len(residues[1])):
-                residues[:, ii] = data[:, ii] - fittes[:, ii]
+                if deconv:
+                    residues[:, ii] = data[:, ii] - fittes[:, ii]
+                else:
+                    t0 = params['t0_1'].value
+                    index = np.argmin([abs(i - t0) for i in x])
+                    residues[index:, ii] = data[index:, ii] - fittes[:, ii]
+                    data2 = 1.0 * data[:]
             for it in range(len(residues[1]) // div):
                 value1 = np.random.randint(len(residues[1]))
                 value2 = np.random.randint(len(residues[1]))
                 residues[:, value1] = residues[:, value2]
-            data2 = 0.0 * data[:]
             for da in range(len(residues[1])):
-                data2[:, da] = fittes[:, da] + residues[:, da]
+                if deconv:
+                    data2[:, da] = fittes[:, da] + residues[:, da]
+                else:
+                    data2[index:, da] = fittes[:, da] + residues[index:, da]
             residue_set_boot = np.dstack((residue_set_boot, data2))
         residue_set_boot = residue_set_boot[:, :, 1:]
         return residue_set_boot
@@ -293,6 +304,7 @@ class BootStrap:
                                                  len(data[1])), len(data[1]))
             for i, ii in enumerate(index):
                 new_data[:, i] = data[:, int(ii)]
+            data_set_boot = np.dstack((data_set_boot, new_data))
         return data_set_boot[:, :, 1:]
 
     def _get_variations(self, names, exp_no):
