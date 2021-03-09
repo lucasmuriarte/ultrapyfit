@@ -134,7 +134,8 @@ class ExploreData(PlotSVD):
             val = 'cm-1'
         self._units['wavelength_unit'] = val
 
-    def plot_traces(self, traces='select', size=14):
+    @use_style
+    def plot_traces(self, traces='select', style='lmu_trac'):
         """
         Plots either the selected traces or 9-10 trace equally space in the
         wavelength range. If less than 10 (included) traces are plotted a
@@ -155,19 +156,18 @@ class ExploreData(PlotSVD):
         Figure and axes matplotlib objects
         """
         data, values = self._get_traces_values(traces)
-        fig, ax = plt.subplots(1, figsize=(11, 6))
+        fig, ax = plt.subplots(1)
         alpha = 0.60
         for i in values:
             ax.plot(self.x, data[:, i], marker='o', alpha=alpha, ms=4, ls='')
         if len(values) <= 10 or traces == 'auto':
             legenda = self._traces_legend(traces, values)
             ax.legend(legenda, loc='best', ncol=2)
-        FiguresFormating.format_figure(ax, data, self.x, set_ylim=False,
-                                       size=size)
         FiguresFormating.axis_labels(ax, f'Time ({self._units["time_unit"]})',
-                                     '$\Delta$A', size=size)
+                                     '$\Delta$A')
         return fig, ax
 
+    @use_style
     def plot_spectra(self,
                      times='all',
                      rango=None,
@@ -178,7 +178,7 @@ class ExploreData(PlotSVD):
                      legend_decimal=2,
                      ncol=1,
                      cmap=None,
-                     size=14,
+                     style='lmu_spec',
                      include_rango_max=True):
         """
         Function to plot spectra
@@ -259,7 +259,7 @@ class ExploreData(PlotSVD):
         legenda = [self._unit_formater.value_formated(i, legend_decimal)
                    for i in times]
         colors = self._get_color(times, cmap)
-        fig, ax = plt.subplots(1, figsize=(11, 6))
+        fig, ax = plt.subplots(1)
         tiempo = pd.Series(self.x)
         for i in range(len(times)):
             index = (tiempo - times[i]).abs().sort_values().index[0]
@@ -269,8 +269,8 @@ class ExploreData(PlotSVD):
             else:
                 trace = data[index, :]
             ax.plot(wavelength, trace, c=colors[i], label=legenda[i])
-        self._format_spectra_figure(ax, data, wavelength, size, cover_range)
-        self._legend_spectra_figure(legend, ncol, size, cmap, times)
+        self._format_spectra_figure(ax, cover_range)
+        self._legend_spectra_figure(legend, ncol, cmap, times)
         return fig, ax
 
     def plot3D(self, cmap=None):
@@ -414,9 +414,9 @@ class ExploreData(PlotSVD):
                                                                 average))
         return fig, cursor
 
-    def _legend_spectra_figure(self, legend, ncol, size, cmap, times):
+    def _legend_spectra_figure(self, legend, ncol, cmap, times):
         if legend:
-            leg = plt.legend(loc='best', ncol=ncol, prop={'size': size})
+            leg = plt.legend(loc='best', ncol=ncol)
             leg.set_zorder(np.inf)
         else:
             cnorm = Normalize(vmin=times[0], vmax=times[-1])
@@ -486,12 +486,12 @@ class ExploreData(PlotSVD):
         times = sorted(list(set(times)))
         return times
 
-    def _format_spectra_figure(self, ax, data, wavelength, size, cover_range):
+    def _format_spectra_figure(self, ax, cover_range):
         # FiguresFormating.format_figure(ax, data, wavelength,
         #                                size=size, x_tight=True,
         #                                set_ylim=False)
         FiguresFormating.axis_labels(ax, self._get_wave_label(),
-                                     '$\Delta$A', size=size)
+                                     '$\Delta$A')
         if cover_range is not None:
             FiguresFormating.cover_excitation(ax, cover_range, self.wavelength)
 

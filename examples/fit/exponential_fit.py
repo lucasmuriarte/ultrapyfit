@@ -6,7 +6,7 @@ Created on Sun Jan 10 23:02:19 2021
 """
 from ultrafast.fit.ExponentialFit import globalfit_exponential
 from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.fit.GlobalFitBootstarp import BootStrap
+from ultrafast.fit.GlobalFitBootstrap import BootStrap
 from ultrafast.graphics.ExploreResults import ExploreResults
 
 path = 'denoised_2.csv'
@@ -19,7 +19,5 @@ result = globalfit_exponential(time, data_select, 4, 40, 400, t0 =2)
 explorer = ExploreResults(result)
 explorer.print_results()
 explorer.plot_fit()
+explorer.plot_DAS()
 
-
-boot = BootStrap(result)
-boot.generate_data_sets(3)

@@ -9,6 +9,7 @@ import os
 from os.path import join, dirname, realpath
 import json
 from functools import wraps
+import matplotlib.pyplot as plt
 from ultrafast.graphics.styles.plot_base_functions import *
 
 UTF_STYLE_DIR = dirname(__file__)
@@ -78,7 +79,7 @@ class MplFigureStyle(FigureStyle):
 class UtfFigureStyle(FigureStyle):
     def get_style(self):
         data = self._get_file()
-        if data is not False:
+        if data is not None:
             styles = data["styles"]
             style = get_combined_style(styles)
             funct, funct_arg = self._get_utf_style_function(data)
@@ -95,7 +96,7 @@ class UtfFigureStyle(FigureStyle):
                 if "utf_style" in data.keys():
                     return data
                 else:
-                    return False
+                    return None
 
     def _get_file_name(self):
         styles = os.listdir(UTF_STYLE_DIR)
@@ -140,10 +141,6 @@ def use_style(func):
     of a plotting function and this has the key style
     """
     argnames = func.__code__.co_varnames[:func.__code__.co_argcount]
-    if len(argnames) > 0:
-        if argnames[0] == 'self':
-            argnames = argnames[1:]
-
     # @wraps use to keep meta data of func
     @wraps(func)
     def style_func(*args, **kwargs):
@@ -154,9 +151,11 @@ def use_style(func):
             for i in defaults.keys():
                 if i not in valores.keys():
                     valores[i] = defaults[i]
+
         if "style" in valores.keys():
+            style = valores["style"]
+            style, func_plot, func_plot_arg = None, None, None
             try:
-                style = valores["style"]
                 style, func_plot, func_plot_arg = get_global_style(style)
                 if "style" in kwargs.keys():
                     kwargs.pop("style")
@@ -164,7 +163,6 @@ def use_style(func):
                     print('style applied')
                     res = func(*args, **kwargs)
             except Exception:
-                res,  = None
                 print('style not applied')
                 return func(*args, **kwargs)
             finally:

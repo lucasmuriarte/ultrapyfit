@@ -9,7 +9,7 @@ from ultrafast.experiment import Experiment
 
 
 path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2.csv'
-time, data, wave = read_data(path, wave_is_row= True)
+# time, data, wave = read_data(path, wave_is_row= True)
 
 # original_taus = [8, 30, 200]
 
@@ -27,7 +27,7 @@ experiment = Experiment.load_data(path, wave_is_row=True)
 # To explore the spectral dimension use "plot_spectra" method
 # By default all spectra will be plotted 
 # (Except they are more than 250 which is the case)
-experiment.plot_spectra()
+experiment.plot_spectra('auto')
 
 # From the figure we observe that 8 spectra equally spaced
 # at 1520 nm are displayed.
@@ -40,7 +40,7 @@ experiment.plot_spectra(times=['auto', 6, 1480])
 # This function plots by default the selected traces except 
 # If traces is set to 'auto' 10 traces separated equally in spectra dimension
 # are display
-experiment.plot_traces('auto')
+experiment.plot_traces()
 
 # alternatively we can pass a list of traces value (according to wave vector)
 experiment.plot_traces([1408,1520,1578])
