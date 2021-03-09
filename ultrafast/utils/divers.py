@@ -730,7 +730,7 @@ class LabBook(object):
 class UnvariableContainer(LabBook):
     """
     Object where once an attribute has been set cannot be modified if
-    self.__frozen = False
+    self.__frozen = True
     """
     def __init__(self, **kws):
         super().__init__(**kws)

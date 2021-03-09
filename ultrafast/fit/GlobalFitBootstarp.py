@@ -255,21 +255,32 @@ class BootStrap:
         """
         div = self._get_division_number(size)
         resultados = self.fit_results
+        params = resultados.params
         data = resultados.data
+        x = resultados.x
+        deconv = resultados.details['deconv']
         result_explorer = ExploreResults(resultados)
         fittes = result_explorer.results()
         residue_set_boot = resultados.data.copy()
         for boot in range(n_boots):
             residues = 0.0 * data
             for ii in range(len(residues[1])):
-                residues[:, ii] = data[:, ii] - fittes[:, ii]
+                if deconv:
+                    residues[:, ii] = data[:, ii] - fittes[:, ii]
+                else:
+                    t0 = params['t0_1'].value
+                    index = np.argmin([abs(i - t0) for i in x])
+                    residues[index:, ii] = data[index:, ii] - fittes[:, ii]
+                    data2 = 1.0 * data[:]
             for it in range(len(residues[1]) // div):
                 value1 = np.random.randint(len(residues[1]))
                 value2 = np.random.randint(len(residues[1]))
                 residues[:, value1] = residues[:, value2]
-            data2 = 0.0 * data[:]
             for da in range(len(residues[1])):
-                data2[:, da] = fittes[:, da] + residues[:, da]
+                if deconv:
+                    data2[:, da] = fittes[:, da] + residues[:, da]
+                else:
+                    data2[index:, da] = fittes[:, da] + residues[index:, da]
             residue_set_boot = np.dstack((residue_set_boot, data2))
         residue_set_boot = residue_set_boot[:, :, 1:]
         return residue_set_boot
