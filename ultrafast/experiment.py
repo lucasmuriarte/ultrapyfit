@@ -66,12 +66,13 @@ class Experiment(ExploreData, ExploreResults):
         automatically re-adapted.
 
     weights: dict
-        contains the weigthing vector that will be apply if apply_weigths is set to True in
-        any of the fitting functions. The weight can be define with the define weights function.
+        contains the weigthing vector that will be apply if apply_weigths is set
+        to True in any of the fitting functions. The weight can be define with
+        the define weights function.
 
     GVD_corrected/chirp_corrected: (default False)
-        Indicates if the data has been chirp corrected. It set to True after calling the
-        chrip_correction method
+        Indicates if the data has been chirp corrected. It set to True after
+        calling the chrip_correction method.
 
     preprocessing_report: class LabBook
         Object containing and keeping track of the preprocessing actions done to the data set.
@@ -214,7 +215,7 @@ class Experiment(ExploreData, ExploreResults):
         """
         Saved the current experiment
         """
-        ## To Do
+        ## ToDo
         pass
 
     def describe_data(self):
@@ -241,8 +242,8 @@ class Experiment(ExploreData, ExploreResults):
         Parameters
         ----------
         fit_number: int or None (default None)
-            defines the fit number of the results all_fit dictionary. If None the last fit in  will
-            be considered.
+            defines the fit number of the results all_fit dictionary. If None
+            the last fit in  will be considered.
         """
         if fit_number is None:
             fit_number = max(self._fits.keys())
@@ -267,7 +268,7 @@ class Experiment(ExploreData, ExploreResults):
         self.action_records.print(False, True, True)
 
     def calibrate_wavelength(self):
-        ## To do
+        ## Todo
         pass
 
     def chirp_correction(self, method):
@@ -317,11 +318,9 @@ class Experiment(ExploreData, ExploreResults):
         """
         self._add_to_data_set("before_baseline_substraction")
         new_data = Preprocessing.baseline_substraction(self.data, number_spec=number_spec, only_one=only_one)
-        selected_data = Preprocessing.baseline_substraction(self.selected_traces, number_spec=number_spec,
-                                                            only_one=only_one)
+
         self.data = new_data
-        self.selected_traces = selected_data
-        self._add_action("baseline substraction")
+        self._add_action("baseline substraction", True)
 
     def subtract_polynomial_baseline(self, points, order=3):
         """
@@ -342,19 +341,17 @@ class Experiment(ExploreData, ExploreResults):
         self._add_to_data_set("before_subtract_polynomial_baseline")
         new_data = Preprocessing.subtract_polynomial_baseline(self.data, self.wavelenght,
                                                               points=points, order=order)
-        selected_data = Preprocessing.subtract_polynomial_baseline(self.selected_traces, self.wavelenght,
-                                                                   points=points, order=order)
         self.data = new_data
-        self.selected_traces = selected_data
-        self._add_action("Subtracted polynomial baseline")
+        self._add_action("Subtracted polynomial baseline", True)
 
     def cut_time(self, mini=None, maxi=None):
         """
-        Cut time point of the data set according to the closest values of mini and
-        maxi margins given to the time vector. Contrary to cut_wavelength function,
-        inner cut are not available since in time resolved spectroscopy is not logical
-        to cut a complete area of recorded times. Therefore, giving mini and maxi
-        margins will result in selection of inner time values.
+        Cut time point of the data set according to the closest values of mini
+        and maxi margins given to the time vector. Contrary to cut_wavelength
+        function, inner cut are not available since in time resolved
+        spectroscopy is not logical to cut a complete area of recorded times.
+        Therefore, giving mini and maxi margins will result in selection of
+        inner time values.
         (The function assumes rows vector is sorted from low to high values)
 
 
@@ -368,17 +365,15 @@ class Experiment(ExploreData, ExploreResults):
         """
         self._add_to_data_set("before_cut_time")
         new_data, new_x = Preprocessing.cut_rows(self.data, self.x, mini, maxi)
-        new_selected_traces, _ = Preprocessing.cut_rows(self.selected_traces, self.x, mini, maxi)
         self.data, self.x = new_data, new_x
-        self.selected_traces = new_selected_traces
-        self._add_action("cut time")
+        self._add_action("cut time", True)
 
     def average_time(self, starting_point, step, method='log', grid_dense=5):
         """
-        Average time points collected (rows). This function can be use to average
-        time points. Useful in multiprobe time-resolved experiments or flash-
-        photolysis experiments recorded with a Photo multiplier tube where the number
-        of time points is very long and are equally spaced.
+        Average time points collected (rows). This function can be use to
+        average time points. Useful in multiprobe time-resolved experiments or
+        flash-photolysis experiments recorded with a Photo multiplier tube where
+        the number of time points is very long and are equally spaced.
         (The function assumes time vector is sorted from low to high values)
 
 
@@ -391,15 +386,15 @@ class Experiment(ExploreData, ExploreResults):
           step to consider for averaging data points
 
         method: 'log' or 'constant' (default: 'log')
-            If constant: after starting_point the the function will return average
-            time points between the step.
+            If constant: after starting_point the the function will return
+            average time points between the step.
 
             If log the firsts step is step/grid_dense and the following points
             are (step/grid_dense)*n where n is point number
 
         grid_dense: int or float higher than 1 (default: 5)
-            density of the log grid that will be applied. To high values will not
-            have effect if: start_point + step/grid_dense is lower than the
+            density of the log grid that will be applied. To high values will
+            not have effect if: start_point + step/grid_dense is lower than the
             difference between the first two consecutive points higher than
             start_point. The higher the value the higher the grid dense will be.
             return.
@@ -415,20 +410,23 @@ class Experiment(ExploreData, ExploreResults):
                 time points return are [1,2,3,4,5,6,9,14,21,30,41,54,67.5]
         """
         self._add_to_data_set("before_average_time")
-        new_data, new_x = Preprocessing.average_time_points(self.data, self.x, starting_point, step, method, grid_dense)
-        new_selected_traces, _ = Preprocessing.average_time_points(self.selected_traces, self.x,
-                                                                   starting_point, step, method, grid_dense)
+        new_data, new_x = Preprocessing.average_time_points(self.data, self.x,
+                                                            starting_point,
+                                                            step, method,
+                                                            grid_dense)
         self.data, self.x = new_data, new_x
-        self.selected_traces = new_selected_traces
-        self._add_action("average time")
+        self._add_action("average time", True)
 
-    def derivate_data(self, window_length=25, polyorder=3, deriv=1, mode='mirror'):
+    def derivate_data(self, window_length=25, polyorder=3,
+                      deriv=1, mode='mirror'):
         """
         Apply a Savitky-Golay filter to the data in the spectral range (rows).
-        After the Savitky-Golay filter the data can be derivate which can be used
-        to correct for baseline fluctuations and still perform a global fit or a single
-        fit to obtain the decay times.
-        Uses scipy.signal.savgol_filter (check scipy documentation for more information)
+        After the Savitky-Golay filter the data can be derivate which can be
+        used to correct for baseline fluctuations and still perform a global
+        fit or a single fit to obtain the decay times.
+
+        Uses scipy.signal.savgol_filter
+        (check scipy documentation for more information)
 
 
         Parameters
@@ -443,20 +441,19 @@ class Experiment(ExploreData, ExploreResults):
           order of the derivative after fitting
 
         mode: (default: 'mirror')
-            mode to evaluate bounders after derivation, check scipy.signal.savgol_filter
-            for the different options
+            mode to evaluate bounders after derivation, check
+            scipy.signal.savgol_filter for the different options
         """
         self._add_to_data_set("before_derivate_data")
-        new_data = Preprocessing.derivate_data(self.data, window_length, polyorder, deriv, mode)
-        selected_data = Preprocessing.derivate_data(self.selected_traces, window_length, polyorder, deriv, mode)
+        new_data = Preprocessing.derivate_data(self.data, window_length,
+                                               polyorder, deriv, mode)
         self.data = new_data
-        self.selected_traces = selected_data
-        self._add_action("derivate data")
+        self._add_action("derivate data", True)
 
     def cut_wavelength(self, mini=None, maxi=None, innerdata=None):
         """
-        Cut columns of the data set and wavelength vector according to the closest
-        values of mini and maxi margins given.
+        Cut columns of the data set and wavelength vector according to the
+        closest values of mini and maxi margins given.
         (The function assumes column vector is sorted from low to high values)
 
         Parameters
@@ -473,10 +470,12 @@ class Experiment(ExploreData, ExploreResults):
             selected.
         """
         self._add_to_data_set("before_cut_wavelength")
-        new_data, new_wave = Preprocessing.cut_columns(self.data, self.wavelength, mini, maxi, innerdata)
+        new_data, new_wave = Preprocessing.cut_columns(self.data,
+                                                       self.wavelength,
+                                                       mini, maxi, innerdata)
         # no need to work on selected data set
         self.data, self.wavelength = new_data, new_wave
-        self._add_action("cut wavelength")
+        self._add_action("cut wavelength", True)
 
     def del_points(self, points, dimension='time'):
         """
@@ -485,10 +484,10 @@ class Experiment(ExploreData, ExploreResults):
         dimension_vector should be equivalent to one of the data dimensions.
 
         Notice that the function will automatically detect the dimension of the
-        delete rows or columns in data if any of their dimensions is equal to the
-        length of the dimension_vector. In case that both dimensions are the same
-        the axis should be given, by default is 0, which is equivalent to the
-        time dimension.
+        delete rows or columns in data if any of their dimensions is equal to
+        the length of the dimension_vector. In case that both dimensions are the
+        same the axis should be given, by default is 0, which is equivalent to
+        the time dimension.
 
         i.e.:
         points = [3,5]
@@ -499,26 +498,28 @@ class Experiment(ExploreData, ExploreResults):
         Parameters
         ----------
         points: int, list or None
-            estimate values of time, the closes values of dimension_vector to the points given
-            will be deleted
+            estimate values of time, the closes values of dimension_vector to t
+            he points given will be deleted
 
         dimension: str (default "time")
-                can be "wavelength" or "time" indicate where points should be deleted
+                can be "wavelength" or "time" indicate where points should be
+                deleted
         """
         self._add_to_data_set("before_del_points")
         if dimension == 'time':
-            new_data, new_x = Preprocessing.del_points(points, self.data, self.x, 0)
-            select_data, _ = Preprocessing.del_points(points, self.selected_traces, self.x, 0)
+            new_data, new_x = Preprocessing.del_points(points, self.data,
+                                                       self.x, 0)
             self.data, self.x = new_data, new_x
-            self.selected_traces = select_data
-            self._add_action(f"delete point {dimension}")
+            self._add_action(f"delete point {dimension}", True)
         elif dimension == 'wavelength':
-            new_data, new_wave = Preprocessing.del_points(points, self.data, self.wavelength, 1)
+            new_data, new_wave = Preprocessing.del_points(points, self.data,
+                                                          self.wavelength, 1)
             # no need to work on selected data set
             self.data, self.wavelength = new_data, new_wave
-            self._add_action(f"delete point {dimension}")
+            self._add_action(f"delete point {dimension}", True)
         else:
-            raise ExperimentException('dimension should be "time" or "wavelength"')
+            msg = 'dimension should be "time" or "wavelength"'
+            raise ExperimentException(msg)
 
     def shit_time(self, value):
         """
@@ -555,7 +556,8 @@ class Experiment(ExploreData, ExploreResults):
             constant: constant weighting value in the range
             exponential: the weighting value increase exponentially
             r_exponential: the weighting value decrease exponentially
-            mix_exp: the weighting value increase and then decrease exponentially
+            mix_exp: the weighting value increase and then decrease
+            exponentially
 
             example:
             ----------
@@ -713,16 +715,16 @@ class Experiment(ExploreData, ExploreResults):
             (only applicable if fwhm is given)
 
         vary: bool or list of bool
-            If True or False all taus are optimized or fixed. If a list, should be a list of bool
-            equal with len equal to the number of taus. Each entry defines if a initial taus
-            should be optimized or not.
+            If True or False all taus are optimized or fixed. If a list, should
+            be a list of bool equal with len equal to the number of taus.
+            Each entry defines if a initial taus should be optimized or not.
 
         maxfev: int (default 5000)
             maximum number of iterations of the fit.
 
         apply_weights: bool (default False)
-            If True and weights have been defined, this will be applied in the fit (for defining weights) check
-            the function define_weights.
+            If True and weights have been defined, this will be applied in the
+            fit (for defining weights) check the function define_weights.
 
         plot: bool (default True)
             If True the results are automatically plotted
@@ -730,8 +732,10 @@ class Experiment(ExploreData, ExploreResults):
         taus = list(taus)
         print(taus)
         trace, wave = select_traces(self.data, self.wavelength, [wave], average)
-        results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary, tau_inf=tau_inf, maxfev=maxfev,
-                                      apply_weights=apply_weights, opt_fwhm=opt_fwhm)
+        results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary,
+                                      tau_inf=tau_inf, maxfev=maxfev,
+                                      apply_weights=apply_weights,
+                                      opt_fwhm=opt_fwhm)
         results.wavelenght = wave
         key = len(self.fit_records.single_fits) + 1
         self.fit_records.single_fits[key] = results
@@ -788,7 +792,7 @@ class Experiment(ExploreData, ExploreResults):
         plot: bool (default True)
             If True the results are automatically plotted
         """
-        taus= list(taus)
+        taus = list(taus)
         indexes = [np.argmax(abs(self.wavelength-wave_range[0])), np.argmax(abs(self.wavelength-wave_range[1]))]
         trace = np.array([np.trapz(self.data[i,indexes[0]:indexes[1]], x=self.wavelength[indexes[0]:indexes[1]])
                           for i in range(len(self.data))])
@@ -818,26 +822,30 @@ class Experiment(ExploreData, ExploreResults):
 
     def plot_single_fit(self, fit_number=None, details=True):
         """
-        Function that generates a figure with the results of the fit stored in the single_fits
+        Function that generates a figure with the results of the fit stored in
+        the single_fits
 
         Parameters
         ----------
         fit_number: int or None (default None)
-            defines the fit number of the results single_fits dictionary. If None the last fit in  will
-            be considered
+            defines the fit number of the results single_fits dictionary. If
+            None the last fit in  will e considered
 
         details: bool (default True)
-            If True the decay times obtained in the fit are included in the figure
+            If True the decay times obtained in the fit are included in the
+            figure
         """
         if fit_number in self.fit_records.single_fits.keys():
-            return self._plot_single_trace_fit(self.fit_records.single_fits, fit_number, details)
+            return self._plot_single_trace_fit(self.fit_records.single_fits,
+                                               fit_number, details)
         else:
             msg = 'Fit number not in records'
             raise ExperimentException(msg)
 
     def plot_integral_band_fit(self, fit_number=None, details=True):
         """
-        Function that generates a figure with the results of the fit stored in the integral_band_fits
+        Function that generates a figure with the results of the fit stored in
+        the integral_band_fits
 
         Parameters
         ----------
@@ -846,7 +854,8 @@ class Experiment(ExploreData, ExploreResults):
             If None the last fit in  will be considered
 
         details: bool (default True)
-            If True the decay times obtained in the fit are included in the figure
+            If True the decay times obtained in the fit are included in the
+            figure
         """
         if fit_number is None:
             fit_number = len(self.fit_records.integral_band_fits)
@@ -895,7 +904,7 @@ class Experiment(ExploreData, ExploreResults):
             minimizer = GlobalFitExponential(self.x, self.selected_traces, exp_no, params_fit,
                                              deconv, tau_inf, False)
             minimizer.pre_fit()
-        ## To do
+        ## Todo
 
         pass
 
@@ -960,7 +969,7 @@ class Experiment(ExploreData, ExploreResults):
             self._last_params['t0'] = params['t0_1'].value
             self._last_params['taus'] = [params['tau%i_1' % (i + 1)].value for i in range(self._exp_no)]
         elif self._params_initialized == 'Target':
-            ## to do
+            ## todo
             pass
         else:
             pass
@@ -1029,12 +1038,25 @@ class Experiment(ExploreData, ExploreResults):
             self.data_sets.__setattr__(key, container)
             self._last_data_sets = container
 
-    def _add_action(self, value):
+    def _add_action(self, value, re_select_traces=False):
         """
         add action to action records
         """
         val = len(self.action_records.__dict__)-2
         self.action_records.__setattr__(f"_{val}", value)
+        if re_select_traces:
+            self._re_select_traces()
+
+    def _re_select_traces(self):
+        if self._SVD_fit:
+            self._calculateSVD()
+            self.select_SVD_vectors(self.selected_traces.shape[1])
+        else:
+            avg = self._averige_selected_traces
+            trace, wave = self.select_traces(self.selected_traces, avg)
+            self.selected_traces, self.selected_wavelength = trace, wave
+            val = len(self.action_records.__dict__) - 3
+            delattr(self.action_records, f"_{val}" )
 
     def _readapt_params(self):
         """

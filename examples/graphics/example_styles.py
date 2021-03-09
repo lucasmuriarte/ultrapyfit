@@ -23,13 +23,14 @@ def plot_test():
     plt.xlabel('Hola amigos')
     
 @use_style
-def plot_test2(style="lmu_spec"):
+def plot_test2(test=1,style="lmu_trac"):
+    print(test)
     plt.figure()
     plt.plot(x, data**2)
     plt.xlabel('Hola amigos')
  
-plot_test(style="lmu_spec")    
-plot_test2()
+plot_test(style="lmu_trac")    
+plot_test2(2)
 
 plot_test(style="lmu_specd")    
 plot_test2(style="ggplot")
