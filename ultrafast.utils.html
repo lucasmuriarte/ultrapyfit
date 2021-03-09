@@ -940,7 +940,7 @@ must be within existing time grid of input_data (otherwise error will be thrown!
 <p>Class containing static methods for axis matplotlib formatting</p>
 <dl class="py method">
 <dt id="ultrafast.utils.divers.FiguresFormating.axis_labels">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">axis_labels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.FiguresFormating.axis_labels" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">axis_labels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.FiguresFormating.axis_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>add labels to the axis ax</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -948,7 +948,6 @@ must be within existing time grid of input_data (otherwise error will be thrown!
 <li><p><strong>ax</strong> (<em>matplotlib axis</em>) – axis containing the figure</p></li>
 <li><p><strong>x_label</strong> (<em>str (default None)</em>) – string containing the x label,</p></li>
 <li><p><strong>y_label</strong> (<em>str (default None)</em>) – string containing the y label</p></li>
-<li><p><strong>size</strong> (<em>int</em>) – size of the label</p></li>
 </ul>
 </dd>
 </dl>
@@ -973,7 +972,9 @@ the excitation of the laser in the spectra figure of a pump-probe UV-vis experim
 <dl class="py method">
 <dt id="ultrafast.utils.divers.FiguresFormating.format_figure">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">format_figure</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_tight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.FiguresFormating.format_figure" title="Permalink to this definition">¶</a></dt>
-<dd><p>format ax figures
+<dd><p>Deprecated function, style in combination with use_style decorator
+should be use to format figures.</p>
+<p>format ax figures
 Always does:</p>
 <blockquote>
 <div><p>-add minor tick
@@ -1124,7 +1125,8 @@ if int the element of the list at this index is deleted</p></li>
 <dt id="ultrafast.utils.divers.TimeUnitFormater">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">TimeUnitFormater</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">multiplicator:</span> <span class="pre">ultrafast.utils.divers.TimeMultiplicator</span> <span class="pre">=</span> <span class="pre">&lt;TimeMultiplicator.p:</span> <span class="pre">1e-12&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.TimeUnitFormater" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class to format a time number in a string with the corresponding unit, after indicating the unit measure.</p>
+<p>Class to format a time number in a string with the corresponding unit, after
+indicating the unit measure.</p>
 <dl>
 <dt>i.e.:</dt><dd><p>formater = TimeUnitFormater(“m”) # formater for milisecond measurement</p>
 <p>formater.value_formated(3046)
@@ -1161,7 +1163,7 @@ if int the element of the list at this index is deleted</p></li>
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.divers.</span></code><code class="sig-name descname"><span class="pre">UnvariableContainer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kws</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.UnvariableContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ultrafast.utils.divers.LabBook" title="ultrafast.utils.divers.LabBook"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.utils.divers.LabBook</span></code></a></p>
 <p>Object where once an attribute has been set cannot be modified if
-self.__frozen = False</p>
+self.__frozen = True</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1305,14 +1307,14 @@ this function works with transposes data sets</p>
 </dl>
 </div></blockquote>
 </li>
-<li><p><strong>wavelength</strong> (<em>1darray or None</em>) – Wavelength vectors where traces are selected. The len(wavelength), should
-be equal to the number of columns of data</p>
+<li><p><strong>wavelength</strong> (<em>1darray or None</em>) – Wavelength vectors where traces are selected. The len(wavelength),
+should be equal to the number of columns of data</p>
 <p>If None an array from 0 to data number of columns is created and
 returned after cutting. The parameters space should be given
 according to indexes</p>
 </li>
-<li><p><strong>space</strong> (<em>int or list or “auto” (default 10)</em>) – If type(space) = int: a series of traces separated by the value indicated
-will be selected.
+<li><p><strong>space</strong> (<em>int or list or “auto” (default 10)</em>) – If type(space) = int: a series of traces separated by the value
+indicated will be selected.
 If type(space) = list: the traces in the list will be selected.
 If space = auto, the number of returned traces is 10 and equally spaced
 along the wavelength vector and points is set to 0</p></li>
@@ -1321,9 +1323,9 @@ e. g.: if point is 1 trace = mean(index-1, index, index+1)</p></li>
 <li><p><strong>avoid_regions</strong> (<em>list of list (default None)</em>) – Defines wavelength regions that are avoided in the selection when space
 is an integer. The sub_list should have two elements defining the region
 to avoid in wavelength values
-i. e.: [[380,450],[520,530] traces with wavelength values between 380-450</p>
+i. e.: [[380,450],[520,530] traces with wavelength values between</p>
 <blockquote>
-<div><p>and 520-530 will not be selected</p>
+<div><p>380-450 and 520-530 will not be selected</p>
 </div></blockquote>
 </li>
 </ul>

@@ -12,10 +12,10 @@ ultrafast.fit.ExponentialFit module
    :undoc-members:
    :show-inheritance:
 
-ultrafast.fit.GlobalFitBootstarp module
+ultrafast.fit.GlobalFitBootstrap module
 ---------------------------------------
 
-.. automodule:: ultrafast.fit.GlobalFitBootstarp
+.. automodule:: ultrafast.fit.GlobalFitBootstrap
    :members:
    :undoc-members:
    :show-inheritance:

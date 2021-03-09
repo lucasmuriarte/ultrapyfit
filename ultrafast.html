@@ -179,7 +179,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ultrafast.fit.html">ultrafast.fit package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.fit.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.fit.html#module-ultrafast.fit.ExponentialFit">ultrafast.fit.ExponentialFit module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ultrafast.fit.html#ultrafast-fit-globalfitbootstarp-module">ultrafast.fit.GlobalFitBootstarp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ultrafast.fit.html#ultrafast-fit-globalfitbootstrap-module">ultrafast.fit.GlobalFitBootstrap module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.fit.html#module-ultrafast.fit.GlobalParams">ultrafast.fit.GlobalParams module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.fit.html#module-ultrafast.fit.ModelCreator">ultrafast.fit.ModelCreator module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.fit.html#module-ultrafast.fit.TargetFit">ultrafast.fit.TargetFit module</a></li>
@@ -326,8 +326,9 @@ automatically re-adapted.</p>
 <dl class="py attribute">
 <dt id="ultrafast.experiment.Experiment.weights">
 <code class="sig-name descname"><span class="pre">weights</span></code><a class="headerlink" href="#ultrafast.experiment.Experiment.weights" title="Permalink to this definition">¶</a></dt>
-<dd><p>contains the weigthing vector that will be apply if apply_weigths is set to True in
-any of the fitting functions. The weight can be define with the define weights function.</p>
+<dd><p>contains the weigthing vector that will be apply if apply_weigths is set
+to True in any of the fitting functions. The weight can be define with
+the define weights function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>dict</p>
@@ -338,8 +339,8 @@ any of the fitting functions. The weight can be define with the define weights f
 <dl class="py attribute">
 <dt>
 <code class="sig-name descname"><span class="pre">GVD_corrected/chirp_corrected</span></code></dt>
-<dd><p>Indicates if the data has been chirp corrected. It set to True after calling the
-chrip_correction method</p>
+<dd><p>Indicates if the data has been chirp corrected. It set to True after
+calling the chrip_correction method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>(default False)</p>
@@ -408,23 +409,23 @@ for some chirp correction methods. If the excitation is not needed.</p>
 <dl class="py method">
 <dt id="ultrafast.experiment.Experiment.average_time">
 <code class="sig-name descname"><span class="pre">average_time</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starting_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_dense</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.average_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Average time points collected (rows). This function can be use to average
-time points. Useful in multiprobe time-resolved experiments or flash-
-photolysis experiments recorded with a Photo multiplier tube where the number
-of time points is very long and are equally spaced.
+<dd><p>Average time points collected (rows). This function can be use to
+average time points. Useful in multiprobe time-resolved experiments or
+flash-photolysis experiments recorded with a Photo multiplier tube where
+the number of time points is very long and are equally spaced.
 (The function assumes time vector is sorted from low to high values)</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul>
 <li><p><strong>starting_point</strong> (<em>int or float</em>) – time points higher than this the function will be applied</p></li>
 <li><p><strong>step</strong> (<em>int, float or None</em>) – step to consider for averaging data points</p></li>
-<li><p><strong>method</strong> (<em>‘log’ or ‘constant’ (default: ‘log’)</em>) – If constant: after starting_point the the function will return average
-time points between the step.</p>
+<li><p><strong>method</strong> (<em>‘log’ or ‘constant’ (default: ‘log’)</em>) – If constant: after starting_point the the function will return
+average time points between the step.</p>
 <p>If log the firsts step is step/grid_dense and the following points
 are (step/grid_dense)*n where n is point number</p>
 </li>
-<li><p><strong>grid_dense</strong> (<em>int or float higher than 1 (default: 5)</em>) – density of the log grid that will be applied. To high values will not
-have effect if: start_point + step/grid_dense is lower than the
+<li><p><strong>grid_dense</strong> (<em>int or float higher than 1 (default: 5)</em>) – density of the log grid that will be applied. To high values will
+not have effect if: start_point + step/grid_dense is lower than the
 difference between the first two consecutive points higher than
 start_point. The higher the value the higher the grid dense will be.
 return.
@@ -491,11 +492,12 @@ if False an average from the spectrum 0 to number_spec is subtracted
 <dl class="py method">
 <dt id="ultrafast.experiment.Experiment.cut_time">
 <code class="sig-name descname"><span class="pre">cut_time</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mini</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.cut_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cut time point of the data set according to the closest values of mini and
-maxi margins given to the time vector. Contrary to cut_wavelength function,
-inner cut are not available since in time resolved spectroscopy is not logical
-to cut a complete area of recorded times. Therefore, giving mini and maxi
-margins will result in selection of inner time values.
+<dd><p>Cut time point of the data set according to the closest values of mini
+and maxi margins given to the time vector. Contrary to cut_wavelength
+function, inner cut are not available since in time resolved
+spectroscopy is not logical to cut a complete area of recorded times.
+Therefore, giving mini and maxi margins will result in selection of
+inner time values.
 (The function assumes rows vector is sorted from low to high values)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -510,8 +512,8 @@ margins will result in selection of inner time values.
 <dl class="py method">
 <dt id="ultrafast.experiment.Experiment.cut_wavelength">
 <code class="sig-name descname"><span class="pre">cut_wavelength</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mini</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">innerdata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.cut_wavelength" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cut columns of the data set and wavelength vector according to the closest
-values of mini and maxi margins given.
+<dd><p>Cut columns of the data set and wavelength vector according to the
+closest values of mini and maxi margins given.
 (The function assumes column vector is sorted from low to high values)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -544,7 +546,8 @@ where the weights will be applied</p></li>
 <p>constant: constant weighting value in the range
 exponential: the weighting value increase exponentially
 r_exponential: the weighting value decrease exponentially
-mix_exp: the weighting value increase and then decrease exponentially</p>
+mix_exp: the weighting value increase and then decrease
+exponentially</p>
 <blockquote>
 <div><p>constant value 5, [1,1,1,1,…5,5,5,5,5,….1,1,1,1,1]
 exponential for val= 2 [1,1,1,1,….2,4,9,16,25,….,1,1,1,]</p>
@@ -568,10 +571,10 @@ exp_mix [1,1,1,1,…2,4,9,4,2,…1,1,1,]</p>
 given in points to the values found in dimension_vector. The length of
 dimension_vector should be equivalent to one of the data dimensions.</p>
 <p>Notice that the function will automatically detect the dimension of the
-delete rows or columns in data if any of their dimensions is equal to the
-length of the dimension_vector. In case that both dimensions are the same
-the axis should be given, by default is 0, which is equivalent to the
-time dimension.</p>
+delete rows or columns in data if any of their dimensions is equal to
+the length of the dimension_vector. In case that both dimensions are the
+same the axis should be given, by default is 0, which is equivalent to
+the time dimension.</p>
 <p>i.e.:
 points = [3,5]
 dimension_vector = [0.7, 1.4, 2.1, 2.8, 3.5, 4.2, 4.9, 5.6]
@@ -580,9 +583,10 @@ data.shape &gt;&gt;&gt; (8, 10)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>points</strong> (<em>int, list or None</em>) – estimate values of time, the closes values of dimension_vector to the points given
-will be deleted</p></li>
-<li><p><strong>dimension</strong> (<em>str (default “time”)</em>) – can be “wavelength” or “time” indicate where points should be deleted</p></li>
+<li><p><strong>points</strong> (<em>int, list or None</em>) – estimate values of time, the closes values of dimension_vector to t
+he points given will be deleted</p></li>
+<li><p><strong>dimension</strong> (<em>str (default “time”)</em>) – can be “wavelength” or “time” indicate where points should be
+deleted</p></li>
 </ul>
 </dd>
 </dl>
@@ -592,18 +596,19 @@ will be deleted</p></li>
 <dt id="ultrafast.experiment.Experiment.derivate_data">
 <code class="sig-name descname"><span class="pre">derivate_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deriv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mirror'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.derivate_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a Savitky-Golay filter to the data in the spectral range (rows).
-After the Savitky-Golay filter the data can be derivate which can be used
-to correct for baseline fluctuations and still perform a global fit or a single
-fit to obtain the decay times.
-Uses scipy.signal.savgol_filter (check scipy documentation for more information)</p>
+After the Savitky-Golay filter the data can be derivate which can be
+used to correct for baseline fluctuations and still perform a global
+fit or a single fit to obtain the decay times.</p>
+<p>Uses scipy.signal.savgol_filter
+(check scipy documentation for more information)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>window_length</strong> (<em>odd int value (default: 25)</em>) – length defining the points for polynomial fitting</p></li>
 <li><p><strong>polyorder</strong> (<em>int or float (default: 3)</em>) – order of the polynomial fit</p></li>
 <li><p><strong>deriv</strong> (<em>int, float or None (default: 1)</em>) – order of the derivative after fitting</p></li>
-<li><p><strong>mode</strong> (<em>(default: ‘mirror’)</em>) – mode to evaluate bounders after derivation, check scipy.signal.savgol_filter
-for the different options</p></li>
+<li><p><strong>mode</strong> (<em>(default: ‘mirror’)</em>) – mode to evaluate bounders after derivation, check
+scipy.signal.savgol_filter for the different options</p></li>
 </ul>
 </dd>
 </dl>
@@ -723,13 +728,15 @@ the function define_weights.</p></li>
 <dl class="py method">
 <dt id="ultrafast.experiment.Experiment.plot_integral_band_fit">
 <code class="sig-name descname"><span class="pre">plot_integral_band_fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.plot_integral_band_fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function that generates a figure with the results of the fit stored in the integral_band_fits</p>
+<dd><p>Function that generates a figure with the results of the fit stored in
+the integral_band_fits</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results integral_band_fits dictionary.
 If None the last fit in  will be considered</p></li>
-<li><p><strong>details</strong> (<em>bool (default True)</em>) – If True the decay times obtained in the fit are included in the figure</p></li>
+<li><p><strong>details</strong> (<em>bool (default True)</em>) – If True the decay times obtained in the fit are included in the
+figure</p></li>
 </ul>
 </dd>
 </dl>
@@ -738,13 +745,15 @@ If None the last fit in  will be considered</p></li>
 <dl class="py method">
 <dt id="ultrafast.experiment.Experiment.plot_single_fit">
 <code class="sig-name descname"><span class="pre">plot_single_fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.plot_single_fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function that generates a figure with the results of the fit stored in the single_fits</p>
+<dd><p>Function that generates a figure with the results of the fit stored in
+the single_fits</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results single_fits dictionary. If None the last fit in  will
-be considered</p></li>
-<li><p><strong>details</strong> (<em>bool (default True)</em>) – If True the decay times obtained in the fit are included in the figure</p></li>
+<li><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results single_fits dictionary. If
+None the last fit in  will e considered</p></li>
+<li><p><strong>details</strong> (<em>bool (default True)</em>) – If True the decay times obtained in the fit are included in the
+figure</p></li>
 </ul>
 </dd>
 </dl>
@@ -756,8 +765,8 @@ be considered</p></li>
 <dd><p>Print out a summarize result of a global fit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results all_fit dictionary. If None the last fit in  will
-be considered.</p>
+<dd class="field-odd"><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results all_fit dictionary. If None
+the last fit in  will be considered.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -873,12 +882,12 @@ If None tau_inf is not added.
 <li><p><strong>opt_fwhm</strong> (<em>bool (default False)</em>) – allows to optimized the FWHM.
 Theoretically this should be measured externally and be fix
 (only applicable if fwhm is given)</p></li>
-<li><p><strong>vary</strong> (<em>bool or list of bool</em>) – If True or False all taus are optimized or fixed. If a list, should be a list of bool
-equal with len equal to the number of taus. Each entry defines if a initial taus
-should be optimized or not.</p></li>
+<li><p><strong>vary</strong> (<em>bool or list of bool</em>) – If True or False all taus are optimized or fixed. If a list, should
+be a list of bool equal with len equal to the number of taus.
+Each entry defines if a initial taus should be optimized or not.</p></li>
 <li><p><strong>maxfev</strong> (<em>int (default 5000)</em>) – maximum number of iterations of the fit.</p></li>
-<li><p><strong>apply_weights</strong> (<em>bool (default False)</em>) – If True and weights have been defined, this will be applied in the fit (for defining weights) check
-the function define_weights.</p></li>
+<li><p><strong>apply_weights</strong> (<em>bool (default False)</em>) – If True and weights have been defined, this will be applied in the
+fit (for defining weights) check the function define_weights.</p></li>
 <li><p><strong>plot</strong> (<em>bool (default True)</em>) – If True the results are automatically plotted</p></li>
 </ul>
 </dd>
