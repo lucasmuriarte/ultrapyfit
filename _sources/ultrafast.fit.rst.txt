@@ -12,6 +12,14 @@ ultrafast.fit.ExponentialFit module
    :undoc-members:
    :show-inheritance:
 
+ultrafast.fit.GlobalFit module
+------------------------------
+
+.. automodule:: ultrafast.fit.GlobalFit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 ultrafast.fit.GlobalFitBootstrap module
 ---------------------------------------
 
