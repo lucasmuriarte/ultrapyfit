@@ -5,18 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitBootstrap.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/experiment/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/experiment/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/experiment/spectrum.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_fit.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_fit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/graphics/example_styles.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/graphics/example_styles.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstarp.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/styles/basic_styles/lmu.mplstyle" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/styles/basic_styles/lmu.mplstyle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitBootstrap.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/styles/plot_base_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/styles/plot_base_functions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,8 +18,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="Python Unit Test" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -170,6 +162,8 @@
       <workItem from="1613765032729" duration="1386000" />
       <workItem from="1613767030163" duration="638000" />
       <workItem from="1613767679811" duration="28888000" />
+      <workItem from="1615313629184" duration="3374000" />
+      <workItem from="1615489038280" duration="9086000" />
     </task>
     <servers />
   </component>
