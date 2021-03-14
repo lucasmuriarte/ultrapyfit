@@ -17,14 +17,13 @@ time, data, wave = read_data(path, wave_is_row=True, separator='\t')
 # original_taus = [8, 30, 200]
 model = Model.load("C:/Users/lucas/git project/ultrafast/tests/ultrafast/fit/testmodel2.model")
 params_model = model.genParameters()
-exp_no = params_model['exp_no']
-data_select, wave_select = select_traces(data, wave, 'auto')
-params = GlobalTargetParameters(data_select.shape[1], model)
-params.adjustParams(0, False, None)
+exp_no = params_model['exp_no'].value
+params = GlobalTargetParameters(data.shape[1], model)
+params.adjustParams(0, 0.12, None)
 parameters = params.params
 
-fitter = GlobalFitTarget(time, data_select, 3, parameters, False,
-                              wavelength=wave_select)
+fitter = GlobalFitTarget(time, data, exp_no, parameters, False,
+                         wavelength=wave)
 result = fitter.global_fit()
 
 explorer = ExploreResults(result)

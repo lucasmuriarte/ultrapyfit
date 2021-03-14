@@ -3,8 +3,6 @@ from ultrafast.graphics.styles import *
 from parameterized import parameterized
 
 
-
-
 class TestBootStrap(unittest.TestCase):
 
     @parameterized([[]])

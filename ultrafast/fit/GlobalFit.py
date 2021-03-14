@@ -10,6 +10,18 @@ from ultrafast.fit.GlobalParams import GlobExpParameters
 from ultrafast.utils.divers import UnvariableContainer, solve_kmatrix
 import copy
 import pickle
+from ultrafast.graphics.ExploreResults import ExploreResults
+import matplotlib.pyplot as plt
+
+
+class Container:
+    """
+    Object where once an attribute has been set cannot be modified if
+    self.__frozen = True
+    """
+    def __init__(self, **kws):
+        for key, val in kws.items():
+            setattr(self, key, val)
 
 
 class GloablFitResult:
@@ -65,24 +77,30 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
             self.wavelength = np.array([i for i in
                                         range(1, self.data.shape[1] + 1)])
         self.params = params
+        self._capture_params = []
         self.deconv = deconv
         self.tau_inf = tau_inf
         self.exp_no = exp_no
         self.GVD_corrected = GVD_corrected
         self.fit_type = None
         self._number_it = 0
+        self._stop = False
         self._prefit_done = False
+        self._plot = False
         self._data_ensemble = UnvariableContainer(x=x, data=data,
                                                   wavelength=self.wavelength)
+        self._progress_result = None
         self.fit_completed = False
+        self._ax = None
+        self._fig = None
         ModelCreator.__init__(self, self.exp_no, self.x, self.tau_inf)
         lmfit.Minimizer.__init__(self, self._objective, params,
-                                 nan_policy='propagate')
+                                 nan_policy='propagate',
+                                 iter_cb=self.trap_params)
 
     def minimize(self, method='leastsq', params=None, max_nfev=None, **kws):
         result = super().minimize(method=method, params=params,
                                   max_nfev=max_nfev, **kws)
-        print(result.__dict__.keys())
         result = GloablFitResult(result)
         details = self._get_fit_details()
         details['maxfev'] = max_nfev
@@ -99,7 +117,10 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
     def _objective(self, params):
         pass
 
-    def global_fit(self, maxfev=None, apply_weights=False, method='leastsq'):
+    def global_fit(self, maxfev=None, apply_weights=False, method='leastsq',
+                   plot=False):
+        if plot:
+            self._plot = True
         self.fit_completed = False
         if not self._prefit_done:
             self.pre_fit()
@@ -108,12 +129,11 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         else:
             self.weights['apply'] = False
         self.fit_completed = False
-        fit_params = self.params
         if maxfev is not None:
-            resultados = self.minimize(params=fit_params, method=method,
+            resultados = self.minimize(params=self.params, method=method,
                                        max_nfev=maxfev)
         else:
-            resultados = self.minimize(params=fit_params, method=method)
+            resultados = self.minimize(params=self.params, method=method)
         self.params = copy.copy(resultados.params)
         self._number_it = 0
         self.fit_completed = True
@@ -162,6 +182,36 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
                    'derivate': False,
                    'avg_traces': 'unknown'}
         return details
+
+    def _stop_fit(self):
+        self._stop = True
+
+    def trap_params(self, params, iter, resid):
+        get_stop = self._stop
+        if self._number_it % 200 == 0:
+            print(self._number_it)
+            print(sum(np.abs(resid.flatten())))
+            self._update_progress_result(params)
+            if self._plot:
+                self.plot_progress()
+
+    def _update_progress_result(self, params):
+        if self._progress_result is None:
+            result = Container(params=params)
+            progress_result = GloablFitResult(result)
+            details = self._get_fit_details()
+            progress_result.add_data_details(self._data_ensemble, details)
+            self._progress_result = progress_result
+        else:
+            self._progress_result.params = params
+
+    def plot_progress(self):
+        plotter = ExploreResults(self._progress_result)
+        if self._fig is not None:
+            plt.close(self._fig)
+        self._fig, self._ax = plotter.plot_fit()
+        #TODO
+        pass
 
 
 class GlobalFitExponential(GlobalFit):
@@ -242,6 +292,7 @@ class GlobalFitExponential(GlobalFit):
         super().__init__(x, data, exp_no, params, deconv,
                          tau_inf, GVD_corrected, **kwargs)
         self.fit_type = 'Exponential'
+        self._update_progress_result(self.params)
 
     def pre_fit(self):
         """
@@ -377,7 +428,7 @@ class GlobalFitExponential(GlobalFit):
             if i == 0 and self.deconv:
                 self.params['tau%i_1' % (i + 1)].min = \
                     self.params['fwhm_1'].value
-            else:
+            elif i >= 1:
                 self.params['tau%i_1' % (i + 1)].min = \
                     self.params['tau%i_1' % i].value
 
@@ -390,6 +441,7 @@ class GlobalFitExponential(GlobalFit):
                 self.params['tau%i_1' % (i + 1)].min = None
             else:
                 self.params['tau%i_1' % (i + 1)].min = None
+
 
 class GlobalFitTarget(GlobalFit):
     """
@@ -487,8 +539,9 @@ class GlobalFitTarget(GlobalFit):
         super().__init__(x, data, exp_no, params, deconv,
                          None, GVD_corrected, **kwargs)
         self.fit_type = 'Target'
+        self._update_progress_result(self.params)
 
-    def preFit(self):
+    def pre_fit(self):
         """
         Method that optimized the pre_exponential factors trace by trace without
         optimizing the kinetic constants times. It is automatically ran before a

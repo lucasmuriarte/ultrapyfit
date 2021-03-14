@@ -5,11 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalParams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_exp_fit_using class.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_exp_fit_using class.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_target_fit_using class.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_target_fit_using class.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ultrafast/graphics/styles/test_set_styles.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/graphics/styles/test_set_styles.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +21,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Unit Test" />
         <option value="Python Script" />
+        <option value="Python Unit Test" />
       </list>
     </option>
   </component>
@@ -165,7 +167,7 @@
       <workItem from="1613767679811" duration="28888000" />
       <workItem from="1615313629184" duration="3374000" />
       <workItem from="1615489038280" duration="15260000" />
-      <workItem from="1615657309297" duration="805000" />
+      <workItem from="1615657309297" duration="17603000" />
     </task>
     <servers />
   </component>

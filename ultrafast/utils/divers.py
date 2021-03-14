@@ -1105,23 +1105,16 @@ class DataSetCreator:
                 if init > 1:
                     space = 'log'
                 else:
-                    return np.append(np.linspace(init,
-                                                 1,
-                                                 round(points / 3) + 1)[:-1],
-                                     np.logspace(np.log10(1),
-                                                 np.log10(final),
+                    return np.append(np.linspace(init, 1, round(points / 3) + 1)[:-1],
+                                     np.logspace(np.log10(1), np.log10(final),
                                                  round(2 * points / 3)))
             elif space == 'log':
                 if init < 1:
-                    return np.logspace(
-                        0,
-                        np.log10(
-                            final + abs(init) + 1),
-                        points) + init - 1
+                    return np.logspace(0, np.log10(final + abs(init) + 1),
+                                       points) + init - 1
                 else:
-                    return np.logspace(
-                        np.log10(init), np.log10(
-                            final + abs(init)), points)
+                    return np.logspace(np.log10(init),
+                                       np.log10(final + abs(init)), points)
             else:
                 return np.linspace(init, final, points)
         else:
