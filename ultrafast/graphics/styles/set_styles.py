@@ -151,10 +151,9 @@ def use_style(func):
             for i in defaults.keys():
                 if i not in valores.keys():
                     valores[i] = defaults[i]
-
+        style, func_plot, func_plot_arg, res = None, None, None, None
         if "style" in valores.keys():
             style = valores["style"]
-            style, func_plot, func_plot_arg = None, None, None
             try:
                 style, func_plot, func_plot_arg = get_global_style(style)
                 if "style" in kwargs.keys():
@@ -164,7 +163,7 @@ def use_style(func):
                     res = func(*args, **kwargs)
             except Exception:
                 print('style not applied')
-                return func(*args, **kwargs)
+                res = func(*args, **kwargs)
             finally:
                 if func_plot is not None:
                     try:

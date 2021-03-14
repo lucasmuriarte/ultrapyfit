@@ -443,6 +443,7 @@ class ReadData:
         similar parameters and explanations as in readData function
         """
         if wave_is_row:
+            print('row')
             data_frame = pd.read_csv(path, sep=separator, index_col=wavelength, skiprows=time, decimal=decimal).dropna(
                 how='all').dropna(how='all', axis=1)
             data_frame = data_frame.transpose()
@@ -450,9 +451,9 @@ class ReadData:
             data_frame = pd.read_csv(path, sep=separator, index_col=time, skiprows=wavelength, decimal=decimal).dropna(
                 how='all').dropna(how='all', axis=1)
         data_frame.fillna(0, inplace=True)
-        wavelength_dimension, time_dimension = self._readPandas(data_frame)
+        wavelength_dimension, time_dimension = ReadData._readPandas(data_frame)
         time_dimension = sorted(time_dimension)
-        data_frame.set_index(time_dimension).sort_index()
+        # data_frame.set_index(time_dimension).sort_index()
         return np.array(time_dimension), data_frame.transpose().values, wavelength_dimension
 
 
