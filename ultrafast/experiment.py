@@ -8,11 +8,10 @@ import numpy as np
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.graphics.ExploreData import ExploreData
 from ultrafast.fit.GlobalParams import GlobExpParameters
-from ultrafast.utils.divers import define_weights, UnvariableContainer, LabBook, book_annotate, read_data, \
-    TimeUnitFormater, select_traces
+from ultrafast.utils.divers import define_weights, UnvariableContainer, LabBook,\
+    book_annotate, read_data, TimeUnitFormater, select_traces
 from ultrafast.utils.Preprocessing import Preprocessing, ExperimentException
-from ultrafast.fit.ExponentialFit import GlobalFitExponential
-from ultrafast.fit.TargetFit import GlobalFitTargetModel
+from ultrafast.fit.GlobalFit import GlobalFitExponential, GlobalFitTarget
 import os
 from matplotlib.offsetbox import AnchoredText
 import copy
@@ -580,7 +579,8 @@ class Experiment(ExploreData, ExploreResults):
         self.working_directory = path
         self.save['path'] = self.working_directory
 
-    def initialize_exp_params(self, t0, fwhm, *taus, tau_inf=1E12, opt_fwhm=False, vary_t0=True, global_t0=True):
+    def initialize_exp_params(self, t0, fwhm, *taus, tau_inf=1E12,
+                              opt_fwhm=False, vary_t0=True, global_t0=True):
         """
         function to initialize parameters for global fitting
 
@@ -619,7 +619,8 @@ class Experiment(ExploreData, ExploreResults):
             may give better results
         """
         taus = list(taus)
-        self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': taus, 'tau_inf': tau_inf, 'opt_fwhm': opt_fwhm}
+        self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': taus,
+                             'tau_inf': tau_inf, 'opt_fwhm': opt_fwhm}
         self._exp_no = len(taus)
         param_creator = GlobExpParameters(self.selected_traces.shape[1], taus)
         if fwhm is None:
@@ -645,28 +646,28 @@ class Experiment(ExploreData, ExploreResults):
 
     def global_fit(self, vary=True, maxfev=5000, apply_weights=False):
         """
-        Perform a exponential or a target global fits to the selected traces. The type
-        of fits depends on the parameters initialized.
+        Perform a exponential or a target global fits to the selected traces.
+        The type of fits depends on the parameters initialized.
 
         Parameters
         ----------
         vary: bool or list of bool
-            If True or False all taus are optimized or fixed. If a list, should be a list of bool
-            equal with len equal to the number of taus. Each entry defines if a initial taus
-            should be optimized or not.
+            If True or False all taus are optimized or fixed. If a list, should
+            be a list of bool equal with len equal to the number of taus. Each
+            entry defines if a initial taus should be optimized or not.
 
         maxfev: int (default 5000)
             maximum number of iterations of the fit.
 
         apply_weights: bool (default False)
-            If True and weights have been defined, this will be applied in the fit (for defining weights) check
-            the function define_weights.
+            If True and weights have been defined, this will be applied in the
+            fit (for defining weights) check the function define_weights.
         """
         if self._params_initialized == 'Exponential':
             minimizer = GlobalFitExponential(self.x, self.selected_traces, self._exp_no, self.params,
                                              self._deconv, self._tau_inf, GVD_corrected=self.GVD_corrected)
         elif self._params_initialized == 'Target':
-            minimizer = GlobalFitTargetModel(self.selected_traces, self.selected_wavelength, self.params)
+            minimizer = GlobalFitTarget(self.selected_traces, self.selected_wavelength, self.params)
         else:
             raise ExperimentException('Parameters need to be initiliazed first"')
         if apply_weights:
