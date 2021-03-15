@@ -156,6 +156,9 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
     
     @property
     def allow_stop(self):
+        """
+        controlles if is posible to stop the fit or not
+        """
         return self._allow_stop
     
     @allow_stop.setter
@@ -215,19 +218,19 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
             self.weights['apply'] = False
         self.fit_completed = False
         if self._allow_stop:
-            it = InputThread(self.stop_fit)
-            it.start()
+            user_stop = InputThread(self.stop_fit)
+            user_stop.start()
         resultados = self.minimize(params=self.params, method=method,
                                     max_nfev=maxfev, **kws)
         if self._allow_stop:
-            it.stop()
-            it.join()
-            print('stop')
+            user_stop.stop()
+            user_stop.join()
         self.params = copy.copy(resultados.params)
         self._number_it = 0
         self.fit_completed = True
         if self._stop_manually:
-            self._abort = True
+            print('Fit stop manually')
+            self._abort = False
             self._stop_manually = False
         if self.weights['apply']:
             self.weights['apply'] = False
@@ -299,7 +302,6 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         use to stop the fit
         """
         self._stop_manually = True
-        # self._abort = False
     
     # def _update_progress_result(self, params):
     #     if self._progress_result is None:
