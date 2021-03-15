@@ -20,6 +20,7 @@ parameters = params.params
 
 fitter = GlobalFitExponential(time, data_select, 3, parameters, False,
                               wavelength=wave_select)
+fitter.allow_stop = True
 result = fitter.global_fit()
 
 explorer = ExploreResults(result)
