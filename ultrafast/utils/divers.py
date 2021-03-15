@@ -443,7 +443,7 @@ class ReadData:
         similar parameters and explanations as in readData function
         """
         if wave_is_row:
-            print('row')
+            # print('row')
             data_frame = pd.read_csv(path, sep=separator, index_col=wavelength, skiprows=time, decimal=decimal).dropna(
                 how='all').dropna(how='all', axis=1)
             data_frame = data_frame.transpose()

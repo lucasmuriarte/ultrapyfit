@@ -12,7 +12,7 @@ import copy
 import pickle
 from ultrafast.graphics.ExploreResults import ExploreResults
 import matplotlib.pyplot as plt
-import concurrent.futures
+import ctypes
 import threading
 
 
@@ -23,18 +23,31 @@ class InputThread(threading.Thread):
         self.daemon = True
         self.last_user_input = None
         self.function = function
-        self._stop = False
         
     def run(self):
-        self._stop = True
         while self._stop:
             self.last_user_input = input('Type "stop" to stop fit:  ')
             if self.last_user_input == 'stop':
                 self.function()
+                self.stop()
                 break
-    
+
+    def get_id(self):
+        # returns id of the respective thread
+        if hasattr(self, '_thread_id'):
+            return self._thread_id
+        for id, thread in threading._active.items():
+            if thread is self:
+                return id
+
     def stop(self):
-        self._stop = False
+        thread_id = self.get_id()
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
+                                                         ctypes.py_object(
+                                                             SystemExit))
+        if res > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
+            print('Exception raise failure')
 
 
 class Container:
@@ -107,7 +120,7 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         self.GVD_corrected = GVD_corrected
         self.fit_type = None
         self._number_it = 0
-        self._stop = False
+        self._stop_manually = False
         self._prefit_done = False
         self._data_ensemble = UnvariableContainer(x=x, data=data,
                                                   wavelength=self.wavelength)
@@ -147,10 +160,10 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
     
     @allow_stop.setter
     def allow_stop(self, value: bool):
-        if value:
-            msg = 'WARNING: Setting this value to True, ' \
-                  'might generate "Bad address" error'
-            print(msg)
+        # if value:
+        #     msg = 'WARNING: Setting this value to True, ' \
+        #           'might generate "Bad address" error'
+        #     print(msg)
         self._allow_stop = value
     
     def pre_fit(self):
@@ -193,7 +206,9 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         #     self._plot = True
         self.fit_completed = False
         if not self._prefit_done:
+            print('Preparing Fit')
             self.pre_fit()
+            print('Starting Fit')
         if apply_weights and len(self.weights['vector']) == len(self.x):
             self.weights['apply'] = True
         else:
@@ -204,10 +219,16 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
             it.start()
         resultados = self.minimize(params=self.params, method=method,
                                     max_nfev=maxfev, **kws)
-        
+        if self._allow_stop:
+            it.stop()
+            it.join()
+            print('stop')
         self.params = copy.copy(resultados.params)
         self._number_it = 0
         self.fit_completed = True
+        if self._stop_manually:
+            self._abort = True
+            self._stop_manually = False
         if self.weights['apply']:
             self.weights['apply'] = False
         return resultados
@@ -263,7 +284,7 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         If not print the number of iterations and the chi square every 200
         iterations.
         """
-        get_stop = self._stop
+        get_stop = self._stop_manually
         if self._number_it % 200 == 0:
             print("Iteration: " + str(self._number_it) + ", chi2: " +
                   str(sum(np.abs(resid.flatten()))))
@@ -277,7 +298,8 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         """
         use to stop the fit
         """
-        self._stop = True
+        self._stop_manually = True
+        # self._abort = False
     
     # def _update_progress_result(self, params):
     #     if self._progress_result is None:
@@ -389,7 +411,7 @@ class GlobalFitExponential(GlobalFit):
         ndata, nx = self.data.shape
         # range is descending just for no specific reason
         for iy in range(nx, 0, -1):
-            print(iy)
+            # print(iy)
             single_param = lmfit.Parameters()
             single_param['y0_%i' % iy] = fit_params['y0_%i' % iy]
             single_param.add(('t0_%i' % iy), value=fit_params['t0_1'].value,
