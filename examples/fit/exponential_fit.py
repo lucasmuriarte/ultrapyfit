@@ -8,16 +8,23 @@ from ultrafast.fit.ExponentialFit import globalfit_exponential
 from ultrafast.utils.divers import read_data, select_traces
 from ultrafast.fit.GlobalFitBootstrap import BootStrap
 from ultrafast.graphics.ExploreResults import ExploreResults
+from ultrafast.fit.GlobalParams import GlobExpParameters
 
 path = 'denoised_2.csv'
 time, data, wave = read_data(path, wave_is_row= True)
 
 # original_taus = [8, 30, 200]
 data_select, wave_select = select_traces(data, wave, 'auto')
-result = globalfit_exponential(time, data_select, 4, 40, 400, t0 =2)
+# result = globalfit_exponential(time, data_select, 4, 40, 400, t0 =2)
+params = GlobExpParameters(data_select.shape[1], 4, 40, 400)
+params.adjustParams(0, False, None)
+
 
 explorer = ExploreResults(result)
 explorer.print_results()
 explorer.plot_fit()
 explorer.plot_DAS()
+
+
+
 
