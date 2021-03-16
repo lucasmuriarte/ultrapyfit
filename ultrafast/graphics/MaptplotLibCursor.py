@@ -43,30 +43,31 @@ class SnaptoCursor(object):
             try:
                 texto_x=[True if i=='0' else False for i in str(x).split('.')[1]].index(False)+1
             except:
-                texto_x=3
-        if abs(y)>=0.1:
-            texto_y=1
+                texto_x = 3
+        if abs(y) >= 0.1:
+            texto_y = 1
         else:
             try:
-                texto_y=[True if i=='0' else False for i in str(y).split('.')[1]].index(False)+1
+                texto_y = [True if i == '0' else False for i in str(y).split('.')[1]].index(False)+1
             except:
-                texto_y=3
-        if self.similar.all()==False:
+                texto_y = 3
+        if self.similar.all() == False:
             self.lx.set_ydata(y)
-            self.txt.set_text('x='+str(round(x,texto_x))+', y='+str(round(y,texto_y)))
-            self.txt.set_position((x,y))
+            self.txt.set_text('x='+str(round(x, texto_x))+', y='+str(round(y, texto_y)))
+            self.txt.set_position((x, y))
         else:
-            self.txt.set_text('x=' +str(round(x,texto_x)))
-        self.txt.set_position((x,y))
+            self.txt.set_text('x=' + str(round(x, texto_x)))
+        self.txt.set_position((x, y))
         self.ax.figure.canvas.draw_idle()
     
     def onClick(self, event):
-        if not event.inaxes: return
+        if not event.inaxes:
+            return
         if event.button == 1:
             #print(self.number_click)
-            if len(self.datax)<self.number_click:
-                x,y=event.xdata,event.ydata
-                if self.draw=='snap':   
+            if len(self.datax) < self.number_click:
+                x,y=event.xdata, event.ydata
+                if self.draw == 'snap':
                     indx = np.searchsorted(self.x, [x])[0]
                     x = self.x[indx]
                     y = self.y[indx]
@@ -125,3 +126,11 @@ class SnaptoCursor(object):
             self.lx.remove()
         event.inaxes.patch.set_facecolor('white')
         event.canvas.draw()
+
+    def clear(self):
+        for i in range(len(self.scat)):
+            self.scat[-1].remove()
+            del self.scat[-1]
+        self.datax = []
+        self.datay = []
+        self.ax.figure.canvas.draw_idle()

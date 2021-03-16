@@ -538,7 +538,7 @@ class ExploreResults():
             fit_number = max(self._fits.keys())
         params = self._fits[fit_number].params
         data = self._fits[fit_number].data
-        x = self._fits[fit_number].x
+        x = self._fits[fit_number].time
         svd_fit = self._fits[fit_number].details['svd_fit']
         wavelength = self._fits[fit_number].wavelength
         deconv = self._fits[fit_number].details['deconv']

@@ -203,7 +203,7 @@ class GlobalFitTargetModel(lmfit.Minimizer, ModelCreator):
         other properties that are later use by UltrafastExperiments class and
         other classes as ExploreResults.
         """
-        resultados.x = self.x
+        resultados.time = self.x
         resultados.data = self.data
         resultados.wavelength = np.array([i for i in
                                           range(1, self.data.shape[1] + 1)])

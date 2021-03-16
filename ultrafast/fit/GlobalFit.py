@@ -74,7 +74,7 @@ class GloablFitResult:
         other properties that are later use by UltrafastExperiments class and
         other classes as ExploreResults.
         """
-        self.x = data.x
+        self.x = data.time
         self.data = data.data
         self.wavelength = data.wavelength
         self.details = details
