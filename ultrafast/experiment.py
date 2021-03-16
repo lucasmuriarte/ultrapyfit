@@ -274,7 +274,7 @@ class Experiment(ExploreData, ExploreResults):
         if hasattr(self.data_sets, 'before_chirp_correction'):
             datas = self.data_sets.before_chirp_correction.data
             wave = self.data_sets.before_chirp_correction.wavelenth
-            time = self.data_sets.before_chirp_correction.x
+            time = self.data_sets.before_chirp_correction.time
         else:
             datas = self.data
             wave = self.wavelenth
@@ -1003,7 +1003,7 @@ class Experiment(ExploreData, ExploreResults):
         if hasattr(self.data_sets, key):
             container = getattr(self.data_sets, key)
             self.data = container.data
-            self.x = container.x
+            self.x = container.time
             self.wavelength = container.wavelength
             self.selected_traces = container.data
             self.selected_wavelength = container.wavelength
