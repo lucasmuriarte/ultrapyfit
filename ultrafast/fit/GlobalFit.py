@@ -60,7 +60,21 @@ class Container:
             setattr(self, key, val)
 
 
-class GloablFitResult:
+class GlobalFitResult:
+    """
+    Contain all attributes that an lmfit minimizer result has, and add some
+    specific details of the fit to this results. These are:
+    x: 1darray
+        x-vector, normally time vector
+
+    data: 2darray
+        Array containing the data, the number of rows should be equal to
+        the len(x)
+    wavelength: 1darray
+            wavelength vector
+    details:
+        A dictionary containing specific details of the fit performed
+    """
     def __init__(self, result):
         for key in result.__dict__.keys():
             setattr(self, key, result.__dict__[key])
@@ -144,7 +158,7 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         """
         result = super().minimize(method=method, params=params,
                                   max_nfev=max_nfev, **kws)
-        result = GloablFitResult(result)
+        result = GlobalFitResult(result)
         details = self._get_fit_details()
         details['maxfev'] = max_nfev
         result.add_data_details(self._data_ensemble, details)
