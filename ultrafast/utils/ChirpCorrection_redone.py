@@ -332,7 +332,7 @@ class EstimationGVD:
         self.time = time
         self.wavelength = wavelength
         self.excitation = excitation
-        self.corrected_data = None
+        self.corrected_done = False
         self.gvd = None
         self.chirp_corrector = ChripCorrection(self.time, self.data,
                                                self.wavelength, self.gvd)
@@ -369,7 +369,10 @@ class EstimationGVD:
         corrected = False
         if self.corrected_data is not None:
             corrected = True
-        return corrected
+        self.corrected_done = corrected
+
+    def get_corrected_data(self):
+        return self.corrected_data
 
 
 class EstimationGVDSellmeier(EstimationGVD):
