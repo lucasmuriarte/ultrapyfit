@@ -6,9 +6,9 @@ Created on Mon Nov 23 11:10:17 2020
 """
 
 import unittest
-from ultrafast.fit.GlobalParams import GlobExpParameters, GlobalTargetParams
+from ultrafast.fit.GlobalParams import GlobExpParameters, GlobalTargetParameters
 from parameterized import parameterized
-from targetmodel import Model
+from ultrafast.graphics.targetmodel import Model
 
 
 taus = [8, 30, 200]
@@ -93,7 +93,7 @@ exp_no = params_model['exp_no']
 class TestGlobalTargetParams(unittest.TestCase):
 
     def test___init__(self):
-        params = GlobalTargetParams(n_traces, model)
+        params = GlobalTargetParameters(n_traces, model)
         self.assertTrue(params.params == params_model)
 
     @parameterized.expand([[0, False, False],
@@ -101,7 +101,7 @@ class TestGlobalTargetParams(unittest.TestCase):
                            [5, True, False],
                            [5, False, True]])
     def test__add_preexp_t0_y0(self, t0, vary, gvd_corrected):
-        params = GlobalTargetParams(n_traces, model)
+        params = GlobalTargetParameters(n_traces, model)
         params._add_preexp_t0_y0(t0, vary, gvd_corrected)
         # two parameter per tau including t0 thus: len(taus)+1
         number = len(params_model) + 2 * n_traces + exp_no * (n_traces + 1)
@@ -117,7 +117,7 @@ class TestGlobalTargetParams(unittest.TestCase):
                            [0.18, True],
                            [0.15, False]])
     def test__addDeconvolution(self, fwhm, opt_fwhm):
-        params = GlobalTargetParams(n_traces, model)
+        params = GlobalTargetParameters(n_traces, model)
         params._add_deconvolution(fwhm, opt_fwhm)
         # notice tau_inf is not a parameter and thus is not
         # added only its preexponential function plus fwhm
@@ -133,7 +133,7 @@ class TestGlobalTargetParams(unittest.TestCase):
                            [0.5, True, 0.18, False, False]])
     def test_adjustParams(self, t0, vary_t0, fwhm, opt_fwhm,
                           GVD_corrected):
-        params = GlobalTargetParams(n_traces, model)
+        params = GlobalTargetParameters(n_traces, model)
         params.adjustParams(t0, vary_t0, fwhm, opt_fwhm,
                             GVD_corrected)
         self.assertEqual(params.params['t0_1'].value, t0)

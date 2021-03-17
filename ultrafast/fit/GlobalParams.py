@@ -121,7 +121,7 @@ class GlobExpParameters:
             self.params['t0_1'].vary = False
 
 
-class GlobalTargetParams:
+class GlobalTargetParameters:
     """
     Class parameter generator global fitting
 

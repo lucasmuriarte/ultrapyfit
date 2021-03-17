@@ -386,12 +386,12 @@ class ModProcess:
         model.processes.pop(n3)
         
     def getsetLocation(self):
-        p1 = QtCore.QPointF(self.source.rect.x()+self.source.rect.width()/2, self.source.rect.y()+self.source.rect.height()/2)
-        p2 = QtCore.QPointF(self.target.rect.x()+self.target.rect.width()/2, self.target.rect.y()+self.target.rect.height()/2)
+        p1 = QtCore.QPointF(self.source.rect.time() + self.source.rect.width() / 2, self.source.rect.y() + self.source.rect.height() / 2)
+        p2 = QtCore.QPointF(self.target.rect.time() + self.target.rect.width() / 2, self.target.rect.y() + self.target.rect.height() / 2)
         
         diff = p2 - p1 # just make arrow shorter....
-        correction = abs(diff.x() / math.sqrt(diff.x()*diff.x() + diff.y()*diff.y())) #uzaleznij odjecie od kata...
-        to_substr = (40 * correction + 28) * diff / math.sqrt(diff.x()*diff.x() + diff.y()*diff.y())
+        correction = abs(diff.time() / math.sqrt(diff.time() * diff.time() + diff.y() * diff.y())) #uzaleznij odjecie od kata...
+        to_substr = (40 * correction + 28) * diff / math.sqrt(diff.time() * diff.time() + diff.y() * diff.y())
         p1 = p1 + to_substr
         p2 = p2 - to_substr
         
@@ -422,7 +422,7 @@ class ModProcess:
             b_p1p2 = float(self.p1.y()) - a_p1p2 * float(self.p1.x())
             
             a_point = -1 / a_p1p2 #find linear eq for point which is perpendicular to p1p2
-            b_point = float(point.y()) - a_point * float(point.x())
+            b_point = float(point.y()) - a_point * float(point.time())
             
             x_cross = (b_point - b_p1p2) / (a_p1p2 - a_point) #find crossing point
             y_cross = a_p1p2 * x_cross + b_p1p2
@@ -450,7 +450,7 @@ class ModProcess:
                     cond2 = False                 
                 
             
-            dist = math.sqrt(math.pow(float(point.x()) - x_cross,2)+math.pow(float(point.y()) - y_cross,2)) 
+            dist = math.sqrt(math.pow(float(point.time()) - x_cross, 2) + math.pow(float(point.y()) - y_cross, 2))
             if dist <= self.dist_treshold:
                 cond3 = True
             else:
@@ -825,7 +825,7 @@ class ModelWindow(QWidget):
             rmpen.setWidth(3)
             if self.mousepressed is r:
                 tmprect = copy.deepcopy(r.rect)
-                tmprect.setX(tmprect.x() + self.mouse_dx)
+                tmprect.setX(tmprect.time() + self.mouse_dx)
                 tmprect.setY(tmprect.y() + self.mouse_dy)
                 tmprect.setWidth(r.rect_w)
                 tmprect.setHeight(r.rect_h)  
@@ -835,7 +835,7 @@ class ModelWindow(QWidget):
                     if(r.rect.contains(self.mouse_position)): rmpen.setWidth(5)
             painter.setPen(rmpen)
             painter.drawRoundedRect(tmprect,10,10)
-            painter.drawText(tmprect.x()+marg, tmprect.y()+marg, tmprect.width()-2*marg, tmprect.height()-2*marg, QtCore.Qt.AlignCenter, r.name)
+            painter.drawText(tmprect.time() + marg, tmprect.y() + marg, tmprect.width() - 2 * marg, tmprect.height() - 2 * marg, QtCore.Qt.AlignCenter, r.name)
         
         for r in self.model.processes:
             rmpen.setWidth(3)
@@ -851,13 +851,13 @@ class ModelWindow(QWidget):
         if event.type() == QtCore.QEvent.MouseMove:
             self.mouse_position = event.pos()
             if self.mousepressed != False:
-                self.mouse_dx = self.mouse_position.x() - self.ref_mouse.x()
+                self.mouse_dx = self.mouse_position.time() - self.ref_mouse.time()
                 self.mouse_dy = self.mouse_position.y() - self.ref_mouse.y()
             self.repaint()
             
         elif event.type() == QtCore.QEvent.MouseButtonRelease:
             if self.mousepressed != False:
-                self.mousepressed.rect.setX(self.mousepressed.rect.x() + self.mouse_dx)
+                self.mousepressed.rect.setX(self.mousepressed.rect.time() + self.mouse_dx)
                 self.mousepressed.rect.setY(self.mousepressed.rect.y() + self.mouse_dy)
                 self.mousepressed.rect.setWidth(self.mousepressed.rect_w)
                 self.mousepressed.rect.setHeight(self.mousepressed.rect_h)
