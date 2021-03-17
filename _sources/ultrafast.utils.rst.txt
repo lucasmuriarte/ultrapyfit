@@ -12,6 +12,14 @@ ultrafast.utils.ChirpCorrection module
    :undoc-members:
    :show-inheritance:
 
+ultrafast.utils.ChirpCorrection\_redone module
+----------------------------------------------
+
+.. automodule:: ultrafast.utils.ChirpCorrection_redone
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 ultrafast.utils.Preprocessing module
 ------------------------------------
 

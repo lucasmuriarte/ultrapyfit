@@ -266,10 +266,202 @@
 
 </dd></dl>
 
+<dl class="py class">
+<dt id="ultrafast.utils.ChirpCorrection.EstimationGVD">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.ChirpCorrection.</span></code><code class="sig-name descname"><span class="pre">EstimationGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelenght</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.EstimationGVD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.EstimationGVD.estimateGVD">
+<code class="sig-name descname"><span class="pre">estimateGVD</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.EstimationGVD.estimateGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.ChirpCorrection.</span></code><code class="sig-name descname"><span class="pre">EstimationGVDSellmeier</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelenght</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ultrafast.utils.ChirpCorrection.EstimationGVD" title="ultrafast.utils.ChirpCorrection.EstimationGVD"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.utils.ChirpCorrection.EstimationGVD</span></code></a></p>
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.GVDFromGrapth">
+<code class="sig-name descname"><span class="pre">GVDFromGrapth</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.GVDFromGrapth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.dispersion">
+<code class="sig-name descname"><span class="pre">dispersion</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">landa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excitation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.dispersion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.estimateGVD">
+<code class="sig-name descname"><span class="pre">estimateGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CaF2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SiO2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BK7</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.estimateGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.finalGVD">
+<code class="sig-name descname"><span class="pre">finalGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.finalGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.fprime">
+<code class="sig-name descname"><span class="pre">fprime</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.fprime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.indexDifraction">
+<code class="sig-name descname"><span class="pre">indexDifraction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.indexDifraction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.updateGVD">
+<code class="sig-name descname"><span class="pre">updateGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.EstimationGVDSellmeier.updateGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt id="ultrafast.utils.ChirpCorrection.correctGVDSellmeier">
 <code class="sig-prename descclassname"><span class="pre">ultrafast.utils.ChirpCorrection.</span></code><code class="sig-name descname"><span class="pre">correctGVDSellmeier</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelenght</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection.correctGVDSellmeier" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</div>
+<div class="section" id="module-ultrafast.utils.ChirpCorrection_redone">
+<span id="ultrafast-utils-chirpcorrection-redone-module"></span><h2>ultrafast.utils.ChirpCorrection_redone module<a class="headerlink" href="#module-ultrafast.utils.ChirpCorrection_redone" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mon Mar 15 21:40:16 2021</p>
+<p>&#64;author: lucas</p>
+<dl class="py class">
+<dt id="ultrafast.utils.ChirpCorrection_redone.ChripCorrection">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.ChirpCorrection_redone.</span></code><code class="sig-name descname"><span class="pre">ChripCorrection</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gvd_estimation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.ChripCorrection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.ChripCorrection.buttonVerifiedGVD">
+<code class="sig-name descname"><span class="pre">buttonVerifiedGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.ChripCorrection.buttonVerifiedGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.ChripCorrection.correctGVD">
+<code class="sig-name descname"><span class="pre">correctGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.ChripCorrection.correctGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.ChripCorrection.radioVerifiedGVD">
+<code class="sig-name descname"><span class="pre">radioVerifiedGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.ChripCorrection.radioVerifiedGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.ChripCorrection.verifiedGVD">
+<code class="sig-name descname"><span class="pre">verifiedGVD</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.ChripCorrection.verifiedGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.ChirpCorrection_redone.Dispersion">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.ChirpCorrection_redone.</span></code><code class="sig-name descname"><span class="pre">Dispersion</span></code><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.Dispersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="ultrafast.utils.ChirpCorrection_redone.Dispersion.BK7">
+<code class="sig-name descname"><span class="pre">BK7</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'b1':</span> <span class="pre">1.03961212,</span> <span class="pre">'b2':</span> <span class="pre">0.231792344,</span> <span class="pre">'b3':</span> <span class="pre">1.01046945,</span> <span class="pre">'c1':</span> <span class="pre">60006986697.0,</span> <span class="pre">'c2':</span> <span class="pre">20017914398.0,</span> <span class="pre">'c3':</span> <span class="pre">103.560653}</span></em><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.Dispersion.BK7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.utils.ChirpCorrection_redone.Dispersion.CaF2">
+<code class="sig-name descname"><span class="pre">CaF2</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'b1':</span> <span class="pre">0.5675888,</span> <span class="pre">'b2':</span> <span class="pre">0.4710914,</span> <span class="pre">'b3':</span> <span class="pre">38.484723,</span> <span class="pre">'c1':</span> <span class="pre">0.050263605,</span> <span class="pre">'c2':</span> <span class="pre">0.1003909,</span> <span class="pre">'c3':</span> <span class="pre">34.64904}</span></em><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.Dispersion.CaF2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="ultrafast.utils.ChirpCorrection_redone.Dispersion.SiO2">
+<code class="sig-name descname"><span class="pre">SiO2</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'b1':</span> <span class="pre">0.69616,</span> <span class="pre">'b2':</span> <span class="pre">0.4079426,</span> <span class="pre">'b3':</span> <span class="pre">0.8974794,</span> <span class="pre">'c1':</span> <span class="pre">46791482597.0,</span> <span class="pre">'c2':</span> <span class="pre">13512063098.0,</span> <span class="pre">'c3':</span> <span class="pre">97.9340025}</span></em><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.Dispersion.SiO2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.Dispersion.dispersion">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">dispersion</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">landa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excitation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.Dispersion.dispersion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.Dispersion.fprime">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">fprime</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.Dispersion.fprime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.Dispersion.indexDifraction">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">indexDifraction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.Dispersion.indexDifraction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVD">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.ChirpCorrection_redone.</span></code><code class="sig-name descname"><span class="pre">EstimationGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excitation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVD.correct_chrip">
+<code class="sig-name descname"><span class="pre">correct_chrip</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVD.correct_chrip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVD.estimate_GVD">
+<code class="sig-name descname"><span class="pre">estimate_GVD</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVD.estimate_GVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVD.estimate_GVD_from_grath">
+<code class="sig-name descname"><span class="pre">estimate_GVD_from_grath</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVD.estimate_GVD_from_grath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVDPolynom">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.ChirpCorrection_redone.</span></code><code class="sig-name descname"><span class="pre">EstimationGVDPolynom</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVDPolynom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVD" title="ultrafast.utils.ChirpCorrection_redone.EstimationGVD"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.utils.ChirpCorrection_redone.EstimationGVD</span></code></a></p>
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVDPolynom.clear_fig">
+<code class="sig-name descname"><span class="pre">clear_fig</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVDPolynom.clear_fig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVDPolynom.estimate_GVD_from_grath">
+<code class="sig-name descname"><span class="pre">estimate_GVD_from_grath</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVDPolynom.estimate_GVD_from_grath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVDPolynom.fitPolGVD">
+<code class="sig-name descname"><span class="pre">fitPolGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVDPolynom.fitPolGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVDPolynom.polynomi">
+<code class="sig-name descname"><span class="pre">polynomi</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVDPolynom.polynomi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVDSellmeier">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">ultrafast.utils.ChirpCorrection_redone.</span></code><code class="sig-name descname"><span class="pre">EstimationGVDSellmeier</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excitation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVDSellmeier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVD" title="ultrafast.utils.ChirpCorrection_redone.EstimationGVD"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.utils.ChirpCorrection_redone.EstimationGVD</span></code></a></p>
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVDSellmeier.estimate_GVD">
+<code class="sig-name descname"><span class="pre">estimate_GVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CaF2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SiO2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BK7</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVDSellmeier.estimate_GVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVDSellmeier.estimate_GVD_from_grath">
+<code class="sig-name descname"><span class="pre">estimate_GVD_from_grath</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVDSellmeier.estimate_GVD_from_grath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVDSellmeier.finalGVD">
+<code class="sig-name descname"><span class="pre">finalGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVDSellmeier.finalGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ultrafast.utils.ChirpCorrection_redone.EstimationGVDSellmeier.updateGVD">
+<code class="sig-name descname"><span class="pre">updateGVD</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.ChirpCorrection_redone.EstimationGVDSellmeier.updateGVD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
 
 </div>
 <div class="section" id="module-ultrafast.utils.Preprocessing">
@@ -1059,7 +1251,7 @@ if int the element of the list at this index is deleted</p></li>
 <dl class="py method">
 <dt id="ultrafast.utils.divers.ReadData.readData">
 <code class="sig-name descname"><span class="pre">readData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_is_row</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.utils.divers.ReadData.readData" title="Permalink to this definition">¶</a></dt>
-<dd><p>similar parameters and explanations as in readData function</p>
+<dd><p>similar parameters and explanations as in “read_data” function</p>
 </dd></dl>
 
 </dd></dl>

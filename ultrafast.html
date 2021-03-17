@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ultrafast.utils.html">ultrafast.utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#module-ultrafast.utils.ChirpCorrection">ultrafast.utils.ChirpCorrection module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#module-ultrafast.utils.ChirpCorrection_redone">ultrafast.utils.ChirpCorrection_redone module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#module-ultrafast.utils.Preprocessing">ultrafast.utils.Preprocessing module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#module-ultrafast.utils.divers">ultrafast.utils.divers module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#module-ultrafast.utils">Module contents</a></li>
@@ -630,17 +631,17 @@ scipy.signal.savgol_filter for the different options</p></li>
 <dl class="py method">
 <dt id="ultrafast.experiment.Experiment.global_fit">
 <code class="sig-name descname"><span class="pre">global_fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.global_fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform a exponential or a target global fits to the selected traces. The type
-of fits depends on the parameters initialized.</p>
+<dd><p>Perform a exponential or a target global fits to the selected traces.
+The type of fits depends on the parameters initialized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vary</strong> (<em>bool or list of bool</em>) – If True or False all taus are optimized or fixed. If a list, should be a list of bool
-equal with len equal to the number of taus. Each entry defines if a initial taus
-should be optimized or not.</p></li>
+<li><p><strong>vary</strong> (<em>bool or list of bool</em>) – If True or False all taus are optimized or fixed. If a list, should
+be a list of bool equal with len equal to the number of taus. Each
+entry defines if a initial taus should be optimized or not.</p></li>
 <li><p><strong>maxfev</strong> (<em>int (default 5000)</em>) – maximum number of iterations of the fit.</p></li>
-<li><p><strong>apply_weights</strong> (<em>bool (default False)</em>) – If True and weights have been defined, this will be applied in the fit (for defining weights) check
-the function define_weights.</p></li>
+<li><p><strong>apply_weights</strong> (<em>bool (default False)</em>) – If True and weights have been defined, this will be applied in the
+fit (for defining weights) check the function define_weights.</p></li>
 </ul>
 </dd>
 </dl>
