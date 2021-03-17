@@ -137,7 +137,7 @@ class BootStrap:
         weight = self.fit_results.weights
         names = self._get_fit_params_names(type_fit, exp_no, deconv)
         variations = self._get_variations(names, exp_no)
-        x = self.fit_results.x
+        x = self.fit_results.time
         self._append_results_pandas_dataframe(self.bootstrap_result,
                                               self.fit_results, names)
         for boot in range(data_sets.shape[2]):
@@ -257,7 +257,7 @@ class BootStrap:
         resultados = self.fit_results
         params = resultados.params
         data = resultados.data
-        x = resultados.x
+        x = resultados.time
         deconv = resultados.details['deconv']
         result_explorer = ExploreResults(resultados)
         fittes = result_explorer.results()
