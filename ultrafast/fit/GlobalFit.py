@@ -88,7 +88,7 @@ class GlobalFitResult:
         other properties that are later use by UltrafastExperiments class and
         other classes as ExploreResults.
         """
-        self.x = data.time
+        self.x = data.x
         self.data = data.data
         self.wavelength = data.wavelength
         self.details = details
