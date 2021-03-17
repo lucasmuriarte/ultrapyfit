@@ -69,7 +69,7 @@ class TestGlobalFitResult(unittest.TestCase):
     def test_add_data_details(self):
         fitter = GlobalFit(time_simulated, data_simulated, 3, params)
         results = Container(params=params)
-        results_test = GloablFitResult(results)
+        results_test = GlobalFitResult(results)
         details = fitter._get_fit_details()
         results_test.add_data_details(fitter._data_ensemble, details)
         self.assertTrue(hasattr(results_test, 'data'))
