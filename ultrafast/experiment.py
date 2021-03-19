@@ -8,6 +8,7 @@ import numpy as np
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.graphics.ExploreData import ExploreData
 from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrafast.utils.ChirpCorrection_redone import EstimationGVDPolynom, EstimationGVDSellmeier
 from ultrafast.utils.divers import define_weights, UnvariableContainer, LabBook,\
     book_annotate, read_data, TimeUnitFormater, select_traces
 from ultrafast.utils.Preprocessing import Preprocessing, ExperimentException
@@ -17,6 +18,9 @@ from matplotlib.offsetbox import AnchoredText
 import copy
 import pickle
 
+def capture_chirp_correction(obj):
+    print(obj._params_initialized)
+    pass
 
 class Experiment(ExploreData, ExploreResults):
     """
@@ -145,6 +149,7 @@ class Experiment(ExploreData, ExploreResults):
         self._last_data_sets = None
         self._tau_inf = 1E12
         self._initialized()
+        self._chirp_corrector = None
         ExploreData.__init__(self, self.x, self.data, self.wavelength, self.selected_traces, self.selected_wavelength,
                              'viridis', **self._units)
         ExploreResults.__init__(self, self.fit_records.global_fits, **self._units)
@@ -162,7 +167,7 @@ class Experiment(ExploreData, ExploreResults):
         self.fit_records.global_fits = {}
         self.fit_records.integral_band_fits = {}
         self.baseline_substraction = book_annotate(self.preprocessing_report)(self.baseline_substraction)
-        self.chirp_correction = book_annotate(self.preprocessing_report)(self.chirp_correction)
+        # self.chirp_correction = book_annotate(self.preprocessing_report)(self.chirp_correction)
         self.subtract_polynomial_baseline = book_annotate(self.preprocessing_report)(self.subtract_polynomial_baseline)
         self.cut_time = book_annotate(self.preprocessing_report)(self.cut_time)
         self.average_time = book_annotate(self.preprocessing_report)(self.average_time)
@@ -267,28 +272,34 @@ class Experiment(ExploreData, ExploreResults):
         self.action_records.print(False, True, True)
 
     def calibrate_wavelength(self):
-        ## Todo
+        ## TODO
         pass
 
-    def chirp_correction(self, method):
-        if hasattr(self.data_sets, 'before_chirp_correction'):
-            datas = self.data_sets.before_chirp_correction.data
-            wave = self.data_sets.before_chirp_correction.wavelenth
-            time = self.data_sets.before_chirp_correction.time
+    def chirp_correction_graphically(self, method, excitation=None):
+        if method == 'sellmeier':
+            if excitation is None:
+                msg = 'The excitation must be defined'
+                raise ExperimentException(msg)
+            self._chirp_corrector = EstimationGVDSellmeier(self.x, 
+                                                           self.data, 
+                                                           self.wavelength, 
+                                                           excitation)
+        elif method == 'polynomila':
+            self._chirp_corrector = EstimationGVDPolynom(self.x, 
+                                                         self.data, 
+                                                         self.wavelength)
         else:
-            datas = self.data
-            wave = self.wavelenth
-            time = self.x
-        corrected_data = Preprocessing.correct_chrip(datas, wave, time, method)
-        self.data = corrected_data
-        # to be tested and finished
-        pass
+            msg = 'Method can only be "sellmeier" or "polynomial"'
+            raise ExperimentException(msg)
+        self._chirp_corrector.estimate_GVD_from_grath()
+        self.data = self._chirp_corrector.corrected_data
+        # capture_chirp_correction(self)
 
-    def GVD_correction(self, method):
+    def GVD_correction_graphically(self, method):
         """
         Identical to chirp_correction method
         """
-        self.chirp_correction(method)
+        self.chirp_correction_graphically(method)
 
     def baseline_substraction(self, number_spec=2, only_one=False):
         """
