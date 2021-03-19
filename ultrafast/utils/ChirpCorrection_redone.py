@@ -106,7 +106,7 @@ class Dispersion:
         return GVD
 
 
-class ChripCorrection:
+class ChirpCorrection:
     """
     Class that corrects the group velocity dispersion (GVD) or chirp from
     a data set. The algorithm is based on the one proposed by Nakayama et al.
@@ -163,7 +163,7 @@ class ChripCorrection:
         self.gvd = gvd_estimation
         self.GVD_corrected = False
 
-    def correctGVD(self, verify=False):
+    def correct_chrip(self, verify=False):
         """
         Modified algorithm from Nakayama et al. to correct the chrip using the
         data itself.
@@ -175,6 +175,9 @@ class ChripCorrection:
             which allows to inspect the correction applied and decline
             or accept it
         """
+        if self.gvd is None:
+            msg = "Estimate the Group velocity dispersion or chirp first"
+            raise ExperimentException(msg)
         result = self.gvd
         nx, ny = self.data.shape
         corrected_data = self.data.copy()
@@ -242,7 +245,6 @@ class ChripCorrection:
             self.corrected_data = None
             self.GVD_corrected = False
             plt.close(self.fig)
-            plt.close()
             print('Data has NOT been corrected from GVD')
             return None
 
@@ -297,7 +299,7 @@ class ChripCorrection:
         self.fig.show()
 
 
-class EstimationGVD:
+class EstimationGVD(ChirpCorrection):
     """
     Basic class to estimate and correct the GVD or chrip
     Attributes
@@ -323,7 +325,7 @@ class EstimationGVD:
         contains the estimation of the dispersion and is used to correct
         the data
 
-    chirp_corrector: instance of ChripCorrection class
+    chirp_corrector: instance of ChirpCorrection class
         use to correct the data
     """
     def __init__(self, time, data, wavelength, excitation=None):
@@ -332,11 +334,12 @@ class EstimationGVD:
         self.time = time
         self.wavelength = wavelength
         self.excitation = excitation
-        self.corrected_done = False
+        self._gvd_window_on = False
         self.gvd = None
-        self.chirp_corrector = ChripCorrection(self.time, self.data,
-                                               self.wavelength, self.gvd)
-
+        super().__init__(self.time, self.data, self.wavelength, self.gvd)
+        # self.chirp_corrector = ChirpCorrection(self.time, self.data,
+        #                                        self.wavelength, self.gvd)
+    
     def estimate_GVD(self):
         """
         Method to estimate the GVD should be overwrite
@@ -349,27 +352,8 @@ class EstimationGVD:
         """
         pass
 
-    def correct_chrip(self, verify=True):
-        """
-        Modified algorithm from Nakayama et al. to correct the chirp using the
-        data itself.
-
-        Parameter
-        --------
-        verify: bool (default False)
-            If True a figure will pop out after the correction of the chirp,
-            which allows to inspect the correction applied and decline
-            or accept it
-        """
-        if self.gvd is None:
-            msg = "Estimate the Group velocity dispersion or chirp first"
-            raise ExperimentException(msg)
-        self.chirp_corrector.gvd = self.gvd
-        self.corrected_data = self.chirp_corrector.correctGVD(verify=verify)
-        corrected = False
-        if self.corrected_data is not None:
-            corrected = True
-        self.corrected_done = corrected
+    def _GVD_window_close(self):
+        self._gvd_window_on = False
 
     def get_corrected_data(self):
         return self.corrected_data
@@ -447,7 +431,7 @@ class EstimationGVDSellmeier(EstimationGVD):
         self.CaF2, self.BK7, self.SiO2, self.GVD_offset = CaF2, BK7, SiO2, offset
         self.correct_chrip(verify=verify)
 
-    def estimate_GVD_from_grath(self, qt=None):
+    def estimate_GVD_from_grath(self, qt=None, function= None):
         """
         Allows to estimates the total chirp manually using sliders on the figure
         that pops out. The final chirp is the sum of the dispersion introduced
@@ -493,6 +477,12 @@ class EstimationGVDSellmeier(EstimationGVD):
             thismanager = plt.get_current_fig_manager()
             thismanager.window.setWindowIcon(QIcon(qt))
         self.figGVD.show()
+        self._gvd_window_on = True
+        if function is not None:
+            self.figGVD.canvas.mpl_connect('close_event',
+                                   lambda event: function())
+        # while self._gvd_window_on:
+        #     _ = 1
 
     def _updateGVD(self, val):
         """
