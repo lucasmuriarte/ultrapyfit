@@ -77,8 +77,8 @@ class ExploreResults():
         verify_svd_fit: bool (default  False)
             If True it will return the single fit perform to every trace of the
             spectra after an svd fit. If false and the fit is an SVD, the
-            values return are the fit to the svd If is not an SVD fit this
-            parameter is not applicable
+            values return are the fit to the svd left vectors.
+            If is not an SVD fit this parameter is not applicable
         """
         x, data, wavelength, result_params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space,  = \
             self._get_values(fit_number=fit_number,
@@ -96,6 +96,13 @@ class ExploreResults():
                 curve_resultados = 0.0 * data[index:, :]
                 for i in range(nx):
                     curve_resultados[:, i] = model.expNDataset(result_params, i)
+
+        elif type_fit == 'Exponential convolved':
+            curve_resultados = data * 0.0
+            for i in range(nx):
+                curve_resultados[:, i] = model.expNDatasetIRF(result_params,
+                                                              i, deconv)
+
         else:
             coeffs, eigs, eigenmatrix = solve_kmatrix(exp_no, result_params)
             curve_resultados = data * 0.0
@@ -107,7 +114,7 @@ class ExploreResults():
                                                                    eigenmatrix])
         return curve_resultados
 
-    @use_style
+    # @use_style
     def plot_fit(self, fit_number=None, selection=None,
                  plot_residues=True, style='lmu_res',):
         """
@@ -158,15 +165,20 @@ class ExploreResults():
             fig, ax = plt.subplots(2, 1, sharex=True, figsize=(8, 6),
                                    gridspec_kw={'height_ratios': [1, 5]})
         fittes = self.results(fit_number=fit_number)
-        if deconv:
-            residues = data - fittes
-            x_residues = x*1.0
-        else:
-            t0 = params['t0_1'].value
-            index = np.argmin([abs(i - t0) for i in x])
-            residues = data[index:, :] - fittes
-            x_residues = x[index:]
         alpha, s = 0.80, 8
+        if type(deconv) == bool:
+            if deconv:
+                residues = data - fittes
+                x_residues = x*1.0
+            else:
+                t0 = params['t0_1'].value
+                index = np.argmin([abs(i - t0) for i in x])
+                residues = data[index:, :] - fittes
+                x_residues = x[index:]
+        else:
+            residues = data - fittes
+            x_residues = x * 1.0
+            ax[1].scatter(x, deconv, marker='o', alpha=alpha, s=s, c='k')
         for i in puntos:
             if plot_residues:
                 ax[0].scatter(x_residues, residues[:, i], marker='o', alpha=alpha, s=s)
@@ -212,11 +224,12 @@ class ExploreResults():
             params = self._fits[fit_number].params_svd
         values = [[params['pre_exp%i_' % (ii + 1) + str(i + 1)].value for i in range(data.shape[1])]
                   for ii in range(exp_no)]
-        if deconv and tau_inf is not None:
-            values.append([params['yinf_' + str(i + 1)].value for i in range(data.shape[1])])
-        elif not deconv:
-            values.append([params['y0_' + str(i + 1)].value for i in
-                           range(data.shape[1])])
+        if type(deconv) == bool:
+            if deconv and tau_inf is not None:
+                values.append([params['yinf_' + str(i + 1)].value for i in range(data.shape[1])])
+            elif not deconv:
+                values.append([params['y0_' + str(i + 1)].value for i in
+                               range(data.shape[1])])
         if number != 'all':
             assert type(number) == list, \
                 'Number should be "all" or a list containing the desired species if tau inf include -1 in the list'
@@ -320,14 +333,15 @@ class ExploreResults():
         self._fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10, 8), gridspec_kw={'height_ratios': [1, 5]})
         self._fittes = self.results(fit_number=None)
         self._x_verivefit = x * 1.0
-        if deconv:
+        if type(deconv) == bool:
+            if not deconv:
+                t0 = params['t0_1'].value
+                index = np.argmin([abs(i - t0) for i in x])
+                self._x_verivefit_residues = x[index:]
+                self._residues = self._data_fit[index:, :] - self._fittes
+        else:
             self._residues = self._data_fit - self._fittes
             self._x_verivefit_residues = x * 1.0
-        else:
-            t0 = params['t0_1'].value
-            index = np.argmin([abs(i - t0) for i in x])
-            self._x_verivefit_residues = x[index:]
-            self._residues = self._data_fit[index:, :] - self._fittes
         initial_i = self._data_fit.shape[1] // 5
         self._l = ax[1].plot(self._x_verivefit, self._data_fit[:, initial_i], marker='o', ms=3, linestyle=None,
                              label='raw data')[0]
@@ -446,12 +460,12 @@ class ExploreResults():
             fit_number = max(self._fits.keys())
         _, data, _, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
-        if deconv:
-            names=['t0_1', 'fwhm_1']+['tau%i_1'%(i+1) for i in range(exp_no)]
-            print_names = ['time 0', 'fwhm']
-        else:
-            names=['t0_1']+['tau%i_1'%(i+1) for i in range(exp_no)]
-            print_names = ['time 0']
+        names = ['t0_1']+['tau%i_1'%(i+1) for i in range(exp_no)]
+        print_names = ['time 0']
+        if type(deconv) == bool:
+            if deconv:
+                names = ['t0_1', 'fwhm_1']+['tau%i_1'%(i+1) for i in range(exp_no)]
+                print_names.append( 'fwhm')
         print_names = print_names + ['tau %i' %i for i in range(1,exp_no + 1)] 
         # print_resultados='\t'+',\n\t'.join([f'{name.split("_")[0]}:\t{round(params[name].value,4)}\t{params[name].vary}' for name in names])
         print(f'Fit number {fit_number}: \tGlobal {type_fit} fit')
@@ -538,7 +552,7 @@ class ExploreResults():
             fit_number = max(self._fits.keys())
         params = self._fits[fit_number].params
         data = self._fits[fit_number].data
-        x = self._fits[fit_number].time
+        x = self._fits[fit_number].x
         svd_fit = self._fits[fit_number].details['svd_fit']
         wavelength = self._fits[fit_number].wavelength
         deconv = self._fits[fit_number].details['deconv']

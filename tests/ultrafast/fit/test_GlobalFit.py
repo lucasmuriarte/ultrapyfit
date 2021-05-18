@@ -113,7 +113,7 @@ class TestGlobalFitExponential(unittest.TestCase):
         fitter = GlobalFitExponential(time, data_select, 3, parameters, False,
                                       wavelength=wave_select)
         fitter._apply_time_constraint()
-        fitter._uncontraint_times()
+        fitter._unconstraint_times()
         params = fitter.params
         self.assertTrue(params['tau2_1'].min is None)
         self.assertTrue(params['tau3_1'].min is None)

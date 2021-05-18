@@ -159,9 +159,11 @@ def use_style(func):
                 if "style" in kwargs.keys():
                     kwargs.pop("style")
                 with plt.style.context(style):
-                    print('style applied')
                     res = func(*args, **kwargs)
-            except Exception:
+                    print('style applied')
+            except Exception as m:
+                print(m)
+                print(1)
                 print('style not applied')
                 res = func(*args, **kwargs)
             finally:

@@ -216,6 +216,44 @@ class ModelCreator:
                    params['tau%i_' % (ii+1)+str(i+1)].value]
                   for ii in range(self.exp_no)]
         return self.expN(self.x[index:], y0, t0, values)
+
+    def expNDatasetIRF(self, params, i, IRF):
+        """
+        calculate a weighted sum of exponential decay functions with an
+        off-set from params for data set i using simple hardwired naming
+        convention. This function can be used for datasets having different t0.
+
+
+        Parameters
+        ----------
+        params: GlobExpParameters  object
+          object containing the parameters created for global
+          fitting several decay traces
+
+        i: int
+            number corresponding to the specific trace
+
+        Returns
+        ----------
+        1darray of size equal to time-vector
+        """
+        y0 = params['y0_%i' % (i + 1)].value
+        t0 = params['t0_%i' % (i + 1)].value
+        y = np.zeros(self.x.shape)
+        pos_range = ((self.x - t0) >= 0)
+        values = [[params['pre_exp%i_' % (ii + 1) + str(i + 1)].value,
+                   params['tau%i_' % (ii + 1) + str(i + 1)].value]
+                  for ii in range(self.exp_no)]
+        sum_exp = sum([pre_exp * ModelCreator.exp1(self.x[pos_range] - t0, tau)
+                       for pre_exp, tau in values])
+        y[pos_range] = sum_exp
+        # index = np.argmin([abs(i - t0) for i in self.x])
+        # exponential = self.expNDataset(params, i)-y0
+        # x = np.fft.fft(exponential)
+        # h = np.fft.fft(IRF[index:])
+        # result = np.real(np.fft.ifft(x * h))
+        result = np.convolve(y, IRF, mode='same')
+        return result + y0
     
     def expNDatasetFast(self, params, i, expvects):
         """

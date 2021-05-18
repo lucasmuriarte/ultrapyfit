@@ -609,7 +609,7 @@ class Experiment(ExploreData, ExploreResults):
 
         tau_inf: int or float (default 1E12)
             allows to add a constant decay value to the parameters.
-            This modelled photoproducts formation with long decay times
+            This constant modelled photoproducts formation with long decay times
             If None tau_inf is not added.
             (only applicable if fwhm is given)
 
@@ -624,10 +624,11 @@ class Experiment(ExploreData, ExploreResults):
             (only applicable if fwhm is given)
 
         global_t0: bool (default True)
-            Important: only applicable if fwhm is given and data is chirp corrected.
-            Allows to fit the t0 globally, which is faster. In case the fit does not give good
-            results in the short time scale the t0 can be independently fitted (slower) which
-            may give better results
+            Important: only applicable if fwhm is given and data is chirp
+            corrected. Allows to fit the t0 globally (setting True), which is
+            faster. In case this first option fit does not give good results
+            in the short time scale the t0 can be independently fitted (slower)
+            (setting False) which may give better results.
         """
         taus = list(taus)
         self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': taus,

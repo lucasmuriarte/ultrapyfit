@@ -99,7 +99,8 @@ class GlobalFitResult:
         with open(path, 'wb') as file:
             pickle.dump(self.result, file, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def load(filename): #this is static method intentionally
+    # static method intentionally left without the @staticmethod decorator
+    def load(filename):
         with open(filename, "rb") as f:
             loaded_results = pickle.load(f)
         return loaded_results
@@ -258,12 +259,16 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
             model = function(params, i)
         else:
             model = function(params, i, extra_params)
-        if self.deconv:
-            return self.data[:, i] - model
+        if type(self.deconv) == bool:
+            if self.deconv:
+                data = self.data[:, i] - model
+            else:
+                t0 = params['t0_%i' % (i + 1)].value
+                index = np.argmin([abs(i - t0) for i in self.x])
+                data = self.data[index:, i] - model
         else:
-            t0 = params['t0_%i' % (i + 1)].value
-            index = np.argmin([abs(i - t0) for i in self.x])
-            return self.data[index:, i] - model
+            data = self.data[:, i] - model
+        return data
 
     def _generate_residues(self, function, params, extra_param=None):
         """
@@ -285,7 +290,11 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         """
         return details of the object
         """
-        tau_inf = self.tau_inf if self.deconv else None
+        if type(self.deconv) == bool:
+            deconv = self.deconv
+        else:
+            deconv = False
+        tau_inf = self.tau_inf if deconv else None
         details = {'exp_no': self.exp_no,
                    'deconv': self.deconv,
                    'type': self.fit_type,
@@ -411,9 +420,10 @@ class GlobalFitExponential(GlobalFit):
                  deconv=True,
                  tau_inf=1E+12,
                  GVD_corrected=True,
+                 wavelength=None,
                  **kwargs):
         super().__init__(x, data, exp_no, params, deconv,
-                         tau_inf, GVD_corrected, **kwargs)
+                         tau_inf, GVD_corrected, wavelength, **kwargs)
         self.fit_type = 'Exponential'
         # self._update_progress_result(self.params)
 
@@ -537,18 +547,18 @@ class GlobalFitExponential(GlobalFit):
             self.params['tau%i_1' % (i + 1)].vary = vary_taus[i]
         if time_constraint:
             self._apply_time_constraint()
-        result = super().global_fit(maxfev=None, apply_weights=False,
+        result = super().global_fit(maxfev=None, apply_weights=apply_weights,
                                     method='leastsq', **kws)
         if time_constraint:
             result.details['time_constraint'] = True
-            self._uncontraint_times()
+            self._unconstraint_times()
         return result
 
     def _apply_time_constraint(self):
         """
         Apply a time constraint to the "tau" values where the minimum value is
-        must be higher than the previous: tau2 > tau1 tau3 > tau2. In case there
-        is deconvolution tau1 > fwhm.
+        must be higher than the previous: tau2 > tau1; tau3 > tau2.
+        In case there is deconvolution tau1 > fwhm.
         """
         for i in range(self.exp_no):
             if i == 0 and self.deconv:
@@ -558,7 +568,7 @@ class GlobalFitExponential(GlobalFit):
                 self.params['tau%i_1' % (i + 1)].min = \
                     self.params['tau%i_1' % i].value
 
-    def _uncontraint_times(self):
+    def _unconstraint_times(self):
         """
         Undo the time constraint to the "tau" values
         """
@@ -618,7 +628,6 @@ class GlobalFitTarget(GlobalFit):
        The dictionary keys can be passes as kwargs when instantiating the
        object
     """
-
     def __init__(self,
                  x,
                  data,
@@ -626,6 +635,7 @@ class GlobalFitTarget(GlobalFit):
                  params,
                  deconv=True,
                  GVD_corrected=True,
+                 wavelength=None,
                  **kwargs):
         """
         constructor function:
@@ -663,7 +673,7 @@ class GlobalFitTarget(GlobalFit):
             the function define_weights can be directly pass as *+weights
         """
         super().__init__(x, data, exp_no, params, deconv,
-                         None, GVD_corrected, **kwargs)
+                         None, GVD_corrected, wavelength, **kwargs)
         self.fit_type = 'Target'
         # self._update_progress_result(self.params)
 
@@ -749,3 +759,214 @@ class GlobalFitTarget(GlobalFit):
                     :]
         self._number_it = self._number_it + 1
         return resid.flatten()
+
+
+class GlobalFitWithIRF(GlobalFit):
+    """
+    Class that does a global fit using exponential models convolved with an
+    instrument response function (IRF) array. A global fit evaluate the times
+    from all the traces (taus are globally fitted), while the pre_exponential
+    values (pre_exp) are estimated independently from each trace.
+    The Class do not generates the parameters automatically.
+
+    Attributes
+    ----------
+        x: 1darray
+            x-vector, normally time vector
+
+        data: 2darray
+            array containing the data, the number of rows should be equal to the
+            len(x)
+
+        exp_no: int
+            number of exponential that will be used to fit the data.
+
+        params: lmfit parameters object
+            object containing the initial parameters values used to build an
+            exponential model. These parameters are iteratively optimize to
+            reduce the residual matrix formed by data-model (error matrix)
+            using Levenberg-Marquardt algorithm.
+
+
+        """
+
+    def __init__(self,
+                 x,
+                 data,
+                 irf,
+                 exp_no,
+                 params,
+                 wavelength=None):
+        super().__init__(x, data, exp_no, params, True,
+                         None, False, wavelength)
+        self.fit_type = 'Exponential convolved'
+        self.deconv = irf
+        self.weights = {'apply': True, 'vector': data[:,1],
+                        'range': [x[0], x[-1]],
+                        'type': 'poison', 'value': None}
+        self.params['t0_1'].vary = True
+        self.params['t0_1'].max = 0.5
+        self.params['t0_1'].min = 0
+        # self._update_progress_result(self.params)
+
+    def pre_fit(self):
+        """
+        Method that optimized the pre_exponential factors trace by trace without
+        optimizing the decay times (taus). It is automatically ran before a
+        global fit.
+        """
+        fit_params = self.params.copy()
+        ndata, nx = self.data.shape
+        # range is descending just for no specific reason
+        for iy in range(nx, 0, -1):
+            # print(iy)
+            single_param = lmfit.Parameters()
+            single_param['y0_%i' % iy] = fit_params['y0_%i' % iy]
+            single_param.add(('t0_%i' % iy), value=fit_params['t0_1'].value,
+                             expr=None, vary=fit_params['t0_1'].vary)
+
+            for i in range(self.exp_no):
+                single_param.add(('tau%i_' % (i + 1) + str(iy)),
+                                 value=fit_params['tau%i_1' % (i + 1)].value,
+                                 expr=None, vary=False)
+                single_param.add(('pre_exp%i_' % (i + 1) + str(iy)),
+                                 value=fit_params['pre_exp%i_' % (i + 1)
+                                                  + str(iy)].value*10,
+                                 vary=True)
+
+            result = lmfit.minimize(self._single_fit, single_param,
+                                    args=(self.expNDatasetIRF, iy-1, self.deconv),
+                                    nan_policy='propagate')
+            fit_params['y0_%i' % iy] = result.params['y0_%i' % iy]
+            for i in range(self.exp_no):
+                fit_params['pre_exp%i_' % (i + 1) + str(iy)] = \
+                    result.params['pre_exp%i_' % (i + 1) + str(iy)]
+            self.params = fit_params
+            self._prefit_done = True
+
+    def global_fit(self, vary_taus=True, maxfev=None, time_constraint=False,
+                   method='leastsq', **kws):
+        """
+        Method to fit the data to a model. Returns a modified lmfit result
+        object.
+
+        Parameters
+        ----------
+
+        vary_taus: bool or list of bool
+            If True or False all taus are optimized or fixed. If a list, should
+            be a list of bool equal with len equal to the number of taus.
+            Each entry defines if a initial taus should be optimized or not.
+
+        maxfev: int (default 5000)
+            maximum number of iterations of the fit.
+
+        time_constraint: bool (default False)
+            If True and there are more than one tau to optimized force:
+            tau2 > tau1, tau3 > tau2 and so on
+            If self.deconv and True a Gaussian modified exponential model is
+            applied and tau1 > fwhm.
+
+        method: default (leastsq)
+            Any valid method that can be used by lmfit minimize function
+
+        kws:
+            Any valid kwarg that can be used by lmfit minimize function
+        """
+        if type(vary_taus) == bool:
+            vary_taus = [vary_taus for i in range(self.exp_no)]
+        for i in range(self.exp_no):
+            self.params['tau%i_1' % (i + 1)].vary = vary_taus[i]
+        if time_constraint:
+            self._apply_time_constraint()
+        result = super().global_fit(maxfev=None, apply_weights=True,
+                                    method='leastsq', **kws)
+        if time_constraint:
+            result.details['time_constraint'] = True
+            self._unconstraint_times()
+        return result
+
+    def _generate_residues(self, function, params, extra_param):
+        """
+        Generate a single residue for one trace (used by global_fit)
+        """
+        ndata, nx = self.data.shape
+        data = self.data[:]
+        resid = data * 1.0
+        for i in range(nx):
+            resid[:, i] = data[:, i] - function(params, i, extra_param)
+            if self.weights['apply']:
+                 w = 1/np.sqrt(data[:, i])
+                 w[w == np.inf] = 0
+                 resid[:, i] = resid[:, i] * w
+        return resid
+
+    def _objective(self, params):
+        """
+        The optimizing function that is minimized. Is constructed to return a
+        flat array  of residues, which corresponds to the data minus the
+        exponential model.
+        """
+        resid = self._generate_residues(self.expNDatasetIRF,
+                                        params, self.deconv)
+        self._number_it = self._number_it + 1
+        return resid.flatten()
+
+    def _apply_time_constraint(self):
+        """
+        Apply a time constraint to the "tau" values where the minimum value is
+        must be higher than the previous: tau2 > tau1; tau3 > tau2.
+        In case there is deconvolution tau1 > fwhm.
+        """
+        for i in range(1, self.exp_no):
+            self.params['tau%i_1' % (i + 1)].min = \
+                self.params['tau%i_1' % i].value
+
+    def _unconstraint_times(self):
+        """
+        Undo the time constraint to the "tau" values
+        """
+        for i in range(1, self.exp_no):
+            self.params['tau%i_1' % (i + 1)].min = None
+
+    def global_fit(self, vary_taus=True, maxfev=None, time_constraint=False,
+                   method='leastsq', **kws):
+        """
+        Method to fit the data to a model. Returns a modified lmfit result
+        object.
+
+        Parameters
+        ----------
+
+        vary_taus: bool or list of bool
+            If True or False all taus are optimized or fixed. If a list, should
+            be a list of bool equal with len equal to the number of taus.
+            Each entry defines if a initial taus should be optimized or not.
+
+        maxfev: int (default 5000)
+            maximum number of iterations of the fit.
+
+        time_constraint: bool (default False)
+            If True and there are more than one tau to optimized force:
+            tau2 > tau1, tau3 > tau2 and so on
+            If self.deconv and True a Gaussian modified exponential model is
+            applied and tau1 > fwhm.
+
+        method: default (leastsq)
+            Any valid method that can be used by lmfit minimize function
+
+        kws:
+            Any valid kwarg that can be used by lmfit minimize function
+        """
+        if type(vary_taus) == bool:
+            vary_taus = [vary_taus for i in range(self.exp_no)]
+        for i in range(self.exp_no):
+            self.params['tau%i_1' % (i + 1)].vary = vary_taus[i]
+        if time_constraint:
+            self._apply_time_constraint()
+        result = super().global_fit(maxfev=None, apply_weights=True,
+                                    method='leastsq', **kws)
+        if time_constraint:
+            result.details['time_constraint'] = True
+            self._unconstraint_times()
+        return result

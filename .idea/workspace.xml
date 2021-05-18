@@ -6,8 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/experiment/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/experiment/experiment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_exp_fit_using class.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_exp_fit_using class.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_fit.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_fit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection_redone.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection_redone.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +51,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../chempyspec" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
   </component>
   <component name="PyConsoleOptionsProvider">
@@ -166,6 +174,17 @@
       <workItem from="1615657309297" duration="74517000" />
       <workItem from="1616061110347" duration="699000" />
       <workItem from="1616144613353" duration="299000" />
+      <workItem from="1616519068085" duration="333000" />
+      <workItem from="1616522182128" duration="601000" />
+      <workItem from="1616770157913" duration="1398000" />
+      <workItem from="1617119601677" duration="4148000" />
+      <workItem from="1617267249574" duration="301000" />
+      <workItem from="1618048289332" duration="1954000" />
+      <workItem from="1618836542589" duration="4948000" />
+      <workItem from="1620288456723" duration="2171000" />
+      <workItem from="1620833759255" duration="581000" />
+      <workItem from="1620892629007" duration="25374000" />
+      <workItem from="1621366080188" duration="1921000" />
     </task>
     <servers />
   </component>
