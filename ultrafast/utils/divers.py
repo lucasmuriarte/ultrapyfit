@@ -215,7 +215,7 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
             values = [first + space * i for i in range(len(wavelengths)) if first + space * i < wavelengths.iloc[-1]]
             selected_traces = [(wavelengths - values[i]).abs().sort_values().index[0] for i in range(len(values))]
         else:
-            selected_traces = [np.argmin(abs(wavelength - i)) for i in space]
+            selected_traces = [np.argmin(abs(wavelengths.values - i)) for i in space]
         avoid_regions_index = []
         if avoid_regions is not None:
             assert type(avoid_regions) is list, 'Please regions should be indicated as a list'
@@ -242,7 +242,7 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
                     indexes = []
                     for i in selected_traces:
                         mini = 0 if i - points < 0 else i - points
-                        maxi = len(wavelength) if i + points > len(wavelength) else i + points + 1
+                        maxi = len(wavelengths) if i + points > len(wavelengths) else i + points + 1
                         indexes.append([mini, maxi])
                     dat_res = pd.DataFrame(data=[dat.iloc[:, i[0]:i[1]].mean(axis=1) for i in indexes],
                                            columns=dat.index,
@@ -446,12 +446,12 @@ class ReadData:
         if wave_is_row:
             # print('row')
             data_frame = pd.read_csv(path, sep=separator, index_col=wavelength,
-                                     skiprows=time, decimal=decimal).dropna(
+                                     skiprows=wavelength, decimal=decimal).dropna(
                                      how='all', axis=1).dropna(how='all', axis=1)
             data_frame = data_frame.transpose()
         else:
             data_frame = pd.read_csv(path, sep=separator, index_col=time,
-                                     skiprows=wavelength, decimal=decimal).dropna(
+                                     skiprows=time, decimal=decimal).dropna(
                 how='all').dropna(how='all', axis=1)
         data_frame.fillna(0, inplace=True)
         wavelength_dimension, time_dimension = ReadData._readPandas(data_frame)
