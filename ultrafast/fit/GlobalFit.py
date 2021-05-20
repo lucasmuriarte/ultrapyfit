@@ -97,7 +97,7 @@ class GlobalFitResult:
     def save(self, name):
         path = name + '.res'
         with open(path, 'wb') as file:
-            pickle.dump(self.result, file, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self, file, protocol=pickle.HIGHEST_PROTOCOL)
 
     # static method intentionally left without the @staticmethod decorator
     def load(filename):
@@ -118,7 +118,9 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
                  wavelength=None,
                  **kwargs):
         weights = dict({'apply': False, 'vector': None, 'range': [],
-                        'type': 'constant', 'value': 2}, **kwargs)
+                        'type': 'constant', 'value': 2,
+                        'derivative': False}, **kwargs)
+        self._derivative = weights.pop('derivative')
         self.weights = weights
         self.x = x
         self.data = data
@@ -235,8 +237,8 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         if self._allow_stop:
             user_stop = InputThread(self.stop_fit)
             user_stop.start()
-        resultados = self.minimize(params=self.params, method=method,
-                                    max_nfev=maxfev, **kws)
+        resultados = self.minimize(method=method, params=self.params, 
+                                   max_nfev=int(maxfev), **kws)
         if self._allow_stop:
             user_stop.stop()
             user_stop.join()
@@ -300,7 +302,7 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
                    'type': self.fit_type,
                    'tau_inf': tau_inf,
                    'svd_fit': False,
-                   'derivate': False,
+                   'derivative': self._derivative,
                    'avg_traces': 'unknown'}
         return details
 
@@ -547,8 +549,8 @@ class GlobalFitExponential(GlobalFit):
             self.params['tau%i_1' % (i + 1)].vary = vary_taus[i]
         if time_constraint:
             self._apply_time_constraint()
-        result = super().global_fit(maxfev=None, apply_weights=apply_weights,
-                                    method='leastsq', **kws)
+        result = super().global_fit(maxfev=maxfev, apply_weights=apply_weights,
+                                    method=method, **kws)
         if time_constraint:
             result.details['time_constraint'] = True
             self._unconstraint_times()

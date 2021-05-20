@@ -172,6 +172,7 @@ class Experiment(ExploreData, ExploreResults):
         self.cut_time = book_annotate(self.preprocessing_report)(self.cut_time)
         self.average_time = book_annotate(self.preprocessing_report)(self.average_time)
         self.derivate_data = book_annotate(self.preprocessing_report)(self.derivate_data)
+        self.calibrate_wavelength = book_annotate(self.preprocessing_report)(self.calibrate_wavelength)
         self.cut_wavelength = book_annotate(self.preprocessing_report)(self.cut_wavelength)
         self.del_points = book_annotate(self.preprocessing_report)(self.del_points)
         self.shitTime = book_annotate(self.preprocessing_report)(self.shit_time)
@@ -271,11 +272,21 @@ class Experiment(ExploreData, ExploreResults):
         print('============================================\n')
         self.action_records.print(False, True, True)
 
-    def calibrate_wavelength(self):
-        ## TODO
-        pass
-
     def chirp_correction_graphically(self, method, excitation=None):
+        """
+        Function to correct the chrip or GVD dispersion graphically.
+
+        Parameters
+        ----------
+
+        method: str (valid strings "sellmeier"; "polynomial")
+            defines the method use, either using the Sellmeier equation or
+            fitting a polynomial.
+
+        excitation: float (default None)
+            give the excitation uses in the experiment; only needed if the
+            method is "sellmeier"
+        """
         if method == 'sellmeier':
             if excitation is None:
                 msg = 'The excitation must be defined'
@@ -283,17 +294,55 @@ class Experiment(ExploreData, ExploreResults):
             self._chirp_corrector = EstimationGVDSellmeier(self.x, 
                                                            self.data, 
                                                            self.wavelength, 
-                                                           excitation)
-        elif method == 'polynomila':
+                                                           excitation,
+                                                           function=self._change_data_after_chrip_correction)
+        elif method == 'polynomial':
             self._chirp_corrector = EstimationGVDPolynom(self.x, 
                                                          self.data, 
-                                                         self.wavelength)
+                                                         self.wavelength,
+                                                         excitation=None,
+                                                         function=self._change_data_after_chrip_correction)
         else:
             msg = 'Method can only be "sellmeier" or "polynomial"'
             raise ExperimentException(msg)
         self._chirp_corrector.estimate_GVD_from_grath()
-        self.data = self._chirp_corrector.corrected_data
+        # self.data = self._chirp_corrector.corrected_data
         # capture_chirp_correction(self)
+
+    def _change_data_after_chrip_correction(self):
+        """
+        Internal function to update data after chrip correction
+        """
+        self.data = self._chirp_corrector.corrected_data()
+
+    def calibrate_wavelength(self, pixels: list, wavelength: list,
+                             order=2):
+        """
+        Calibrates the wavelength vector from a set of given lists of points,
+        pixels and wavelength, using a polynomial fit between the point in the
+        two list.
+
+
+        Parameters
+        ----------
+        pixels: list
+            list containing a set of values from the original array.
+
+        wavelength: list
+            list containing a set of values to which the values given in the
+             pixels list correspond in reality.
+
+        order: int (default 2)
+            Order of the polynomial use to fit pixels and wavelength.
+            Notice that the order should be smaller than the len of the list
+        """
+        self._add_to_data_set("before_wavelength_calibration")
+        new_wave = Preprocessing.calibration_with_polynom(self.wavelength,
+                                                          pixels, wavelength,
+                                                          order)
+
+        self.wavelength = new_wave
+        self._add_action("wavelength calibration", True)
 
     def GVD_correction_graphically(self, method):
         """
@@ -591,7 +640,8 @@ class Experiment(ExploreData, ExploreResults):
         self.save['path'] = self.working_directory
 
     def initialize_exp_params(self, t0, fwhm, *taus, tau_inf=1E12,
-                              opt_fwhm=False, vary_t0=True, global_t0=True):
+                              opt_fwhm=False, vary_t0=True,
+                              global_t0=True, y0=None):
         """
         function to initialize parameters for global fitting
 
@@ -632,7 +682,8 @@ class Experiment(ExploreData, ExploreResults):
         """
         taus = list(taus)
         self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': taus,
-                             'tau_inf': tau_inf, 'opt_fwhm': opt_fwhm}
+                             'tau_inf': tau_inf, 'opt_fwhm': opt_fwhm,
+                             'y0': y0}
         self._exp_no = len(taus)
         param_creator = GlobExpParameters(self.selected_traces.shape[1], taus)
         if fwhm is None:
@@ -648,12 +699,14 @@ class Experiment(ExploreData, ExploreResults):
                 correction = True
             self._deconv = True
             self._tau_inf = tau_inf
-        param_creator.adjustParams(t0, vary_t0, fwhm, opt_fwhm, correction, tau_inf)
+        param_creator.adjustParams(t0, vary_t0, fwhm, opt_fwhm,
+                                   correction, tau_inf, y0)
         self.params = param_creator.params
         self._params_initialized = 'Exponential'
         self._add_action(f'new {self._params_initialized} parameters initialized')
 
     def initialize_target_params(self, t0, fwhm, *taus, tau_inf=1E12, opt_fwhm=False):
+        # TODO
         pass
 
     def global_fit(self, vary=True, maxfev=5000, apply_weights=False):
@@ -675,13 +728,23 @@ class Experiment(ExploreData, ExploreResults):
             If True and weights have been defined, this will be applied in the
             fit (for defining weights) check the function define_weights.
         """
-        if self._params_initialized == 'Exponential':
-            minimizer = GlobalFitExponential(self.x, self.selected_traces, self._exp_no, self.params,
-                                             self._deconv, self._tau_inf, GVD_corrected=self.GVD_corrected)
-        elif self._params_initialized == 'Target':
-            minimizer = GlobalFitTarget(self.selected_traces, self.selected_wavelength, self.params)
+        if hasattr(self.preprocessing_report, 'derivate_data'):
+            derivative = True
         else:
-            raise ExperimentException('Parameters need to be initiliazed first"')
+            derivative = False
+        if self._params_initialized == 'Exponential':
+            minimizer = GlobalFitExponential(self.x, self.selected_traces,
+                                             self._exp_no, self.params,
+                                             self._deconv, self._tau_inf,
+                                             GVD_corrected=self.GVD_corrected,
+                                             derivative=derivative)
+        elif self._params_initialized == 'Target':
+            minimizer = GlobalFitTarget(self.selected_traces,
+                                        self.selected_wavelength,
+                                        self.params, derivative=derivative)
+        else:
+            msg = 'Parameters need to be initiliazed first'
+            raise ExperimentException(msg)
         if apply_weights:
             minimizer.weights = self.weights
         results = minimizer.global_fit(vary, maxfev, apply_weights)
@@ -819,13 +882,14 @@ class Experiment(ExploreData, ExploreResults):
             self.plot_integral_band_fit(key)
 
     def _one_trace_fit(self, trace, t0, fwhm, *taus, vary=True, tau_inf=1E12, maxfev=5000,
-                       apply_weights=False, opt_fwhm=False):
+                       apply_weights=False, opt_fwhm=False, y0=None):
         """
         Real fitting function used by "integral_band_exp_fit" and "single_exp_fit"
         """
         print(taus)
         param_creator = GlobExpParameters(1, taus)
-        param_creator.adjustParams(t0, vary, fwhm, opt_fwhm, self.GVD_corrected, tau_inf)
+        param_creator.adjustParams(t0, vary, fwhm, opt_fwhm, self.GVD_corrected,
+                                   tau_inf, y0)
         print(param_creator.params)
         deconv = True if fwhm is not None else False
         minimizer = GlobalFitExponential(self.x, trace, len(taus), params=param_creator.params,
@@ -917,9 +981,10 @@ class Experiment(ExploreData, ExploreResults):
             minimizer = GlobalFitExponential(self.x, self.selected_traces, exp_no, params_fit,
                                              deconv, tau_inf, False)
             minimizer.pre_fit()
-        ## Todo
+        else:
+            ## Todo
 
-        pass
+            pass
 
     def select_traces(self, points=10, average=1, avoid_regions=None):
         """
@@ -952,7 +1017,7 @@ class Experiment(ExploreData, ExploreResults):
         self._readapt_params()
         self._averige_selected_traces = average if points != 'all' else 0
         self._add_action("Selected traces")
-
+        
     def select_region(self, mini, maxi):
         """
         Select a region of the data as selected traces according to the closest
@@ -992,7 +1057,7 @@ class Experiment(ExploreData, ExploreResults):
         Restore the data to a point previous to a preprocesing action
         actions should be the name of the function.
         e.g.: "baseline substraction" or "baseline_substraction"
-        Possible action:
+        Possible actions:
             baseline_substraction
             average_time
             cut_time
@@ -1002,6 +1067,7 @@ class Experiment(ExploreData, ExploreResults):
             shift_time
             subtract_polynomial_baseline
             correct_chirp/correct_GVD
+            calibrate_wavelength
         """
         action = '_'.join(action.split(' '))
         key = [i for i in self.data_sets.__dict__.keys() if action in i]
@@ -1015,11 +1081,18 @@ class Experiment(ExploreData, ExploreResults):
         if hasattr(self.data_sets, key):
             container = getattr(self.data_sets, key)
             self.data = container.data
-            self.x = container.time
+            self.x = container.x
             self.wavelength = container.wavelength
             self.selected_traces = container.data
             self.selected_wavelength = container.wavelength
-            self.preprocessing_report = copy.copy(container.report)
+            keys = [i for i in self.preprocessing_report.__dict__.keys()]
+            for i in keys:
+                if i not in container.report.__dict__.keys():
+                    delattr(self.preprocessing_report, i)
+            for i in container.report.__dict__.keys():
+                if i not in self.preprocessing_report.__dict__.keys():
+                    atr = getattr(container.report, i)
+                    setattr(self.preprocessing_report, i, atr)
             self.preprocessing_report._last_action = None
             msg = ' '.join(key.split('_'))
             self._add_action(f'restore {msg}')
@@ -1066,8 +1139,8 @@ class Experiment(ExploreData, ExploreResults):
             self.select_SVD_vectors(self.selected_traces.shape[1])
         else:
             avg = self._averige_selected_traces
-            trace, wave = self.select_traces(self.selected_traces, avg)
-            self.selected_traces, self.selected_wavelength = trace, wave
+            wave = [i for i in self.selected_wavelength]
+            self.select_traces(wave, avg)
             val = len(self.action_records.__dict__) - 3
             delattr(self.action_records, f"_{val}" )
 
@@ -1081,7 +1154,10 @@ class Experiment(ExploreData, ExploreResults):
             fwhm = self._last_params['fwhm']
             tau_inf = self._last_params['tau_inf']
             opt_fwhm = self._last_params['opt_fwhm']
-            self.initialize_exp_params(t0, fwhm, *previous_taus, tau_inf=tau_inf, opt_fwhm=opt_fwhm)
+            y0 = self._last_params['y0']
+            self.initialize_exp_params(t0, fwhm, *previous_taus,
+                                       tau_inf=tau_inf, opt_fwhm=opt_fwhm,
+                                       y0=y0)
         elif self._params_initialized == 'Target':
             print('to be coded')
             # to do
@@ -1089,5 +1165,6 @@ class Experiment(ExploreData, ExploreResults):
             fwhm = self._last_params['fwhm']
             self.initialize_target_params(t0, fwhm,)
             # self.initialize_target_params()
+            # TODO
         else:
             pass

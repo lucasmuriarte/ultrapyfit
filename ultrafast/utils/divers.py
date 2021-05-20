@@ -127,7 +127,19 @@ class TimeUnitFormater:
             val = self._multiplicator.value * multi**turns
             
             if 1 >= val >= 1E-24:
-                name = TimeMultiplicator(TimeMultiplicator(self._multiplicator.value * multi**turns))
+                # print(multi, turns)
+                val = self._multiplicator.value * multi**turns
+                if val == 1.0000000000000002e-15:
+                    val = 1e-15
+                elif val == 1.0000000000000002e-12:
+                    val = 1e-12
+                elif val == 1.0000000000000002e-09:
+                    val = 1e-9
+                elif val == 1.0000000000000002e-06:
+                    val = 1e-6
+                elif val == 1.0000000000000002e-03:
+                    val = 1e-3
+                name = TimeMultiplicator(TimeMultiplicator(val))
                 if name.name != "s":
                     name = f'{name.name}s'
                 else:
@@ -445,12 +457,12 @@ class ReadData:
         """
         if wave_is_row:
             # print('row')
-            data_frame = pd.read_csv(path, sep=separator, index_col=wavelength,
+            data_frame = pd.read_csv(path, sep=separator, index_col=time,
                                      skiprows=wavelength, decimal=decimal).dropna(
                                      how='all', axis=1).dropna(how='all', axis=1)
             data_frame = data_frame.transpose()
         else:
-            data_frame = pd.read_csv(path, sep=separator, index_col=time,
+            data_frame = pd.read_csv(path, sep=separator, index_col=wavelength,
                                      skiprows=time, decimal=decimal).dropna(
                 how='all').dropna(how='all', axis=1)
         data_frame.fillna(0, inplace=True)
