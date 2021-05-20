@@ -11,5 +11,5 @@ path = 'C:/Users/lucas/Downloads/calibrated spectra.asc'
 time, data, wave = read_data(path)
 
 
-corrector= EstimationGVDSellmeier(time, data, wave, 400)
+corrector = EstimationGVDSellmeier(time, data, wave, 400)
 corrector.estimate_GVD_from_grath()

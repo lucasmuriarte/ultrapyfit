@@ -276,7 +276,7 @@ class ExploreResults():
             be use to cut the excitation wavelength range
         
         plot_integrated_DAS: bool (default False)
-            Defines in case if data has been derivate, to directly integrate
+            Defines in case if data has been derivative, to directly integrate
             the DAS.
             
         Returns
@@ -294,7 +294,7 @@ class ExploreResults():
             # constants=' '.join([str(i.split('=')[1]) for i in legenda[:number]])
             # print(f'WARNING! time constants of value {constants} has been used to fit')
             legenda = [legenda[i] for i in wanted]
-        if type(derivative_space) == dict and plot_integrated_DAS:
+        if derivative_space and plot_integrated_DAS:
             das = np.array([integral.cumtrapz(das[i, :], wavelength, initial=0) for i in range(len(das))])
         fig, ax = plt.subplots(1, figsize=(11, 6))
         n_das = das.shape[0]
@@ -558,7 +558,7 @@ class ExploreResults():
         deconv = self._fits[fit_number].details['deconv']
         tau_inf = self._fits[fit_number].details['tau_inf']
         exp_no = self._fits[fit_number].details['exp_no']
-        derivative_space = self._fits[fit_number].details['derivate']
+        derivative_space = self._fits[fit_number].details['derivative']
         # check for type of fit done target or exponential
         type_fit = self._fits[fit_number].details['type']
         return x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space

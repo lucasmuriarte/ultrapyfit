@@ -4,17 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="">
+    <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/experiment/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/experiment/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_exp_fit_using class.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_exp_fit_using class.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_fit.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_fit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/utils/chirp_correction.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/utils/chirp_correction.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection_redone.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection_redone.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -184,8 +183,16 @@
       <workItem from="1620288456723" duration="2171000" />
       <workItem from="1620833759255" duration="581000" />
       <workItem from="1620892629007" duration="25374000" />
-      <workItem from="1621366080188" duration="1921000" />
+      <workItem from="1621366080188" duration="19505000" />
     </task>
+    <task id="LOCAL-00001" summary="global_fit with IRF convolution">
+      <created>1621369582820</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1621369582820</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -202,6 +209,10 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="global_fit with IRF convolution" />
+    <option name="LAST_COMMIT_MESSAGE" value="global_fit with IRF convolution" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

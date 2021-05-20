@@ -73,7 +73,7 @@ class GlobExpParameters:
                 self.params['fwhm_%i' % (iy+1)].expr = 'fwhm_1'
 
     def adjustParams(self, t0, vary_t0=True, fwhm=0.12, opt_fwhm=False,
-                     GVD_corrected=True, tau_inf=1E12):
+                     GVD_corrected=True, tau_inf=1E12, y0=None):
         """
         function to initialize parameters for global fitting
         
@@ -105,6 +105,15 @@ class GlobExpParameters:
             This modelled photoproducts formation with long decay times
             If None tau_inf is not added.
             (only applicable if fwhm is given)
+
+        y0: int or float or list/1d-array (default None)
+            If this parameter is pass y0 value will be a fixed parameter to the
+            value passed. This affects fits with and without deconvolution. For
+            a fit with deconvolution y0 is is added to negative delay offsets.
+            For a fit without deconvolution y0 fit the offset of the exponential.
+            If an array is pass this should have the length of the curves that
+            want to be fitted, and for each curve the the y0 value would
+            be different.
         """
         self._generateParams(t0, vary_t0)
         for iy in range(2, self.number_traces+1):
@@ -117,6 +126,12 @@ class GlobExpParameters:
                 for iy in range(2, self.number_traces+1):
                     self.params['t0_%i' % iy].expr = None
                     self.params['t0_%i' % iy].vary = True
+        if y0 is not None:
+            if not hasattr(y0, '__iter__'):
+                y0 = [y0 for i in range(self.number_traces)]
+            for iy in range(1, self.number_traces + 1):
+                self.params['y0_%i' % iy].value = y0[iy-1]
+                self.params['y0_%i' % iy].vary = False
         else:
             self.params['t0_1'].vary = False
 

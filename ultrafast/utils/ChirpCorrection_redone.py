@@ -136,7 +136,7 @@ class ChirpCorrection:
     GVD_corrected: bool
         True if the data has been corrected
     """
-    def __init__(self, time, data, wavelength, gvd_estimation):
+    def __init__(self, time, data, wavelength, gvd_estimation, function=None):
         """
         Constructor:
 
@@ -162,6 +162,7 @@ class ChirpCorrection:
         self.corrected_data = None
         self.gvd = gvd_estimation
         self.GVD_corrected = False
+        self._function = function
 
     def correct_chrip(self, verify=False):
         """
@@ -217,6 +218,8 @@ class ChirpCorrection:
         if verify:
             self.verifiedGVD()
         else:
+            if self._function is not None:
+                self._apply_function_after_correction()
             return self.corrected_data
 
     def _find_nearest(self, array, value):
@@ -240,6 +243,8 @@ class ChirpCorrection:
             print('Data has been corrected from GVD')
             plt.close(self.fig)
             plt.close()
+            if self._function is not None:
+                self._apply_function_after_correction()
             return self.corrected_data
         else:
             self.corrected_data = None
@@ -298,10 +303,14 @@ class ChirpCorrection:
         #    thismanager.window.setWindowIcon(QIcon(self.qt_path))
         self.fig.show()
 
+    def _apply_function_after_correction(self):
+        self._function()
+
 
 class EstimationGVD(ChirpCorrection):
     """
     Basic class to estimate and correct the GVD or chrip
+
     Attributes
     ----------
     time: 1darray
@@ -328,7 +337,7 @@ class EstimationGVD(ChirpCorrection):
     chirp_corrector: instance of ChirpCorrection class
         use to correct the data
     """
-    def __init__(self, time, data, wavelength, excitation=None):
+    def __init__(self, time, data, wavelength, excitation=None, function=None):
         self.data = data
         self.corrected_data = None
         self.time = time
@@ -336,7 +345,8 @@ class EstimationGVD(ChirpCorrection):
         self.excitation = excitation
         self._gvd_window_on = False
         self.gvd = None
-        super().__init__(self.time, self.data, self.wavelength, self.gvd)
+        super().__init__(self.time, self.data, self.wavelength,
+                         self.gvd, function)
         # self.chirp_corrector = ChirpCorrection(self.time, self.data,
         #                                        self.wavelength, self.gvd)
     
@@ -390,8 +400,8 @@ class EstimationGVDSellmeier(EstimationGVD):
         contains dispersion curve of BK7
 
     """
-    def __init__(self, time, data, wavelength, excitation):
-        super().__init__(time, data, wavelength, excitation)
+    def __init__(self, time, data, wavelength, excitation, function=None):
+        super().__init__(time, data, wavelength, excitation, function)
         self.CaF2 = 0
         self.BK7 = 0
         self.SiO2 = 0
