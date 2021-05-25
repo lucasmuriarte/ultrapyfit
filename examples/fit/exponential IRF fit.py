@@ -19,7 +19,7 @@ data = pd.read_csv(path_2, header=None).values
 irf = pd.read_csv(irf_path, header=9).values[:1500,0]
 time = np.linspace(0,1500,1500)*0.004
 params = GlobExpParameters(data.shape[1], [0.6])
-params.adjustParams(0.3, False, None)
+params.adjustParams(0, False, None)
 parameters = params.params
 
 fitter = GlobalFitWithIRF(time, data, irf, 1, parameters, wavelength=None)
@@ -32,6 +32,7 @@ ax[0].set_yscale('log')
 ax[1].set_yscale('log')
 ax[0].set_ylim(0, 25000)
 model = ModelCreator(1, time)
+plt.show()
 
 parameters['pre_exp1_1'].value=10
 y = model.expNDatasetIRF(parameters, 0, irf)
