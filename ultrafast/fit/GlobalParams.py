@@ -127,7 +127,10 @@ class GlobExpParameters:
                     self.params['t0_%i' % iy].expr = None
                     self.params['t0_%i' % iy].vary = True
         if y0 is not None:
+            # this allow to pass a spectrum to consider the offset
             if not hasattr(y0, '__iter__'):
+                # if is in case a single value is passes, create a list of y0
+                # with same value
                 y0 = [y0 for i in range(self.number_traces)]
             for iy in range(1, self.number_traces + 1):
                 self.params['y0_%i' % iy].value = y0[iy-1]

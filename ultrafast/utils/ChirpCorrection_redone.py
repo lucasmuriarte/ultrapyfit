@@ -10,6 +10,7 @@ from PyQt5.QtGui import QIcon
 from matplotlib.widgets import Slider, Button, RadioButtons
 from pylab import pcolormesh
 from ultrafast.utils.Preprocessing import ExperimentException
+from ultrafast.utils.divers import book_annotate, LabBook
 from ultrafast.graphics.MaptplotLibCursor import SnaptoCursor
 import lmfit
 
@@ -271,7 +272,7 @@ class ChirpCorrection:
                              ::round(len(self.wavelength) / 11)]]
         ax0.pcolormesh(self.wavelength, self.x[:index2ps],
                        pd.DataFrame(self.corrected_data).iloc[
-                       :index2ps].values, cmap='RdYlBu')
+                       :index2ps].values, cmap='RdYlBu', shading='auto')
         # ax1 = self.fig.add_subplot(1,2,2)
         #        self.corrected_data
         xlabel = 'Time (ps)'
@@ -343,10 +344,12 @@ class EstimationGVD(ChirpCorrection):
         self.time = time
         self.wavelength = wavelength
         self.excitation = excitation
+        self.estimation_params = LabBook(name="GVD_details")
         self._gvd_window_on = False
         self.gvd = None
         super().__init__(self.time, self.data, self.wavelength,
                          self.gvd, function)
+        self.details = book_annotate(self.estimation_params)(self.details)
         # self.chirp_corrector = ChirpCorrection(self.time, self.data,
         #                                        self.wavelength, self.gvd)
     
@@ -367,6 +370,10 @@ class EstimationGVD(ChirpCorrection):
 
     def get_corrected_data(self):
         return self.corrected_data
+
+    def details(self, **kwargs):
+        for i in kwargs:
+            print(f'{i}')
 
 
 class EstimationGVDSellmeier(EstimationGVD):
@@ -439,6 +446,8 @@ class EstimationGVDSellmeier(EstimationGVD):
         self.gvd = self.dispersion_BK7 * BK7 + self.dispersion_SiO2 * SiO2 + \
                    self.dispersion_CaF2 * CaF2 + offset
         self.CaF2, self.BK7, self.SiO2, self.GVD_offset = CaF2, BK7, SiO2, offset
+        self.details(method='sellmeier', CaF2=CaF2, SiO2=SiO2,
+                     BK7=BK7, offset=offset)
         self.correct_chrip(verify=verify)
 
     def estimate_GVD_from_grath(self, qt=None, function= None):
@@ -447,8 +456,7 @@ class EstimationGVDSellmeier(EstimationGVD):
         that pops out. The final chirp is the sum of the dispersion introduced
         by all elements.
         """
-        self.figGVD = plt.figure(figsize=(7, 6))
-        self.figGVD.add_subplot()
+        self.figGVD, ax = plt.subplots(1, figsize=(7, 6))
         plt.ylabel('Time (ps)', size=14)
         plt.xlabel('Wavelength (nm)', size=14)
         result = np.zeros(len(self.wavelength))  # original GVD value equal to 0
@@ -539,8 +547,8 @@ class EstimationGVDPolynom(EstimationGVD):
     Class that allows to calculate the dispersion GVD or chirp fitting a
     polynomial to the data.
     """
-    def __init__(self, time, data, wavelength):
-        super().__init__(time, data, wavelength, None)
+    def __init__(self, time, data, wavelength, function=None):
+        super().__init__(time, data, wavelength, None, function)
 
     def estimate_GVD_from_grath(self, qt=None):
         """
@@ -548,9 +556,8 @@ class EstimationGVDPolynom(EstimationGVD):
         that pops out. The final chirp is estimated fitting a polynomial to the
         selected points in the figure.
         """
-        self.figGVD = plt.figure(figsize=(7, 6))
+        self.figGVD, self.ax = plt.subplots(1, figsize=(7, 6))
         self.l, = plt.plot(self.wavelength, self.wavelength * 0, lw=2, c='r')
-        self.ax = self.figGVD.add_subplot(1, 1, 1)
         ylabel = 'Time (ps)'
         plt.ylabel(ylabel, size=14)
         plt.xlabel('Wavelength (nm)', size=14)
@@ -558,7 +565,8 @@ class EstimationGVDPolynom(EstimationGVD):
         self.index2ps = np.argmin([abs(i - value) for i in self.time])
         self.ax.pcolormesh(self.wavelength, self.time[:self.index2ps],
                            pd.DataFrame(self.data).iloc[
-                           :self.index2ps].values, cmap='RdYlBu')
+                           :self.index2ps].values, cmap='RdYlBu',
+                           shading='auto')
         plt.axis([self.wavelength[0], self.wavelength[-1], self.time[0],
                   self.time[self.index2ps - 1]])
         plt.subplots_adjust(bottom=0.15)
@@ -618,10 +626,7 @@ class EstimationGVDPolynom(EstimationGVD):
         wavelength attribute vector.
         """
         wavelength = self.wavelength
-        # def optimize(params, x, y, order):
-        #     return y - self.polynomi(params, x, order)
 
-        # with weigths
         def optimize(params, x, y, order):
             return np.array([i**2 for i in range(len(x) + 1, 1, -1)]) * (
                         y - self.polynomi(params, x, order))
@@ -634,6 +639,7 @@ class EstimationGVDPolynom(EstimationGVD):
         params.add('c4', value=2.151E-9)
         out = lmfit.minimize(optimize, params,
                              args=(np.array(x), y, 4))
+        self.details(method='polynomial', x=x, y=y)
         self.gvd = self.polynomi(out.params, wavelength, 4)
 
     @staticmethod

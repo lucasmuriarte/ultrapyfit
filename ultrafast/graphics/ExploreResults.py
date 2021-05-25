@@ -98,7 +98,10 @@ class ExploreResults():
                     curve_resultados[:, i] = model.expNDataset(result_params, i)
 
         elif type_fit == 'Exponential convolved':
-            curve_resultados = data * 0.0
+            # curve_resultados = data * 0.0
+            t0 = result_params['t0_1'].value
+            index = np.argmin([abs(i - t0) for i in x])
+            curve_resultados = 0.0 * data[index:, :]
             for i in range(nx):
                 curve_resultados[:, i] = model.expNDatasetIRF(result_params,
                                                               i, deconv)
@@ -176,8 +179,12 @@ class ExploreResults():
                 residues = data[index:, :] - fittes
                 x_residues = x[index:]
         else:
-            residues = data - fittes
-            x_residues = x * 1.0
+            # residues = data - fittes
+            # x_residues = x * 1.0
+            t0 = params['t0_1'].value
+            index = np.argmin([abs(i - t0) for i in x])
+            residues = data[index:, :] - fittes
+            x_residues = x[index:]
             ax[1].scatter(x, deconv, marker='o', alpha=alpha, s=s, c='k')
         for i in puntos:
             if plot_residues:

@@ -48,5 +48,6 @@ experiment.plot_fit()
 # params.adjustParams(0.1, False, None)
 # parameters = params.params
 
-
-
+path2 = 'C:/Users/lucas/Downloads/calibrated spectra.asc'
+experiment2 = Experiment.load_data(path2)
+experiment2.chirp_correction_graphically('polynomial')

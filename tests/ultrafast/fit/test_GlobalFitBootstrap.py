@@ -30,7 +30,7 @@ class TestBootStrap(unittest.TestCase):
         self.assertEqual(n_boots, res.shape[2])
 
     def test__get_original_fitter(self):
-        params2 = deepcopy(result.params)
+        params2 = deepcopy(result.estimation_params)
         for i in params2:
             params2[i].value = params2[i].init_value
         fitter, params = boot._get_original_fitter()
@@ -74,10 +74,10 @@ class TestBootStrap(unittest.TestCase):
                            [['t0_1', 'tau1_1', 'tau3_1'], False],
                            [['t0_1', 'tau3_1'], True]])
     def test__initial_final_values(self, names, only_vary):
-        params = result.params
+        params = result.estimation_params
         initial_values = [params[name].init_value for name in names]
         final_values = [params[name].value for name in names]
-        ini, final = boot._initial_final_values(result.params, 
+        ini, final = boot._initial_final_values(result.estimation_params,
                                                 names, only_vary)
         if only_vary:
             initial_values = initial_values[1:]

@@ -247,12 +247,12 @@ class ModelCreator:
         sum_exp = sum([pre_exp * ModelCreator.exp1(self.x[pos_range] - t0, tau)
                        for pre_exp, tau in values])
         y[pos_range] = sum_exp
-        # index = np.argmin([abs(i - t0) for i in self.x])
-        # exponential = self.expNDataset(params, i)-y0
-        # x = np.fft.fft(exponential)
-        # h = np.fft.fft(IRF[index:])
-        # result = np.real(np.fft.ifft(x * h))
-        result = np.convolve(y, IRF, mode='same')
+        index = np.argmin([abs(i - t0) for i in self.x])
+        exponential = self.expNDataset(params, i)-y0
+        x = np.fft.fft(exponential)
+        h = np.fft.fft(IRF[index:])
+        result = np.real(np.fft.ifft(x * h))
+        # result = np.convolve(y, IRF, mode='same')
         return result + y0
     
     def expNDatasetFast(self, params, i, expvects):

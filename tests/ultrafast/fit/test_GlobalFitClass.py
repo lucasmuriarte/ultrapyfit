@@ -35,14 +35,14 @@ class TestGlobalFitClass(unittest.TestCase):
 
     def test_globalfit_exponential(self):
         result = globalfit_exponential(time, data_select, 4, 40, 400)
-        params_result = result.params
+        params_result = result.estimation_params
         final_taus = [params_result['tau1_1'].value, params_result['tau2_1'].value, params_result['tau3_1'].value]
         self.assertTrue(assertNearlyEqualArray(original_taus, final_taus, 7))
 
     def test_globalfit_gauss_exponential(self):
         result = globalfit_gauss_exponential(time_gauss, data_select_gauss, 8, 40, 400, fwhm=0.12, vary_fwhm=True,
                                              vary_t0=False, tau_inf=1E12)
-        params_result = result.params
+        params_result = result.estimation_params
         final_taus = [params_result['tau1_1'].value, params_result['tau2_1'].value, params_result['tau3_1'].value]
         self.assertTrue(assertNearlyEqualArray(original_taus, final_taus, 5))
 

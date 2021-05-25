@@ -237,8 +237,10 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         if self._allow_stop:
             user_stop = InputThread(self.stop_fit)
             user_stop.start()
+        if maxfev is not None:
+           maxfev = int(maxfev)
         resultados = self.minimize(method=method, params=self.params, 
-                                   max_nfev=int(maxfev), **kws)
+                                   max_nfev=maxfev, **kws)
         if self._allow_stop:
             user_stop.stop()
             user_stop.join()
@@ -895,8 +897,10 @@ class GlobalFitWithIRF(GlobalFit):
         ndata, nx = self.data.shape
         data = self.data[:]
         resid = data * 1.0
+        t0 = params['t0_1'].value
+        index =  np.argmin([abs(i - t0) for i in self.x])
         for i in range(nx):
-            resid[:, i] = data[:, i] - function(params, i, extra_param)
+            resid[index:, i] = data[index:, i] - function(params, i, extra_param)
             if self.weights['apply']:
                  w = 1/np.sqrt(data[:, i])
                  w[w == np.inf] = 0

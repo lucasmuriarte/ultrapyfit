@@ -255,7 +255,7 @@ class BootStrap:
         """
         div = self._get_division_number(size)
         resultados = self.fit_results
-        params = resultados.params
+        params = resultados.estimation_params
         data = resultados.data
         x = resultados.time
         deconv = resultados.details['deconv']
@@ -311,7 +311,7 @@ class BootStrap:
         """
         returns which parameter where varied in the original fit
         """
-        variation = [self.fit_results.params[name].vary for name in names]
+        variation = [self.fit_results.estimation_params[name].vary for name in names]
         return variation[-exp_no:]
 
     def _get_original_fitter(self):
@@ -320,7 +320,7 @@ class BootStrap:
         Either GlobalFitTargetModel or GlobalFitExponential
         """
         exp_no, type_fit, deconv, maxfev, tau_inf = self._details()
-        initial_prams = deepcopy(self.fit_results.params)
+        initial_prams = deepcopy(self.fit_results.estimation_params)
         for i in initial_prams:
             initial_prams[i].value = initial_prams[i].init_value
         if type_fit == 'Exponential':
@@ -433,7 +433,7 @@ class BootStrap:
         Appends the results of the fit done to the simulated data sets
         to the pandas dataFrame containing the bootstrap results
         """
-        params = results.params
+        params = results.estimation_params
         type_fit = results.details['type']
         key = data_frame.shape[0] + 1
         initial_values, final_values = self._initial_final_values(params,

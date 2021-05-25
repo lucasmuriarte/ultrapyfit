@@ -18,17 +18,15 @@ from matplotlib.offsetbox import AnchoredText
 import copy
 import pickle
 
-def capture_chirp_correction(obj):
-    print(obj._params_initialized)
-    pass
 
 class Experiment(ExploreData, ExploreResults):
     """
-    Class to work with a time resolved data set and easily preprocess the data, obtain
-    quality fits and result, explore the data set and keep track of actions done. Finally
-    to easily create figures already formatted.
-    The class inherits ExploreData and ExploreResults therefore all methods for plotting and
-    exploring a data set, explore the SVD space and check results are available.
+    Class to work with a time resolved data set and easily preprocess the data,
+    obtain quality fits and result, explore the data set and keep track of
+    actions done. Finally to easily create figures already formatted.
+    The class inherits ExploreData and ExploreResults therefore all methods for
+    plotting and exploring a data set, explore the SVD space and check results
+    are available.
 
     Attributes
     ----------
@@ -36,36 +34,41 @@ class Experiment(ExploreData, ExploreResults):
         x-vector, normally time vector
 
     data: 2darray
-        Array containing the data, the number of rows should be equal to the len(x) and the
-        number of columns equal to len(wavelength)
+        Array containing the data, the number of rows should be equal to the
+        len(x) and the number of columns equal to len(wavelength)
 
     wavelength: 1darray
         Wavelength vector
 
     selected_traces: 2darray
-        Sub dataset of data. The global fits are performed only in the selected traces data set.
-        Preprocesing actions are done on both data and selected traces. To select a part of the
-        data set, use select_traces, select_traces_graph. To select the SVD left values for
-        fitting use select_SVD_vectors or plot_SVD(1, select=True).
+        Sub dataset of data. The global fits are performed only in the selected
+        traces data set. Preprocesing actions are done on both data and selected
+        traces. To select a part of the data set, use select_traces,
+        select_traces_graph. To select the SVD left values for fitting use
+        select_SVD_vectors or plot_SVD(1, select=True).
 
     selected_wavelength: 1darray
-        Sub dataset of wavelength. Automatically updated when selected traces is update
+        Sub dataset of wavelength. Automatically updated when selected traces
+        is update
 
     time_unit: str (default ps)
-        Contains the strings of the time units to format axis labels and legends automatically:
+        Contains the strings of the time units to format axis labels and legends
+        automatically:
         time_unit str of the unit. >>> e.g.: 'ps' for picosecond
         Can be passes as kwargs when instantiating the object
 
     wavelength_unit: str (default nm)
-        Contains the strings of the wavelength units to format axis labels and legends automatically:
+        Contains the strings of the wavelength units to format axis labels and
+        legends automatically:
         wavelength_unit str of the unit: >>> e.g.: 'nm' for nanometers
         Can be passes as kwargs when instantiating the object
 
     params: lmfit parameters object
-        object containing the initial parameters values used to build an exponential model.
-        These parameters are iteratively optimize to reduce the residual matrix formed by
-        data-model (error matrix) using Levenberg-Marquardt algorithm. After a global fit
-        they are actualized to the results obtained. After selection of new traces, this are
+        object containing the initial parameters values used to build an
+        exponential model. These parameters are iteratively optimize to reduce
+        the residual matrix formed by data-model (error matrix) using
+        Levenberg-Marquardt algorithm. After a global fit they are actualized
+        to the results obtained. After selection of new traces, this are
         automatically re-adapted.
 
     weights: dict
@@ -78,24 +81,27 @@ class Experiment(ExploreData, ExploreResults):
         calling the chrip_correction method.
 
     preprocessing_report: class LabBook
-        Object containing and keeping track of the preprocessing actions done to the data set.
-        The preprocessing_report.print() method will print the status of the actions done and
-        parameters passed to each of the preprocesing functions. The general report method of the
+        Object containing and keeping track of the preprocessing actions done to
+        the data set. The preprocessing_report.print() method will print the
+        status of the actions done and parameters passed to each of the
+        preprocesing functions. The general report method of the
         Experiment class will also print it.
 
     action_records: class UnvariableContainer
-        Object containing and keeping track of the important actions done. similar to the
-        preprocessing_report t content can be printed. The general report method of the
-        Experiment class will also print it.
+        Object containing and keeping track of the important actions done.
+        similar to the preprocessing_report t content can be printed.
+        The general report method of the Experiment class will also print it.
 
     fit_records: class UnvariableContainer
-        Object containing and keeping track of fit results done. The attributes are: single_fits,
-        global_fits, integral_band_fits, bootstrap_record, conf_interval and target_models
+        Object containing and keeping track of fit results done. The attributes
+        are: single_fits, global_fits, integral_band_fits, bootstrap_record,
+        conf_interval and target_models
 
     excitation: float or int (default None)
-        If given the spectra figures will display a white box ± 10 units of excitation automatically
-        to cover the excitation if this value is between the wavelength range. This value is needed
-        for some chirp correction methods. If the excitation is not needed.
+        If given the spectra figures will display a white box ± 10 units of
+        excitation automatically to cover the excitation if this value is
+        between the wavelength range. This value is needed for some chirp
+        correction methods. If the excitation is not needed.
     """
     def __init__(self, x, data, wavelength=None, path=None, **kwargs):
         """
@@ -108,13 +114,15 @@ class Experiment(ExploreData, ExploreResults):
             x-vector, normally time vector
 
         data: 2darray
-            array containing the data, the number of rows should be equal to the len(x)
+            array containing the data, the number of rows should be equal to
+            the len(x)
 
         wavelength: 1darray (default None)
-            Wavelength vector. Alternatively the wavelength can be "None" and may be later on calibrated.
-            If None, wavelength vector will be an array from 0 to the length of data columns. Although
-            it can be initialize without wavelength vector, is recommended to pass this value or calibrate
-            in a first step.
+            Wavelength vector. Alternatively the wavelength can be "None" and
+            may be later on calibrated. If None, wavelength vector will be an
+            array from 0 to the length of data columns. Although it can be
+            initialize without wavelength vector, is recommended to pass this
+            value or calibrate in a first step.
 
         path: str (default None)
             String to keep track of the data loaded for keeping track in future.
@@ -137,7 +145,8 @@ class Experiment(ExploreData, ExploreResults):
         self.action_records = UnvariableContainer(name="Sequence of actions")
         self.fit_records = UnvariableContainer(name="Fits")
         self.params = None
-        self.weights = {'apply': False, 'vector': None, 'range': [], 'type': 'constant', 'value': 2}
+        self.weights = {'apply': False, 'vector': None, 'range': [],
+                        'type': 'constant', 'value': 2}
         self.preprocessing_report = LabBook(name="Pre-processing")
         self.data_path = path
         self._units = units
@@ -150,9 +159,11 @@ class Experiment(ExploreData, ExploreResults):
         self._tau_inf = 1E12
         self._initialized()
         self._chirp_corrector = None
-        ExploreData.__init__(self, self.x, self.data, self.wavelength, self.selected_traces, self.selected_wavelength,
+        ExploreData.__init__(self, self.x, self.data, self.wavelength,
+                             self.selected_traces, self.selected_wavelength,
                              'viridis', **self._units)
-        ExploreResults.__init__(self, self.fit_records.global_fits, **self._units)
+        ExploreResults.__init__(self, self.fit_records.global_fits,
+                                **self._units)
 
     def _initialized(self):
         """
@@ -199,14 +210,52 @@ class Experiment(ExploreData, ExploreResults):
         pass
 
     @staticmethod
-    def load_data(path: str, wavelength=0, time=0, wave_is_row=False, separator=',', decimal='.'):
-        x, data, wave = read_data(path, wavelength, time, wave_is_row, separator, decimal)
+    def load_data(path: str, wavelength=0, time=0, wave_is_row=False,
+                  separator=',', decimal='.'):
+        """
+        Load data from a file and return dn Experiment instance
+
+        Parameters
+        ----------
+        path: str
+            path to the data file
+
+        wavelength: int (default 0)
+            defines the element where to find the wavelength vector in its
+            direction which is defined by wave_is_row parameter.
+            i.e.: if wavelength correspond to columns, wavelength=0 indicates
+            is the first column of the data file if wavelength correspond to
+            rows, then wavelength=0 is first row
+
+
+        time: int (default 0)
+            defines the element where to find the time vector in its direction
+            which is defined by wave_is_row parameter. i.e.: if times correspond
+            to columns, time=0 indicates is the first column of the data file
+
+        wave_is_row: bool (default False)
+            defines if in the original data set the wavelength correspond
+            to the rows.
+
+        separator: str (default ',')
+            defines the separator in the data (any value that can be used in
+            pandas read_csv is valid. For tab uses \t
+
+        decimal: int (default '.')
+            defines the decimal point in the data
+
+        Returns
+        ----------
+        Experiment instance
+        """
+        x, data, wave = read_data(path, wavelength, time, wave_is_row,
+                                  separator, decimal)
         return Experiment(x, data, wave, path)
 
     @staticmethod
     def load(path: str):
         """
-        Load a saved experiment
+        Load a saved Experiment
         """
         with open(path) as file:
             experiment = pickle.load(file)
@@ -218,10 +267,17 @@ class Experiment(ExploreData, ExploreResults):
 
     def save(self, path):
         """
-        Saved the current experiment
+        Saved the current Experiment
+
+        Parameters
+        ----------
+        path: string
+            path where to save the Experiment
         """
-        ## ToDo
-        pass
+        path = path + '.exp'
+        with open(path, 'wb') as file:
+            pickle.dump(self, file, protocol=pickle.HIGHEST_PROTOCOL)
+        ## ToDo better saving
 
     def describe_data(self):
         """
@@ -300,7 +356,6 @@ class Experiment(ExploreData, ExploreResults):
             self._chirp_corrector = EstimationGVDPolynom(self.x, 
                                                          self.data, 
                                                          self.wavelength,
-                                                         excitation=None,
                                                          function=self._change_data_after_chrip_correction)
         else:
             msg = 'Method can only be "sellmeier" or "polynomial"'
@@ -313,7 +368,9 @@ class Experiment(ExploreData, ExploreResults):
         """
         Internal function to update data after chrip correction
         """
-        self.data = self._chirp_corrector.corrected_data()
+        self.data = self._chirp_corrector.corrected_data
+        details = self._chirp_corrector.estimation_params.details
+        self.preprocessing_report.__setattr__('chrip_correction', details, True)
 
     def calibrate_wavelength(self, pixels: list, wavelength: list,
                              order=2):
@@ -376,7 +433,9 @@ class Experiment(ExploreData, ExploreResults):
                 if only_one = False; if not only spectrum 5 is subtracted
         """
         self._add_to_data_set("before_baseline_substraction")
-        new_data = Preprocessing.baseline_substraction(self.data, number_spec=number_spec, only_one=only_one)
+        new_data = Preprocessing.baseline_substraction(self.data,
+                                                       number_spec=number_spec,
+                                                       only_one=only_one)
 
         self.data = new_data
         self._add_action("baseline substraction", True)
@@ -398,8 +457,10 @@ class Experiment(ExploreData, ExploreResults):
            order of the polynomial fit
         """
         self._add_to_data_set("before_subtract_polynomial_baseline")
-        new_data = Preprocessing.subtract_polynomial_baseline(self.data, self.wavelenght,
-                                                              points=points, order=order)
+        new_data = Preprocessing.subtract_polynomial_baseline(self.data,
+                                                              self.wavelenght,
+                                                              points=points,
+                                                              order=order)
         self.data = new_data
         self._add_action("Subtracted polynomial baseline", True)
 
@@ -754,7 +815,7 @@ class Experiment(ExploreData, ExploreResults):
         self._fit_number += 1
         self.fit_records.global_fits[self._fit_number] = results
         self._add_action(f'{self._params_initialized} fit performed')
-        self._update_last_params(results.params)
+        self._update_last_params(results.estimation_params)
 
     def single_exp_fit(self, wave, average, t0, fwhm, *taus, vary=True, tau_inf=1E12, maxfev=5000,
                        apply_weights=False, opt_fwhm=False, plot=True):
@@ -822,15 +883,17 @@ class Experiment(ExploreData, ExploreResults):
     def integral_band_exp_fit(self, wave_range: list, t0, fwhm, *taus, vary=True, tau_inf=1E12, maxfev=5000,
                               apply_weights=False, opt_fwhm=False, plot=True):
         """
-        Perform an exponential fit to an integrated are of the spectral range of the data set.
-        This type of fits allows for example to identify time constants attributed to cooling
-        since the integration compensate the effects and the contribution of this type of
-        phenomena to the decay decreases or disappears.
+        Perform an exponential fit to an integrated are of the spectral range of
+        the data set. This type of fits allows for example to identify time
+        constants attributed to cooling since the integration compensate the
+        effects and the contribution of this type of phenomena to the decay
+        decreases or disappears.
 
         Parameters
         ----------
         wave_range: list (lenght 2) or float
-            The area between the two entries of the wavelength range is integrated and fitted.
+            The area between the two entries of the wavelength range is
+            integrated and fitted.
 
         t0: int or float
             the t0 for the fitting
@@ -854,16 +917,16 @@ class Experiment(ExploreData, ExploreResults):
             (only applicable if fwhm is given)
 
         vary: bool or list of bool
-            If True or False all taus are optimized or fixed. If a list, should be a list of bool
-            equal with len equal to the number of taus. Each entry defines if a initial taus
-            should be optimized or not.
+            If True or False all taus are optimized or fixed. If a list, should
+            be a list of bool equal with len equal to the number of taus.
+            Each entry defines if a initial taus should be optimized or not.
 
         maxfev: int (default 5000)
             maximum number of iterations of the fit.
 
         apply_weights: bool (default False)
-            If True and weights have been defined, this will be applied in the fit (for defining weights) check
-            the function define_weights.
+            If True and weights have been defined, this will be applied in the
+            fit (for defining weights) check the function define_weights.
 
         plot: bool (default True)
             If True the results are automatically plotted
@@ -881,8 +944,8 @@ class Experiment(ExploreData, ExploreResults):
         if plot:
             self.plot_integral_band_fit(key)
 
-    def _one_trace_fit(self, trace, t0, fwhm, *taus, vary=True, tau_inf=1E12, maxfev=5000,
-                       apply_weights=False, opt_fwhm=False, y0=None):
+    def _one_trace_fit(self, trace, t0, fwhm, *taus, vary=True, tau_inf=1E12,
+                       maxfev=5000, apply_weights=False, opt_fwhm=False, y0=None):
         """
         Real fitting function used by "integral_band_exp_fit" and "single_exp_fit"
         """
@@ -892,8 +955,10 @@ class Experiment(ExploreData, ExploreResults):
                                    tau_inf, y0)
         print(param_creator.params)
         deconv = True if fwhm is not None else False
-        minimizer = GlobalFitExponential(self.x, trace, len(taus), params=param_creator.params,
-                                         deconv=deconv, tau_inf=tau_inf, GVD_corrected=False)
+        minimizer = GlobalFitExponential(self.x, trace, len(taus),
+                                         params=param_creator.params,
+                                         deconv=deconv, tau_inf=tau_inf,
+                                         GVD_corrected=False)
         results = minimizer.global_fit(vary, maxfev, apply_weights)
         return results
 
@@ -939,7 +1004,7 @@ class Experiment(ExploreData, ExploreResults):
         if fit_number in self.fit_records.integral_band_fits.keys():
             fig, ax = self._plot_single_trace_fit(self.fit_records.integral_band_fits, fit_number, details)
             rang = self.fit_records.integral_band_fits[fit_number].details['integral band']
-            w_unit = 'cm$^{-1}$' if self._units['wavelength_unit']  == 'cm-1' else self._units['wavelength_unit']
+            w_unit = 'cm$^{-1}$' if self._units['wavelength_unit'] == 'cm-1' else self._units['wavelength_unit']
             ax[1].legend(['_', f'Integral band {rang[0]}-{rang[1]} {w_unit}'])
             return fig, ax
         else:
@@ -954,7 +1019,8 @@ class Experiment(ExploreData, ExploreResults):
         _, _, _, params, exp_no, deconv, tau_inf, _, _, _ = plotter._get_values(fit_number=fit_number)
         fig, ax = plotter.plot_fit()
         if details:
-            testx = plotter._legend_plot_DAS(params, exp_no, deconv, tau_inf, 'Exponential', 2)
+            testx = plotter._legend_plot_DAS(params, exp_no, deconv,
+                                             tau_inf, 'Exponential', 2)
             textstr = '\n'.join(testx)
             texto = AnchoredText(s=textstr, loc=9)
             ax[1].add_artist(texto)
@@ -976,9 +1042,12 @@ class Experiment(ExploreData, ExploreResults):
             if deconv:
                 fwhm = params['fwhm_1'].value
             param_creator = GlobExpParameters(data_fit.shape[1], taus)
-            param_creator.adjustParams(t0, True, fwhm, False, self.GVD_corrected, tau_inf)
+            param_creator.adjustParams(t0, True, fwhm, False,
+                                       self.GVD_corrected, tau_inf)
+
             params_fit = param_creator.params
-            minimizer = GlobalFitExponential(self.x, self.selected_traces, exp_no, params_fit,
+            minimizer = GlobalFitExponential(self.x, self.selected_traces,
+                                             exp_no, params_fit,
                                              deconv, tau_inf, False)
             minimizer.pre_fit()
         else:
@@ -988,30 +1057,32 @@ class Experiment(ExploreData, ExploreResults):
 
     def select_traces(self, points=10, average=1, avoid_regions=None):
         """
-        Method to select traces from the data attribute and defines a subset of traces
-        in the selected_traces attribute. If the parameters have been initialize automatically
-        re-adapts them to the new selected traces.
-        (The function assumes wavelength vector is sorted from low to high values)
+        Method to select traces from the data, the selected traces are stored
+        in the selected_traces attribute. If the parameters have been
+        initialize automatically re-adapts them to the new selected traces.
+        (The function assumes that the wavelength vector is sorted from low
+        to high values)
 
         Parameters
         ----------
         points: int or list or "auto" (default 10)
-            If type(space) =int: a series of traces separated by the value indicated
-            will be selected.
+            If type(space) =int: a series of traces separated by the value
+            indicated will be selected.
             If type(space) = list: the traces in the list will be selected.
-            If space = auto, the number of returned traces is 10 and equally spaced
-            along the wavelength vector and points is set to 0
+            If space = auto, the number of returned traces is 10 and equally
+            spaced along the wavelength vector and average is set to 0
 
         average: int (default 1)
             Binning points surrounding the selected wavelengths.
             e. g.: if point is 1 trace = mean(index-1, index, index+1)
 
         avoid_regions: list of list (default None)
-            Defines wavelength regions that are avoided in the selection when space
-            is an integer. The sub_list should have two elements defining the region
-            to avoid in wavelength values
-            i. e.: [[380,450],[520,530] traces with wavelength values between 380-450
-                   and 520-530 will not be selected
+            Defines wavelength regions that are avoided in the selection when
+            space is an integer. The sub_list should have two elements defining
+            the region to avoid in wavelength values
+
+            i. e.: [[380,450],[520,530] traces with wavelength values between
+                    380-450 and 520-530 will not be selected
         """
         super().select_traces(points, average, avoid_regions)
         self._readapt_params()
@@ -1057,17 +1128,21 @@ class Experiment(ExploreData, ExploreResults):
         Restore the data to a point previous to a preprocesing action
         actions should be the name of the function.
         e.g.: "baseline substraction" or "baseline_substraction"
-        Possible actions:
-            baseline_substraction
-            average_time
-            cut_time
-            cut_wavelength
-            del_points
-            derivate_data
-            shift_time
-            subtract_polynomial_baseline
-            correct_chirp/correct_GVD
-            calibrate_wavelength
+
+        Parameters
+        ----------
+        action:
+            Possible actions:
+                baseline_substraction,
+                average_time,
+                cut_time,
+                cut_wavelength,
+                del_points,
+                derivate_data,
+                shift_time,
+                subtract_polynomial_baseline,
+                correct_chirp/correct_GVD,
+                calibrate_wavelength,
         """
         action = '_'.join(action.split(' '))
         key = [i for i in self.data_sets.__dict__.keys() if action in i]
@@ -1118,7 +1193,8 @@ class Experiment(ExploreData, ExploreResults):
             pass
         else:
             report = copy.copy(self.preprocessing_report)
-            container = UnvariableContainer(x=self.x, data=self.data, wavelength=self.wavelength,
+            container = UnvariableContainer(x=self.x, data=self.data,
+                                            wavelength=self.wavelength,
                                             report=report)
             self.preprocessing_report._last_action = key
             self.data_sets.__setattr__(key, container)
@@ -1146,7 +1222,8 @@ class Experiment(ExploreData, ExploreResults):
 
     def _readapt_params(self):
         """
-        Function to automatically re-adapt parameters to a new selection of data sets
+        Function to automatically re-adapt parameters to a new selection of
+        data sets
         """
         if self._params_initialized == 'Exponential':
             previous_taus = self._last_params['taus']
