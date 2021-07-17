@@ -238,22 +238,34 @@ class ModelCreator:
         1darray of size equal to time-vector
         """
         y0 = params['y0_%i' % (i + 1)].value
-        t0 = params['t0_%i' % (i + 1)].value
-        y = np.zeros(self.x.shape)
-        pos_range = ((self.x - t0) >= 0)
+        t0 = int(params['t0_%i' % (i + 1)].value)
+        # print(t0)
         values = [[params['pre_exp%i_' % (ii + 1) + str(i + 1)].value,
                    params['tau%i_' % (ii + 1) + str(i + 1)].value]
                   for ii in range(self.exp_no)]
-        sum_exp = sum([pre_exp * ModelCreator.exp1(self.x[pos_range] - t0, tau)
+        sum_exp = sum([pre_exp * ModelCreator.exp1(self.x, tau)
                        for pre_exp, tau in values])
-        y[pos_range] = sum_exp
-        index = np.argmin([abs(i - t0) for i in self.x])
-        exponential = self.expNDataset(params, i)-y0
-        x = np.fft.fft(exponential)
-        h = np.fft.fft(IRF[index:])
-        result = np.real(np.fft.ifft(x * h))
-        # result = np.convolve(y, IRF, mode='same')
-        return result + y0
+        # print(len(sum_exp))
+        # print(len(IRF))
+        # print(len(result))
+
+        # padding for convolution
+        sum_exp_pad = np.pad(sum_exp, len(sum_exp)//2, mode='minimum')
+        IRF_pad = np.pad(IRF, len(IRF) // 2, mode='minimum')
+        # convolution
+        # x = np.fft.fft(sum_exp)
+        # h = np.fft.fft(IRF)
+        # result = np.real(np.fft.ifft(x * h))
+        result = np.convolve(sum_exp_pad, IRF_pad, mode='same')
+        # removing padding
+        mini = len(sum_exp)//2
+        maxi = int(len(sum_exp)*1.5)
+        result = result[mini:maxi]
+
+        # adjusting shift between IRF and data
+        result_y = np.ones(len(result))
+        result_y[t0:] = result[:len(result)-t0]
+        return result_y + y0
     
     def expNDatasetFast(self, params, i, expvects):
         """

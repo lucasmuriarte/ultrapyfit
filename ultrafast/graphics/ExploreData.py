@@ -335,12 +335,16 @@ class ExploreData(PlotSVD):
         ----------
         Modifies the attributes selected_traces and selected_wavelength.
         """
+        if hasattr(points, '__iter__'):
+            if len(points) == len(self.wavelength):
+                points = 'all'
         if points == 'all':
             self.selected_traces = copy(self.data)
             self.selected_wavelength = copy(self.wavelength)
         else:
-            res =  select_traces(self.data, self.wavelength, points,
-                              average, avoid_regions)
+            # print(len(points), average, avoid_regions)
+            res = select_traces(self.data, self.wavelength, points,
+                                average, avoid_regions)
             self.selected_traces, self.selected_wavelength = res
 
     def _verify_plot_spectra(self, times, data, legend, average):
