@@ -13,12 +13,14 @@ Created on Sun Jan 10 23:02:19 2021
 from ultrafast.fit.GlobalFit import GlobalFitExponential
 from ultrafast.experiment import Experiment
 from ultrafast.utils.divers import read_data
+import matplotlib.pyplot as plt
 
-path='E:/PC/donnes/donnes femto/DATA RAL MARS 2019 oxford/preproces december2019 with bining/Off to On TRIMPS correct/WT.csv'
+path='D:/PC/donnes/donnes femto/DATA RAL MARS 2019 oxford/preproces december2019 with bining/Off to On TRIMPS correct/WT.csv'
 experiment = Experiment.load_data(path, wave_is_row=False)
 experiment.calibrate_wavelength([1494.0, 1518.0, 1633.0, 1687.0],
                                 [1491.0, 1515.0, 1633.0, 1681.0])
-experiment.cut_wavelength(1440, 1720, 'select')
+
+experiment.cut_wavelength(1450, 1720, 'select')
 experiment.cut_time(0.001,2)
 experiment.time_unit = 'ns'
 experiment.wavelength_unit = 'cm'
@@ -51,3 +53,43 @@ experiment.plot_fit()
 path2 = 'C:/Users/lucas/Downloads/calibrated spectra.asc'
 experiment2 = Experiment.load_data(path2)
 experiment2.chirp_correction_graphically('polynomial')
+
+
+
+#leucine
+path='D:/PC/donnes/donnes femto/DATA RAL MARS 2019 oxford/preproces december2019 with bining/Off to On TRIMPS correct/leucine.csv'
+experiment = Experiment.load_data(path, wave_is_row=False)
+experiment.calibrate_wavelength([1494.0, 1518.0, 1633.0, 1687.0],
+                                [1491.0, 1515.0, 1633.0, 1681.0])
+
+
+# experiment.subtract_polynomial_baseline([1296.31,1402.98,1455.38,1600.81,1677.85,1717.37,1770.45],2)
+experiment.cut_wavelength(1450, 1720, 'select')
+experiment.cut_time(2)                               
+experiment.derivate_data(5)
+experiment.time_unit = 'ns'
+experiment.wavelength_unit = 'cm'
+experiment.initialize_exp_params(2, None, 100, 3000, 20000)
+experiment.global_fit([True, True, True])
+experiment.plot_DAS(plot_integrated_DAS=True)
+experiment.plot_fit()
+plt.xscale('log')
+
+#alanine
+path='D:/PC/donnes/donnes femto/DATA RAL MARS 2019 oxford/preproces december2019 with bining/Off to On TRIMPS correct/alanine.csv'
+experiment = Experiment.load_data(path, wave_is_row=False)
+experiment.calibrate_wavelength([1494.0, 1518.0, 1633.0, 1687.0],
+                                [1491.0, 1515.0, 1633.0, 1681.0])
+
+
+# experiment.subtract_polynomial_baseline([1296.31,1402.98,1455.38,1600.81,1677.85,1717.37,1770.45],2)
+experiment.cut_wavelength(1450, 1720, 'select')
+experiment.cut_time(2)                               
+experiment.derivate_data(5)
+experiment.time_unit = 'ns'
+experiment.wavelength_unit = 'cm'
+experiment.initialize_exp_params(2, None, 100, 3000)
+experiment.global_fit([True, True])
+experiment.plot_DAS(plot_integrated_DAS=True)
+experiment.plot_fit()
+plt.xscale('log')

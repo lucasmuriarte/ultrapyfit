@@ -19,31 +19,50 @@ data = pd.read_csv(path_2, header=None).values
 irf = pd.read_csv(irf_path, header=9).values[:1500,0]
 time = np.linspace(0,1500,1500)*0.004
 params = GlobExpParameters(data.shape[1], [0.6])
-params.adjustParams(0, False, None)
+params.adjustParams(10, False, None)
 parameters = params.params
+parameters['t0_1'].vary=True
+for i in range(8):
+    parameters['pre_exp1_%i' %(i+1)].value=500
+    if i > 0:
+        parameters['t0_%i' %(i+1)].expr=None
+        parameters['t0_%i' %(i+1)].value=10
+        parameters['t0_%i' %(i+1)].vary=True
+
 
 fitter = GlobalFitWithIRF(time, data, irf, 1, parameters, wavelength=None)
-fitter.allow_stop = True
+# fitter.allow_stop = True
 result = fitter.global_fit(maxfev=5000)
 
 explorer = ExploreResults(result)
 fig, ax = explorer.plot_fit()
 ax[0].set_yscale('log')
 ax[1].set_yscale('log')
-ax[0].set_ylim(0, 25000)
-model = ModelCreator(1, time)
+ax[0].set_ylim(1, 25000)
 plt.show()
 
-parameters['pre_exp1_1'].value=10
-y = model.expNDatasetIRF(parameters, 0, irf)
+
+model = ModelCreator(1, time)
+
+def initial_model(curve, params, tau=570, pre_exp=10, t0=0):
+    #params.pretty_print()
+    params['tau1_1'].value=tau
+    params['t0_1'].value=t0
+    params['pre_exp1_%i' %curve].value=pre_exp
+    y = model.expNDatasetIRF(params, curve-1, irf)
 
 
-plt.figure()        
-#def jumpexpmodel(x,tau1,ampl1,y0,x0,args=(irf))
-plt.semilogy(time,y,'r--',time,data[:,1],'bo')
-plt.title("test the model")
+    plt.figure()        
+    #def jumpexpmodel(x,tau1,ampl1,y0,x0,args=(irf))
+    plt.semilogy(time,y,'r--',time,data[:,curve+1],'bo')
+    plt.title("test the model")
+    plt.show()
 
+initial_model(2,parameters, 0.5, 5, 50)
 
+params = GlobExpParameters(data.shape[1], [0.6])
+params.adjustParams(0.3, False, None)
+parameters = params.params
 fitter = GlobalFitExponential(time, data, 1, parameters, False, wavelength=None)
 fitter.allow_stop = True
 result = fitter.global_fit(maxfev=5000)

@@ -98,10 +98,10 @@ class ExploreResults():
                     curve_resultados[:, i] = model.expNDataset(result_params, i)
 
         elif type_fit == 'Exponential convolved':
-            # curve_resultados = data * 0.0
-            t0 = result_params['t0_1'].value
-            index = np.argmin([abs(i - t0) for i in x])
-            curve_resultados = 0.0 * data[index:, :]
+            curve_resultados = data * 0.0
+            # t0 = result_params['t0_1'].value
+            # index = np.argmin([abs(i - t0) for i in x])
+            # curve_resultados = 0.0 * data[index:, :]
             for i in range(nx):
                 curve_resultados[:, i] = model.expNDatasetIRF(result_params,
                                                               i, deconv)
@@ -117,7 +117,7 @@ class ExploreResults():
                                                                    eigenmatrix])
         return curve_resultados
 
-    # @use_style
+    @use_style
     def plot_fit(self, fit_number=None, selection=None,
                  plot_residues=True, style='lmu_res',):
         """
@@ -179,12 +179,12 @@ class ExploreResults():
                 residues = data[index:, :] - fittes
                 x_residues = x[index:]
         else:
-            # residues = data - fittes
-            # x_residues = x * 1.0
-            t0 = params['t0_1'].value
-            index = np.argmin([abs(i - t0) for i in x])
-            residues = data[index:, :] - fittes
-            x_residues = x[index:]
+            residues = data - fittes
+            x_residues = x * 1.0
+            # t0 = params['t0_1'].value
+            # index = np.argmin([abs(i - t0) for i in x])
+            # residues = data[index:, :] - fittes
+            # x_residues = x[index:]
             ax[1].scatter(x, deconv, marker='o', alpha=alpha, s=s, c='k')
         for i in puntos:
             if plot_residues:
@@ -293,7 +293,7 @@ class ExploreResults():
         # verify type of fit is: either fit to Singular vectors or global fit to traces
         x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
-        das = self.DAS(fit_number=fit_number)
+        das = self.DAS(number=number, fit_number=fit_number)
         xlabel = self._get_wave_label_res(wavelength)
         legenda = self._legend_plot_DAS(params, exp_no, deconv, tau_inf, type_fit, precision)
         if number != 'all':
@@ -546,8 +546,7 @@ class ExploreResults():
         return a sub-array of DAS
         """
         posible = [i + 1 for i in range(exp_no)]
-        if tau_inf is not None:
-            posible.append(-1)
+        posible.append(-1)
         wanted = [ii for ii, i in enumerate(posible) if i in number]
         return wanted
 

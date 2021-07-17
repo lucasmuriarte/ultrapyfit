@@ -4,8 +4,8 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 from ultrafast.utils.Preprocessing import ExperimentException
 from ultrafast.graphics.ExploreResults import ExploreResults
-from ultrafast.fit.ExponentialFit import GlobalFitExponential
-from ultrafast.fit.TargetFit import GlobalFitTargetModel
+from ultrafast.fit.GlobalFit import GlobalFitExponential
+from ultrafast.fit.GlobalFit import GlobalFitTarget
 from seaborn import distplot
 from matplotlib.offsetbox import AnchoredText
 
@@ -22,7 +22,7 @@ class BootStrap:
     ----------
     fit_results: lmfit results Object
         Should be an lmfit result object obtained either from
-        GlobalFitTargetModel, GlobalFitExponential or Experiment classes
+        GlobalFitTarget, GlobalFitExponential or Experiment classes
     bootstrap_result: pandas dataFrame (default None)
         Pandas data frame containing where the bootstrap results are appended
         initially can be None, which will imply creating a new one from zero.
@@ -38,7 +38,7 @@ class BootStrap:
     datas: numpy array
         contain the simulated data sets for fitting produced either directly
         from the sample or from the residues.
-    fitter: GlobalFitTargetModel / GlobalFitExponential
+    fitter: GlobalFitTarget / GlobalFitExponential
         Contains the fitter used to obtained the fit_results passed
     params: lmfit Parameter object
         Contains the parameters used to obtained the fit_results passed
@@ -51,7 +51,7 @@ class BootStrap:
         ----------
         fit_results: lmfit results Object
             Should be an lmfit result object obtained either from
-            GlobalFitTargetModel, GlobalFitExponential or Experiment classes
+            GlobalFitTarget, GlobalFitExponential or Experiment classes
         bootstrap_result: pandas dataFrame (default None)
             Pandas data frame containing where the bootstrap results are
             appended initially can be None, which will imply creating a new one
@@ -137,7 +137,7 @@ class BootStrap:
         weight = self.fit_results.weights
         names = self._get_fit_params_names(type_fit, exp_no, deconv)
         variations = self._get_variations(names, exp_no)
-        x = self.fit_results.time
+        x = self.fit_results.x
         self._append_results_pandas_dataframe(self.bootstrap_result,
                                               self.fit_results, names)
         for boot in range(data_sets.shape[2]):
@@ -255,9 +255,9 @@ class BootStrap:
         """
         div = self._get_division_number(size)
         resultados = self.fit_results
-        params = resultados.estimation_params
+        params = resultados.params
         data = resultados.data
-        x = resultados.time
+        x = resultados.x
         deconv = resultados.details['deconv']
         result_explorer = ExploreResults(resultados)
         fittes = result_explorer.results()
@@ -311,22 +311,22 @@ class BootStrap:
         """
         returns which parameter where varied in the original fit
         """
-        variation = [self.fit_results.estimation_params[name].vary for name in names]
+        variation = [self.fit_results.params[name].vary for name in names]
         return variation[-exp_no:]
 
     def _get_original_fitter(self):
         """
         returns which fitter was used in the original fit.
-        Either GlobalFitTargetModel or GlobalFitExponential
+        Either GlobalFitTarget or GlobalFitExponential
         """
         exp_no, type_fit, deconv, maxfev, tau_inf = self._details()
-        initial_prams = deepcopy(self.fit_results.estimation_params)
+        initial_prams = deepcopy(self.fit_results.params)
         for i in initial_prams:
             initial_prams[i].value = initial_prams[i].init_value
         if type_fit == 'Exponential':
             fitter_obj = GlobalFitExponential
         elif type_fit == 'Target':
-            fitter_obj = GlobalFitTargetModel
+            fitter_obj = GlobalFitTarget
         else:
             msg = 'error in the defined type of fit'
             raise ExperimentException(msg)
@@ -433,7 +433,7 @@ class BootStrap:
         Appends the results of the fit done to the simulated data sets
         to the pandas dataFrame containing the bootstrap results
         """
-        params = results.estimation_params
+        params = results.params
         type_fit = results.details['type']
         key = data_frame.shape[0] + 1
         initial_values, final_values = self._initial_final_values(params,

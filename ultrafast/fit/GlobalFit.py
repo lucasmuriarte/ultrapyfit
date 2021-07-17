@@ -329,25 +329,6 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         use to stop the fit
         """
         self._stop_manually = True
-    
-    # def _update_progress_result(self, params):
-    #     if self._progress_result is None:
-    #         result = Container(params=params)
-    #         progress_result = GloablFitResult(result)
-    #         details = self._get_fit_details()
-    #         progress_result.add_data_details(self._data_ensemble, details)
-    #         self._progress_result = progress_result
-    #     else:
-    #         self._progress_result.params = params
-
-    # def plot_progress(self):
-    #     plotter = ExploreResults(self._progress_result)
-    #     if self._fig is not None:
-    #         plt.close(self._fig)
-    #     self._fig, self._ax = plotter.plot_fit()
-    #     plt.show(block=False)
-    #     #TODO
-    #     pass
 
 
 class GlobalFitExponential(GlobalFit):
@@ -897,10 +878,11 @@ class GlobalFitWithIRF(GlobalFit):
         ndata, nx = self.data.shape
         data = self.data[:]
         resid = data * 1.0
-        t0 = params['t0_1'].value
-        index =  np.argmin([abs(i - t0) for i in self.x])
+        # t0 = params['t0_1'].value
+        # index =  np.argmin([abs(i - t0) for i in self.x])
         for i in range(nx):
-            resid[index:, i] = data[index:, i] - function(params, i, extra_param)
+            # resid[index:, i] = data[index:, i] - function(params, i, extra_param)
+            resid[:, i] = data[:, i] - function(params, i, extra_param)
             if self.weights['apply']:
                  w = 1/np.sqrt(data[:, i])
                  w[w == np.inf] = 0

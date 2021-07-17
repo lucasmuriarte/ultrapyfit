@@ -19,6 +19,38 @@ import copy
 import pickle
 
 
+class SaveExperiment:
+    def __init__(self, path, experiment):
+        self.path = path
+        self.experiment = experiment
+        self.save_object = {}
+        self._extract_objects()
+        self.save()
+
+    def save(self):
+        path = self.path + '.exp'
+        with open(path, 'wb') as file:
+            pickle.dump(self.save_object, file,
+                        protocol=pickle.HIGHEST_PROTOCOL)
+
+    def _extract_objects(self):
+        details = {'units': self.experiment._units,
+                   'GVD': self.experiment.GVD_corrected,
+                   'excitation': self.experiment.excitation,
+                   'path': self.experiment.data_path,
+                   'deconv': self.experiment._deconv,
+                   'n_fits':self.experiment._fit_number}
+
+        self.save_object["report"] = self.experiment.preprocessing_report
+        self.save_object['fits'] = self.experiment.fit_records
+        self.save_object['actions'] = self.experiment.action_records
+        self.save_object['datas'] = self.experiment.data_sets
+        self.save_object['data'] = self.experiment.data
+        self.save_object['x'] = self.experiment.x
+        self.save_object['wavelength'] = self.experiment.wavelength
+        self.save_object['detail'] = details
+
+
 class Experiment(ExploreData, ExploreResults):
     """
     Class to work with a time resolved data set and easily preprocess the data,
@@ -257,13 +289,53 @@ class Experiment(ExploreData, ExploreResults):
         """
         Load a saved Experiment
         """
-        with open(path) as file:
-            experiment = pickle.load(file)
-        if type(experiment) == Experiment:
-            return experiment
+        error = False
+        file_found = False
+        unpickle = False
+        instantiate = False
+        try:
+            with open(path, 'rb') as file:
+                file_found = True
+                object_load = pickle.load(file)
+                unpickle = True
+                x = object_load['x']
+                data = object_load['data']
+                wavelength = object_load['wavelength']
+                instantiate = True
+                experiment = Experiment(x, data, wavelength)
+                experiment.preprocessing_report = object_load["report"]
+                experiment.fit_records = object_load['fits']
+                experiment.action_records = object_load['actions']
+                experiment._units = object_load['detail']['units']
+                experiment.GVD_corrected = object_load['detail']['GVD']
+                experiment.excitation = object_load['detail']['excitation']
+                experiment.data_path = object_load['detail']['path']
+                experiment._deconv = object_load['detail']['deconv']
+                experiment._fit_number = object_load['detail']['n_fits']
+
+        except Exception:
+            error = True
         else:
-            msg = 'File do not correspond to a ultrafast Experiment class'
-            raise ExperimentException(msg)
+            if type(experiment) == Experiment:
+                return experiment
+        finally:
+            if error:
+                if not file_found:
+                    msg = 'File not found, incorrect path'
+                elif not file_found:
+                    msg = 'Unable to open the specify file'
+                elif not instantiate:
+                    msg = 'File do not correspond to a ultrafast Experiment class'
+                else:
+                    msg = 'Undefined error occur while loading the file'
+                raise ExperimentException(msg)
+            else:
+                print('Experiment load successfully')
+
+    def load_fit(self, path):
+
+        # TODO load a fit result
+        pass
 
     def save(self, path):
         """
@@ -274,10 +346,7 @@ class Experiment(ExploreData, ExploreResults):
         path: string
             path where to save the Experiment
         """
-        path = path + '.exp'
-        with open(path, 'wb') as file:
-            pickle.dump(self, file, protocol=pickle.HIGHEST_PROTOCOL)
-        ## ToDo better saving
+        save = SaveExperiment(path, self)
 
     def describe_data(self):
         """
@@ -319,6 +388,7 @@ class Experiment(ExploreData, ExploreResults):
         """
         Print the general report of the experiment 
         """
+        # TODO save in an output file
         self.describe_data()
         print('============================================\n')
         self.preprocessing_report.print()
@@ -401,11 +471,11 @@ class Experiment(ExploreData, ExploreResults):
         self.wavelength = new_wave
         self._add_action("wavelength calibration", True)
 
-    def GVD_correction_graphically(self, method):
+    def GVD_correction_graphically(self, method, excitation=None):
         """
         Identical to chirp_correction method
         """
-        self.chirp_correction_graphically(method)
+        self.chirp_correction_graphically(method, excitation)
 
     def baseline_substraction(self, number_spec=2, only_one=False):
         """
@@ -458,7 +528,7 @@ class Experiment(ExploreData, ExploreResults):
         """
         self._add_to_data_set("before_subtract_polynomial_baseline")
         new_data = Preprocessing.subtract_polynomial_baseline(self.data,
-                                                              self.wavelenght,
+                                                              self.wavelength,
                                                               points=points,
                                                               order=order)
         self.data = new_data
@@ -815,7 +885,7 @@ class Experiment(ExploreData, ExploreResults):
         self._fit_number += 1
         self.fit_records.global_fits[self._fit_number] = results
         self._add_action(f'{self._params_initialized} fit performed')
-        self._update_last_params(results.estimation_params)
+        self._update_last_params(results.params)
 
     def single_exp_fit(self, wave, average, t0, fwhm, *taus, vary=True, tau_inf=1E12, maxfev=5000,
                        apply_weights=False, opt_fwhm=False, plot=True):
@@ -1215,7 +1285,7 @@ class Experiment(ExploreData, ExploreResults):
             self.select_SVD_vectors(self.selected_traces.shape[1])
         else:
             avg = self._averige_selected_traces
-            wave = [i for i in self.selected_wavelength]
+            wave = list(self.selected_wavelength)
             self.select_traces(wave, avg)
             val = len(self.action_records.__dict__) - 3
             delattr(self.action_records, f"_{val}" )

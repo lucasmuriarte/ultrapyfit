@@ -527,7 +527,7 @@ class Preprocessing:
         ----------
         initial data and time vector averaged
         """
-        if len(points) > order:
+        if len(points) < order:
             statement = 'The number of points need to be higher than the '\
                         'polynomial order'
             raise ExperimentException(statement)
