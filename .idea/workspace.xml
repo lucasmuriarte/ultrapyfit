@@ -6,16 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/fit/experiement_fit_rsEGFP2_trimps.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/experiement_fit_rsEGFP2_trimps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/fit/exponential IRF fit.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential IRF fit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +184,7 @@
       <workItem from="1624632160911" duration="756000" />
       <workItem from="1624887054235" duration="580000" />
       <workItem from="1625410394337" duration="144000" />
-      <workItem from="1626344827950" duration="12417000" />
+      <workItem from="1626344827950" duration="14880000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>
