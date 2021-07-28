@@ -216,6 +216,56 @@ class ModelCreator:
                    params['tau%i_' % (ii+1)+str(i+1)].value]
                   for ii in range(self.exp_no)]
         return self.expN(self.x[index:], y0, t0, values)
+
+    def expNDatasetIRF(self, params, i, IRF):
+        """
+        calculate a weighted sum of exponential decay functions with an
+        off-set from params for data set i using simple hardwired naming
+        convention. This function can be used for datasets having different t0.
+
+
+        Parameters
+        ----------
+        params: GlobExpParameters  object
+          object containing the parameters created for global
+          fitting several decay traces
+
+        i: int
+            number corresponding to the specific trace
+
+        Returns
+        ----------
+        1darray of size equal to time-vector
+        """
+        y0 = params['y0_%i' % (i + 1)].value
+        t0 = int(params['t0_%i' % (i + 1)].value)
+        # print(t0)
+        values = [[params['pre_exp%i_' % (ii + 1) + str(i + 1)].value,
+                   params['tau%i_' % (ii + 1) + str(i + 1)].value]
+                  for ii in range(self.exp_no)]
+        sum_exp = sum([pre_exp * ModelCreator.exp1(self.x, tau)
+                       for pre_exp, tau in values])
+        # print(len(sum_exp))
+        # print(len(IRF))
+        # print(len(result))
+
+        # padding for convolution
+        sum_exp_pad = np.pad(sum_exp, len(sum_exp)//2, mode='minimum')
+        IRF_pad = np.pad(IRF, len(IRF) // 2, mode='minimum')
+        # convolution
+        # x = np.fft.fft(sum_exp)
+        # h = np.fft.fft(IRF)
+        # result = np.real(np.fft.ifft(x * h))
+        result = np.convolve(sum_exp_pad, IRF_pad, mode='same')
+        # removing padding
+        mini = len(sum_exp)//2
+        maxi = int(len(sum_exp)*1.5)
+        result = result[mini:maxi]
+
+        # adjusting shift between IRF and data
+        result_y = np.ones(len(result))
+        result_y[t0:] = result[:len(result)-t0]
+        return result_y + y0
     
     def expNDatasetFast(self, params, i, expvects):
         """

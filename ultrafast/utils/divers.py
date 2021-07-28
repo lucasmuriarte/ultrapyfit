@@ -127,7 +127,19 @@ class TimeUnitFormater:
             val = self._multiplicator.value * multi**turns
             
             if 1 >= val >= 1E-24:
-                name = TimeMultiplicator(TimeMultiplicator(self._multiplicator.value * multi**turns))
+                # print(multi, turns)
+                val = self._multiplicator.value * multi**turns
+                if val == 1.0000000000000002e-15:
+                    val = 1e-15
+                elif val == 1.0000000000000002e-12:
+                    val = 1e-12
+                elif val == 1.0000000000000002e-09:
+                    val = 1e-9
+                elif val == 1.0000000000000002e-06:
+                    val = 1e-6
+                elif val == 1.0000000000000002e-03:
+                    val = 1e-3
+                name = TimeMultiplicator(TimeMultiplicator(val))
                 if name.name != "s":
                     name = f'{name.name}s'
                 else:
@@ -215,7 +227,7 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
             values = [first + space * i for i in range(len(wavelengths)) if first + space * i < wavelengths.iloc[-1]]
             selected_traces = [(wavelengths - values[i]).abs().sort_values().index[0] for i in range(len(values))]
         else:
-            selected_traces = [np.argmin(abs(wavelength - i)) for i in space]
+            selected_traces = [np.argmin(abs(wavelengths.values - i)) for i in space]
         avoid_regions_index = []
         if avoid_regions is not None:
             assert type(avoid_regions) is list, 'Please regions should be indicated as a list'
@@ -242,7 +254,7 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
                     indexes = []
                     for i in selected_traces:
                         mini = 0 if i - points < 0 else i - points
-                        maxi = len(wavelength) if i + points > len(wavelength) else i + points + 1
+                        maxi = len(wavelengths) if i + points > len(wavelengths) else i + points + 1
                         indexes.append([mini, maxi])
                     dat_res = pd.DataFrame(data=[dat.iloc[:, i[0]:i[1]].mean(axis=1) for i in indexes],
                                            columns=dat.index,
@@ -413,8 +425,12 @@ def read_data(path, wavelength=0, time=0, wave_is_row=False, separator=',', deci
     3 arrays corresponding to time, data, and wavelength
     """
     reader = ReadData()
-    time, data, wavelength = reader.readData(path, wavelength=wavelength, time=time,
-                                             wave_is_row=wave_is_row, separator=separator, decimal=decimal)
+    time, data, wavelength = reader.readData(path,
+                                             wavelength=wavelength,
+                                             time=time,
+                                             wave_is_row=wave_is_row,
+                                             separator=separator,
+                                             decimal=decimal)
     return time, data, wavelength
 
 
@@ -422,9 +438,10 @@ class ReadData:
     @staticmethod
     def _readPandas(pandas):
         """
-        return the index and columns names of a pandas data frame as numpy arrays if
-        this are form by numbers or a number plus a string. For example if for a dataFrame
-        with index or columns as [4 nm, 5 nm, 6 nm] is returns [4, 5, 6]
+        return the index and columns names of a pandas data frame as numpy
+        arrays if this are form by numbers or a number plus a string. For
+        example if for a dataFrame with index or columns as [4 nm, 5 nm, 6 nm]
+        is returns [4, 5, 6]
         """
         try:
             column = np.array([float(i) for i in pandas.columns.values])
@@ -445,13 +462,13 @@ class ReadData:
         """
         if wave_is_row:
             # print('row')
-            data_frame = pd.read_csv(path, sep=separator, index_col=wavelength,
-                                     skiprows=time, decimal=decimal).dropna(
+            data_frame = pd.read_csv(path, sep=separator, index_col=time,
+                                     skiprows=wavelength, decimal=decimal).dropna(
                                      how='all', axis=1).dropna(how='all', axis=1)
             data_frame = data_frame.transpose()
         else:
-            data_frame = pd.read_csv(path, sep=separator, index_col=time,
-                                     skiprows=wavelength, decimal=decimal).dropna(
+            data_frame = pd.read_csv(path, sep=separator, index_col=wavelength,
+                                     skiprows=time, decimal=decimal).dropna(
                 how='all').dropna(how='all', axis=1)
         data_frame.fillna(0, inplace=True)
         wavelength_dimension, time_dimension = ReadData._readPandas(data_frame)
@@ -567,9 +584,9 @@ def book_annotate(container, extend=True):
     Decorator with arguments. This decorator is working only with LabBook class,
     or an object with modified __setattr__ method.
 
-    It is use to create a lab book where the functions names and parameters names and values given
-    are saved in container (VariableContainer class). VariableContainer has a method print() for
-    printing the lab book.
+    It is use to create a lab book where the functions names and parameters
+    names and values given are saved in container (VariableContainer class).
+    VariableContainer has a method print() for printing the lab book.
     """
 
     def dump_args(func):
@@ -624,14 +641,15 @@ class LabBook(object):
 
     def __setattr__(self, key, val, extend=False):
         """
-        setter modification to include an extend parameter working with book_annotate
+        setter modification to include an extend parameter working with
+        book_annotate decorator
 
         Parameters
         ----------
             extend: bool (default True)
-                If True, and a same function is run several times, then the records
-                are keep as a list of string.
-                If False, if a same function is ran twice the previous meta data
+                If True, and a same function is run several times, then the
+                records are keep as a list of string.
+                If False, if a same function is run twice the previous meta data
                 will be overwritten.
         """
         if hasattr(self, key) and extend:
@@ -659,7 +677,8 @@ class LabBook(object):
 
     def delete(self, key, element='all'):
         """
-        method similar to delattr function. It deletes an entry on the lab according to key
+        method similar to delattr function. It deletes an entry on the lab
+        according to key
 
         Parameters
         ----------
@@ -694,7 +713,8 @@ class LabBook(object):
                 Define if protected attributes starting with "_" are printed
 
             single_line: bool (default False)
-                If True attributes that are not a list, the name and value will be printed in a single line
+                If True attributes that are not a list, the name and value will
+                be printed in a single line
         """
         if hasattr(self, 'name'):
             name = getattr(self, 'name')
@@ -751,8 +771,9 @@ class FiguresFormating:
     @staticmethod
     def cover_excitation(ax, x_range, x_vector):
         """
-        add a white rectangle on top of an area in the figure. Typically use to cover
-        the excitation of the laser in the spectra figure of a pump-probe UV-vis experiment.
+        add a white rectangle on top of an area in the figure. Typically use to
+        cover the excitation of the laser in the spectra figure of a pump-probe
+        UV-vis experiment.
 
         Parameters
         ----------
@@ -760,7 +781,8 @@ class FiguresFormating:
             axis containing the figure
 
         x_range: list or tupple of length 2
-            contains the initial and and final x values of x vector(normally wavelength)
+            contains the initial and and final x values of x vector
+            (normally wavelength)
 
         x_vector: array
             the x vector plotted in the figure
@@ -770,8 +792,10 @@ class FiguresFormating:
         ymax = ymax - ymax * 0.05
         mini = np.argmin([abs(x_range[0] - i) for i in x_vector])
         maxi = np.argmin([abs(x_range[1] - i) for i in x_vector])
-        rect = Rectangle((x_vector[mini] - 1, ymin), width=x_vector[maxi] - x_vector[mini] + 2,
-                         height=abs(ymax) + abs(ymin), fill=True, color='white', zorder=np.inf)
+        rect = Rectangle((x_vector[mini] - 1, ymin),
+                         width=x_vector[maxi] - x_vector[mini] + 2,
+                         height=abs(ymax) + abs(ymin),
+                         fill=True, color='white', zorder=np.inf)
         ax.add_patch(rect)
 
     @staticmethod
@@ -798,7 +822,8 @@ class FiguresFormating:
         ax.set_xlabel(x_label)
 
     @staticmethod
-    def format_figure(ax, data, x_vector, size=14, x_tight=False, set_ylim=True, val=50):
+    def format_figure(ax, data, x_vector, size=14, x_tight=False,
+                      set_ylim=True, val=50):
         """
         Deprecated function, style in combination with use_style decorator
         should be use to format figures.
@@ -811,7 +836,8 @@ class FiguresFormating:
             -set tick labels in scientific notations
             -add x = 0 horizontal line. line_style = (--)
 
-        Set margins of the data figure in x and y directions according to the different parameters.
+        Set margins of the data figure in x and y directions according to the
+        different parameters.
 
         Parameters
         ----------
@@ -819,8 +845,8 @@ class FiguresFormating:
             axis containing the figure
 
         data: np array
-            array containing the data plotted. Is used to get minimum and maximum values and
-            adjust the y margins if set_ylim is True
+            array containing the data plotted. Is used to get minimum and
+            maximum values and adjust the y margins if set_ylim is True
 
         x_vector: array
             the x vector plotted in the figure
