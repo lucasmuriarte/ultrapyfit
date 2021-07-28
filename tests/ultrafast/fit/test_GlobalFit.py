@@ -69,7 +69,7 @@ class TestGlobalFitResult(unittest.TestCase):
     def test_add_data_details(self):
         fitter = GlobalFit(time_simulated, data_simulated, 3, params)
         results = Container(params=params)
-        results_test = GloablFitResult(results)
+        results_test = GlobalFitResult(results)
         details = fitter._get_fit_details()
         results_test.add_data_details(fitter._data_ensemble, details)
         self.assertTrue(hasattr(results_test, 'data'))
@@ -87,7 +87,7 @@ class TestGlobalFitExponential(unittest.TestCase):
         fitter = GlobalFitExponential(time, data_select, 3, parameters, False,
                                       wavelength=wave_select)
         result = fitter.global_fit()
-        params_result = result.params
+        params_result = result.estimation_params
         final_taus = [params_result['tau1_1'].value,
                       params_result['tau2_1'].value,
                       params_result['tau3_1'].value]
@@ -113,7 +113,7 @@ class TestGlobalFitExponential(unittest.TestCase):
         fitter = GlobalFitExponential(time, data_select, 3, parameters, False,
                                       wavelength=wave_select)
         fitter._apply_time_constraint()
-        fitter._uncontraint_times()
+        fitter._unconstraint_times()
         params = fitter.params
         self.assertTrue(params['tau2_1'].min is None)
         self.assertTrue(params['tau3_1'].min is None)

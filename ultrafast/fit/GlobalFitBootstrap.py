@@ -4,8 +4,8 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 from ultrafast.utils.Preprocessing import ExperimentException
 from ultrafast.graphics.ExploreResults import ExploreResults
-from ultrafast.fit.ExponentialFit import GlobalFitExponential
-from ultrafast.fit.TargetFit import GlobalFitTargetModel
+from ultrafast.fit.GlobalFit import GlobalFitExponential
+from ultrafast.fit.GlobalFit import GlobalFitTarget
 from seaborn import distplot
 from matplotlib.offsetbox import AnchoredText
 
@@ -22,7 +22,7 @@ class BootStrap:
     ----------
     fit_results: lmfit results Object
         Should be an lmfit result object obtained either from
-        GlobalFitTargetModel, GlobalFitExponential or Experiment classes
+        GlobalFitTarget, GlobalFitExponential or Experiment classes
     bootstrap_result: pandas dataFrame (default None)
         Pandas data frame containing where the bootstrap results are appended
         initially can be None, which will imply creating a new one from zero.
@@ -38,20 +38,20 @@ class BootStrap:
     datas: numpy array
         contain the simulated data sets for fitting produced either directly
         from the sample or from the residues.
-    fitter: GlobalFitTargetModel / GlobalFitExponential
+    fitter: GlobalFitTarget / GlobalFitExponential
         Contains the fitter used to obtained the fit_results passed
     params: lmfit Parameter object
         Contains the parameters used to obtained the fit_results passed
     """
 
-    def __init__(self, fit_results, bootstrap_result=None):
+    def __init__(self, fit_results, bootstrap_result=None, time_unit='ps'):
         """
         constructor function:
         Parameters
         ----------
         fit_results: lmfit results Object
             Should be an lmfit result object obtained either from
-            GlobalFitTargetModel, GlobalFitExponential or Experiment classes
+            GlobalFitTarget, GlobalFitExponential or Experiment classes
         bootstrap_result: pandas dataFrame (default None)
             Pandas data frame containing where the bootstrap results are
             appended initially can be None, which will imply creating a new one
@@ -65,6 +65,7 @@ class BootStrap:
         else:
             self.bootstrap_result = bootstrap_result
             self.data_simulated = bootstrap_result._type
+        self.time_unit = time_unit
         self.confidence_interval = None
         self.datas = None
         self.fitter, self.params = self._get_original_fitter()
@@ -118,28 +119,33 @@ class BootStrap:
         if return_data:
             return data
 
-    def fit_bootstrap(self, cal_conf=True):
+    def fit_bootstrap(self, cal_conf=True, parallel_computing=False):
         """
         Fit the simulated data sets with the same model used to obtain the
         fit_results passed to instatiate the obaject.
         Parameters
         ----------
-        cal_conf: bool, (default True
+        cal_conf: bool, (default True)
             If True the confidence intervals will be calculated after all fits
             have been completed
+        parallel_computing: bool, (default False)
+            If True the calculations will be run parallel using dask library
+
         """
         data_sets = self.datas
         if data_sets is None:
             msg = 'Generate the data sets before'
             raise ExperimentException(msg)
+        # extract parameters from the fit
         exp_no, type_fit, deconv, maxfev, tau_inf = self._details()
         time_constraint = self.fit_results.details['time_constraint']
         weight = self.fit_results.weights
         names = self._get_fit_params_names(type_fit, exp_no, deconv)
         variations = self._get_variations(names, exp_no)
-        x = self.fit_results.time
+        x = self.fit_results.x
         self._append_results_pandas_dataframe(self.bootstrap_result,
                                               self.fit_results, names)
+        # fit all the generated data_sets
         for boot in range(data_sets.shape[2]):
             if type(weight) == dict:
                 apply_weight = weight['apply']
@@ -151,16 +157,19 @@ class BootStrap:
             if apply_weight:
                 fitter.weights = weight
 
-            reults = fitter.global_fit(variations, maxfev=maxfev,
-                                       time_constraint=time_constraint,
-                                       apply_weights=apply_weight)
+            results = fitter.global_fit(variations, maxfev=maxfev,
+                                        time_constraint=time_constraint,
+                                        apply_weights=apply_weight)
 
             self._append_results_pandas_dataframe(self.bootstrap_result,
-                                                  reults, names)
-
+                                                  results, names)
             print(f'the number of boots is: {boot}')
+
         if cal_conf:
             self.bootConfInterval(data=self.bootstrap_result)
+
+    def _fit_iteration(self, number):
+        pass
 
     @staticmethod
     def bootConfInterval(data):
@@ -257,7 +266,7 @@ class BootStrap:
         resultados = self.fit_results
         params = resultados.params
         data = resultados.data
-        x = resultados.time
+        x = resultados.x
         deconv = resultados.details['deconv']
         result_explorer = ExploreResults(resultados)
         fittes = result_explorer.results()
@@ -317,7 +326,7 @@ class BootStrap:
     def _get_original_fitter(self):
         """
         returns which fitter was used in the original fit.
-        Either GlobalFitTargetModel or GlobalFitExponential
+        Either GlobalFitTarget or GlobalFitExponential
         """
         exp_no, type_fit, deconv, maxfev, tau_inf = self._details()
         initial_prams = deepcopy(self.fit_results.params)
@@ -326,7 +335,7 @@ class BootStrap:
         if type_fit == 'Exponential':
             fitter_obj = GlobalFitExponential
         elif type_fit == 'Target':
-            fitter_obj = GlobalFitTargetModel
+            fitter_obj = GlobalFitTarget
         else:
             msg = 'error in the defined type of fit'
             raise ExperimentException(msg)

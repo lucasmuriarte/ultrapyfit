@@ -140,6 +140,7 @@ class ExploreData(PlotSVD):
         Plots either the selected traces or 9-10 trace equally space in the
         wavelength range. If less than 10 (included) traces are plotted a
         legend will be display.
+
         Parameters
         ----------
         traces: auto, select or a list  (default select)
@@ -182,6 +183,7 @@ class ExploreData(PlotSVD):
                      include_rango_max=True):
         """
         Function to plot spectra
+
         Parameters
         ----------
         times: list or "all" or "auto" (default "all")
@@ -240,8 +242,8 @@ class ExploreData(PlotSVD):
             Name of matplotlib color map if None the attribute color_map will
             be use
         size: int (default 14)
-            size of the figure text labels including tick labels axis labels
-            and legend
+            (deprecated) size of the figure text labels including tick labels
+            axis labels and legend
         include_rango_max: bool (default True)
             If True, spectra are auto-plotted in a given range the last spectrum
             plotted will be the closest to the range limit
@@ -276,6 +278,7 @@ class ExploreData(PlotSVD):
     def plot3D(self, cmap=None):
         """
         Plot the data in 3D
+
         Parameters
         ----------
         cmap: str or None
@@ -310,6 +313,7 @@ class ExploreData(PlotSVD):
         """
         Method to select traces from the data attribute and defines a subset
         of traces in the selected_traces attribute.
+
         Parameters
         ----------
         points: int or list or "auto" (default 10)
@@ -331,13 +335,17 @@ class ExploreData(PlotSVD):
         ----------
         Modifies the attributes selected_traces and selected_wavelength.
         """
+        if hasattr(points, '__iter__'):
+            if len(points) == len(self.wavelength):
+                points = 'all'
         if points == 'all':
             self.selected_traces = copy(self.data)
             self.selected_wavelength = copy(self.wavelength)
         else:
-            self.selected_traces, self.selected_wavelength = \
-                select_traces(self.data, self.wavelength, points,
-                              average, avoid_regions)
+            # print(len(points), average, avoid_regions)
+            res = select_traces(self.data, self.wavelength, points,
+                                average, avoid_regions)
+            self.selected_traces, self.selected_wavelength = res
 
     def _verify_plot_spectra(self, times, data, legend, average):
         """
@@ -396,6 +404,7 @@ class ExploreData(PlotSVD):
     def select_traces_graph(self, points=-1, average=0):
         """
         Function to select traces graphically
+
         Parameters
         ----------
         points: int (default -1)
@@ -490,8 +499,7 @@ class ExploreData(PlotSVD):
         # FiguresFormating.format_figure(ax, data, wavelength,
         #                                size=size, x_tight=True,
         #                                set_ylim=False)
-        FiguresFormating.axis_labels(ax, self._get_wave_label(),
-                                     '$\Delta$A')
+        FiguresFormating.axis_labels(ax, self._get_wave_label(), '$\Delta$A')
         if cover_range is not None:
             FiguresFormating.cover_excitation(ax, cover_range, self.wavelength)
 

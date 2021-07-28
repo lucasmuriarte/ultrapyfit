@@ -27,10 +27,10 @@ class Preprocessing:
     Class containing main preprocessing functions as static methods
     
     All methods assumes tha the data array pass has: 1) data is a 2darray that 
-    has no wavelength or time data points, time and wavelength are given as separate
-    1d arrays. 2) In the original data set the number of rows shape is the time
-    points and the number of columns the wavelength points. (Some functions work
-    independently of the orientation of the data)
+    has no wavelength or time data points, time and wavelength are given as 
+    separate 1d arrays. 2) In the original data set the number of rows shape
+    is the time points and the number of columns the wavelength points. 
+    (Some functions work independently of the orientation of the data)
     
     The transient data pass should be: 
         data 2d_arrays (time point rows and wavelength columns)
@@ -39,7 +39,43 @@ class Preprocessing:
         e.g.: data.shape = (50,250)
                 data has 250 wavelength points and 50 time points
     """
-    
+
+    @staticmethod
+    def calibration_with_polynom(array, pixels: list, wavelength: list,
+                                 order=2):
+        """
+        Computes a calibration of an array from a set of given lists of points,
+        pixels and wavelength, using a polynomial fit between the point in the
+        two list.
+
+
+        Parameters
+        ----------
+        array: 1darray
+          Original data array to be calibrated
+
+        pixels: list
+            list containing a set of values from the original array.
+
+        wavelength: list
+            list containing a set of values to which the values given in the
+             pixels list correspond in reality.
+
+        order: int (default 2)
+            Order of the polynomial use to fit pixels and wavelength.
+            Notice that the order should be smaller than the len of the list
+
+        Returns
+        ----------
+        ndarray of size equal data
+        """
+        if len(pixels) != len(wavelength):
+            msg = 'the length of pixels and wavelength list should be identical'
+            raise ExperimentException(msg)
+        polynom = np.poly1d(np.polyfit(pixels, wavelength, order))
+        new_array = polynom(array)
+        return new_array
+
     @staticmethod
     def baseline_substraction(data, number_spec=2, only_one=False):
         """
@@ -117,8 +153,8 @@ class Preprocessing:
         Parameters
         ----------
         points: int, list or None
-            estimate values of time, the closes values of dimension_vector to the points given
-            will be deleted
+            estimate values of time, the closes values of dimension_vector to 
+            the points given will be deleted
         
         data: ndarray
             Original data set where the number of rows should be the time points
@@ -154,8 +190,8 @@ class Preprocessing:
         elif nx == len(dimension_vector):
             data_return = np.delete(data, index, axis=1)
         else:
-            exception = 'The length of the vector pass is not coincident with \
-                        any of the data dimensions'
+            exception = 'The length of the vector pass is not coincident with'\
+                        'any of the data dimensions'
             print('exception')
             raise ExperimentException(exception)
         dimension_vector = np.delete(dimension_vector, index)
@@ -164,8 +200,8 @@ class Preprocessing:
     @staticmethod
     def cut_columns(data, columns, mini=None, maxi=None, innerdata=None):
         """
-        Cut columns of the data set and wavelength vector according to the closest
-        values of mini and maxi margins given.  
+        Cut columns of the data set and wavelength vector according to the 
+        closest values of mini and maxi margins given.  
         (The function assumes column vector is sorted from low to high values)
         
         Parameters
@@ -180,8 +216,8 @@ class Preprocessing:
         columns: 1darray or None
             Wavelength vectors where regions are cut.
             If None an array from 0 to data number of columns is created and
-            returned after cutting. The parameters mini and maxi should be given
-            according to indexes
+            returned after cutting. The parameters mini and maxi should be 
+            given according to indexes
             
         mini: int, float or None (default: None)
           data higher than this value is kept
@@ -213,7 +249,8 @@ class Preprocessing:
                 raise ExperimentException(statement_3)
         if mini is None and maxi is None:
             statement_2 = 'please indicate only mini or maxi margins, or booth ' \
-                          'if data inside margins want to be cut or selected with innerdata'
+                          'if data inside margins want to be cut or selected '\
+                          'with innerdata'
             raise ExperimentException(statement_2)
         elif maxi is not None and mini is None:
             cut_index = (pd.Series(columns)-maxi).abs().sort_values().index[0]
@@ -239,9 +276,11 @@ class Preprocessing:
                 data_res = data[:, cut_mini:cut_maxi]
             else:
                 columns_res = np.append(columns[:cut_mini], columns[cut_maxi:])
-                data_res = np.concatenate((data[:, :cut_mini], data[:, cut_maxi:]), axis=1)
+                data_res = np.concatenate((data[:, :cut_mini],
+                                           data[:, cut_maxi:]), axis=1)
         else:
-            statement_4 = 'if mini and maxi margins are be given indicates that innerdata action either cut or select'
+            statement_4 = 'if mini and maxi margins are be given indicate '\
+            'the innerdata action; either cut or select'
             raise ExperimentException(statement_4)
         return data_res, columns_res
     
@@ -249,10 +288,11 @@ class Preprocessing:
     def cut_rows(data, rows, mini=None, maxi=None):
         """
         Cut rows of the data set and time vector according to the closest
-        values of mini and maxi margins given. Contrary to cut_columns functions,
-        inner cut are not available since in time resolved spectroscopy is not logical
-        to cut a complete area of recorded times. Therefore, giving mini and maxi
-        margins will result in selection of inner time values.
+        values of mini and maxi margins given. Contrary to cut_columns 
+        functions, inner cut are not available since in time resolved 
+        spectroscopy is not logical to cut a complete area of recorded times. 
+        Therefore, giving mini and maxi margins will result in selection of 
+        inner time values.
         (The function assumes rows vector is sorted from low to high values)
 
 
@@ -301,8 +341,8 @@ class Preprocessing:
         """
         Average time points collected (rows). This function can be use to average 
         time points. Useful in multiprobe time-resolved experiments or flash-
-        photolysis experiments recorded with a Photo multiplier tube where the number
-        of time points is very long and are equally spaced.
+        photolysis experiments recorded with a Photo multiplier tube where 
+        the number of time points is very long and are equally spaced.
         (The function assumes time vector is sorted from low to high values)
         
         
@@ -325,15 +365,15 @@ class Preprocessing:
           step to consider for averaging data points
         
         method: 'log' or 'constant' (default: 'log')
-            If constant: after starting_point the the function will return average 
-            time points between the step.
+            If constant: after starting_point the the function will return
+            average time points between the step.
               
             If log the firsts step is step/grid_dense and the following points
             are (step/grid_dense)*n where n is point number
         
         grid_dense: int or float higher than 1 (default: 5)
-            density of the log grid that will be applied. To high values will not
-            have effect if: start_point + step/grid_dense is lower than the
+            density of the log grid that will be applied. To high values will 
+            not have effect if: start_point + step/grid_dense is lower than the
             difference between the first two consecutive points higher than
             start_point. The higher the value the higher the grid dense will be.
             return.
@@ -394,12 +434,14 @@ class Preprocessing:
         return data_res, time_res
     
     @staticmethod
-    def derivate_data(data, window_length=25, polyorder=3, deriv=1, mode='mirror'):
+    def derivate_data(data, window_length=25, polyorder=3, deriv=1, 
+                      mode='mirror'):
         """
         Apply a Savitky-Golay filter to the data in the spectral range (rows).
         This function can be used to correct for baseline fluctuations and still 
         perform a global fit or a single fit to obtain the decay times.  Uses 
-        scipy.signal.savgol_filter (check scipy documentation for more information)
+        scipy.signal.savgol_filter. 
+        (check scipy documentation for more information)
 
         
         Parameters
@@ -421,8 +463,8 @@ class Preprocessing:
           order of the derivative after fitting
         
         mode: (default: 'mirror')
-            mode to evaluate bounders after derivation, check scipy.signal.savgol_filter
-            for the different options
+            mode to evaluate bounders after derivation, 
+            check scipy.signal.savgol_filter for the different options
             
         Returns
         ----------
@@ -485,8 +527,9 @@ class Preprocessing:
         ----------
         initial data and time vector averaged
         """
-        if len(points) > order:
-            statement = 'The number of points need to be higher than the polynomial order'
+        if len(points) < order:
+            statement = 'The number of points need to be higher than the '\
+                        'polynomial order'
             raise ExperimentException(statement)
         else:
             n_r, n_c = data.shape

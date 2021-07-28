@@ -4,19 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="">
+    <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/targetmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/targetmodel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/ExponentialFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/ExponentialFit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/TargetFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/TargetFit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/MaptplotLibCursor.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/MaptplotLibCursor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/targetmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/targetmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection_redone.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection_redone.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -172,8 +163,37 @@
       <workItem from="1613767679811" duration="28888000" />
       <workItem from="1615313629184" duration="3374000" />
       <workItem from="1615489038280" duration="15260000" />
-      <workItem from="1615657309297" duration="45274000" />
+      <workItem from="1615657309297" duration="74517000" />
+      <workItem from="1616061110347" duration="699000" />
+      <workItem from="1616144613353" duration="299000" />
+      <workItem from="1616519068085" duration="333000" />
+      <workItem from="1616522182128" duration="601000" />
+      <workItem from="1616770157913" duration="1398000" />
+      <workItem from="1617119601677" duration="4148000" />
+      <workItem from="1617267249574" duration="301000" />
+      <workItem from="1618048289332" duration="1954000" />
+      <workItem from="1618836542589" duration="4948000" />
+      <workItem from="1620288456723" duration="2171000" />
+      <workItem from="1620833759255" duration="581000" />
+      <workItem from="1620892629007" duration="25374000" />
+      <workItem from="1621366080188" duration="28086000" />
+      <workItem from="1621681511739" duration="2671000" />
+      <workItem from="1621945278697" duration="10516000" />
+      <workItem from="1622156486670" duration="781000" />
+      <workItem from="1622967126950" duration="5223000" />
+      <workItem from="1624632160911" duration="756000" />
+      <workItem from="1624887054235" duration="580000" />
+      <workItem from="1625410394337" duration="144000" />
+      <workItem from="1626344827950" duration="14880000" />
     </task>
+    <task id="LOCAL-00001" summary="global_fit with IRF convolution">
+      <created>1621369582820</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1621369582820</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -190,6 +210,10 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="global_fit with IRF convolution" />
+    <option name="LAST_COMMIT_MESSAGE" value="global_fit with IRF convolution" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

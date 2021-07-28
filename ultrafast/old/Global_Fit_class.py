@@ -1336,11 +1336,11 @@ class GlobalFit(lmfit.Minimizer):
             print('true')
             self.all_fit[self.fit_number]=(self.x_before_last_Fit,self.data_before_last_Fit,self.wavelength_before_first_selection,self.resultados,
                         self.exp_no,self.deconv,self.tau_inf,self.derivative_space,fit_condition,self.SVD_fit,data_SVD,self.params)
-            print_resultados='\t\t'+',\n\t\t'.join([f'{name.split("_")[0]}:\t{round(self.resultados.params[name].value,4)}\t{self.resultados.params[name].vary}' for name in names])
+            print_resultados='\t\t'+',\n\t\t'.join([f'{name.split("_")[0]}:\t{round(self.resultados.estimation_params[name].value, 4)}\t{self.resultados.estimation_params[name].vary}' for name in names])
             self.general_report['Fits done'][f'Fit number {self.fit_number}']=f'Singular vector {self.type_fit} Fit\n\t---------------\n\tFitted {data_SVD.shape[1]} Singular vectors with {self.exp_no} exponenitial,\n\t{deconvolution},\n\tresults:\tname\tvalue\toptimized\n{print_resultados}\n\t{weight_rep}'
             self.general_report['Sequence of actions'].append(f'\t--> Singular vector {self.type_fit} Fit {self.fit_number} completed') 
         self.data_before_last_Fit=data_SVD*1.0
-        self.params=deepcopy(resultados.params)
+        self.params=deepcopy(resultados.estimation_params)
         self.initial_params=initial_params.copy()
         
         print('finish')
@@ -1356,7 +1356,7 @@ class GlobalFit(lmfit.Minimizer):
             else:
                 data=self.all_fit[fit_number][1]
             wavelenght=self.all_fit[fit_number][2]
-            params=self.all_fit[fit_number][3].params
+            params=self.all_fit[fit_number][3].estimation_params
             deconv=self.all_fit[fit_number][5]
         else:
             data=self.data_before_last_Fit
@@ -1441,7 +1441,7 @@ class GlobalFit(lmfit.Minimizer):
             if self.all_fit[fit_number][9]:#verify type of fitaither SVD or global fit
                 result_params=self.all_fit[fit_number][11]
             else:    
-                result_params=self.all_fit[fit_number][3].params
+                result_params=self.all_fit[fit_number][3].estimation_params
             data=self.all_fit[fit_number][1]
             exp_no=self.all_fit[fit_number][4]
             deconv=self.all_fit[fit_number][5]
@@ -1469,7 +1469,7 @@ class GlobalFit(lmfit.Minimizer):
             if self.all_fit[fit_number][9]:
                 params=self.all_fit[fit_number][11]
             else:
-                params=self.all_fit[fit_number][3].params
+                params=self.all_fit[fit_number][3].estimation_params
             exp_no=self.all_fit[fit_number][4]
             deconv=self.all_fit[fit_number][5]
             wavelenght=self.all_fit[fit_number][2]
@@ -1697,7 +1697,7 @@ class GlobalFit(lmfit.Minimizer):
         colors=c.to_rgba(a,norm=False)
         times=list(times)
         cols=[str(i) for i in self.wavelength]
-        data=pd.DataFrame(columns=cols,data=self.results(self.resultados.params))
+        data=pd.DataFrame(columns=cols, data=self.results(self.resultados.estimation_params))
         self.recompose_spec=pd.DataFrame(columns=([self.time_unit]+cols))
         if plot_raw:
             data_raw=pd.DataFrame(columns=cols,data=self.data)
@@ -2309,7 +2309,7 @@ class GlobalFit(lmfit.Minimizer):
         elif type(fit[8][3]) == dict:
             self.weights=fit[8][3]
             apply_weight=True
-        self.params=deepcopy(self.resultados.params)
+        self.params=deepcopy(self.resultados.estimation_params)
         if self.type_fit == 'Exponential':
             if self.deconv:
                 names=['t0_1','fwhm_1']+['tau%i_1'%(i+1) for i in range(self.exp_no)]
@@ -2817,7 +2817,7 @@ class GlobalFit(lmfit.Minimizer):
             if self.all_fit[fit_number][9]:
                 params=self.all_fit[fit_number][11]
             else:
-                params=self.all_fit[fit_number][3].params
+                params=self.all_fit[fit_number][3].estimation_params
             self.deconv=self.all_fit[fit_number][5]
         else:
             self.data_fit=self.data_before_last_Fit
@@ -2882,7 +2882,7 @@ class GlobalFit(lmfit.Minimizer):
                 params=self.all_fit[fit_number][11]
                 data=self.all_fit[fit_number][10]
             else:
-                params=self.all_fit[fit_number][3].params
+                params=self.all_fit[fit_number][3].estimation_params
                 data=self.all_fit[fit_number][1]
             exp_no=self.all_fit[fit_number][4]
             type_fit=self.all_fit[fit_number][8][2]#check for type of fit done
@@ -2957,7 +2957,7 @@ class GlobalFit(lmfit.Minimizer):
             if(self.initial_params['k_%i%i' % (i+1,i+1)].value != 0):
                 self.initial_params.add('tau%i_1' % (i+1),-1/self.initial_params['k_%i%i' % (i+1,i+1)].value,vary=False)
             else:
-                self.resultados.params.add('tau%i_1' % (i+1),np.inf,vary=False)
+                self.resultados.estimation_params.add('tau%i_1' % (i + 1), np.inf, vary=False)
         for iy in range(2,self.data.shape[1]+1):
             if self.deconv:
                 self.initial_params['fwhm_%i'% iy].expr='fwhm_1'   

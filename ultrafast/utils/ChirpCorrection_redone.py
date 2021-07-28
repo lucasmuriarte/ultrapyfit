@@ -10,11 +10,17 @@ from PyQt5.QtGui import QIcon
 from matplotlib.widgets import Slider, Button, RadioButtons
 from pylab import pcolormesh
 from ultrafast.utils.Preprocessing import ExperimentException
+from ultrafast.utils.divers import book_annotate, LabBook
 from ultrafast.graphics.MaptplotLibCursor import SnaptoCursor
 import lmfit
 
 
 class Dispersion:
+    """
+    Class that calculate the dispersion of different dispersive medium using
+    the Sellmeier equation. It only contain static methods.
+    The default dispersive media are BK7, SiO2 and CaF2
+    """
     BK7 = {'b1': 1.03961212, 'b2': 0.231792344, 'b3': 1.01046945,
            'c1': 6.00069867e10 - 3, 'c2': 2.00179144e10 - 2, 'c3': 103.560653}
     SiO2 = {'b1': 0.69616, 'b2': 0.4079426, 'b3': 0.8974794,
@@ -24,6 +30,17 @@ class Dispersion:
 
     @staticmethod
     def indexDifraction(x, b1, b2, b3, c1, c2, c3):
+        """
+        Returns the index diffraction of a dispersive media at every wavelength
+        pass (x). See https://en.wikipedia.org/wiki/Sellmeier_equation
+
+        Parameters
+        ----------
+            x: int or float
+                value of wavelength at which the dispersion is calculated
+            b1, b2, b3, c1, c2, c3: float
+                Values for the Sellmeier equation of a certain dispersive medium
+        """
         n = (1 + (b1 * x ** 2 / (x ** 2 - c1 ** 2)) + (
                 b2 * x ** 2 / (x ** 2 - c2 ** 2)) + (
                      b3 * x ** 2 / (x ** 2 - c3 ** 2))) ** 0.5
@@ -31,6 +48,19 @@ class Dispersion:
 
     @staticmethod
     def fprime(x, b1, b2, b3, c1, c2, c3):
+        """
+        Returns the index diffraction of a dispersive media at every wavelength
+        pass (x).
+
+        Parameters
+        ----------
+            x: int or float
+                value of wavelength at which the dispersion is calculated
+            x:
+                Wavelength vector to calculate the   dispersion
+            b1, b2, b3, c1, c2, c3:
+                Values for the Sellmeier equation of a certain dispersive medium
+        """
         return (b1 * x ** 2 / (-c1 ** 2 + x ** 2) + b2 * x ** 2 / (
                 -c2 ** 2 + x ** 2)
                 + b3 * x ** 2 / (-c3 ** 2 + x ** 2) + 1) ** (-0.5) * (
@@ -44,13 +74,30 @@ class Dispersion:
                        + 1.0 * b3 * x / (-c3 ** 2 + x ** 2))
 
     @staticmethod
-    def dispersion(landa, element_name, excitation):
+    def dispersion(wavelength, element_name, excitation):
+        """
+        Returns the index diffraction of a dispersive media at every wavelength
+        pass (x). See https://en.wikipedia.org/wiki/Sellmeier_equation
+
+        Parameters
+        ----------
+            wavelength: 1d numpy array or iterable
+                Wavelength vector to calculate the   dispersion
+            element_name: str
+                a valid key for an attribute in the class, for example "BK7"
+                "SiO2" and "CaF2"
+            excitation: int or float
+                reference value to calculate the dispersion normally should be
+                the "Excitaion (pump)" wavelength used to excite the sample
+
+        """
+
         element = getattr(Dispersion, element_name)
         b1, b2, b3, c1, c2, c3 = element['b1'], element['b2'], element['b3'], \
                                  element['c1'], element['c2'], element['c3']
         n_g = np.array([Dispersion.indexDifraction(i, b1, b2, b3, c1, c2, c3) -
                         i * Dispersion.fprime(i, b1, b2, b3, c1, c2, c3)
-                        for i in landa])
+                        for i in wavelength])
         n_excitation = Dispersion.indexDifraction(excitation, b1, b2, b3, c1,
                                                   c2, c3) - excitation * \
                        Dispersion.fprime(excitation, b1, b2, b3, c1, c2, c3)
@@ -60,16 +107,79 @@ class Dispersion:
         return GVD
 
 
-class ChripCorrection:
-    def __init__(self, time, data, wavelength, gvd_estimation):
+class ChirpCorrection:
+    """
+    Class that corrects the group velocity dispersion (GVD) or chirp from
+    a data set. The algorithm is based on the one proposed by Nakayama et al.
+    (https://doi.org/10.1063/1.1148398), which used the data itself to correct
+    the chrip.
+
+    Attributes
+    ----------
+    x: 1darray
+        x-vector, normally time vector
+
+    data: 2darray
+        Array containing the data, the number of rows should be equal to
+        the len(x)
+
+    wavelength: 1darray
+            wavelength vector
+
+    corrected_data: 2darray
+        Array containing the data corrected, has the same shape as the
+        original data
+
+    gvd: 1darray
+        contains the estimation of the dispersion and is used to correct
+        the data
+
+    GVD_corrected: bool
+        True if the data has been corrected
+    """
+    def __init__(self, time, data, wavelength, gvd_estimation, function=None):
+        """
+        Constructor:
+
+        Parameters
+        ----------
+        time: 1darray
+            x-vector, normally time vector
+
+        data: 2darray
+            Array containing the data, the number of rows should be equal to
+            the len(x)
+
+        wavelength: 1darray
+                wavelength vector
+
+        gvd_estimation: 1darray
+            contains the estimation of the dispersion and is used to
+            correct the data
+        """
         self.data = data
         self.x = time
         self.wavelength = wavelength
         self.corrected_data = None
         self.gvd = gvd_estimation
-        self.GVD_correction = False
+        self.GVD_corrected = False
+        self._function = function
 
-    def correctGVD(self, verify=False):
+    def correct_chrip(self, verify=False):
+        """
+        Modified algorithm from Nakayama et al. to correct the chrip using the
+        data itself.
+
+        Parameter
+        --------
+        verify: bool (default False)
+            If True a figure will pop out after the correction of the chirp,
+            which allows to inspect the correction applied and decline
+            or accept it
+        """
+        if self.gvd is None:
+            msg = "Estimate the Group velocity dispersion or chirp first"
+            raise ExperimentException(msg)
         result = self.gvd
         nx, ny = self.data.shape
         corrected_data = self.data.copy()
@@ -102,13 +212,15 @@ class ChripCorrection:
                         w = abs((valor - sub) / (sub - inf))
                         corrected_data[ii, i] = w * self.data[idex - 1, i] + (
                                     1 - w) * self.data[idex, i]
-        self.GVD_correction = 'in process'
+        self.GVD_corrected = 'in process'
 #        fig, ax = plt.subplots(figsize=(6,6))
 #        pcolormesh(self.wavelength,self.x[:46],pd.DataFrame(corrected_data).iloc[:46].values,cmap='RdYlBu')
         self.corrected_data = corrected_data
         if verify:
             self.verifiedGVD()
         else:
+            if self._function is not None:
+                self._apply_function_after_correction()
             return self.corrected_data
 
     def _find_nearest(self, array, value):
@@ -116,27 +228,40 @@ class ChripCorrection:
         idx = (np.abs(array - value)).argmin()
         return idx, array[idx]
 
-    def radioVerifiedGVD(self, label):
+    def _radioVerifiedGVD(self, label):
+        """
+        Function used by verified GVD
+        """
         radiodict = {'True': True, 'False': False}
         self.radio1 = radiodict[label]
 
-    def buttonVerifiedGVD(self, label):
+    def _buttonVerifiedGVD(self, label):
+        """
+        Function used by verified GVD
+        """
         if self.radio1:
-            self.GVD_correction = True
+            self.GVD_corrected = True
             print('Data has been corrected from GVD')
             plt.close(self.fig)
             plt.close()
+            if self._function is not None:
+                self._apply_function_after_correction()
             return self.corrected_data
         else:
             self.corrected_data = None
-            self.GVD_correction = False
+            self.GVD_corrected = False
             plt.close(self.fig)
-            plt.close()
             print('Data has NOT been corrected from GVD')
             return None
 
     def verifiedGVD(self):
-        assert self.GVD_correction == 'in process', 'Please first try to correct the GVD'
+        """
+        Function pops out a window that allows to check the correction of the
+        chirp.
+        """
+        if self.GVD_corrected != 'in process':
+            msg = 'Please first try to correct the GVD'
+            raise ExperimentException(msg)
         axcolor = 'lightgoldenrodyellow'
         value = 2
         index2ps = np.argmin([abs(i - value) for i in self.x])
@@ -147,7 +272,7 @@ class ChripCorrection:
                              ::round(len(self.wavelength) / 11)]]
         ax0.pcolormesh(self.wavelength, self.x[:index2ps],
                        pd.DataFrame(self.corrected_data).iloc[
-                       :index2ps].values, cmap='RdYlBu')
+                       :index2ps].values, cmap='RdYlBu', shading='auto')
         # ax1 = self.fig.add_subplot(1,2,2)
         #        self.corrected_data
         xlabel = 'Time (ps)'
@@ -172,68 +297,169 @@ class ChripCorrection:
         ax0.set_xlabel('Wavelength (nm)', size=14)
         self.radio = RadioButtons(rax, ('True', 'False'), active=0)
         self.radio1 = self.radio.value_selected
-        self.radio.on_clicked(self.radioVerifiedGVD)
-        self.button.on_clicked(self.buttonVerifiedGVD)
+        self.radio.on_clicked(self._radioVerifiedGVD)
+        self.button.on_clicked(self._buttonVerifiedGVD)
         # if self.qt_path is not None:
         #    thismanager = plt.get_current_fig_manager()
         #    thismanager.window.setWindowIcon(QIcon(self.qt_path))
         self.fig.show()
 
+    def _apply_function_after_correction(self):
+        self._function()
 
-class EstimationGVD:
-    def __init__(self, time, data, wavelength, excitation=None):
+
+class EstimationGVD(ChirpCorrection):
+    """
+    Basic class to estimate and correct the GVD or chrip
+
+    Attributes
+    ----------
+    time: 1darray
+         normally the time vector
+
+    data: 2darray
+        Array containing the data, the number of rows should be equal to
+        the len(x)
+
+    wavelength: 1darray
+        wavelength vector
+
+    excitation: int or float (default None)
+        Contains the excitation wavelength of the pump laser used
+
+    corrected_data: 2darray
+        Array containing the data corrected, has the same shape as the
+        original data
+
+    gvd: 1darray (default None)
+        contains the estimation of the dispersion and is used to correct
+        the data
+
+    chirp_corrector: instance of ChirpCorrection class
+        use to correct the data
+    """
+    def __init__(self, time, data, wavelength, excitation=None, function=None):
         self.data = data
         self.corrected_data = None
         self.time = time
         self.wavelength = wavelength
         self.excitation = excitation
-        self.corrected_data = None
+        self.estimation_params = LabBook(name="GVD_details")
+        self._gvd_window_on = False
         self.gvd = None
-        self.chirp_corrector = ChripCorrection(self.time, self.data,
-                                               self.wavelength, self.gvd)
-
+        super().__init__(self.time, self.data, self.wavelength,
+                         self.gvd, function)
+        self.details = book_annotate(self.estimation_params)(self.details)
+        # self.chirp_corrector = ChirpCorrection(self.time, self.data,
+        #                                        self.wavelength, self.gvd)
+    
     def estimate_GVD(self):
+        """
+        Method to estimate the GVD should be overwrite
+        """
         pass
 
     def estimate_GVD_from_grath(self):
+        """
+        Method to estimate the GVD graphically should be overwrite
+        """
         pass
 
-    def correct_chrip(self, verify=True):
-        if self.gvd is None:
-            msg = "Estimate the Group velocity dispersion first"
-            raise ExperimentException(msg)
-        self.chirp_corrector.gvd = self.gvd
-        self.corrected_data = self.chirp_corrector.correctGVD(verify=verify)
-        corrected = False
-        if self.corrected_data is not None:
-            corrected = True
-        return corrected
+    def _GVD_window_close(self):
+        self._gvd_window_on = False
+
+    def get_corrected_data(self):
+        return self.corrected_data
+
+    def details(self, **kwargs):
+        for i in kwargs:
+            print(f'{i}')
 
 
 class EstimationGVDSellmeier(EstimationGVD):
-    def __init__(self, time, data, wavelength, excitation):
-        super().__init__(time, data, wavelength, excitation)
+    """
+    Class that calculate the dispersion GVD or chirp using the Sellmeier
+    equation. It only contain static methods.
+    The default dispersive media are BK7, SiO2 and CaF2
+
+    Attributes
+    ----------
+    BK7: int (Default 0)
+        contains the millimeters of BK7
+
+    SiO2: int (Default 0)
+        contains the millimeters of SiO2
+
+    CaF2: int (Default 0)
+        contains the millimeters of CaF2
+
+    GVD_offset: int (default 0)
+        contains an offset time value, that can be used to correct the t0
+        of the experimental data
+
+    dispersion_BK7: 1darray
+        contains dispersion curve of BK7
+
+    dispersion_SiO2: 1darray
+        contains dispersion curve of BK7
+
+    dispersion_CaF2: 1darray
+        contains dispersion curve of BK7
+
+    """
+    def __init__(self, time, data, wavelength, excitation, function=None):
+        super().__init__(time, data, wavelength, excitation, function)
         self.CaF2 = 0
         self.BK7 = 0
         self.SiO2 = 0
         self.GVD_offset = 0
         self.dispersion_BK7 = 0
-        self.dispersion_Caf2 = 0
+        self.dispersion_CaF2 = 0
         self.dispersion_SiO2 = 0
         self._calculate_dispersions()
-        
-    def estimate_GVD(self, CaF2=0, SiO2=0, BK7=0, offset=0):
+
+    def estimate_GVD(self, CaF2=0, SiO2=0, BK7=0, offset=0, verify=True):
+        """
+        Estimates the total chirp as the sum of the dispersion introduced by all
+        elements
+
+        Parameters
+        ----------
+        BK7: int (Default 0)
+            contains the millimeters of BK7
+
+        SiO2: int (Default 0)
+            contains the millimeters of SiO2
+
+        CaF2: int (Default 0)
+            contains the millimeters of CaF2
+
+        offset: int (default 0)
+            contains an offset time value, that can be used to correct the t0
+            of the experimental data
+
+        verify: bool (default True)
+            If True, after correction a figure that allows to verify the
+            correction will pop out.
+        """
         # print(CaF2, SiO2, BK7, offset)
         self.gvd = self.dispersion_BK7 * BK7 + self.dispersion_SiO2 * SiO2 + \
-                   self.dispersion_Caf2 * CaF2 + offset
+                   self.dispersion_CaF2 * CaF2 + offset
         self.CaF2, self.BK7, self.SiO2, self.GVD_offset = CaF2, BK7, SiO2, offset
+        self.details(method='sellmeier', CaF2=CaF2, SiO2=SiO2,
+                     BK7=BK7, offset=offset)
+        self.correct_chrip(verify=verify)
 
-    def estimate_GVD_from_grath(self, qt=None):
-        self.figGVD = plt.figure(figsize=(7, 6))
-        self.figGVD.add_subplot()
+    def estimate_GVD_from_grath(self, qt=None, function= None):
+        """
+        Allows to estimates the total chirp manually using sliders on the figure
+        that pops out. The final chirp is the sum of the dispersion introduced
+        by all elements.
+        """
+        self.figGVD, ax = plt.subplots(1, figsize=(7, 6))
         plt.ylabel('Time (ps)', size=14)
         plt.xlabel('Wavelength (nm)', size=14)
-        result = np.zeros(len(self.wavelength)) # original GVD value equal to 0
+        result = np.zeros(len(self.wavelength))  # original GVD value equal to 0
         self.l, = plt.plot(self.wavelength, result, lw=2, c='r')
         value = 2
         self.index2ps = np.argmin([abs(i - value) for i in self.time])
@@ -255,22 +481,31 @@ class EstimationGVDSellmeier(EstimationGVD):
         self.sfreq = Slider(axfreq, 'SiO2', 0, 10, valinit=0, color='b')
         self.sofset = Slider(axofset, 'Offset', -2, 2, valinit=0, color='r')
         # call update function on slider value change
-        self.sbk7.on_changed(self.updateGVD)
-        self.samp.on_changed(self.updateGVD)
-        self.sofset.on_changed(self.updateGVD)
-        self.sfreq.on_changed(self.updateGVD)
+        self.sbk7.on_changed(self._updateGVD)
+        self.samp.on_changed(self._updateGVD)
+        self.sofset.on_changed(self._updateGVD)
+        self.sfreq.on_changed(self._updateGVD)
         # button
         resetax = plt.axes([0.85, 0.025, 0.1, 0.04])
         self.button = Button(resetax, 'Calculate', color='tab:red',
                              hovercolor='0.975')
-        self.button.on_clicked(self.finalGVD)
+        self.button.on_clicked(self._finalGVD)
         if qt is not None:
             self.qt_path = qt
             thismanager = plt.get_current_fig_manager()
             thismanager.window.setWindowIcon(QIcon(qt))
         self.figGVD.show()
+        self._gvd_window_on = True
+        if function is not None:
+            self.figGVD.canvas.mpl_connect('close_event',
+                                   lambda event: function())
+        # while self._gvd_window_on:
+        #     _ = 1
 
-    def updateGVD(self, val):
+    def _updateGVD(self, val):
+        """
+        Function used by estimate_GVD_from_grath
+        """
         # amp is the current value of the slider
         ofset = self.sofset.val
         sio2 = self.sfreq.val
@@ -278,38 +513,51 @@ class EstimationGVDSellmeier(EstimationGVD):
         bk = self.sbk7.val
         # update curve
         self.l.set_ydata(bk * self.dispersion_BK7 +
-                         caf2 * self.dispersion_Caf2 +
+                         caf2 * self.dispersion_CaF2 +
                          sio2 * self.dispersion_SiO2 + ofset)
         # redraw canvas while idle
         self.figGVD.canvas.draw_idle()
 
-    def finalGVD(self, event):
+    def _finalGVD(self, event):
+        """
+        Function used by estimate_GVD_from_grath
+        """
         self.polynomGVD = False
         offset = self.sofset.val
         SiO2 = self.sfreq.val
         CaF2 = self.samp.val
         BK = self.sbk7.val
-        self.estimate_GVD(CaF2=CaF2, SiO2=SiO2, BK7=BK, offset=offset)
-        self.correct_chrip(verify=True)
+        self.estimate_GVD(CaF2=CaF2, SiO2=SiO2, BK7=BK, offset=offset,
+                          verify=True)
 
     def _calculate_dispersions(self):
+        """
+        Calculate the dispersions curves of the different dispersive media
+        """
         self.dispersion_BK7 = Dispersion.dispersion(self.wavelength, 'BK7',
                                                     self.excitation)
-        self.dispersion_Caf2 = Dispersion.dispersion(self.wavelength, 'CaF2',
+        self.dispersion_CaF2 = Dispersion.dispersion(self.wavelength, 'CaF2',
                                                      self.excitation)
         self.dispersion_SiO2 = Dispersion.dispersion(self.wavelength, 'SiO2',
                                                      self.excitation)
 
 
 class EstimationGVDPolynom(EstimationGVD):
-    def __init__(self, time, data, wavelength):
-        super().__init__(time, data, wavelength, None)
+    """
+    Class that allows to calculate the dispersion GVD or chirp fitting a
+    polynomial to the data.
+    """
+    def __init__(self, time, data, wavelength, function=None):
+        super().__init__(time, data, wavelength, None, function)
 
     def estimate_GVD_from_grath(self, qt=None):
-        self.figGVD = plt.figure(figsize=(7, 6))
-        result = np.array([self.time[0] for i in self.wavelength])
-        self.l, = plt.plot(self.wavelength, result, lw=2, c='r')
-        self.ax = self.figGVD.add_subplot(1, 1, 1)
+        """
+        Allows to estimates the total chirp manually by clicking on the figure
+        that pops out. The final chirp is estimated fitting a polynomial to the
+        selected points in the figure.
+        """
+        self.figGVD, self.ax = plt.subplots(1, figsize=(7, 6))
+        self.l, = plt.plot(self.wavelength, self.wavelength * 0, lw=2, c='r')
         ylabel = 'Time (ps)'
         plt.ylabel(ylabel, size=14)
         plt.xlabel('Wavelength (nm)', size=14)
@@ -317,7 +565,8 @@ class EstimationGVDPolynom(EstimationGVD):
         self.index2ps = np.argmin([abs(i - value) for i in self.time])
         self.ax.pcolormesh(self.wavelength, self.time[:self.index2ps],
                            pd.DataFrame(self.data).iloc[
-                           :self.index2ps].values, cmap='RdYlBu')
+                           :self.index2ps].values, cmap='RdYlBu',
+                           shading='auto')
         plt.axis([self.wavelength[0], self.wavelength[-1], self.time[0],
                   self.time[self.index2ps - 1]])
         plt.subplots_adjust(bottom=0.15)
@@ -343,28 +592,41 @@ class EstimationGVDPolynom(EstimationGVD):
         self.button3 = Button(resetax3, 'fit', color='tab:red',
                               hovercolor='0.975')
         self.button.on_clicked(self.correct_chrip)
-        self.button2.on_clicked(self.clear_fig)
-        self.button3.on_clicked(self.fitPolGVD)
+        self.button2.on_clicked(self._clear_fig)
+        self.button3.on_clicked(self._fitPolGVD_Grapth)
         if qt is not None:
             self.qt_path = qt
             thismanager = plt.get_current_fig_manager()
             thismanager.window.setWindowIcon(QIcon(qt))
         self.figGVD.show()
-    
-    def clear_fig(self, event):
-        self.cursor_pol.clear() 
-    
-    def fitPolGVD(self, event):
-        point_pol_GVD = self.cursor_pol.datay
-        #        plt.close(self.fig)
-        x = self.cursor_pol.datax
-        wavelength = self.cursor_pol.x
-    
 
-        # def optimize(params, x, y, order):
-        #     return y - self.polynomi(params, x, order)
-        
-        # with weigths
+    def _clear_fig(self, event):
+        """
+        Function used by estimate_GVD_from_grath, which clear the
+        selected points
+        """
+        self.cursor_pol.clear()
+        self.l.set_ydata(self.wavelength * 0)
+        self.figGVD.canvas.draw()
+
+    def _fitPolGVD_Grapth(self, event):
+        """
+        Function used by estimate_GVD_from_grath
+        """
+        y = self.cursor_pol.datay
+        x = self.cursor_pol.datax
+        self.fitPolGVD(x, y)
+        self.l.set_ydata(self.gvd)
+        self.figGVD.canvas.draw()
+
+    def fitPolGVD(self, x, y):
+        """
+        fit a polynomial to the data point X and Y, automatically calculates the
+        dispersion (gvd attribute) with the output of the polynomial fit and the
+        wavelength attribute vector.
+        """
+        wavelength = self.wavelength
+
         def optimize(params, x, y, order):
             return np.array([i**2 for i in range(len(x) + 1, 1, -1)]) * (
                         y - self.polynomi(params, x, order))
@@ -375,14 +637,16 @@ class EstimationGVDPolynom(EstimationGVD):
         params.add('c2', value=-4.21E-4)
         params.add('c3', value=2.151E-7)
         params.add('c4', value=2.151E-9)
-        wavelength = self.cursor_pol.x
         out = lmfit.minimize(optimize, params,
-                             args=(np.array(x), point_pol_GVD, 4))
+                             args=(np.array(x), y, 4))
+        self.details(method='polynomial', x=x, y=y)
         self.gvd = self.polynomi(out.params, wavelength, 4)
-        self.l.set_ydata(self.gvd)
-        self.figGVD.canvas.draw()
-    #
-    def polynomi(self, params, x, order):
+
+    @staticmethod
+    def polynomi(params, x, order):
+        """
+        Returns the values of a polynomial from a lmfit parameters object
+        """
         pars = [params['c%i' % i].value for i in range(order + 1)]
         return np.array([pars[i] * x ** i for i in range(order + 1)]).sum(
             axis=0)
