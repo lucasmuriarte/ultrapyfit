@@ -20,20 +20,45 @@ import pickle
 
 
 class SaveExperiment:
-    def __init__(self, path, experiment):
+    """
+    Class that extract and save important featurez of an Experiment instance
+    and saved them as a dictionary that can be later on reload and used.
+    This class is directly used when you run the Experiment.save() method 
+    
+    Attributes
+    ----------
+    path: string
+        path containing the name and extension that should be used to save the 
+        data.
+        
+    experiment: Experiment instance
+        An instance of Experiment class that want to be saved.
+        
+    save_object: dictionary
+        Object that will be pcikle
+    """
+    def __init__(self, path, experiment, auto_save=True):
         self.path = path
         self.experiment = experiment
         self.save_object = {}
-        self._extract_objects()
-        self.save()
+        if auto_save:
+            self.save()
 
     def save(self):
+        """
+        Save the save_object dictionary as pickle object 
+        """
+        self._extract_objects()
         path = self.path + '.exp'
         with open(path, 'wb') as file:
             pickle.dump(self.save_object, file,
                         protocol=pickle.HIGHEST_PROTOCOL)
 
     def _extract_objects(self):
+        """
+        Extract the features of an Experiment instance and add to the 
+        save_object dictionary
+        """
         details = {'units': self.experiment._units,
                    'GVD': self.experiment.GVD_corrected,
                    'excitation': self.experiment.excitation,
@@ -196,7 +221,7 @@ class Experiment(ExploreData, ExploreResults):
                              'viridis', **self._units)
         ExploreResults.__init__(self, self.fit_records.global_fits,
                                 **self._units)
-
+    # finish initialization
     def _initialized(self):
         """
         Finalize the initialization of the Experiment class
@@ -220,7 +245,11 @@ class Experiment(ExploreData, ExploreResults):
         self.del_points = book_annotate(self.preprocessing_report)(self.del_points)
         self.shitTime = book_annotate(self.preprocessing_report)(self.shit_time)
         self._unit_formater = TimeUnitFormater(self._units['time_unit'])
-
+    
+    
+    """
+    Properties and structural functions
+    """
     @property
     def chirp_corrected(self):
         return self.GVD_corrected
@@ -347,7 +376,17 @@ class Experiment(ExploreData, ExploreResults):
             path where to save the Experiment
         """
         save = SaveExperiment(path, self)
-
+        
+    def createNewDir(self, path):
+        # Probably will be removed
+        if not os.path.exists(path):
+            os.makedirs(path)
+        self.working_directory = path
+        self.save['path'] = self.working_directory
+    
+    """
+    Check status functions
+    """
     def describe_data(self):
         """
         Print description of the data
@@ -397,7 +436,11 @@ class Experiment(ExploreData, ExploreResults):
             self.print_results(i+1)
         print('============================================\n')
         self.action_records.print(False, True, True)
-
+        
+        
+    """
+    Preprocessing functions
+    """
     def chirp_correction_graphically(self, method, excitation=None):
         """
         Function to correct the chrip or GVD dispersion graphically.
@@ -724,7 +767,10 @@ class Experiment(ExploreData, ExploreResults):
         self._add_to_data_set("before_shift_time")
         self.x = self.x - value
         self._add_action("shift time")
-
+        
+    """
+    Fitting functions
+    """
     def define_weights(self, rango, typo='constant', val=5):
         """
         Defines a an array that can be apply  in global fit functions as weights.
@@ -762,13 +808,6 @@ class Experiment(ExploreData, ExploreResults):
         """
         self.weights = define_weights(self.x, rango, typo=typo, val=val)
         self._add_action("define weights")
-
-    def createNewDir(self, path):
-        # Probably will be removed
-        if not os.path.exists(path):
-            os.makedirs(path)
-        self.working_directory = path
-        self.save['path'] = self.working_directory
 
     def initialize_exp_params(self, t0, fwhm, *taus, tau_inf=1E12,
                               opt_fwhm=False, vary_t0=True,
@@ -1124,7 +1163,10 @@ class Experiment(ExploreData, ExploreResults):
             ## Todo
 
             pass
-
+    
+    """
+    Data selection and restoration functions
+    """
     def select_traces(self, points=10, average=1, avoid_regions=None):
         """
         Method to select traces from the data, the selected traces are stored
@@ -1179,19 +1221,6 @@ class Experiment(ExploreData, ExploreResults):
         self._readapt_params()
         self._averige_selected_traces = 0
         self._add_action("Selected region as traces")
-
-    def _update_last_params(self, params):
-        """
-        Function updating parameters after a global fit
-        """
-        if self._params_initialized == 'Exponential':
-            self._last_params['t0'] = params['t0_1'].value
-            self._last_params['taus'] = [params['tau%i_1' % (i + 1)].value for i in range(self._exp_no)]
-        elif self._params_initialized == 'Target':
-            ## todo
-            pass
-        else:
-            pass
 
     def restore_data(self, action: str):
         """
@@ -1254,7 +1283,20 @@ class Experiment(ExploreData, ExploreResults):
             key = self.preprocessing_report._last_action
             self.restore_data(key)
             self.preprocessing_report._last_action = None
-
+    
+    def _update_last_params(self, params):
+        """
+        Function updating parameters after a global fit
+        """
+        if self._params_initialized == 'Exponential':
+            self._last_params['t0'] = params['t0_1'].value
+            self._last_params['taus'] = [params['tau%i_1' % (i + 1)].value for i in range(self._exp_no)]
+        elif self._params_initialized == 'Target':
+            ## todo
+            pass
+        else:
+            pass
+    
     def _add_to_data_set(self, key):
         """
         add data to data sets after a preprocesing action
