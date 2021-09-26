@@ -7,7 +7,7 @@ import numpy as np
 import lmfit
 from ultrafast.fit.ModelCreator import ModelCreator
 from ultrafast.utils.divers import solve_kmatrix
-
+from packaging import version
 
 class GlobalFitTargetModel(lmfit.Minimizer, ModelCreator):
     """
@@ -185,7 +185,10 @@ class GlobalFitTargetModel(lmfit.Minimizer, ModelCreator):
         else:
             fit_condition.append('no weights')
         if maxfev is not None:
-            resultados = self.minimize(params=fit_params, maxfev=maxfev)
+            if(version.parse(lmfit.__version__) >= version.parse("1.0.1")):        
+                resultados = self.minimize(params=fit_params, max_nfev=maxfev)
+            else:          
+                resultados = self.minimize(params=fit_params, maxfev=maxfev) 
         else:
             resultados = self.minimize(params=fit_params)
         resultados = self._addToResultados(resultados, fit_condition)
