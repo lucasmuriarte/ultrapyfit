@@ -14,6 +14,7 @@ from ultrafast.graphics.ExploreResults import ExploreResults
 import matplotlib.pyplot as plt
 import ctypes
 import threading
+from packaging import version
 
 
 # define a thread which takes input
@@ -159,8 +160,15 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         lmfit results, except for this works identically as lmfit minimize.
         Check lmfit minimize for more information
         """
-        result = super().minimize(method=method, params=params,
+        #pass correct parameter based on lmfit version, please modify
+        #the version cases if some problem arises with maxfev keyword
+        if(version.parse(lmfit.__version__) >= version.parse("1.0.1")):        
+            result = super().minimize(method=method, params=params,
                                   max_nfev=max_nfev, **kws)
+        else:
+            result = super().minimize(method=method, params=params,
+                                  maxfev=max_nfev, **kws)
+            
         result = GlobalFitResult(result)
         details = self._get_fit_details()
         details['maxfev'] = max_nfev

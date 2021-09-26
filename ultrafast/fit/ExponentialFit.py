@@ -8,6 +8,7 @@ import numpy as np
 import lmfit
 from ultrafast.fit.ModelCreator import ModelCreator
 from ultrafast.fit.GlobalParams import GlobExpParameters
+from packaging import version
 
 
 def globalfit_exponential(x,
@@ -433,7 +434,12 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
             self.weights['apply'] = False
             fit_condition.append('no weights')
         if maxfev is not None:
-            resultados = self.minimize(params=fit_params, max_nfev=maxfev)
+            #pass correct parameter based on lmfit version, please modify
+            #the version cases if some problem arises with maxfev keyword
+            if(version.parse(lmfit.__version__) >= version.parse("1.0.1")):
+                resultados = self.minimize(params=fit_params, max_nfev=maxfev)
+            else:
+                resultados = self.minimize(params=fit_params, maxfev=maxfev) 
         else:
             resultados = self.minimize(params=fit_params)
         resultados = self._addToResultados(resultados, fit_condition)
