@@ -91,7 +91,7 @@ class TestDatasetsDAS(unittest.TestCase):
         
         for i in range(len(taus)):
             self.assertTrue(abs((taus[i]-taus_out[i])/taus_err[i]) < 5,
-                            msg="""Tau before fit is %.3f, tau after fit is 
+                            msg="""Tau generated is %.3f, tau after fit is 
                             %.3f, and error is %.3f""" % (taus[i],taus_out[i],taus_err[i]))   
         
     def test_genAndFit1expNoConvNoNoiseDAS(self):
@@ -144,9 +144,6 @@ class TestDatasetsDAS(unittest.TestCase):
         #explorer.plot_fit()
         #explorer.plot_DAS()  
         
-        self.assertTrue(True,msg="Cannot fit dynamically generated data!")   
-        
-        
         (x, data, wavelength, 
          params, exp_no, deconv, 
          tau_inf, svd_fit, type_fit, 
@@ -157,7 +154,7 @@ class TestDatasetsDAS(unittest.TestCase):
         tau_err = params["tau1_1"].stderr
                   
         self.assertTrue(abs((tau-tau_out)/tau_err) < 5,
-                        msg="""Tau before fit is %.3f, tau after fit is 
+                        msg="""Tau generated is %.3f, tau after fit is 
                         %.3f, and error is %.3f""" % (tau,tau_out,tau_err))          
         
         
