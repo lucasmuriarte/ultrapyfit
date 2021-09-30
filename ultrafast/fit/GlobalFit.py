@@ -500,6 +500,9 @@ class GlobalFitExponential(GlobalFit):
 
         self._number_it = self._number_it + 1
         return resid.flatten()
+    
+    def _jacobian(self, params):    
+        pass
 
     def global_fit(self, vary_taus=True, maxfev=None, time_constraint=False,
                    apply_weights=False, method='leastsq', **kws):
