@@ -379,3 +379,26 @@ class ModelCreator:
                           for i in range(len(eigs))]
         return y0+sum([pre_exp[iii]*concentrations[iii]
                        for iii in range(exp_no)])
+
+    @staticmethod
+    def erfDerrivative(z):
+        """
+        calculate derrivative of the error function
+        
+        
+        Parameters
+        ----------
+        z: float or array of floats
+            function argument
+       
+        Returns
+        ----------
+        float or array of floats
+        """
+        
+        return 2*np.exp(-np.square(z))/1.7724538509055159
+    
+    
+    
+    
+    
