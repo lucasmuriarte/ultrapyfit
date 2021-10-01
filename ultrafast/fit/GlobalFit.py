@@ -550,14 +550,18 @@ class GlobalFitExponential(GlobalFit):
                                                  self.recent_lambda_array[par_i], 
                                                  self.recent_tauj_array[par_i]) 
                 jacobian[par_i,:] = resid.flatten()
+                #note that all derrivative-jacobian methods assume that "kinetic
+                #of derrivatives" they calculate, normally contained the param
+                #by which derrivative is calculated. i mean it assumes thet
+                #derrivative is, for example by the same tau or preexp that
+                #is in the given trace, not some other trace where derrivative
+                #should be obviously zero!
 
             return jacobian
         else:
             raise Exception("Error! Jacobian not implemented."+\
                             "Disable jacobian and run optimization again.")
         
-        
-    
     def _prepareJacobian(self, params): 
         """
         Run before fit if analytical jacobian will be used. It should prepare
