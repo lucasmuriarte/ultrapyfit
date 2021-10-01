@@ -27,7 +27,7 @@ class TestDatasetsDAS(unittest.TestCase):
     def setUp(self):
         self.datasets_dir = "../../examples/dynamically_created_data/"
     
-    def test_genAndFit3expNoConvNoNoiseDAS(self):
+    def skip_test_genAndFit3expNoConvNoNoiseDAS(self):
         #generate and save dataset, then fit it and verify results
         
         taus = [5,20,100]
@@ -143,7 +143,7 @@ class TestDatasetsDAS(unittest.TestCase):
                                    method='leastsq')
         
         explorer = ExploreResults(result)
-        #explorer.print_results()
+        explorer.print_results()
         #explorer.plot_fit()
         #explorer.plot_DAS()  
         
