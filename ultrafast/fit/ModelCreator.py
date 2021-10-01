@@ -269,7 +269,7 @@ class ModelCreator:
         1darray of size equal to time-vector 
         """    
         
-        return np.ones(self.x.shape(0))
+        return np.ones(self.x.shape[0])
     
     def expNGaussDatasetJacobianByYInf(self, params, lambda_i, tau_j):
         """
