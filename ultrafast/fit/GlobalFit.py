@@ -590,8 +590,26 @@ class GlobalFitExponential(GlobalFit):
                 self.recent_lambda_array.append(int(m[0][0]))
                 self.recent_tauj_array.append(None)
                 self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianBySigma)
-                continue            
-            #add all of them!
+                continue       
+            m = re.findall("^yinf_(\d+)$", key)
+            if(len(m) > 0): #check if this is yinf (infinite offset) param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByYInf)
+                continue
+            m = re.findall("^y0_(\d+)$", key)
+            if(len(m) > 0): #check if this is y0 (global offset) param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByY0)
+                continue
+            m = re.findall("^t0_(\d+)$", key)
+            if(len(m) > 0): #check if this is t0 (time zero) param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByT0)
+                continue
+            #add all of them or exception will be!
             
             raise Exception("Some parameter found for which no derrivative is\
                             implemented!")
