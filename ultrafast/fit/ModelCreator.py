@@ -51,6 +51,25 @@ class ModelCreator:
         self.tau_inf = tau_inf
 
     @staticmethod
+    def erfDerrivative(z):
+        """
+        calculate derrivative of the error function
+        
+        
+        Parameters
+        ----------
+        z: float or array of floats
+            function argument
+       
+        Returns
+        ----------
+        float or array of floats
+        """
+        
+        return 2*np.exp(-np.square(z))/1.7724538509055159
+    
+
+    @staticmethod
     def exp1(time, tau):
         """
         single exponential decay function
@@ -156,6 +175,132 @@ class ModelCreator:
         return y0+sum([pre_exp*ModelCreator.expGauss(time-t0, tau, fwhm/2.35482)
                        for pre_exp, tau in values])
     
+    def expNGaussDatasetJacobianBySigma(self, params, i, *args):
+        """
+        calculate jacobian derrivative by sigma in a equivalent 
+        way to the expNGaussDataset method.
+        
+        Parameters
+        ----------
+        params: GlobExpParameters  object
+          object containing the parameters created for global 
+          fitting several decay traces
+        
+        i: int
+            number corresponding to the specific trace
+            
+        *args
+            to take additional unused argument to be able to use all jacobian
+            functions in a equivalent way
+       
+        Returns
+        ----------
+        1darray of size equal to time-vector 
+        """    
+        y0 = params['y0_%i' % (i+1)].value
+        t0 = params['t0_%i' % (i+1)].value
+        fwhm = params['fwhm_%i' % (i+1)].value
+        values = [[params['pre_exp%i_' % (ii+1)+str(i+1)].value,
+                   params['tau%i_' % (ii+1)+str(i+1)].value]
+                  for ii in range(self.exp_no)]
+        if self.tau_inf is not None:
+            yinf = params['yinf_%i' % (i+1)].value
+            values.append([yinf, self.tau_inf])    
+        
+        if(): #derrivative by some tau
+
+            time = self.x-t0
+            sigma = fwhm/2.35482
+            #pre_exp = ...
+            inv_tau = 1/tau
+            inv2_tau = inv_tau**2
+            inv3_tau = inv_tau**3
+            erf_part = 1+erf((time-sigma**2*inv_tau)/(sigma*2**0.5))
+            exp_part = np.exp(-inv_tau*time + sigma**2*inv2_tau/2)
+
+            #for pre_exp, tau in values])
+
+
+            
+            tmp = exp_part*erf_part*(inv2_tau*time - sigma**2*inv3_tau)+\
+                  exp_part*ModelCreator.erfDerrivative((time-sigma**2*inv_tau)/(sigma*2**0.5))*\
+                  (-sigma**2*inv2_tau)/(sigma*2**0.5)
+            
+            return 0.5*pre_exp*tmp
+        
+        if(): #derrivative by some sigma
+            
+            time = self.x-t0
+            sigma = fwhm/2.35482
+            #pre_exp = ...
+            inv_tau = 1/tau
+            inv2_tau = inv_tau**2
+            inv3_tau = inv_tau**3
+            erf_part = 1+erf((time-sigma**2*inv_tau)/(sigma*2**0.5))
+            exp_part = np.exp(-inv_tau*time + sigma**2*inv2_tau/2)
+
+            #for pre_exp, tau in values])
+
+     
+            tmp = sum([pre_exp*(exp_part*erf_part*(sigma*inv2_tau)+\
+                  exp_part*ModelCreator.erfDerrivative((time-sigma**2*inv_tau)/(sigma*2**0.5))*\
+                  (-time/(sigma**2*2**0.5)-inv_tau/(2**0.5)))
+                  for pre_exp, tau in values]
+            #sum this over all taus
+            
+            #sum([pre_exp*ModelCreator.expGauss(time-t0, tau, fwhm/2.35482)
+            #           for pre_exp, tau in values])
+            
+            return 0.5*tmp            
+            
+    
+    
+        return self.expNGauss(self.x, y0, t0, fwhm, values)           
+    
+    def expNGaussDatasetJacobianByTau(self, params, i, tau_j):
+        """
+        calculate jacobian derrivative by tau in a equivalent 
+        way to the expNGaussDataset method.
+        
+        Parameters
+        ----------
+        params: GlobExpParameters  object
+          object containing the parameters created for global 
+          fitting several decay traces
+        
+        i: int
+            number corresponding to the specific trace
+            
+        tau_j: int
+            number corresponding to the specific tau number
+            it is from zero to self.exp_no-1 (1 will be added) 
+        
+        Returns
+        ----------
+        1darray of size equal to time-vector 
+        """    
+        y0 = params['y0_%i' % (i+1)].value
+        t0 = params['t0_%i' % (i+1)].value
+        fwhm = params['fwhm_%i' % (i+1)].value
+    
+        pre_exp = params['pre_exp%i_' % (tau_j+1)+str(i+1)].value
+        tau = params['tau%i_' % (tau_j+1)+str(i+1)].value
+    
+        time = self.x-t0
+        sigma = fwhm/2.35482
+        
+        inv_tau = 1/tau
+        inv2_tau = inv_tau**2
+        inv3_tau = inv_tau**3
+        erf_part = 1+erf((time-sigma**2*inv_tau)/(sigma*2**0.5))
+        exp_part = np.exp(-inv_tau*time + sigma**2*inv2_tau/2)
+
+        tmp = exp_part*erf_part*(inv2_tau*time - sigma**2*inv3_tau)+\
+              exp_part*ModelCreator.erfDerrivative((time-sigma**2*inv_tau)/(sigma*2**0.5))*\
+              (-sigma**2*inv2_tau)/(sigma*2**0.5)
+        
+        return 0.5*pre_exp*tmp
+             
     def expNGaussDataset(self, params, i):
         """
         calculate a weighted sum of exponential modified Gaussian decay
@@ -380,25 +525,6 @@ class ModelCreator:
         return y0+sum([pre_exp[iii]*concentrations[iii]
                        for iii in range(exp_no)])
 
-    @staticmethod
-    def erfDerrivative(z):
-        """
-        calculate derrivative of the error function
-        
-        
-        Parameters
-        ----------
-        z: float or array of floats
-            function argument
-       
-        Returns
-        ----------
-        float or array of floats
-        """
-        
-        return 2*np.exp(-np.square(z))/1.7724538509055159
-    
-    
     
     
     
