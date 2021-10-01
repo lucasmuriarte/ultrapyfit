@@ -72,7 +72,7 @@ class TestDatasetsDAS(unittest.TestCase):
                                       wavelength=wave_select)
         
         fitter.allow_stop = False #in my case it just hangs.
-        result = fitter.global_fit(maxfev=10000)
+        result = fitter.global_fit(maxfev=10000, method='leastsq')
         
         explorer = ExploreResults(result)
         
@@ -137,7 +137,7 @@ class TestDatasetsDAS(unittest.TestCase):
                                       wavelength=wave_select)
         
         fitter.allow_stop = False #in my case it just hangs.
-        result = fitter.global_fit(maxfev=10000)
+        result = fitter.global_fit(maxfev=10000, method='leastsq')
         
         explorer = ExploreResults(result)
         #explorer.print_results()
