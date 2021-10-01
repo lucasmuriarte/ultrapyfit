@@ -45,14 +45,14 @@ class GlobExpParameters:
         self.number_traces = number_traces
         self.params = Parameters()
         
-    def _generateParams(self, t0, vary_t0):
+    def _generateParams(self, t0, vary_t0, vary_y0):
         """ 
         generate the parameters for globally fitting the number of traces 
         to a sum of "exp_no" exponential decay
         """
         for iy in range(self.number_traces):
             self.params.add_many(
-                ('y0_' + str(iy+1), 0, True, None, None, None, None),
+                ('y0_' + str(iy+1), 0, vary_y0, None, None, None, None),
                 ('t0_' + str(iy+1), t0, vary_t0,  0, None, None, None))
             
             for i in range(self.exp_no):
@@ -61,19 +61,19 @@ class GlobExpParameters:
                     ('pre_exp%i_' % (i+1) + str(iy+1), 0.1*10**(-i), True, None, None, None, None),
                     ('tau%i_' % (i+1) + str(iy+1), self.taus[i], True, 0.00000001, None, None, None))
 
-    def _add_deconvolution(self, fwhm, opt_fwhm, tau_inf=1E12):
+    def _add_deconvolution(self, fwhm, opt_fwhm, tau_inf=1E12, vary_yinf = True):
         """
         add the deconvolution parameters to a sum of "exp_no" exponential decay
         """
         for iy in range(self.number_traces):
             self.params.add_many(('fwhm_' + str(iy+1), fwhm, opt_fwhm, 0.000001, None, None, None))
             if tau_inf is not None:            
-                self.params.add_many(('yinf_' + str(iy+1), 0.001, True, None, None, None, None))
+                self.params.add_many(('yinf_' + str(iy+1), 0.0, vary_yinf, None, None, None, None))
             if iy > 0:
                 self.params['fwhm_%i' % (iy+1)].expr = 'fwhm_1'
 
-    def adjustParams(self, t0, vary_t0=True, fwhm=0.12, opt_fwhm=False,
-                     GVD_corrected=True, tau_inf=1E12, y0=None):
+    def adjustParams(self, t0, vary_t0=True, vary_y0 = True, fwhm=0.12, opt_fwhm=False,
+                     GVD_corrected=True, tau_inf=1E12, vary_yinf=True, y0=None):
         """
         function to initialize parameters for global fitting
         
@@ -115,13 +115,14 @@ class GlobExpParameters:
             want to be fitted, and for each curve the the y0 value would
             be different.
         """
-        self._generateParams(t0, vary_t0)
+        self._generateParams(t0, vary_t0, vary_y0)
         for iy in range(2, self.number_traces+1):
             self.params['t0_%i' % iy].expr = 't0_1'
             for i in range(self.exp_no):
                 self.params['tau%i_' % (i+1) + str(iy)].expr = 'tau%i_1' % (i+1)
         if fwhm is not None:
-            self._add_deconvolution(fwhm, opt_fwhm, tau_inf=tau_inf)
+            self._add_deconvolution(fwhm, opt_fwhm, tau_inf=tau_inf, 
+                                    vary_yinf=vary_yinf)
             if not GVD_corrected:
                 for iy in range(2, self.number_traces+1):
                     self.params['t0_%i' % iy].expr = None
