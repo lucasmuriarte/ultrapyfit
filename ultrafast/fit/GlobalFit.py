@@ -276,7 +276,7 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
             self._prepareJacobian(params=self.params)
             resultados = self.minimize(method=method, params=self.params,
                                        max_nfev=maxfev, Dfun=self._jacobian,
-                                       **kws)            
+                                       col_deriv=True, **kws)            
             
         if self._allow_stop:
             user_stop.stop()
@@ -541,21 +541,30 @@ class GlobalFitExponential(GlobalFit):
             ndata, nx = self.data.shape #(no of taus,no of lambdas)
             out_funcs_no = nx*self.x.shape[0] #no of residuals
             
-            jacobian = np.zeros((params_no,out_funcs_no)) #prepare space for this monstrosity
+            real_params_no = params_no - self.recent_constrained_no
             
+            #prepare space for this monstrosity
+            jacobian = np.zeros((real_params_no,out_funcs_no)) 
+            
+            real_param_num = 0
             for par_i in range(params_no):
+                if(self.recent_constrainted_array[par_i] is True):
+                    continue #skip constrained or fixed params
+                    
                 resid = np.zeros((ndata, nx))
                 resid[:,self.recent_lambda_array[par_i]-1] = \
                                         -self.recent_Dfuncs_array[par_i](params, 
                                                  self.recent_lambda_array[par_i], 
                                                  self.recent_tauj_array[par_i]) 
-                jacobian[par_i,:] = resid.flatten()
+                jacobian[real_param_num,:] = resid.flatten()
                 #note that all derrivative-jacobian methods assume that "kinetic
                 #of derrivatives" they calculate, normally contained the param
                 #by which derrivative is calculated. i mean it assumes thet
                 #derrivative is, for example by the same tau or preexp that
                 #is in the given trace, not some other trace where derrivative
                 #should be obviously zero!
+                
+                real_param_num += 1
 
             return jacobian
         else:
@@ -576,7 +585,16 @@ class GlobalFitExponential(GlobalFit):
         self.recent_Dfuncs_array = [] #proper derrivative funcs
         self.recent_tauj_array = [] #numbers of corresponding tau
         self.recent_lambda_array = [] #numbers of corresponding lambda
+        self.recent_constrainted_array = [] #if param fixed or constrained,
+        #then =True. it is because lmfit removes these, so jacobian shouldn't
+        #also contain them. so it is to mark the params to be skipped...
         for key in self.recent_key_array:
+            
+            if(params[key].vary is False or params[key].expr is not None):
+                self.recent_constrainted_array.append(True)
+            else:
+                self.recent_constrainted_array.append(False)
+                
             m = re.findall("^tau(\d+)_(\d+)$", key)
             if(len(m) > 0): #check if this is tau param
                 self.recent_lambda_array.append(int(m[0][1]))
@@ -617,6 +635,9 @@ class GlobalFitExponential(GlobalFit):
             
             raise Exception("Some parameter found for which no derrivative is\
                             implemented!")
+        
+        self.recent_constrained_no = sum(self.recent_constrainted_array)
+        #number of constrained params, excluded from jacobian
     
 
     def global_fit(self, vary_taus=True, maxfev=None, time_constraint=False,
