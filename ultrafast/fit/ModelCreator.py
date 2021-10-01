@@ -205,6 +205,45 @@ class ModelCreator:
               ModelCreator.erfDerrivative((time-sigma**2*inv_tau)/(sigma*2**0.5))*\
               (-time/(sigma**2*2**0.5)-inv_tau/(2**0.5))
     
+    def expNGaussDatasetJacobianByPreExp(self, params, lambda_i, tau_j):
+        """
+        calculate jacobian derrivative by pre_exp in a equivalent 
+        way to the expNGaussDataset method.
+        
+        Parameters
+        ----------
+        params: GlobExpParameters  object
+          object containing the parameters created for global 
+          fitting several decay traces
+        
+        lambda_i: int
+            number corresponding to the specific trace
+            it is from 1 to self.exp_no (like in param key)
+            
+        tau_j: int
+            number corresponding to the specific tau number
+            it is from 1 to self.exp_no (like in param key)
+        
+        Returns
+        ----------
+        1darray of size equal to time-vector 
+        """    
+        #i = lambda_i-1
+        t0 = params['t0_%i' % (lambda_i)].value
+        fwhm = params['fwhm_%i' % (lambda_i)].value
+    
+        tau = params['tau%i_' % (tau_j)+str(lambda_i)].value
+    
+        time = self.x-t0
+        sigma = fwhm/2.35482
+        
+        inv_tau = 1/tau
+        inv2_tau = inv_tau**2
+        erf_part = 1+erf((time-sigma**2*inv_tau)/(sigma*2**0.5))
+        exp_part = np.exp(-inv_tau*time + sigma**2*inv2_tau/2)
+
+        return 0.5*exp_part*erf_part
+    
     def expNGaussDatasetJacobianBySigma(self, params, lambda_i, tau_j):
         """
         calculate jacobian derrivative by tau in a equivalent 
