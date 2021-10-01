@@ -81,6 +81,8 @@ class GlobalFitResult:
         for key in result.__dict__.keys():
             setattr(self, key, result.__dict__[key])
         self.details = None
+        #actually it is useful to access also methods sometimes
+        self.model_result = result
 
     def add_data_details(self, data, details):
         """
@@ -215,14 +217,14 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         The function that should implement jacobian.It should be compatible with
         _objective method.
         """
-        pass
+        raise Exception("Not implemented _jacobian method!")
     
     def _prepareJacobian(self, params): 
         """
         Run before fit if analytical jacobian will be used. It should prepare
         variables to speed up calculation.
         """
-        pass
+        raise Exception("Not implemented _prepareJacobian method!")
 
     def global_fit(self, maxfev=None, apply_weights=False, use_jacobian = False,
                    method='leastsq', **kws):

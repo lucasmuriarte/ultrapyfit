@@ -27,7 +27,7 @@ class TestDatasetsDAS(unittest.TestCase):
     def setUp(self):
         self.datasets_dir = "../../examples/dynamically_created_data/"
     
-    def skip_test_genAndFit3expNoConvNoNoiseDAS(self):
+    def test_genAndFit3expNoConvNoNoiseDAS(self):
         #generate and save dataset, then fit it and verify results
         
         taus = [5,20,100]
@@ -64,7 +64,8 @@ class TestDatasetsDAS(unittest.TestCase):
         
         data_select, wave_select = select_traces(data, wavelength, 10)
         params = GlobExpParameters(data_select.shape[1], taus)
-        params.adjustParams(0, False, fwhm=0.2, opt_fwhm=False)
+        params.adjustParams(0, vary_t0=False, vary_y0 = False, 
+                            fwhm=0.2, opt_fwhm=True, vary_yinf=False)
         parameters = params.params
         
         fitter = GlobalFitExponential(time, data_select, 3, 
@@ -73,6 +74,7 @@ class TestDatasetsDAS(unittest.TestCase):
         
         fitter.allow_stop = False #in my case it just hangs.
         result = fitter.global_fit(maxfev=10000,
+                                   use_jacobian = True,
                                    method='leastsq')
         
         explorer = ExploreResults(result)
@@ -128,9 +130,10 @@ class TestDatasetsDAS(unittest.TestCase):
         
         time, data, wavelength = read_data(datapath, wave_is_row = True)
         
-        data_select, wave_select = select_traces(data, wavelength, 10)
+        data_select, wave_select = select_traces(data, wavelength, 300)
         params = GlobExpParameters(data_select.shape[1], [35,])
-        params.adjustParams(0, False, fwhm=0.1, opt_fwhm=True)
+        params.adjustParams(0, vary_t0=False, vary_y0 = False, 
+                            fwhm=0.1, opt_fwhm=True, vary_yinf=False)
         parameters = params.params
         
         fitter = GlobalFitExponential(time, data_select, 1, 
@@ -138,8 +141,14 @@ class TestDatasetsDAS(unittest.TestCase):
                                       wavelength=wave_select)
         
         fitter.allow_stop = False #in my case it just hangs.
+        
+        ##tests
+        fitter._prepareJacobian(parameters)
+        
+        ##tests     
+        
         result = fitter.global_fit(maxfev=10000, 
-                                   use_jacobian = True, 
+                                   #use_jacobian = True, 
                                    method='leastsq')
         
         explorer = ExploreResults(result)
@@ -151,6 +160,17 @@ class TestDatasetsDAS(unittest.TestCase):
          params, exp_no, deconv, 
          tau_inf, svd_fit, type_fit, 
          derivative_space) = explorer._get_values()
+        
+        ##tests
+        print(params)
+        jac = fitter._jacobian(params)
+        for i in range(jac.shape[0]):
+            for j in range(jac.shape[1]):
+                if(abs(jac[i,j]) > 10**(-1)):
+                    print("Indexes %i, %i, value %.9f" % (i,j,jac[i,j]))
+        
+        print(jac.shape)
+        ##tests
     
         tau_out = params["tau1_1"].value
         
