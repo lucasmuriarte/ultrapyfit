@@ -534,8 +534,10 @@ class GlobalFitExponential(GlobalFit):
     
     def _jacobian(self, params): 
         """
-        The function that should implement jacobian.It should be compatible with
-        _objective method.
+        The function that should implement jacobian.
+        It should be compatible with _objective method.
+        Edit: NO! It shouldn't. It removed all fixed/constrained params rows,
+        and adds proper contibutions to other params if expr's are defined.
         """
         
         if self.deconv:
@@ -550,6 +552,8 @@ class GlobalFitExponential(GlobalFit):
             
             real_param_num = 0
             for par_i in range(params_no):
+            
+                #firstly generate matrix for all independent params
                 if(self.recent_constrainted_array[par_i] is True):
                     continue #skip constrained or fixed params
                     
@@ -558,15 +562,28 @@ class GlobalFitExponential(GlobalFit):
                                         -self.recent_Dfuncs_array[par_i](params, 
                                                  self.recent_lambda_array[par_i], 
                                                  self.recent_tauj_array[par_i]) 
+                                        
+                #secondly, add contribution from dependent (shared) params:
+                #for now i assume that they are only simple "=other param" 
+                #not expr's.
+                for par_dep_i in range(len(self.recent_dependences_array[par_i])):  
+                    par_dep = self.recent_dependences_array[par_i][par_dep_i]
+                    par_mult = self.recent_dependences_derrivs_array[par_i][par_dep_i]
+                
+                    resid[:,self.recent_lambda_array[par_dep]-1] += \
+                        -par_mult(params)*self.recent_Dfuncs_array[par_dep](params,
+                        self.recent_lambda_array[par_dep],
+                        self.recent_tauj_array[par_dep])                  
+                    
                 jacobian[real_param_num,:] = resid.flatten()
                 #note that all derrivative-jacobian methods assume that "kinetic
                 #of derrivatives" they calculate, normally contained the param
-                #by which derrivative is calculated. i mean it assumes thet
+                #by which derrivative is calculated. i mean it assumes that
                 #derrivative is, for example by the same tau or preexp that
                 #is in the given trace, not some other trace where derrivative
                 #should be obviously zero!
-                
-                real_param_num += 1
+       
+                real_param_num += 1           
 
             return jacobian
         else:
@@ -590,13 +607,43 @@ class GlobalFitExponential(GlobalFit):
         self.recent_constrainted_array = [] #if param fixed or constrained,
         #then =True. it is because lmfit removes these, so jacobian shouldn't
         #also contain them. so it is to mark the params to be skipped...
-        for key in self.recent_key_array:
+        self.recent_dependences_array = \
+        [[] for i in range(len(self.recent_key_array))]
+        #lists dependences in other params 
+        #from this one. if empty list, then no dependences anywhere. if 
+        #internal list contains some indices, then they are
+        #indices of other params where it is mentioned in expr
+        self.recent_dependences_derrivs_array = \
+        [[] for i in range(len(self.recent_key_array))]
+        #structured as above list,
+        #it will have proper derrivatives to multiply by, if this is not just
+        #"share variable", but some more complex expression. required for
+        #target models, but not for DAS, where only simple "shares" happen
+        
+        for key_num in range(len(self.recent_key_array)):
+            key = self.recent_key_array[key_num]
             
+            #exclude constrained params from the matrix
             if(params[key].vary is False or params[key].expr is not None):
                 self.recent_constrainted_array.append(True)
             else:
                 self.recent_constrainted_array.append(False)
                 
+            #if this param depends on some other param, then add proper reference
+            if(params[key].expr is not None):
+                #note that i don't impement anything except simple "equals
+                #other parameter". and i set lambda func to 1
+                #more complex cases will be implemented for target fit
+                try:
+                    relative_i = self.recent_key_array.index(params[key].expr) 
+                except ValueError:
+                    raise Exception("Failure in param constraints, "+\
+                        "not implemented case! Fix or disable jacobian!")
+                self.recent_dependences_array[relative_i].append(key_num)
+                derriv_scale = lambda params: 1
+                self.recent_dependences_derrivs_array[relative_i].append(derriv_scale)
+             
+            #associate proper functions for proper parameters    
             m = re.findall("^tau(\d+)_(\d+)$", key)
             if(len(m) > 0): #check if this is tau param
                 self.recent_lambda_array.append(int(m[0][1]))
