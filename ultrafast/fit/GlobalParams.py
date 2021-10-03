@@ -53,7 +53,9 @@ class GlobExpParameters:
         for iy in range(self.number_traces):
             self.params.add_many(
                 ('y0_' + str(iy+1), 0, vary_y0, None, None, None, None),
-                ('t0_' + str(iy+1), t0, vary_t0,  0, None, None, None))
+                ('t0_' + str(iy+1), t0, vary_t0,  None, None, None, None))
+                #SN: I chaned min for t0 to None, because zero value seems to be
+                #a mistake (sometimes it can be slightly <0 due to bad correction)
             
             for i in range(self.exp_no):
                 # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
