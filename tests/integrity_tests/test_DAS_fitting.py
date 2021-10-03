@@ -12,7 +12,7 @@ from ultrafast.fit.GlobalFit import GlobalFitExponential
 from ultrafast.utils.divers import read_data, select_traces
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.fit.GlobalParams import GlobExpParameters
-from scipy.optimize import check_grad
+from scipy.optimize import check_grad, approx_fprime
 import numpy as np
 
 #datasets_dir = "ultrafast/examples/dynamically_created_data/"
@@ -209,7 +209,7 @@ class TestDatasetsDAS(unittest.TestCase):
                                                         0.2)
         new_times = DataSetCreator.generate_time(data_set_conv.index[0],
                                                  data_set_conv.index[-1]-0.01,
-                                                 120)
+                                                 50)
         data_set_conv_proj = DataSetCreator.timegrid_projection(data_set_conv, 
                                                                 new_times)        
         
@@ -219,9 +219,9 @@ class TestDatasetsDAS(unittest.TestCase):
         
         time, data, wavelength = read_data(datapath, wave_is_row = True)
         
-        data_select, wave_select = select_traces(data, wavelength, 10)
+        data_select, wave_select = select_traces(data, wavelength, 1000)
         params = GlobExpParameters(data_select.shape[1], taus)
-        params.adjustParams(0, vary_t0=True, vary_y0 = True, 
+        params.adjustParams(0.1, vary_t0=True, vary_y0 = True, 
                             fwhm=0.2, opt_fwhm=True, vary_yinf=True)
         parameters = params.params
         
@@ -230,6 +230,9 @@ class TestDatasetsDAS(unittest.TestCase):
                                       wavelength=wave_select)
         
         params = self.tmp_fitter.params
+        
+        print(params)
+        
         self.tmp_fitter._prepareJacobian(params)
         params_no = len(self.tmp_fitter.recent_key_array)
  
@@ -249,28 +252,31 @@ class TestDatasetsDAS(unittest.TestCase):
                 self.params_tmp2 = params.copy()
                 
                 par_val = params[self.checkkey].value
-                err = check_grad(self.objectiveFunc, self.gradientFunc, 
-                                 [par_val])
+                num_grad = self.numericGradient(par_val, epsilon = 1.49e-08)
+                anal_grad = self.gradientFunc(par_val)
+                diff = num_grad - anal_grad
                 
-                if(abs(err) > 10**(-8)):
-                    print(("Err is %.9f and exceeds treshold for " % err) +\
+                if(abs(diff) > 10**(-8)):
+                    print(("Num gives %.9f anal gives %.9f " % (num_grad,anal_grad)) +\
                           str(self.checkkey)+" and res number "+str(res_index))
-                    #self.assertTrue(abs(err) < 10**(-8),
-                    #    msg=("Err is %.9f and exceeds treshold for " % err) +\
-                    #      str(self.checkkey)+" and res number "+str(res_index)) 
+
                 
             self.real_param_num += 1
+            
 
-
+    def numericGradient(self, value, epsilon = 1.49e-08):
+        return (self.objectiveFunc(value+epsilon/2) - \
+                self.objectiveFunc(value-epsilon/2))/epsilon
+        
     def objectiveFunc(self, x):
-        self.params_tmp1[self.checkkey].value = x[0]
+        self.params_tmp1[self.checkkey].value = x
         restmp = self.tmp_fitter._objective(self.params_tmp1)
         return restmp[self.checkres]
 
     def gradientFunc(self, x):
-        self.params_tmp2[self.checkkey].value = x[0]
+        self.params_tmp2[self.checkkey].value = x
         jactmp = self.tmp_fitter._jacobian(self.params_tmp2)
-        return [jactmp[self.real_param_num,self.checkres]]
+        return jactmp[self.real_param_num,self.checkres]
      
         
           
