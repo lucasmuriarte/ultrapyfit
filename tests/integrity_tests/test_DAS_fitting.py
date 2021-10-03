@@ -219,9 +219,9 @@ class TestDatasetsDAS(unittest.TestCase):
         
         time, data, wavelength = read_data(datapath, wave_is_row = True)
         
-        data_select, wave_select = select_traces(data, wavelength, 1000)
+        data_select, wave_select = select_traces(data, wavelength, 50)
         params = GlobExpParameters(data_select.shape[1], taus)
-        params.adjustParams(0.1, vary_t0=True, vary_y0 = True, 
+        params.adjustParams(0.0, vary_t0=True, vary_y0 = True, 
                             fwhm=0.2, opt_fwhm=True, vary_yinf=True)
         parameters = params.params
         
@@ -231,7 +231,7 @@ class TestDatasetsDAS(unittest.TestCase):
         
         params = self.tmp_fitter.params
         
-        print(params)
+        #print(params) #diagnostics
         
         self.tmp_fitter._prepareJacobian(params)
         params_no = len(self.tmp_fitter.recent_key_array)
@@ -252,14 +252,18 @@ class TestDatasetsDAS(unittest.TestCase):
                 self.params_tmp2 = params.copy()
                 
                 par_val = params[self.checkkey].value
-                num_grad = self.numericGradient(par_val, epsilon = 1.49e-08)
+                num_grad = self.numericGradient(par_val)
                 anal_grad = self.gradientFunc(par_val)
                 diff = num_grad - anal_grad
                 
-                if(abs(diff) > 10**(-8)):
-                    print(("Num gives %.9f anal gives %.9f " % (num_grad,anal_grad)) +\
-                          str(self.checkkey)+" and res number "+str(res_index))
-
+                #diagnostics
+                #if(abs(diff) > 10**(-8)):
+                #    print(("Num gives %.9f anal gives %.9f " % (num_grad,anal_grad)) +\
+                #          str(self.checkkey)+" and res number "+str(res_index))
+                
+                self.assertTrue(abs(diff) < 10**(-8),
+                    msg=("Num gives %.9f anal gives %.9f key " % (num_grad,anal_grad)) +\
+                          str(self.checkkey)+" and res number "+str(res_index)) 
                 
             self.real_param_num += 1
             
