@@ -415,8 +415,7 @@ class ModelCreator:
             values.append([yinf, self.tau_inf])
          
         return sum([0.5*pre_exp*ModelCreator.expGaussDerrivativeSigma(self.x-t0, 
-                                                                     tau, 
-                                                                     fwhm/2.35482)
+                                tau, fwhm/2.35482)/2.35482
                        for pre_exp, tau in values])    
     
     def expNGaussDatasetJacobianByTau(self, params, lambda_i, tau_j):
@@ -460,7 +459,7 @@ class ModelCreator:
 
         tmp = exp_part*erf_part*(inv2_tau*time - sigma**2*inv3_tau)+\
               exp_part*ModelCreator.erfDerrivative((time-sigma**2*inv_tau)/(sigma*2**0.5))*\
-              (-sigma**2*inv2_tau)/(sigma*2**0.5)
+              (sigma**2*inv2_tau)/(sigma*2**0.5)
         
         return 0.5*pre_exp*tmp
              
