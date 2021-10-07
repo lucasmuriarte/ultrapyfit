@@ -140,6 +140,7 @@ class GlobalFitResult:
         else:
             oryginal_k_order=-np.array(k_values)     
         ks_ordering = np.argsort(oryginal_k_order)
+        ks_reverse_ordering = np.argsort(ks_ordering)
         
         #sort eigenthings
         sort_ordering = np.argsort(eigs_out)
@@ -147,8 +148,8 @@ class GlobalFitResult:
         vects_sorted = vects_out[:,sort_ordering]
         
         #order eigenthings like k1,k2,k3....
-        eigs = eigs_sorted[ks_ordering]
-        vects = vects_sorted[:,ks_ordering]
+        eigs = eigs_sorted[ks_reverse_ordering]
+        vects = vects_sorted[:,ks_reverse_ordering]
         
         #then solve linear equation, where t=0 so you have
         #eigvects_matrix*vect_of_concentrations = vect_of_initial_values
