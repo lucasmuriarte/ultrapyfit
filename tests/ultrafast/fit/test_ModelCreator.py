@@ -155,9 +155,9 @@ class TestModelCreator(unittest.TestCase):
                             [3, 10, None],
                             [4, 20, 1E12]])
     def test_expNGaussDatasetFast(self, i, t0, tau_inf):
-        params = GlobExpParameters(5,taus)
+        params = GlobExpParameters(5, taus)
         #generate parameters
-        params.adjustParams(t0, vary_t0 = True, fwhm = 0.12, tau_inf = tau_inf) 
+        params.adjustParams(t0, vary_t0=True, fwhm=0.12, tau_inf=tau_inf)
         parametros = params.params
         test_model_creator.tau_inf = tau_inf
         expvects=[test_model_creator.expGauss(
