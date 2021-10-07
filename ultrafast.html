@@ -687,29 +687,21 @@ direction which is defined by wave_is_row parameter.
 i.e.: if wavelength correspond to columns, wavelength=0 indicates
 is the first column of the data file if wavelength correspond to
 rows, then wavelength=0 is first row</p></li>
+<li><p><strong>time</strong> (<em>int (default 0)</em>) – defines the element where to find the time vector in its direction
+which is defined by wave_is_row parameter. i.e.: if times correspond
+to columns, time=0 indicates is the first column of the data file</p></li>
+<li><p><strong>wave_is_row</strong> (<em>bool (default False)</em>) – defines if in the original data set the wavelength correspond
+to the rows.</p></li>
+<li><p><strong>separator</strong> (<em>str (default ‘,’)</em>) – defines the separator in the data (any value that can be used in
+pandas read_csv is valid. For tab uses</p></li>
+<li><p><strong>decimal</strong> (<em>int (default ‘.’)</em>) – defines the decimal point in the data</p></li>
 </ul>
 </dd>
-</dl>
-<dl class="simple">
-<dt>time: int (default 0)</dt><dd><p>defines the element where to find the time vector in its direction
-which is defined by wave_is_row parameter. i.e.: if times correspond
-to columns, time=0 indicates is the first column of the data file</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
 </dd>
-<dt>wave_is_row: bool (default False)</dt><dd><p>defines if in the original data set the wavelength correspond
-to the rows.</p>
-</dd>
-<dt>separator: str (default ‘,’)</dt><dd><p>defines the separator in the data (any value that can be used in
-pandas read_csv is valid. For tab uses</p>
-</dd>
-<dt>decimal: int (default ‘.’)</dt><dd><p>defines the decimal point in the data</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Experiment instance</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Experiment instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -937,9 +929,10 @@ spectra should be zero</p></li>
 <dt class="sig sig-object py" id="ultrafast.experiment.SaveExperiment">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.experiment.</span></span><span class="sig-name descname"><span class="pre">SaveExperiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.SaveExperiment" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class that extract and save important featurez of an Experiment instance
+<p>Class that extract and save important features of an Experiment instance
 and saved them as a dictionary that can be later on reload and used.
-This class is directly used when you run the Experiment.save() method</p>
+This class is directly used when you run the Experiment.save() method.
+It also directly save the Experiment pass after instantiation.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ultrafast.experiment.SaveExperiment.path">
 <span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#ultrafast.experiment.SaveExperiment.path" title="Permalink to this definition"></a></dt>
