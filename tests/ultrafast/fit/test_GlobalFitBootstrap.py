@@ -6,7 +6,7 @@ from ultrafast.fit.ExponentialFit import GlobalFitExponential
 from ultrafast.utils.Preprocessing import ExperimentException
 from copy import deepcopy
 
-path = 'C:/Users/lucas/git project/ultrafast/tests/ultrafast/fit/test_result.obj'
+path = 'test_result.obj'
 
 with open(path, 'rb') as file:
     result = pickle.load(file)
