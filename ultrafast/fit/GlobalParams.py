@@ -52,7 +52,7 @@ class GlobExpParameters:
         """
         for iy in range(self.number_traces):
             self.params.add_many(
-                ('y0_' + str(iy+1), 0, vary_y0, None, None, None, None),
+                ('y0_' + str(iy+1), 0, True, None, None, None, None),
                 ('t0_' + str(iy+1), t0, vary_t0,  None, None, None, None))
                 #SN: I chaned min for t0 to None, because zero value seems to be
                 #a mistake (sometimes it can be slightly <0 due to bad correction)
@@ -70,7 +70,7 @@ class GlobExpParameters:
         for iy in range(self.number_traces):
             self.params.add_many(('fwhm_' + str(iy+1), fwhm, opt_fwhm, 0.000001, None, None, None))
             if tau_inf is not None:            
-                self.params.add_many(('yinf_' + str(iy+1), 0.0, vary_yinf, None, None, None, None))
+                self.params.add_many(('yinf_' + str(iy+1), 0.0, True, None, None, None, None))
             if iy > 0:
                 self.params['fwhm_%i' % (iy+1)].expr = 'fwhm_1'
 
@@ -117,14 +117,13 @@ class GlobExpParameters:
             want to be fitted, and for each curve the the y0 value would
             be different.
         """
-        self._generateParams(t0, vary_t0, vary_y0)
+        self._generateParams(t0, vary_t0)
         for iy in range(2, self.number_traces+1):
             self.params['t0_%i' % iy].expr = 't0_1'
             for i in range(self.exp_no):
                 self.params['tau%i_' % (i+1) + str(iy)].expr = 'tau%i_1' % (i+1)
         if fwhm is not None:
-            self._add_deconvolution(fwhm, opt_fwhm, tau_inf=tau_inf, 
-                                    vary_yinf=vary_yinf)
+            self._add_deconvolution(fwhm, opt_fwhm, tau_inf=tau_inf)
             if not GVD_corrected:
                 for iy in range(2, self.number_traces+1):
                     self.params['t0_%i' % iy].expr = None

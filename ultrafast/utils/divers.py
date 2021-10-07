@@ -538,6 +538,7 @@ def book_annotate_all_methods(book=None, cls=None):
 
 def froze_it(cls):
     cls.__frozen = False
+    cls.__modified = False
 
     def frozen_setattr(self, key, value, code=None):
         """
@@ -548,11 +549,17 @@ def froze_it(cls):
         if code is not None:
             x = np.random.RandomState(code)
             val = x.randint(10000, size=1)[0]
+
         if self.__frozen and hasattr(self, key) and val != 2603:
+            if val != 1:
+                print("INCORRECT CODE: Contact creator for more information")
             print("Class {} is frozen. Cannot modified {} = {}"
                   .format(cls.__name__, key, value))
         else:
             object.__setattr__(self, key, value)
+            if val == 2603:
+                print("CORRECT CODE: Attribute modified")
+                object.__setattr__(self, '__modified', True)
 
     def init_decorator(func):
         @wraps(func)
@@ -666,6 +673,11 @@ class LabBook(object):
         actions = [i for i in self.__dict__.keys() if i not in ["name", "creation"] and i[0] != '_']
         return actions
 
+    @property
+    def protected_actions(self):
+        actions = [i for i in self.__dict__.keys() if i not in ["name", "creation"] and i[0] == '_']
+        return actions
+
     def clean(self):
         """
         Clean the LabBook except name attribute if given
@@ -761,6 +773,10 @@ class UnvariableContainer(LabBook):
     """
     def __init__(self, **kws):
         super().__init__(**kws)
+
+    def __delattr__(self, name):
+        print(f"The class UnvariableContainer is frozen and attribute"
+              f" '{name}' cannot be deleted")
 
 
 class FiguresFormating:

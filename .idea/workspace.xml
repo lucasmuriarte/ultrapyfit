@@ -6,6 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_fit.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_fit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitBootstrap.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitClass.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,11 +63,11 @@
       <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\ultrafast" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\old" />
       <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\fit" />
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\fit" />
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\graphics" />
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\utils" />
-      <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\old" />
     </key>
   </component>
   <component name="RunManager" selected="Python.example lab_book">
@@ -224,7 +231,7 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/ultrafast/fit/TargetFit.py</url>
+          <url>file://$PROJECT_DIR$/ultrafast/old/TargetFit.py</url>
           <line>5</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>

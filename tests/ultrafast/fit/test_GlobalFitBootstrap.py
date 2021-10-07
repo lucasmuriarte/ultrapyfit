@@ -2,7 +2,7 @@ import unittest
 import pickle
 from ultrafast.fit.GlobalFitBootstrap import BootStrap
 from parameterized import parameterized
-from ultrafast.fit.ExponentialFit import GlobalFitExponential
+from ultrafast.old.ExponentialFit import GlobalFitExponential
 from ultrafast.utils.Preprocessing import ExperimentException
 from copy import deepcopy
 

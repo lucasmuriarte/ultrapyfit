@@ -87,7 +87,7 @@ class TestGlobalFitExponential(unittest.TestCase):
         fitter = GlobalFitExponential(time, data_select, 3, parameters, False,
                                       wavelength=wave_select)
         result = fitter.global_fit()
-        params_result = result.estimation_params
+        params_result = result.params
         final_taus = [params_result['tau1_1'].value,
                       params_result['tau2_1'].value,
                       params_result['tau3_1'].value]
