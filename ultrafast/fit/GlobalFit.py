@@ -93,6 +93,142 @@ class GlobalFitResult:
         self.wavelength = data.wavelength
         self.details = details
         self.details['time_constraint'] = False
+        
+    def das_to_sas(self):
+        """
+        Recalculates DAS spectra into EAS, treating y_inf as final product.
+        Replaces DAS with EAS, so one should treat this data as EAS after
+        calling this method.
+        It works with matrixes and should be correct for any number of exp's.
+        """
+        
+        no_of_wavelengths = self.wavelength.shape[0]
+        tau_inf_enabled = True #set here if it is enabled
+        no_of_exps = 99999 #load here number of exponentials
+        params = self.params.copy()
+        
+        ##########
+        if(tau_inf_enabled):
+            size_of_kmatrix = no_of_exps + 1
+        else:
+            size_of_kmatrix = no_of_exps
+
+        #let's build kmatrix of the sequential model        
+        kmatrix = np.zeros((size_of_kmatrix,size_of_kmatrix))
+        k_values = []
+        for i in range(no_of_exps):
+            k_value = 1/params['tau%i_' % (i+1) + str(1)].value
+            kmatrix[i,i] = -k_value
+            if(i+1 < size_of_kmatrix):
+                kmatrix[i+1,i] = k_value
+        k_values.append(k_value)
+                
+        #initialize initial values, since it is sequential, only first is 1
+        c_initials = np.zeros(size_of_kmatrix)
+        c_initials[0] = 1.0
+
+        #now extract eigenvalues and eigenvectors, to be able to reduce kmatrix
+        #to the only-diagonal form. then we can easily differentiate and get solution
+        eigs_out, vects_out = np.linalg.eig(kmatrix)
+        
+        #note that eigenvalues can come out not ordered. we want them in the
+        #same order and values as k1,k2,k3... note that the same values are
+        #obtained only if kmatrix describes sequential model. more complicated
+        #models can give different k values than these used to build kmatrix              
+        if(tau_inf_enabled):
+            oryginal_k_order=-np.array(k_values+[0.0])
+        else:
+            oryginal_k_order=-np.array(k_values)     
+        ks_ordering = np.argsort(oryginal_k_order)
+        
+        #sort eigenthings
+        sort_ordering = np.argsort(eigs_out)
+        eigs_sorted = eigs_out[sort_ordering]
+        vects_sorted = vects_out[:,sort_ordering]
+        
+        #order eigenthings like k1,k2,k3....
+        eigs = eigs_sorted[ks_ordering]
+        vects = vects_sorted[:,ks_ordering]
+        
+        #then solve linear equation, where t=0 so you have
+        #eigvects_matrix*vect_of_concentrations = vect_of_initial_values
+        #by this you get coeffs which are before diagonalized exp functions
+        coeffs = np.linalg.solve(vects, c_initials)
+        
+        #ok, now you make diagonal array with these coeffs
+        em_matrix = np.identity(coeffs.shape[0]) * np.transpose(coeffs[np.newaxis])
+        #and you multiply eigenvector matrix by this. so you have:
+        #fit_of_data = eas_array * d_matrix * exp_matrix
+        #fit_of_data = das_array * exp_matrix
+        d_matrix = np.dot(vects,em_matrix)
+        
+        #now you can just transpose that, and by comparison of das and sas,
+        #you can get eas values from linear equation:
+        d_t = np.transpose(d_matrix)
+        #like below, but need to do this in loop for all kinetics:
+        #EASv = np.linalg.solve(d_t, DASv)  
+            
+        #idea is to iterate slowly over every kinetic, and change exp-associated
+        #preexp factors into species associated preexp factors
+        for wavelength_num in range(no_of_wavelengths):
+            DASv = [self.params['pre_exp%i_' % (i+1) + str(wavelength_num+1)].value 
+                                for i in range(no_of_exps)]
+            if(tau_inf_enabled):
+                DASv.append(self.params['yinf_' + str(wavelength_num+1)].value)
+            
+            EASv = np.linalg.solve(d_t, np.array(DASv)) 
+            
+            #lets replace das with eas:
+            for i in range(no_of_exps):
+                params['pre_exp%i_' % (i+1) + str(wavelength_num+1)].set(value=EASv[i])
+            if(tau_inf_enabled):    
+                params['yinf_' + str(wavelength_num+1)].set(value=EASv[no_of_exps])
+            
+
+        #lets put back the params, but now pre_exps are EAS, not DAS!
+        self.params = params
+        
+    def das_to_sas_3exp(self):
+        """
+        Recalculates DAS spectra into EAS, treating y_inf as final product.
+        Replaces DAS with EAS, so one should treat this data as EAS after
+        calling this method.
+        This is special case where we have 3 exponentials + offset.
+        It is calculated manually, to check if it generates the same result as 
+        das_to_sas method (only for 3exp+offset). 
+        Compare results of this func with result of das_to_sas() to be sure that
+        everything is correct.
+        """        
+
+        no_of_wavelengths = self.wavelength.shape[0]
+        tau_inf_enabled = True #must be enabled
+        no_of_exps = 3 #must be 3
+        params = self.params.copy()
+
+        k1 = 1/params['tau%i_' % (1) + str(1)].value
+        k2 = 1/params['tau%i_' % (2) + str(1)].value
+        k3 = 1/params['tau%i_' % (3) + str(1)].value
+
+        for wavelength_num in range(no_of_wavelengths):
+            DAS1 = self.params['pre_exp%i_' % (1) + str(wavelength_num+1)].value
+            DAS2 = self.params['pre_exp%i_' % (2) + str(wavelength_num+1)].value
+            DAS3 = self.params['pre_exp%i_' % (3) + str(wavelength_num+1)].value
+            offset = self.params['yinf_' + str(wavelength_num+1)].value
+
+            EAS1 = DAS1 + DAS2 + DAS3 + offset*(-k1/(k2-k1)-k1*k2/((k2-k1)*(k3-k1))+k2*k3/((k2-k1)*(k3-k1)))
+            EAS2 = DAS2*((k1-k2)/k1) + DAS3*((k1-k3)/k1) + offset
+            EAS3 = DAS3*((k1-k3)*(k2-k3)/(k1*k2)) + offset
+            #offset = EAS4 = DAS4 = offset
+
+            #lets replace das with eas:
+            params['pre_exp%i_' % (1) + str(wavelength_num+1)].set(value=EAS1)
+            params['pre_exp%i_' % (2) + str(wavelength_num+1)].set(value=EAS2)
+            params['pre_exp%i_' % (3) + str(wavelength_num+1)].set(value=EAS3)
+
+
+        #lets put back the params, but now pre_exps are EAS, not DAS!
+        self.params = params
+
 
     def save(self, name):
         path = name + '.res'
