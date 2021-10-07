@@ -102,10 +102,14 @@ class GlobalFitResult:
         It works with matrixes and should be correct for any number of exp's.
         """
         
+        params = self.params.copy()
         no_of_wavelengths = self.wavelength.shape[0]
         tau_inf_enabled = True #set here if it is enabled
-        no_of_exps = 99999 #load here number of exponentials
-        params = self.params.copy()
+        try:
+            y_inf = params['yinf_' + str(1)]
+        except:
+            tau_inf_enabled = False
+        no_of_exps = self.exp_no #load here number of exponentials
         
         ##########
         if(tau_inf_enabled):
@@ -121,7 +125,7 @@ class GlobalFitResult:
             kmatrix[i,i] = -k_value
             if(i+1 < size_of_kmatrix):
                 kmatrix[i+1,i] = k_value
-        k_values.append(k_value)
+            k_values.append(k_value)
                 
         #initialize initial values, since it is sequential, only first is 1
         c_initials = np.zeros(size_of_kmatrix)
@@ -154,6 +158,8 @@ class GlobalFitResult:
         #then solve linear equation, where t=0 so you have
         #eigvects_matrix*vect_of_concentrations = vect_of_initial_values
         #by this you get coeffs which are before diagonalized exp functions
+        #it is crucial, to have 1 before exp which is first in cascade, this
+        #is why we sorted things before
         coeffs = np.linalg.solve(vects, c_initials)
         
         #ok, now you make diagonal array with these coeffs
@@ -201,10 +207,19 @@ class GlobalFitResult:
         everything is correct.
         """        
 
-        no_of_wavelengths = self.wavelength.shape[0]
-        tau_inf_enabled = True #must be enabled
-        no_of_exps = 3 #must be 3
         params = self.params.copy()
+        no_of_wavelengths = self.wavelength.shape[0]
+        tau_inf_enabled = True #set here if it is enabled
+        try:
+            y_inf = params['yinf_' + str(1)]
+        except:
+            tau_inf_enabled = False
+        no_of_exps = self.exp_no #load here number of exponentials
+        
+        if(no_of_exps != 3):
+            raise Exception("This conversion method cannot be used in this case!")
+        if(tau_inf_enabled is not True):
+            raise Exception("This conversion method cannot be used in this case!")
 
         k1 = 1/params['tau%i_' % (1) + str(1)].value
         k2 = 1/params['tau%i_' % (2) + str(1)].value
