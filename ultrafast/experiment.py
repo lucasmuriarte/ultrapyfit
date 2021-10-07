@@ -21,9 +21,10 @@ import pickle
 
 class SaveExperiment:
     """
-    Class that extract and save important featurez of an Experiment instance
+    Class that extract and save important features of an Experiment instance
     and saved them as a dictionary that can be later on reload and used.
-    This class is directly used when you run the Experiment.save() method 
+    This class is directly used when you run the Experiment.save() method.
+    It also directly save the Experiment pass after instantiation.
     
     Attributes
     ----------
@@ -264,11 +265,13 @@ class Experiment(ExploreData, ExploreResults):
         if not self._params_initialized:
             return "Not ready to fit data"
         else:
-            return f"parameters for {self._params_initialized} fit  with {self._exp_no} components"
+            msg = f"parameters for {self._params_initialized} " \
+                  f"fit  with {self._exp_no} components"
+            return msg
 
     @type_fit.setter
     def type_fit(self, value):
-        pass
+        print("type_fit property cannot be set by the user")
 
     @staticmethod
     def load_data(path: str, wavelength=0, time=0, wave_is_row=False,
@@ -287,7 +290,6 @@ class Experiment(ExploreData, ExploreResults):
             i.e.: if wavelength correspond to columns, wavelength=0 indicates
             is the first column of the data file if wavelength correspond to
             rows, then wavelength=0 is first row
-
 
         time: int (default 0)
             defines the element where to find the time vector in its direction
@@ -355,6 +357,8 @@ class Experiment(ExploreData, ExploreResults):
                     msg = 'Unable to open the specify file'
                 elif not instantiate:
                     msg = 'File do not correspond to a ultrafast Experiment class'
+                elif not unpickle:
+                    msg = 'Unable to unpickle the specified file'
                 else:
                     msg = 'Undefined error occur while loading the file'
                 raise ExperimentException(msg)
@@ -1139,6 +1143,7 @@ class Experiment(ExploreData, ExploreResults):
         """
         Not finished
         """
+        # _get_values is a heritage function from ExploreResults class
         x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
         if fit_data == 'all':

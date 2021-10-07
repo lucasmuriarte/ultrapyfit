@@ -79,6 +79,9 @@ class ModPopulation:
         return active_counter
     
     def countFixed(self):
+        """
+        Count fixed parameters
+        """
         fixed_counter = 0
         
         if(self.k_all_fixed): fixed_counter += 1
@@ -125,17 +128,18 @@ class ModPopulation:
             self.k_all_enabled = True if not(self.tau_active) else False
             self.tau_enabled = True if not(self.k_all_active) else False  
             
-        elif(active_counter < arrow_counter): #enable everything which is inactive and can be enabled
+        elif active_counter < arrow_counter: #enable everything which is inactive and can be enabled
             double_present = False #if in some arrow two fields are active, it determines k_all value. 
             for arrow in self.arrows:
-                if(arrow.source is self):
-                    if(arrow.k_active and arrow.sf_active): double_present = True
+                if arrow.source is self:
+                    if arrow.k_active and arrow.sf_active:
+                        double_present = True
 
-            if(double_present):
+            if double_present:
                 self.k_all_enabled = False
                 self.tau_enabled = False
                 for arrow in self.arrows:
-                    if(arrow.source is self):
+                    if arrow.source is self:
                         arrow.k_enabled = True if not(arrow.sf_active) else False
                         arrow.sf_enabled = True if (not(arrow.k_active) and active_SF_counter < arrow_counter-1) or arrow.sf_active else False                
                 
@@ -305,16 +309,16 @@ class ModPopulation:
             self.tau = float(tau_edit.text.text())
             self.tau_fixed = tau_edit.check_fixed.isChecked()
             self.updateBranchKs()
-        if(c_active):
+        if c_active:
             self.c = float(c_edit.text.text())
             self.c_fixed = c_edit.check_fixed.isChecked()
             
-        if(not(k_all_active)):
+        if not k_all_active:
             k_all_edit.text.setText("%.9f" % self.k_all)
-        if(not(tau_active)):
-            tau_edit.text.setText("%.9f" %  self.tau)
-        if(not(c_active)):
-            c_edit.text.setText("%.9f" %  self.c)   
+        if not tau_active:
+            tau_edit.text.setText("%.9f" % self.tau)
+        if not c_active:
+            c_edit.text.setText("%.9f" % self.c)
             
             
 class ModProcess:
@@ -509,8 +513,8 @@ class ParamControl(QWidget):
 
         self.label = QtWidgets.QLabel(name, self)
         self.text = QtWidgets.QLineEdit('0.0', self)
-        self.check_editable = QtWidgets.QCheckBox("Modify?",self)
-        self.check_fixed = QtWidgets.QCheckBox("Fixed?",self)
+        self.check_editable = QtWidgets.QCheckBox("Modify?", self)
+        self.check_fixed = QtWidgets.QCheckBox("Fixed?", self)
         self.check_editable.clicked.connect(callback)
         self.check_fixed.clicked.connect(callback)
         self.text.editingFinished.connect(callback)
