@@ -4,6 +4,7 @@ Created on Sat Mars 13 14:35:39 2021
 @author: Lucas
 """
 import numpy as np
+import re
 import lmfit
 from ultrafast.fit.ModelCreator import ModelCreator
 from ultrafast.fit.GlobalParams import GlobExpParameters
@@ -80,6 +81,8 @@ class GlobalFitResult:
         for key in result.__dict__.keys():
             setattr(self, key, result.__dict__[key])
         self.details = None
+        #actually it is useful to access also methods sometimes
+        self.model_result = result
 
     def add_data_details(self, data, details):
         """
@@ -208,9 +211,23 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         flatten. Check lmfit for more details.
         """
         pass
+    
+    def _jacobian(self, params): 
+        """
+        The function that should implement jacobian.It should be compatible with
+        _objective method.
+        """
+        raise Exception("Not implemented _jacobian method!")
+    
+    def _prepareJacobian(self, params): 
+        """
+        Run before fit if analytical jacobian will be used. It should prepare
+        variables to speed up calculation.
+        """
+        raise Exception("Not implemented _prepareJacobian method!")
 
-    def global_fit(self, maxfev=None, apply_weights=False, method='leastsq', 
-                   **kws):
+    def global_fit(self, maxfev=None, apply_weights=False, use_jacobian = False,
+                   method='leastsq', **kws):
         """
         Method to fit the data to a model. Returns a modified lmfit result
         object.
@@ -223,6 +240,12 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         apply_weights: bool (default False)
             If True and weights have been defined, this will be applied in the
             fit (for defining weights) check the function define_weights.
+
+        use_jacobian: bool
+            decide if generate and apply analytic jacobian matrix
+            False will result in usage of standard numeric estimation of the
+            jacobian matrix, which is slow. assumes that jacobian function is 
+            implemented.
 
         method: default (leastsq)
             Any valid method that can be used by lmfit minimize function
@@ -247,8 +270,16 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
             user_stop.start()
         if maxfev is not None:
            maxfev = int(maxfev)
-        resultados = self.minimize(method=method, params=self.params, 
-                                   max_nfev=maxfev, **kws)
+        
+        if(use_jacobian == False):
+            resultados = self.minimize(method=method, params=self.params,
+                                       max_nfev=maxfev, **kws)
+        else:
+            self._prepareJacobian(params=self.params)
+            resultados = self.minimize(method=method, params=self.params,
+                                       max_nfev=maxfev, Dfun=self._jacobian,
+                                       col_deriv=True, **kws)            
+            
         if self._allow_stop:
             user_stop.stop()
             user_stop.join()
@@ -500,9 +531,167 @@ class GlobalFitExponential(GlobalFit):
 
         self._number_it = self._number_it + 1
         return resid.flatten()
+    
+    def _jacobian(self, params): 
+        """
+        The function that should implement jacobian.
+        It should be compatible with _objective method.
+        Edit: NO! It shouldn't. It removed all fixed/constrained params rows,
+        and adds proper contibutions to other params if expr's are defined.
+        """
+        
+        if self.deconv:
+            params_no = len(self.recent_key_array)
+            ndata, nx = self.data.shape #(no of taus,no of lambdas)
+            out_funcs_no = nx*self.x.shape[0] #no of residuals
+            
+            real_params_no = params_no - self.recent_constrained_no
+            
+            #prepare space for this monstrosity
+            jacobian = np.zeros((real_params_no,out_funcs_no)) 
+            
+            real_param_num = 0
+            for par_i in range(params_no):
+            
+                #firstly generate matrix for all independent params
+                if(self.recent_constrainted_array[par_i] is True):
+                    continue #skip constrained or fixed params
+                    
+                resid = np.zeros((ndata, nx))
+                resid[:,self.recent_lambda_array[par_i]-1] = \
+                                        -self.recent_Dfuncs_array[par_i](params, 
+                                                 self.recent_lambda_array[par_i], 
+                                                 self.recent_tauj_array[par_i]) 
+                                        
+                #secondly, add contribution from dependent (shared) params:
+                #for now i assume that they are only simple "=other param" 
+                #not expr's.
+                for par_dep_i in range(len(self.recent_dependences_array[par_i])):  
+                    par_dep = self.recent_dependences_array[par_i][par_dep_i]
+                    par_mult = self.recent_dependences_derrivs_array[par_i][par_dep_i]
+                
+                    resid[:,self.recent_lambda_array[par_dep]-1] += \
+                        -par_mult(params)*self.recent_Dfuncs_array[par_dep](params,
+                        self.recent_lambda_array[par_dep],
+                        self.recent_tauj_array[par_dep])                  
+                    
+                jacobian[real_param_num,:] = resid.flatten()
+                #note that all derrivative-jacobian methods assume that "kinetic
+                #of derrivatives" they calculate, normally contained the param
+                #by which derrivative is calculated. i mean it assumes that
+                #derrivative is, for example by the same tau or preexp that
+                #is in the given trace, not some other trace where derrivative
+                #should be obviously zero!
+       
+                real_param_num += 1           
+
+            return jacobian
+        else:
+            raise Exception("Error! Jacobian not implemented."+\
+                            "Disable jacobian and run optimization again.")
+        
+    def _prepareJacobian(self, params): 
+        """
+        Run before fit if analytical jacobian will be used. It should prepare
+        variables to speed up calculation.
+        It just makes table with correct order of keywords for param objects,
+        and functions used to calc proper derrivatives, and exp nums if
+        they are required. So _jacobian method can later smoothly iterate
+        and build while matrix without if statements.
+        """
+        self.recent_key_array = [key for key in params.keys()]
+        #not very elegant, but run once, so who cares....
+        self.recent_Dfuncs_array = [] #proper derrivative funcs
+        self.recent_tauj_array = [] #numbers of corresponding tau
+        self.recent_lambda_array = [] #numbers of corresponding lambda
+        self.recent_constrainted_array = [] #if param fixed or constrained,
+        #then =True. it is because lmfit removes these, so jacobian shouldn't
+        #also contain them. so it is to mark the params to be skipped...
+        self.recent_dependences_array = \
+        [[] for i in range(len(self.recent_key_array))]
+        #lists dependences in other params 
+        #from this one. if empty list, then no dependences anywhere. if 
+        #internal list contains some indices, then they are
+        #indices of other params where it is mentioned in expr
+        self.recent_dependences_derrivs_array = \
+        [[] for i in range(len(self.recent_key_array))]
+        #structured as above list,
+        #it will have proper derrivatives to multiply by, if this is not just
+        #"share variable", but some more complex expression. required for
+        #target models, but not for DAS, where only simple "shares" happen
+        
+        for key_num in range(len(self.recent_key_array)):
+            key = self.recent_key_array[key_num]
+            
+            #exclude constrained params from the matrix
+            if(params[key].vary is False or params[key].expr is not None):
+                self.recent_constrainted_array.append(True)
+            else:
+                self.recent_constrainted_array.append(False)
+                
+            #if this param depends on some other param, then add proper reference
+            if(params[key].expr is not None):
+                #note that i don't impement anything except simple "equals
+                #other parameter". and i set lambda func to 1
+                #more complex cases will be implemented for target fit
+                try:
+                    relative_i = self.recent_key_array.index(params[key].expr) 
+                except ValueError:
+                    raise Exception("Failure in param constraints, "+\
+                        "not implemented case! Fix or disable jacobian!")
+                self.recent_dependences_array[relative_i].append(key_num)
+                derriv_scale = lambda params: 1
+                self.recent_dependences_derrivs_array[relative_i].append(derriv_scale)
+             
+            #associate proper functions for proper parameters    
+            m = re.findall("^tau(\d+)_(\d+)$", key)
+            if(len(m) > 0): #check if this is tau param
+                self.recent_lambda_array.append(int(m[0][1]))
+                self.recent_tauj_array.append(int(m[0][0]))
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByTau)
+                continue
+            m = re.findall("^pre_exp(\d+)_(\d+)$", key)
+            if(len(m) > 0): #check if this is pre_exp param
+                self.recent_lambda_array.append(int(m[0][1]))
+                self.recent_tauj_array.append(int(m[0][0]))
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByPreExp)
+                continue
+            m = re.findall("^fwhm_(\d+)$", key)
+            if(len(m) > 0): #check if this is sigma/fhwm param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianBySigma)
+                continue       
+            m = re.findall("^yinf_(\d+)$", key)
+            if(len(m) > 0): #check if this is yinf (infinite offset) param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByYInf)
+                continue
+            m = re.findall("^y0_(\d+)$", key)
+            if(len(m) > 0): #check if this is y0 (global offset) param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByY0)
+                continue
+            m = re.findall("^t0_(\d+)$", key)
+            if(len(m) > 0): #check if this is t0 (time zero) param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByT0)
+                continue
+            #add all of them or exception will be!
+            
+            raise Exception("Some parameter found for which no derrivative is\
+                            implemented!")
+        
+        self.recent_constrained_no = sum(self.recent_constrainted_array)
+        #number of constrained params, excluded from jacobian
+    
 
     def global_fit(self, vary_taus=True, maxfev=None, time_constraint=False,
-                   apply_weights=False, method='leastsq', **kws):
+                   apply_weights=False, use_jacobian = False, 
+                   method='leastsq', **kws):
         """
         Method to fit the data to a model. Returns a modified lmfit result
         object.
@@ -527,6 +716,11 @@ class GlobalFitExponential(GlobalFit):
         apply_weights: bool (default False)
             If True and weights have been defined, this will be applied in the
             fit (for defining weights) check the function define_weights.
+            
+        use_jacobian: bool
+            decide if generate and apply analytic jacobian matrix
+            False will result in usage of standard numeric estimation of the
+            jacobian matrix, which is slow
 
         method: default (leastsq)
             Any valid method that can be used by lmfit minimize function
@@ -541,7 +735,7 @@ class GlobalFitExponential(GlobalFit):
         if time_constraint:
             self._apply_time_constraint()
         result = super().global_fit(maxfev=maxfev, apply_weights=apply_weights,
-                                    method=method, **kws)
+                                    use_jacobian = use_jacobian, method=method, **kws)
         if time_constraint:
             result.details['time_constraint'] = True
             self._unconstraint_times()

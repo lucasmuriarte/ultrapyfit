@@ -12,6 +12,8 @@ from ultrafast.fit.GlobalFit import GlobalFitExponential
 from ultrafast.utils.divers import read_data, select_traces
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.fit.GlobalParams import GlobExpParameters
+from scipy.optimize import check_grad, approx_fprime
+import numpy as np
 
 #datasets_dir = "ultrafast/examples/dynamically_created_data/"
 
@@ -64,7 +66,8 @@ class TestDatasetsDAS(unittest.TestCase):
         
         data_select, wave_select = select_traces(data, wavelength, 10)
         params = GlobExpParameters(data_select.shape[1], taus)
-        params.adjustParams(0, False, fwhm=0.2, opt_fwhm=False)
+        params.adjustParams(0, vary_t0=False, vary_y0 = False, 
+                            fwhm=0.2, opt_fwhm=False, vary_yinf=False)
         parameters = params.params
         
         fitter = GlobalFitExponential(time, data_select, 3, 
@@ -72,9 +75,12 @@ class TestDatasetsDAS(unittest.TestCase):
                                       wavelength=wave_select)
         
         fitter.allow_stop = False #in my case it just hangs.
-        result = fitter.global_fit(maxfev=10000)
+        result = fitter.global_fit(maxfev=10000,
+                                   use_jacobian = True,
+                                   method='leastsq')
         
         explorer = ExploreResults(result)
+        #explorer.print_results()
         
         (x, data, wavelength, 
          params, exp_no, deconv, 
@@ -127,9 +133,10 @@ class TestDatasetsDAS(unittest.TestCase):
         
         time, data, wavelength = read_data(datapath, wave_is_row = True)
         
-        data_select, wave_select = select_traces(data, wavelength, 10)
+        data_select, wave_select = select_traces(data, wavelength, 300)
         params = GlobExpParameters(data_select.shape[1], [35,])
-        params.adjustParams(0, False, fwhm=0.1, opt_fwhm=True)
+        params.adjustParams(0, vary_t0=False, vary_y0 = False, 
+                            fwhm=0.1, opt_fwhm=True, vary_yinf=False)
         parameters = params.params
         
         fitter = GlobalFitExponential(time, data_select, 1, 
@@ -137,7 +144,10 @@ class TestDatasetsDAS(unittest.TestCase):
                                       wavelength=wave_select)
         
         fitter.allow_stop = False #in my case it just hangs.
-        result = fitter.global_fit(maxfev=10000)
+
+        result = fitter.global_fit(maxfev=10000, 
+                                   use_jacobian = True, 
+                                   method='leastsq')
         
         explorer = ExploreResults(result)
         #explorer.print_results()
@@ -150,15 +160,12 @@ class TestDatasetsDAS(unittest.TestCase):
          derivative_space) = explorer._get_values()
     
         tau_out = params["tau1_1"].value
-        
         tau_err = params["tau1_1"].stderr
                   
         self.assertTrue(abs((tau-tau_out)/tau_err) < 5,
                         msg="""Tau generated is %.3f, tau after fit is 
                         %.3f, and error is %.3f""" % (tau,tau_out,tau_err))          
         
-        
-     
-        
+
 if __name__ == '__main__':
     unittest.main()
