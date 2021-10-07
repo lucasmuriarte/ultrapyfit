@@ -4,14 +4,6 @@ ultrafast.fit package
 Submodules
 ----------
 
-ultrafast.fit.ExponentialFit module
------------------------------------
-
-.. automodule:: ultrafast.fit.ExponentialFit
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 ultrafast.fit.GlobalFit module
 ------------------------------
 
@@ -40,14 +32,6 @@ ultrafast.fit.ModelCreator module
 ---------------------------------
 
 .. automodule:: ultrafast.fit.ModelCreator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-ultrafast.fit.TargetFit module
-------------------------------
-
-.. automodule:: ultrafast.fit.TargetFit
    :members:
    :undoc-members:
    :show-inheritance:

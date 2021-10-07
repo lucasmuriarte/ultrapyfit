@@ -9,6 +9,7 @@ Subpackages
 
    ultrafast.fit
    ultrafast.graphics
+   ultrafast.old
    ultrafast.utils
 
 Submodules

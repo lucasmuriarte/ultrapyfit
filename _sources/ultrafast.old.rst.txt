@@ -1,0 +1,61 @@
+ultrafast.old package
+=====================
+
+Submodules
+----------
+
+ultrafast.old.Calibration\_Final\_QT\_2 module
+----------------------------------------------
+
+.. automodule:: ultrafast.old.Calibration_Final_QT_2
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.old.ExponentialFit module
+-----------------------------------
+
+.. automodule:: ultrafast.old.ExponentialFit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.old.Global\_Fit\_class module
+---------------------------------------
+
+.. automodule:: ultrafast.old.Global_Fit_class
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.old.TargetFit module
+------------------------------
+
+.. automodule:: ultrafast.old.TargetFit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.old.basicSpectrum module
+----------------------------------
+
+.. automodule:: ultrafast.old.basicSpectrum
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.old.data\_containers module
+-------------------------------------
+
+.. automodule:: ultrafast.old.data_containers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: ultrafast.old
+   :members:
+   :undoc-members:
+   :show-inheritance:
