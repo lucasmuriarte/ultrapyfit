@@ -6,12 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalParams.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_ModelCreator.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_ModelCreator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/targetmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/targetmodel.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -195,7 +189,7 @@
       <workItem from="1631863657490" duration="3421000" />
       <workItem from="1632488244412" duration="1943000" />
       <workItem from="1632732921882" duration="6488000" />
-      <workItem from="1633593462183" duration="11166000" />
+      <workItem from="1633593462183" duration="11833000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>
