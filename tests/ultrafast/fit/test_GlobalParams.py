@@ -50,12 +50,12 @@ class TestGlobExpParameters(unittest.TestCase):
         self.assertEqual(params.params['fwhm_1'].vary, opt_fwhm)
         self.assertEqual(params.params['fwhm_2'].expr, 'fwhm_1')
 
-    @parameterized.expand([[0, True, 0.12, False, True, 1E12],
-                           [0, False, None, True, True, None],
-                           [0, True, None, True, False, None],
-                           [0.5, True, 0.18, False, False, 1E12]])
+    @parameterized.expand([[0, True, 0.12, False, True, 1E12, None],
+                           [0, False, None, True, True, None, 0],
+                           [0, True, None, True, False, None, 5],
+                           [0.5, True, 0.18, False, False, 1E12, 10]])
     def test_adjustParams(self, t0, vary_t0, fwhm, opt_fwhm,
-                          GVD_corrected, tau_inf):
+                          GVD_corrected, tau_inf, y0):
         params = GlobExpParameters(n_traces, taus)
         params.adjustParams(t0, vary_t0, fwhm, opt_fwhm, 
                             GVD_corrected, tau_inf)
@@ -84,7 +84,11 @@ class TestGlobExpParameters(unittest.TestCase):
             # verify if there is no deconvolution t0 is fixed
             self.assertFalse(params.params['t0_1'].vary)
         self.assertEqual(len(params.params), number)
-
+        if y0 is not None:
+            self.assertFalse(params.params['y0_1'].vary == False)
+            self.assertFalse(params.params['y0_1'].vary == y0)
+            self.assertFalse(params.params['y0_4'].vary == False)
+            self.assertFalse(params.params['y0_4'].vary == y0)
 
 model = Model.load("./testmodel2.model")
 params_model = model.genParameters()
