@@ -9,14 +9,8 @@ import lmfit
 from ultrafast.fit.ModelCreator import ModelCreator
 from ultrafast.fit.GlobalParams import GlobExpParameters
 
-
-def globalfit_exponential(x,
-                          data,
-                          *taus,
-                          vary=True,
-                          t0=0,
-                          maxfev=5000,
-                          **kwargs):
+def globalfit_exponential(x, data, *taus, vary=True,
+        t0=0, maxfev=5000, **kwargs):
     """
     Function that does a global fit of a weighted sum of exponential equal to
     the number of time constants (taus) pass. It gives a result object which is
@@ -72,30 +66,25 @@ def globalfit_exponential(x,
         higher than 0, t0 by default is 0.
     """
     taus = list(taus)
+
     if type(vary) == bool:
         vary = [vary for i in taus]
+
     exp_no = len(taus)
     _, n_traces = data.shape
+
     params = GlobExpParameters(n_traces, taus)
     params.adjustParams(t0, False, None)
-    fit = GlobalFitExponential(x, data, exp_no, params.params, deconv=False,
-                               **kwargs)
-    results = fit.global_fit(vary_taus=vary, maxfev=maxfev)
-    return results
 
+    fit = GlobalFitExponential(
+        x, data, exp_no, params.params, deconv=False, **kwargs)
 
-def globalfit_gauss_exponential(x,
-                                data,
-                                *taus,
-                                vary=True,
-                                fwhm=0.12,
-                                tau_inf=1E12,
-                                t0=0,
-                                vary_t0=True,
-                                vary_fwhm=False,
-                                maxfev=5000,
-                                GVD_corrected=True,
-                                **kwargs):
+    return fit.global_fit(vary_taus=vary, maxfev=maxfev)
+
+def globalfit_gauss_exponential(
+        x, data, *taus, vary=True, fwhm=0.12,
+        tau_inf=1E12, t0=0, vary_t0=True, vary_fwhm=False,
+        maxfev=5000, GVD_corrected=True, **kwargs):
     """
     Function that does a global fit of a weighted sum of gaussian modified
     exponential equal to the number of time constants (taus) pass. It gives a
@@ -182,18 +171,23 @@ def globalfit_gauss_exponential(x,
         and 200 are optimized and 30 is fixed. The fwhm of the Gauss function
         is 0.12.
     """
+
     taus = list(taus)
+
     if type(vary) == bool:
         vary = [vary for i in taus]
+
     exp_no = len(taus)
     _, n_traces = data.shape
+
     params = GlobExpParameters(n_traces, taus)
     params.adjustParams(t0, vary_t0, fwhm, vary_fwhm, GVD_corrected, tau_inf)
+
     fit = GlobalFitExponential(x, data, exp_no, params.params, vary=True,
-                               deconv=True,
-                               tau_inf=tau_inf, GVD_corrected=GVD_corrected,
-                               **kwargs)
+        deconv=True, tau_inf=tau_inf, GVD_corrected=GVD_corrected, **kwargs)
+
     results = fit.global_fit(vary_taus=vary, maxfev=maxfev)
+
     return results
 
 
@@ -263,15 +257,8 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
             object
     """
 
-    def __init__(self,
-                 x,
-                 data,
-                 exp_no,
-                 params,
-                 deconv=True,
-                 tau_inf=1E+12,
-                 GVD_corrected=True,
-                 **kwargs):
+    def __init__(self, x, data, exp_no, params, deconv=True,
+            tau_inf=1E+12, GVD_corrected=True, **kwargs):
         """
         constructor function:
 
@@ -334,9 +321,10 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         self._number_it = 0
         self._prefit_done = False
         self.fit_completed = False
+
         ModelCreator.__init__(self, self.exp_no, self.x, self.tau_inf)
-        lmfit.Minimizer.__init__(self, self._objectiveExponential, params,
-                                 nan_policy='propagate')
+        lmfit.Minimizer.__init__(
+            self, self._objectiveExponential, params, nan_policy='propagate')
 
     def pre_fit(self):
         """
@@ -345,48 +333,69 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         global fit.
         """
         fit_params = self.params.copy()
-        ndata, nx = self.data.shape
+        _, nx = self.data.shape
+
         # range is descending just for no specific reason
+        # TODO: verify the range ? I hink it should be range(nx -1, -1, -1) but not sure
+
         for iy in range(nx, 0, -1):
-            print(iy)
+            print(iy) #TODO add informations on the print
+
             single_param = lmfit.Parameters()
             single_param['y0_%i' % iy] = fit_params['y0_%i' % iy]
             single_param.add(('t0_%i' % iy), value=fit_params['t0_1'].value,
                              expr=None, vary=fit_params['t0_1'].vary)
+
             if self.deconv:
                 single_param['fwhm_%i' % iy] = fit_params['fwhm_1']
+
                 if self.tau_inf is not None:
                     single_param['yinf_%i' % iy] = fit_params['yinf_%i' % iy]
+
             for i in range(self.exp_no):
                 single_param.add(('tau%i_' % (i + 1) + str(iy)),
                                  value=fit_params['tau%i_1' % (i + 1)].value,
                                  expr=None, vary=False)
-                single_param.add(('pre_exp%i_' % (i + 1) + str(iy)),
-                                 value=fit_params['pre_exp%i_' % (i + 1)
-                                                  + str(iy)].value,
-                                 vary=True)
+                single_param.add(
+                    ('pre_exp%i_' % (i + 1) + str(iy)),
+                    value=fit_params['pre_exp%i_' % (i + 1) + str(iy)].value,
+                    vary=True
+                )
+
             if self.deconv:
-                result = lmfit.minimize(self._singleFit, single_param,
-                                        args=(self.expNGaussDataset, iy - 1),
-                                        nan_policy='propagate')
+                result = lmfit.minimize(
+                    self._singleFit,
+                    single_param,
+                    args=(self.expNGaussDataset, iy - 1),
+                    nan_policy='propagate'
+                )
+
             else:
-                result = lmfit.minimize(self._singleFit, single_param,
-                                        args=(self.expNDataset, iy - 1),
-                                        nan_policy='propagate')
+                result = lmfit.minimize(
+                    self._singleFit,
+                    single_param,
+                    args=(self.expNDataset, iy - 1),
+                    nan_policy='propagate'
+                )
+
             fit_params['y0_%i' % iy] = result.params['y0_%i' % iy]
+
             for i in range(self.exp_no):
                 fit_params['pre_exp%i_' % (i + 1) + str(iy)] = \
                     result.params['pre_exp%i_' % (i + 1) + str(iy)]
+
             if self.deconv:
                 if self.GVD_corrected is False:
                     fit_params['t0_%i' % iy] = result.params['t0_%i' % iy]
+
                 if self.tau_inf is not None:
                     fit_params['yinf_%i' % iy] = result.params['yinf_%i' % iy]
+
             self.params = fit_params
             self._prefit_done = True
 
     def global_fit(self, vary_taus=True, maxfev=None, time_constraint=False,
-                   apply_weights=False):
+            apply_weights=False):
         """
         Method to fit the data to a model. Returns a modified lmfit result
         object.
@@ -414,34 +423,46 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         """
         if type(vary_taus) == bool:
             vary_taus = [vary_taus for i in range(self.exp_no)]
+
         self.fit_completed = False
+
         if self._prefit_done is False:
             self.pre_fit()
+
         # self.type_fit is important to know if we are doing an exponential
         # or target fit
         # this is used later for exploring the results
         fit_condition = [maxfev, time_constraint, 'Exponential']
         fit_params = self.params
+
         for i in range(self.exp_no):
             fit_params['tau%i_1' % (i + 1)].vary = vary_taus[i]
+
         if time_constraint:
             fit_params = self._apply_time_constraint(fit_params)
+
         if apply_weights and len(self.weights['vector']) == len(self.x):
             self.weights['apply'] = True
             fit_condition.append(self.weights)
+
         else:
             self.weights['apply'] = False
             fit_condition.append('no weights')
+
         if maxfev is not None:
-            resultados = self.minimize(params=fit_params, max_nfev=maxfev)
+            results = self.minimize(params=fit_params, max_nfev=maxfev)
+
         else:
-            resultados = self.minimize(params=fit_params)
-        resultados = self._addToResultados(resultados, fit_condition)
+            results = self.minimize(params=fit_params)
+
+        results = self._addToResultados(results, fit_condition)
         self._number_it = 0
         self.fit_completed = True
+
         if type(fit_condition[3]) == dict:
             self.weights['apply'] = False
-        return resultados
+
+        return results
 
     def _apply_time_constraint(self, params):
         """
@@ -452,11 +473,13 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         for i in range(self.exp_no):
             if i == 0 and self.deconv:
                 params['tau%i_1' % (i + 1)].min = params['fwhm_1'].value
+
             else:
                 params['tau%i_1' % (i + 1)].min = params['tau%i_1' % i].value
+
         return params
 
-    def _addToResultados(self, resultados, fit_condition):
+    def _addToResultados(self, results, fit_condition):
         """
         Add as attributes to the lmfit results object: these are the data, the
         time the wavelength. Also add fit details such as the number of
@@ -464,25 +487,32 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         other properties that are later use by UltrafastExperiments class and
         other classes as ExploreResults.
         """
-        resultados.time = self.x
-        resultados.data = self.data
-        resultados.wavelength = np.array([i for i in
-                                          range(1, self.data.shape[1] + 1)])
+
+        results.time = self.x
+        results.data = self.data
+        results.wavelength = np.array(
+            [i for i in range(1, self.data.shape[1] + 1)])
+
         tau_inf = self.tau_inf if self.deconv else None
-        resultados.details = {'exp_no': self.exp_no,
-                              'deconv': self.deconv,
-                              'type': 'Exponential',
-                              'tau_inf': tau_inf,
-                              'maxfev': fit_condition[0],
-                              'time_constraint': fit_condition[1],
-                              'svd_fit': False,
-                              'derivate': False,
-                              'avg_traces': 'unknown'}
+        results.details = {
+            'exp_no': self.exp_no,
+            'deconv': self.deconv,
+            'type': 'Exponential',
+            'tau_inf': tau_inf,
+            'maxfev': fit_condition[0],
+            'time_constraint': fit_condition[1],
+            'svd_fit': False,
+            'derivate': False,
+            'avg_traces': 'unknown'
+        }
+
         if not self.weights['apply']:
-            resultados.weights = False
+            results.weights = False
+
         else:
-            resultados.weights = self.weights
-        return resultados
+            results.weights = self.weights
+
+        return results
 
     def _singleFit(self, params, function, i):
         """
@@ -490,9 +520,11 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         """
         if self.deconv:
             return self.data[:, i] - function(params, i)
+
         else:
             t0 = params['t0_%i' % (i + 1)].value
             index = np.argmin([abs(i - t0) for i in self.x])
+
             return self.data[index:, i] - function(params, i)
 
     def _objectiveExponential(self, params):
@@ -505,16 +537,21 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
             if self.GVD_corrected:
                 t0 = params['t0_1'].value
                 fwhm = params['fwhm_1'].value
-                values = [params['tau%i_1' % (ii + 1)].value for ii in
-                          range(self.exp_no)]
+                values = \
+                    [params['tau%i_1' % (ii + 1)].value for ii in range(self.exp_no)]
+
                 if self.tau_inf is not None:
                     values.append(self.tau_inf)
-                expvects = [self.expGauss(self.x - t0, tau, fwhm / 2.35482)
-                            for tau in values]
-                resid = self._generateResidues(self.expNGaussDatasetFast,
-                                               params, expvects)
+
+                expvects = \
+                    [self.expGauss(self.x - t0, tau, fwhm / 2.35482) for tau in values]
+
+                resid = self._generateResidues(
+                    self.expNGaussDatasetFast, params, expvects)
+
             else:
                 resid = self._generateResidues(self.expNGaussDataset, params)
+
         else:
             t0 = params['t0_1'].value
             index = np.argmin([abs(i - t0) for i in self.x])
@@ -526,9 +563,11 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
                                            expvects)[index:, :]
 
         self._number_it = self._number_it + 1
+
         if self._number_it % 100 == 0:
             print(self._number_it)
             print(sum(np.abs(resid.flatten())))
+
         return resid.flatten()
 
     def _generateResidues(self, function, params, extra_param=None):
@@ -538,11 +577,15 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
         ndata, nx = self.data.shape
         data = self.data[:]
         resid = data * 1.0
+        
         for i in range(nx):
             if extra_param is not None:
                 resid[:, i] = data[:, i] - function(params, i, extra_param)
+
             else:
                 resid[:, i] = data[:, i] - function(params, i)
+
             if self.weights['apply']:
                 resid[:, i] = resid[:, i] * self.weights['vector']
+
         return resid

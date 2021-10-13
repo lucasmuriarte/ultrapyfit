@@ -10,7 +10,7 @@ from ultrafast.experiment import Experiment
 
 # path_2 = "C:/Users/lucas/Downloads/dataluc.csv"
 
-path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2.csv'
+path = 'examples/data/denoised_2.csv'
 # time, data, wave = read_data(path, wave_is_row= True)
 
 # original_taus = [8, 30, 200]

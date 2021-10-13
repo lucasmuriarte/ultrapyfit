@@ -19,9 +19,6 @@ number_exp = 3
 time = np.linspace(5,106,101)
 test_model_creator = ModelCreator(number_exp,time)
 
-
-
-
 def expModifiedGaussian(x, amplitude=1, center=0, sigma=1.0, tau=1.0):
     """
     an alternative exponentially modified Gaussian from:

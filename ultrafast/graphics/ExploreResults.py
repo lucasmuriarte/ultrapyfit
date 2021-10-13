@@ -564,7 +564,7 @@ class ExploreResults():
         deconv = self._fits[fit_number].details['deconv']
         tau_inf = self._fits[fit_number].details['tau_inf']
         exp_no = self._fits[fit_number].details['exp_no']
-        derivative_space = self._fits[fit_number].details['derivative']
+        derivative_space = self._fits[fit_number].details['derivative'] #TODO 'derivative' KeyError
         # check for type of fit done target or exponential
         type_fit = self._fits[fit_number].details['type']
         return x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space

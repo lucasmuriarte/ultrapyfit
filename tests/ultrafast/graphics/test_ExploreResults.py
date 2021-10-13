@@ -7,14 +7,14 @@ from ultrafast.utils.divers import read_data, select_traces
 import numpy as np
 
 
-path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2.csv'
+path = 'examples/data/denoised_2.csv'
 
 original_taus = [8, 30, 200]
 
 time, data, wave = read_data(path, wave_is_row=True)
 data_select, wave_select = select_traces(data, wave, 'auto')
 
-file = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2_results.res'
+file = 'examples/data/denoised_2_results.res'
 res = pickle.load(file)
 
 result = ExploreResults(res)

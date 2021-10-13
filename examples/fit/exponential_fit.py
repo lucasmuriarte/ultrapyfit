@@ -10,7 +10,7 @@ from ultrafast.fit.GlobalFitBootstrap import BootStrap
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.fit.GlobalParams import GlobExpParameters
 
-path = 'denoised_2.csv'
+path = 'examples/data/denoised_2.csv'
 time, data, wave = read_data(path, wave_is_row= True)
 
 # original_taus = [8, 30, 200]

@@ -10,10 +10,11 @@ from ultrafast.fit.GlobalParams import GlobExpParameters, GlobalTargetParameters
 from parameterized import parameterized
 from ultrafast.graphics.targetmodel import Model
 
-
 taus = [8, 30, 200]
 n_traces = 5
-
+model = Model.load("tests/ultrafast/fit/testmodel2.model")
+params_model = model.genParameters()
+exp_no = params_model['exp_no']
 
 class TestGlobExpParameters(unittest.TestCase):
     """
@@ -85,13 +86,7 @@ class TestGlobExpParameters(unittest.TestCase):
             self.assertFalse(params.params['t0_1'].vary)
         self.assertEqual(len(params.params), number)
 
-
-model = Model.load("./testmodel2.model")
-params_model = model.genParameters()
-exp_no = params_model['exp_no']
-
 class TestGlobalTargetParams(unittest.TestCase):
-
     def test___init__(self):
         params = GlobalTargetParameters(n_traces, model)
         self.assertTrue(params.params == params_model)

@@ -10,7 +10,7 @@ from copy import deepcopy
 
 time_simulated = np.logspace(0, 3, 150)
 
-path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2.csv'
+path = 'examples/data/denoised_2.csv'
 original_taus = [8, 30, 200]
 
 time, data, wave = read_data(path, wave_is_row=True)
@@ -22,6 +22,7 @@ param_generator.adjustParams(0, fwhm=None)
 params = param_generator.params
 model = ModelCreator(3, time_simulated)
 data_simulated = np.zeros((150, 10))
+
 for i in range(10):
     data_simulated[:, i] = model.expNDataset(params, i)
 
@@ -87,7 +88,7 @@ class TestGlobalFitExponential(unittest.TestCase):
         fitter = GlobalFitExponential(time, data_select, 3, parameters, False,
                                       wavelength=wave_select)
         result = fitter.global_fit()
-        params_result = result.estimation_params
+        params_result = result.params
         final_taus = [params_result['tau1_1'].value,
                       params_result['tau2_1'].value,
                       params_result['tau3_1'].value]
