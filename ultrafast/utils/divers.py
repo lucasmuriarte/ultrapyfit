@@ -215,26 +215,32 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
         else:
             wavelengths = pd.Series(wavelength)
         if space == 'auto':
-            values = [i for i in range(len(wavelength))[::round(len(wavelength) / 11)]]
+            number = round(len(wavelength) / 11)
+            values = [i for i in range(len(wavelength))[::number]]
             selected_traces = values[1:]
             points = 0
         elif type(space) is int:
             if wavelength is not None:
-                wavelength_unit = 1 / ((wavelength[-1] - wavelength[0]) / len(wavelength))
-                if wavelength_unit >= 1:
-                    space = round(space * wavelength_unit)
+                wavelength_unit = (wavelength[-1] - wavelength[0]) / len(wavelength)
+                # print(wavelength_unit)
+                # if wavelength_unit >= 1:
+                #    space = round(space * wavelength_unit)
+                #    print("aa")
             first = wavelengths.iloc[0 + points]
             values = [first + space * i for i in range(len(wavelengths)) if first + space * i < wavelengths.iloc[-1]]
             selected_traces = [(wavelengths - values[i]).abs().sort_values().index[0] for i in range(len(values))]
+            # print(len(selected_traces))
         else:
             selected_traces = [np.argmin(abs(wavelengths.values - i)) for i in space]
         avoid_regions_index = []
         if avoid_regions is not None:
-            assert type(avoid_regions) is list, 'Please regions should be indicated as a list'
+            msg = 'Please regions should be indicated as a list'
+            assert type(avoid_regions) is list, msg
             if type(avoid_regions[0]) is not list:
                 avoid_regions = [avoid_regions]
             for i in avoid_regions:
-                assert len(i) == 2, 'Please indicate 2 number to declare a region'
+                msg = 'Please indicate 2 number to declare a region'
+                assert len(i) == 2, msg
                 i = sorted(i)
                 avoid_wavelength = np.where((wavelength > i[0]) & (wavelength < i[1]))[0]
                 if len(avoid_wavelength) > 0:

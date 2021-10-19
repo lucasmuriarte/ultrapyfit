@@ -4,7 +4,7 @@ Created on Wed Mar 17 17:45:45 2021
 
 @author: lucas
 """
-from ultrafast.utils.ChirpCorrection_redone import EstimationGVDPolynom, EstimationGVDSellmeier
+from ultrafast.utils.ChirpCorrection import EstimationGVDPolynom, EstimationGVDSellmeier
 from ultrafast.utils.divers import read_data, select_traces
 
 path = 'C:/Users/lucas/Downloads/calibrated spectra.asc'

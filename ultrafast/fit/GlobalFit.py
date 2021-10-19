@@ -146,7 +146,6 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         self._data_ensemble = UnvariableContainer(x=x, data=data,
                                                   wavelength=self.wavelength)
         # self._progress_result = None
-        # self._allow_stop = False
         self._allow_stop = False
         self.thread = None
         self.fit_completed = False
@@ -262,6 +261,10 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
             print('Starting Fit')
         if apply_weights and len(self.weights['vector']) == len(self.x):
             self.weights['apply'] = True
+        elif apply_weights:
+            print("WARNING: weights are undefined, or need to be updated. "
+                  "There are not been applied")
+            self.weights['apply'] = False
         else:
             self.weights['apply'] = False
         self.fit_completed = False
@@ -296,7 +299,7 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
 
     def _single_fit(self, params, function, i, extra_params=None):
         """
-        Generate a single residue for one trace (used by prefit)
+        Generate a single residue for one trace (used by prefit method)
         """
         if extra_params is None:
             model = function(params, i)
@@ -354,11 +357,12 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         iterations.
         """
         get_stop = self._stop_manually
-        if self._number_it % 200 == 0:
-            print("Iteration: " + str(self._number_it) + ", chi2: " +
-                  str(sum(np.abs(resid.flatten()))))
         if get_stop:
             return True
+        else:
+            if self._number_it % 200 == 0:
+                print("Iteration: " + str(self._number_it) + ", chi2: " +
+                      str(sum(np.abs(resid.flatten()))))
             # self._update_progress_result(params)
             # if self._plot:
             #     self.plot_progress()
