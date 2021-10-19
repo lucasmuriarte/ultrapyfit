@@ -110,6 +110,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ultrafast.old.html">ultrafast.old package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.old.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.old.html#module-ultrafast.old.Calibration_Final_QT_2">ultrafast.old.Calibration_Final_QT_2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ultrafast.old.html#module-ultrafast.old.ChirpCorrection">ultrafast.old.ChirpCorrection module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.old.html#module-ultrafast.old.ExponentialFit">ultrafast.old.ExponentialFit module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.old.html#ultrafast-old-global-fit-class-module">ultrafast.old.Global_Fit_class module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.old.html#module-ultrafast.old.TargetFit">ultrafast.old.TargetFit module</a></li>
@@ -121,7 +122,6 @@
 <li class="toctree-l1"><a class="reference internal" href="ultrafast.utils.html">ultrafast.utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#module-ultrafast.utils.ChirpCorrection">ultrafast.utils.ChirpCorrection module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#module-ultrafast.utils.ChirpCorrection_redone">ultrafast.utils.ChirpCorrection_redone module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#module-ultrafast.utils.Preprocessing">ultrafast.utils.Preprocessing module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#module-ultrafast.utils.divers">ultrafast.utils.divers module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ultrafast.utils.html#module-ultrafast.utils">Module contents</a></li>
@@ -141,9 +141,9 @@
 <dt class="sig sig-object py" id="ultrafast.experiment.Experiment">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.experiment.</span></span><span class="sig-name descname"><span class="pre">Experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ultrafast.graphics.html#ultrafast.graphics.ExploreData.ExploreData" title="ultrafast.graphics.ExploreData.ExploreData"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.graphics.ExploreData.ExploreData</span></code></a>, <a class="reference internal" href="ultrafast.graphics.html#ultrafast.graphics.ExploreResults.ExploreResults" title="ultrafast.graphics.ExploreResults.ExploreResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.graphics.ExploreResults.ExploreResults</span></code></a></p>
-<p>Class to work with a time resolved data set and easily preprocess the data,
-obtain quality fits and result, explore the data set and keep track of
-actions done. Finally to easily create figures already formatted.
+<p>Class to work with a time resolved data sets. To easily preprocess the data,
+obtain quality fits and result. Is possible to explore the data set and keep
+track of actions done. Finally to easily create figures already formatted.
 The class inherits ExploreData and ExploreResults therefore all methods for
 plotting and exploring a data set, explore the SVD space and check results
 are available.</p>
@@ -255,7 +255,7 @@ automatically re-adapted.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ultrafast.experiment.Experiment.weights">
 <span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#ultrafast.experiment.Experiment.weights" title="Permalink to this definition"></a></dt>
-<dd><p>contains the weigthing vector that will be apply if apply_weigths is set
+<dd><p>contains the weigthing vector that will be apply if apply_weights is set
 to True in any of the fitting functions. The weight can be define with
 the define weights function.</p>
 <dl class="field-list simple">
@@ -323,8 +323,9 @@ conf_interval and target_models</p>
 <span class="sig-name descname"><span class="pre">excitation</span></span><a class="headerlink" href="#ultrafast.experiment.Experiment.excitation" title="Permalink to this definition"></a></dt>
 <dd><p>If given the spectra figures will display a white box ± 10 units of
 excitation automatically to cover the excitation if this value is
-between the wavelength range. This value is needed for some chirp
-correction methods. If the excitation is not needed.</p>
+between the wavelength range plotted. This value is needed for some
+chirp correction methods. Note that the excitation is not needed for
+fitting the data or any other method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>float or int (default None)</p>
@@ -337,6 +338,11 @@ correction methods. If the excitation is not needed.</p>
 <span class="sig-name descname"><span class="pre">GVD_correction_graphically</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excitation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.GVD_correction_graphically" title="Permalink to this definition"></a></dt>
 <dd><p>Identical to chirp_correction method</p>
 </dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ultrafast.experiment.Experiment.allow_stop">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">allow_stop</span></span><a class="headerlink" href="#ultrafast.experiment.Experiment.allow_stop" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ultrafast.experiment.Experiment.average_time">
@@ -526,8 +532,8 @@ exp_mix [1,1,1,1,…2,4,9,4,2,…1,1,1,]</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.experiment.Experiment.del_points">
-<span class="sig-name descname"><span class="pre">del_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.del_points" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="ultrafast.experiment.Experiment.delete_points">
+<span class="sig-name descname"><span class="pre">delete_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.delete_points" title="Permalink to this definition"></a></dt>
 <dd><p>Delete rows or columns from the data set according to the closest values
 given in points to the values found in dimension_vector. The length of
 dimension_vector should be equivalent to one of the data dimensions.</p>
@@ -585,6 +591,11 @@ scipy.signal.savgol_filter for the different options</p></li>
 <dt class="sig sig-object py" id="ultrafast.experiment.Experiment.general_report">
 <span class="sig-name descname"><span class="pre">general_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.general_report" title="Permalink to this definition"></a></dt>
 <dd><p>Print the general report of the experiment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>output_file</strong> (<em>str or None (default None)</em>) – give the output file directory where the report will be printed</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -639,7 +650,7 @@ in the short time scale the t0 can be independently fitted (slower)
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ultrafast.experiment.Experiment.initialize_target_params">
-<span class="sig-name descname"><span class="pre">initialize_target_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">taus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.initialize_target_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">initialize_target_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vary_t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.initialize_target_params" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -787,7 +798,7 @@ e.g.: “baseline substraction” or “baseline_substraction”</p>
 average_time,
 cut_time,
 cut_wavelength,
-del_points,
+delete_points,
 derivate_data,
 shift_time,
 subtract_polynomial_baseline,
@@ -862,8 +873,18 @@ the region to avoid in wavelength values</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.experiment.Experiment.shit_time">
-<span class="sig-name descname"><span class="pre">shit_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.shit_time" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="ultrafast.experiment.Experiment.set_init_concentrations_manual">
+<span class="sig-name descname"><span class="pre">set_init_concentrations_manual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concentrations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.set_init_concentrations_manual" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrafast.experiment.Experiment.set_kmatrix_manual">
+<span class="sig-name descname"><span class="pre">set_kmatrix_manual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.set_kmatrix_manual" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrafast.experiment.Experiment.shift_time">
+<span class="sig-name descname"><span class="pre">shift_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.shift_time" title="Permalink to this definition"></a></dt>
 <dd><p>Shift the time vector by a value</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -921,6 +942,11 @@ spectra should be zero</p></li>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ultrafast.experiment.Experiment.time">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">time</span></span><a class="headerlink" href="#ultrafast.experiment.Experiment.time" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ultrafast.experiment.Experiment.type_fit">

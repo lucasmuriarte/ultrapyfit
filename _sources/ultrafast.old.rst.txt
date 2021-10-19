@@ -12,6 +12,14 @@ ultrafast.old.Calibration\_Final\_QT\_2 module
    :undoc-members:
    :show-inheritance:
 
+ultrafast.old.ChirpCorrection module
+------------------------------------
+
+.. automodule:: ultrafast.old.ChirpCorrection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 ultrafast.old.ExponentialFit module
 -----------------------------------
 
