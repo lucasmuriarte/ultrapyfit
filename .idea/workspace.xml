@@ -5,13 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
+      <change afterPath="$PROJECT_DIR$/examples/data/exp3_data_denoised.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/ultrafast/test_experiment.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ultrafast/old/ChirpCorrection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_fit.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_fit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitBootstrap.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitClass.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/experiment/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/experiment/experiment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/utils/chirp_correction.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/utils/chirp_correction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection_redone.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -22,8 +26,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Unit Test" />
         <option value="Python Script" />
+        <option value="Python Unit Test" />
       </list>
     </option>
   </component>
@@ -44,19 +48,13 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
-  </component>
-  <component name="PyConsoleOptionsProvider">
-    <option name="myPythonConsoleState">
-      <console-settings>
-        <option name="useSoftWraps" value="true" />
-      </console-settings>
-    </option>
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/tests/ultrafast/test_experiment.py" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -70,7 +68,7 @@
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.example lab_book">
+  <component name="RunManager" selected="Python.test_experiment">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="chempyspec" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -93,20 +91,17 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="example lab_book" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="test_experiment" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="chempyspec" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="C:\Users\lucas\Anaconda3\envs\chempyspec_env\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/ultrafast" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/example lab_book.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/ultrafast/test_experiment.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -131,13 +126,13 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.example lab_book" />
+      <item itemvalue="Python.test_experiment" />
       <item itemvalue="Python tests.Unittests in C:/Users/lucas/git project/ultrafast/test/ultrafast/tes_outils.py" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.example lab_book" />
-        <item itemvalue="Python.example lab_book" />
+        <item itemvalue="Python.test_experiment" />
+        <item itemvalue="Python.test_experiment" />
         <item itemvalue="Python tests.Unittests in C:/Users/lucas/git project/ultrafast/test/ultrafast/tes_outils.py" />
       </list>
     </recent_temporary>
@@ -197,6 +192,10 @@
       <workItem from="1632488244412" duration="1943000" />
       <workItem from="1632732921882" duration="6488000" />
       <workItem from="1633593462183" duration="11833000" />
+      <workItem from="1633713502633" duration="19286000" />
+      <workItem from="1634548135179" duration="3388000" />
+      <workItem from="1634551564122" duration="95000" />
+      <workItem from="1634553916349" duration="21451000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>

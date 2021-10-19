@@ -6,11 +6,14 @@ Created on Tue Feb 16 17:42:19 2021
 """
 from ultrafast.utils.divers import read_data, select_traces
 from ultrafast.experiment import Experiment
+import os
 
+path= 'C:\\Users\\lucas\\git project\\ultrafast\\examples\\data\\3_exp_data_denoised_2.csv'
 
 # path_2 = "C:/Users/lucas/Downloads/dataluc.csv"
+path = '../data/exp3_data_denoised.csv'
+path = os.path.abspath(path)
 
-path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2.csv'
 # time, data, wave = read_data(path, wave_is_row= True)
 
 # original_taus = [8, 30, 200]
@@ -78,16 +81,16 @@ experiment.time_unit = 'millisecond'
 experiment.time_unit 
 # >>> 'ms'
 
-experiment.wave_unit 
+experiment.wavelength_unit
 # >>> 'nm'
-experiment.wave_unit = 'wavenumber'
-experiment.wave_unit 
+experiment.wavelength_unit = 'wavenumber'
+experiment.wavelength_unit
 # >>> 'cm-1'
-experiment.wave_unit = 'nanometer'
-experiment.wave_unit 
+experiment.wavelength_unit = 'nanometer'
+experiment.wavelength_unit
 # >>> 'nm'
-experiment.wave_unit = 'cm'
-experiment.wave_unit 
+experiment.wavelength_unit = 'cm'
+experiment.wavelength_unit
 # >>> 'cm-1'
 
 # DATA FITTING

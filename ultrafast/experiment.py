@@ -5,10 +5,11 @@ Created on Thu Nov 12 20:55:03 2020
 @author: lucas
 """
 import numpy as np
+from lmfit import Parameters
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.graphics.ExploreData import ExploreData
 from ultrafast.fit.GlobalParams import GlobExpParameters
-from ultrafast.utils.ChirpCorrection_redone import EstimationGVDPolynom, EstimationGVDSellmeier
+from ultrafast.utils.ChirpCorrection import EstimationGVDPolynom, EstimationGVDSellmeier
 from ultrafast.utils.divers import define_weights, UnvariableContainer, LabBook,\
     book_annotate, read_data, TimeUnitFormater, select_traces
 from ultrafast.utils.Preprocessing import Preprocessing, ExperimentException
@@ -17,6 +18,7 @@ import os
 from matplotlib.offsetbox import AnchoredText
 import copy
 import pickle
+import sys
 
 
 class SaveExperiment:
@@ -50,7 +52,9 @@ class SaveExperiment:
         Save the save_object dictionary as pickle object 
         """
         self._extract_objects()
-        path = self.path + '.exp'
+        path = self.path
+        if not path[:-4] == '.exp':
+            path += '.exp'
         with open(path, 'wb') as file:
             pickle.dump(self.save_object, file,
                         protocol=pickle.HIGHEST_PROTOCOL)
@@ -79,9 +83,9 @@ class SaveExperiment:
 
 class Experiment(ExploreData, ExploreResults):
     """
-    Class to work with a time resolved data set and easily preprocess the data,
-    obtain quality fits and result, explore the data set and keep track of
-    actions done. Finally to easily create figures already formatted.
+    Class to work with a time resolved data sets. To easily preprocess the data,
+    obtain quality fits and result. Is possible to explore the data set and keep
+    track of actions done. Finally to easily create figures already formatted.
     The class inherits ExploreData and ExploreResults therefore all methods for
     plotting and exploring a data set, explore the SVD space and check results
     are available.
@@ -130,7 +134,7 @@ class Experiment(ExploreData, ExploreResults):
         automatically re-adapted.
 
     weights: dict
-        contains the weigthing vector that will be apply if apply_weigths is set
+        contains the weigthing vector that will be apply if apply_weights is set
         to True in any of the fitting functions. The weight can be define with
         the define weights function.
 
@@ -158,8 +162,9 @@ class Experiment(ExploreData, ExploreResults):
     excitation: float or int (default None)
         If given the spectra figures will display a white box ± 10 units of
         excitation automatically to cover the excitation if this value is
-        between the wavelength range. This value is needed for some chirp
-        correction methods. If the excitation is not needed.
+        between the wavelength range plotted. This value is needed for some
+        chirp correction methods. Note that the excitation is not needed for
+        fitting the data or any other method.
     """
     def __init__(self, x, data, wavelength=None, path=None, **kwargs):
         """
@@ -215,8 +220,15 @@ class Experiment(ExploreData, ExploreResults):
         self._params_initialized = False
         self._last_data_sets = None
         self._tau_inf = 1E12
+        # attribute that defines if the selection of traces should be add to
+        # record of actions.
+        self._allow_stop = False
+        self._silent_selection_of_traces = False
         self._initialized()
         self._chirp_corrector = None
+        self._kmatrix_manual = False
+        self._init_concentrations_manual = False
+        self._last_params = None
         ExploreData.__init__(self, self.x, self.data, self.wavelength,
                              self.selected_traces, self.selected_wavelength,
                              'viridis', **self._units)
@@ -243,14 +255,33 @@ class Experiment(ExploreData, ExploreResults):
         self.derivate_data = book_annotate(self.preprocessing_report)(self.derivate_data)
         self.calibrate_wavelength = book_annotate(self.preprocessing_report)(self.calibrate_wavelength)
         self.cut_wavelength = book_annotate(self.preprocessing_report)(self.cut_wavelength)
-        self.del_points = book_annotate(self.preprocessing_report)(self.del_points)
-        self.shitTime = book_annotate(self.preprocessing_report)(self.shit_time)
+        self.delete_points = book_annotate(self.preprocessing_report)(self.delete_points)
+        self.shift_time = book_annotate(self.preprocessing_report)(self.shift_time)
         self._unit_formater = TimeUnitFormater(self._units['time_unit'])
-    
     
     """
     Properties and structural functions
     """
+    @property
+    def time(self):
+        return self.x
+
+    @time.setter
+    def time(self, time):
+        self.x = time
+
+    @property
+    def allow_stop(self):
+        return self._allow_stop
+
+    @allow_stop.setter
+    def allow_stop(self, value):
+        if type(value) == bool:
+            self._allow_stop = value
+        else:
+            msg = "Type error, allow_stop should be a boolean"
+            raise ExperimentException(msg)
+
     @property
     def chirp_corrected(self):
         return self.GVD_corrected
@@ -311,9 +342,15 @@ class Experiment(ExploreData, ExploreResults):
         ----------
         Experiment instance
         """
-        x, data, wave = read_data(path, wavelength, time, wave_is_row,
-                                  separator, decimal)
-        return Experiment(x, data, wave, path)
+        try:
+            x, data, wave = read_data(path, wavelength, time, wave_is_row,
+                                      separator, decimal)
+        except Exception as exception:
+            raise ExperimentException(exception)
+        else:
+            experiment = Experiment(x, data, wave, path)
+            experiment.preprocessing_report.loaded_file = path
+        return experiment
 
     @staticmethod
     def load(path: str):
@@ -429,18 +466,44 @@ class Experiment(ExploreData, ExploreResults):
 
     def general_report(self, output_file=None):
         """
-        Print the general report of the experiment 
+        Print the general report of the experiment
+
+        Parameters
+        ----------
+        output_file: str or None (default None)
+            give the output file directory where the report will be printed
         """
-        # TODO save in an output file
-        self.describe_data()
-        print('============================================\n')
-        self.preprocessing_report.print()
-        print('============================================\n')
-        for i in range(len(self.fit_records.global_fits)):
-            self.print_results(i+1)
-        print('============================================\n')
-        self.action_records.print(False, True, True)
-        
+        def printing():
+            self.describe_data()
+            print('============================================\n')
+            self.preprocessing_report.print()
+            print('============================================\n')
+            for i in range(len(self.fit_records.global_fits)):
+                self.print_results(i+1)
+            print('============================================\n')
+            self.action_records.print(False, True, True)
+
+        if output_file is not None:
+            try:
+                total_path = os.path.abspath(output_file)
+                path, extension = os.path.splitext(total_path)
+                original_stdout = sys.stdout
+                if extension == "txt":
+                    pass
+                else:
+                    total_path = path + ".txt"
+                with open(total_path, "w") as file:
+                    sys.stdout = file
+                    printing()
+                    sys.stdout = original_stdout
+            except Exception as e:
+                msg = f"Unable to save in '{total_path}'"
+                raise ExperimentException(msg)
+            else:
+                msg = f"Report save in '{total_path}'"
+                print(msg)
+        else:
+            printing()
         
     """
     Preprocessing functions
@@ -579,7 +642,7 @@ class Experiment(ExploreData, ExploreResults):
                                                               points=points,
                                                               order=order)
         self.data = new_data
-        self._add_action("Subtracted polynomial baseline", True)
+        self._add_action("subtract polynomial baseline", True)
 
     def cut_time(self, mini=None, maxi=None):
         """
@@ -714,7 +777,7 @@ class Experiment(ExploreData, ExploreResults):
         self.data, self.wavelength = new_data, new_wave
         self._add_action("cut wavelength", True)
 
-    def del_points(self, points, dimension='time'):
+    def delete_points(self, points, dimension='time'):
         """
         Delete rows or columns from the data set according to the closest values
         given in points to the values found in dimension_vector. The length of
@@ -742,23 +805,23 @@ class Experiment(ExploreData, ExploreResults):
                 can be "wavelength" or "time" indicate where points should be
                 deleted
         """
-        self._add_to_data_set("before_del_points")
+        self._add_to_data_set("before_delete_points")
         if dimension == 'time':
             new_data, new_x = Preprocessing.del_points(points, self.data,
                                                        self.x, 0)
             self.data, self.x = new_data, new_x
-            self._add_action(f"delete point {dimension}", True)
+            self._add_action(f"delete points {dimension}", True)
         elif dimension == 'wavelength':
             new_data, new_wave = Preprocessing.del_points(points, self.data,
                                                           self.wavelength, 1)
             # no need to work on selected data set
             self.data, self.wavelength = new_data, new_wave
-            self._add_action(f"delete point {dimension}", True)
+            self._add_action(f"delete points {dimension}", True)
         else:
             msg = 'dimension should be "time" or "wavelength"'
             raise ExperimentException(msg)
 
-    def shit_time(self, value):
+    def shift_time(self, value):
         """
         Shift the time vector by a value
 
@@ -879,9 +942,49 @@ class Experiment(ExploreData, ExploreResults):
         self._params_initialized = 'Exponential'
         self._add_action(f'new {self._params_initialized} parameters initialized')
 
-    def initialize_target_params(self, t0, fwhm, *taus, tau_inf=1E12, opt_fwhm=False):
+    def initialize_target_params(self, t0, fwhm, opt_fwhm=False, vary_t0=True,
+                                 global_t0=True, y0=None):
         # TODO
         pass
+
+    def set_init_concentrations_manual(self, concentrations):
+        if self.params is None or not self._kmatrix_manual:
+            self.params = Parameters()
+        total = sum(concentrations)
+        self._exp_no = len(concentrations)
+        for i in range(self._exp_no):
+            self.params['c_%i' % (i + 1)].set(concentrations[i] / total,
+                                              vary=False)
+        self._init_concentrations_manual = True
+        self._params_initialized = False
+
+    def set_kmatrix_manual(self, paths):
+        # array of (source, destination, rate, vary)
+        if self.params is None or not self._init_concentrations_manual:
+            self.params = Parameters()
+        exp = [i[0] for i in paths]
+        self._exp_no = np.max(exp)
+        sources = ["" for i in range(self._exp_no)]
+        for i in paths:
+            source = i[0]
+            destination = i[1]
+            rate = i[2]
+            vary = i[3]
+            if (source != destination):
+                self.params['k_%i%i' % (destination, source)].set(rate,
+                                                                  vary=vary)
+                sources[source - 1] += '-k_%i%i' % (destination, source)
+
+            else:
+                # if destination == source, it means that this is the terminal component or parallel decay
+                self.params['k_%i%i' % (destination, source)].set(-rate,
+                                                                  vary=vary)
+
+        for i in range(self._exp_no):
+            if (len(sources[i]) > 0):
+                self.params['k_%i%i' % (i + 1, i + 1)].set(expr=sources[i])
+        self._kmatrix_manual = True
+        self._params_initialized = False
 
     def global_fit(self, vary=True, maxfev=5000, apply_weights=False):
         """
@@ -917,10 +1020,12 @@ class Experiment(ExploreData, ExploreResults):
                                         self.selected_wavelength,
                                         self.params, derivative=derivative)
         else:
-            msg = 'Parameters need to be initiliazed first'
+            msg = 'Parameters need to be initialized first'
             raise ExperimentException(msg)
         if apply_weights:
             minimizer.weights = self.weights
+        if self.allow_stop:
+            minimizer.allow_stop = True
         results = minimizer.global_fit(vary, maxfev, apply_weights)
         results.details['svd_fit'] = self._SVD_fit
         results.wavelength = self.selected_wavelength
@@ -1204,7 +1309,10 @@ class Experiment(ExploreData, ExploreResults):
         super().select_traces(points, average, avoid_regions)
         self._readapt_params()
         self._averige_selected_traces = average if points != 'all' else 0
-        self._add_action("Selected traces")
+        if self._silent_selection_of_traces:
+            self._silent_selection_of_traces = False
+        else:
+            self._add_action("Selected traces")
         
     def select_region(self, mini, maxi):
         """
@@ -1241,7 +1349,7 @@ class Experiment(ExploreData, ExploreResults):
                 average_time,
                 cut_time,
                 cut_wavelength,
-                del_points,
+                delete_points,
                 derivate_data,
                 shift_time,
                 subtract_polynomial_baseline,
@@ -1327,6 +1435,7 @@ class Experiment(ExploreData, ExploreResults):
             self._re_select_traces()
 
     def _re_select_traces(self):
+        self._silent_selection_of_traces = True
         if self._SVD_fit:
             self._calculateSVD()
             self.select_SVD_vectors(self.selected_traces.shape[1])
@@ -1334,13 +1443,13 @@ class Experiment(ExploreData, ExploreResults):
             avg = self._averige_selected_traces
             wave = list(self.selected_wavelength)
             self.select_traces(wave, avg)
-            val = len(self.action_records.__dict__) - 3
-            delattr(self.action_records, f"_{val}" )
+            # val = len(self.action_records.__dict__) - 3
+            # delattr(self.action_records, f"_{val}" )
 
     def _readapt_params(self):
         """
         Function to automatically re-adapt parameters to a new selection of
-        data sets
+        traces from the original data set.
         """
         if self._params_initialized == 'Exponential':
             previous_taus = self._last_params['taus']
