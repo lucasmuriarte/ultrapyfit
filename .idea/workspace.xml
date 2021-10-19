@@ -5,18 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
-      <change afterPath="$PROJECT_DIR$/examples/data/exp3_data_denoised.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/ultrafast/test_experiment.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ultrafast/old/ChirpCorrection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/experiment/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/experiment/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/utils/chirp_correction.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/utils/chirp_correction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ultrafast/test_experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/test_experiment.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/ChirpCorrection_redone.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -195,7 +186,7 @@
       <workItem from="1633713502633" duration="19286000" />
       <workItem from="1634548135179" duration="3388000" />
       <workItem from="1634551564122" duration="95000" />
-      <workItem from="1634553916349" duration="21451000" />
+      <workItem from="1634553916349" duration="26934000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>

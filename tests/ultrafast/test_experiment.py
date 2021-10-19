@@ -13,8 +13,17 @@ class TestExperiment(unittest.TestCase):
         path = '../../examples/data/exp3_data_denoised.csv'
         self.path_save = os.path.abspath("my_test")
         self.path = os.path.abspath(path)
-        self.experiment = Experiment.load_data(self.path)
+        self.experiment = Experiment.load_data(self.path, wave_is_row=True)
         self.original_time = deepcopy(self.experiment.time)
+
+    def assertNearlyEqualArray(self, array1, array2, decimal):
+        """
+        returns "True" if all elements of two arrays
+        are identical until decimal
+        """
+        dif = np.array(array1) - np.array(array2)
+        value = (dif < 10**(-decimal)).all()
+        return value
 
     def check_preprocessing_function(self, name, extra=None):
         # print(name)
@@ -105,6 +114,20 @@ class TestExperiment(unittest.TestCase):
         value = self.check_preprocessing_function("derivate_data")
         self.assertEqual(value, True)
 
+    def test_calibrate_wavelength(self):
+        original_wavelengths = self.experiment.wavelength
+        values = [(a*100, b) for a, b in enumerate(self.experiment.wavelength[::100])]
+        pixels = [i[0] for i in values]
+        waves = [i[1] for i in values]
+        pix = np.array([a for a, b in enumerate(self.experiment.wavelength)])
+        self.experiment.wavelength = pix
+        self.experiment.calibrate_wavelength(pixels, waves)
+        value = self.check_preprocessing_function("calibrate_wavelength")
+        equal = self.assertNearlyEqualArray(self.experiment.wavelength,
+                                            original_wavelengths, 10)
+        self.assertTrue(equal)
+        self.assertTrue(value)
+
     @parameterized.expand([[55, "time"],
                            [1575, "wavelength"]])
     def test_delete_points(self, point, dimension):
@@ -116,6 +139,16 @@ class TestExperiment(unittest.TestCase):
         self.experiment.shift_time(1)
         value = self.check_preprocessing_function("shift_time")
         self.assertEqual(value, True)
+
+    def test_undo_last_preprocesing(self):
+        experiment1 = Experiment.load_data(self.path, wave_is_row=True)
+        experiment2 = Experiment.load_data(self.path, wave_is_row=True)
+        experiment2.baseline_substraction()
+        different = (experiment1.data != experiment2.data).all()
+        self.assertTrue(different)
+        experiment2.undo_last_preprocesing()
+        equal = (experiment1.data == experiment2.data).all()
+        self.assertTrue(equal)
 
     @parameterized.expand([[[5, 30], 'constant', 5],
                            [[5, 30], 'constant', 8],
