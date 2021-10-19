@@ -216,13 +216,14 @@ class Experiment(ExploreData, ExploreResults):
         self._averige_selected_traces = 0
         self._deconv = True
         self._exp_no = 1
+        # _fit_number take record of global exponential and target fits ran.
         self._fit_number = 0
         self._params_initialized = False
         self._last_data_sets = None
         self._tau_inf = 1E12
-        # attribute that defines if the selection of traces should be add to
-        # record of actions.
         self._allow_stop = False
+        # _silent_selection_of_traces is an attribute that defines if the
+        # selection of traces should be add to record of actions.
         self._silent_selection_of_traces = False
         self._initialized()
         self._chirp_corrector = None
@@ -573,13 +574,13 @@ class Experiment(ExploreData, ExploreResults):
             Order of the polynomial use to fit pixels and wavelength.
             Notice that the order should be smaller than the len of the list
         """
-        self._add_to_data_set("before_wavelength_calibration")
+        self._add_to_data_set("before_calibrate_wavelength")
         new_wave = Preprocessing.calibration_with_polynom(self.wavelength,
                                                           pixels, wavelength,
                                                           order)
 
         self.wavelength = new_wave
-        self._add_action("wavelength calibration", True)
+        self._add_action("calibrate wavelength", True)
 
     def GVD_correction_graphically(self, method, excitation=None):
         """
@@ -948,6 +949,7 @@ class Experiment(ExploreData, ExploreResults):
         pass
 
     def set_init_concentrations_manual(self, concentrations):
+        # TODO check functionality and add documentation
         if self.params is None or not self._kmatrix_manual:
             self.params = Parameters()
         total = sum(concentrations)
@@ -959,6 +961,7 @@ class Experiment(ExploreData, ExploreResults):
         self._params_initialized = False
 
     def set_kmatrix_manual(self, paths):
+        # TODO check functionality and add documentation
         # array of (source, destination, rate, vary)
         if self.params is None or not self._init_concentrations_manual:
             self.params = Parameters()
@@ -1035,7 +1038,8 @@ class Experiment(ExploreData, ExploreResults):
         self._add_action(f'{self._params_initialized} fit performed')
         self._update_last_params(results.params)
 
-    def single_exp_fit(self, wave, average, t0, fwhm, *taus, vary=True, tau_inf=1E12, maxfev=5000,
+    def single_exp_fit(self, wave: int, average: int, t0: float, fwhm: float,
+                       *taus, vary=True, tau_inf=1E12, maxfev=5000,
                        apply_weights=False, opt_fwhm=False, plot=True):
         """
         Perform an exponential fit to a single trace
@@ -1085,20 +1089,21 @@ class Experiment(ExploreData, ExploreResults):
             If True the results are automatically plotted
         """
         taus = list(taus)
-        print(taus)
+        # print(taus)
         trace, wave = select_traces(self.data, self.wavelength, [wave], average)
         results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary,
                                       tau_inf=tau_inf, maxfev=maxfev,
                                       apply_weights=apply_weights,
                                       opt_fwhm=opt_fwhm)
-        results.wavelenght = wave
+        results.wavelength = wave
         key = len(self.fit_records.single_fits) + 1
         self.fit_records.single_fits[key] = results
         self._add_action('Exponential single fit performed')
         if plot:
             self.plot_single_fit(key)
 
-    def integral_band_exp_fit(self, wave_range: list, t0, fwhm, *taus, vary=True, tau_inf=1E12, maxfev=5000,
+    def integral_band_exp_fit(self, wave_range: list, t0: float, fwhm: float,
+                              *taus, vary=True, tau_inf=1E12, maxfev=5000,
                               apply_weights=False, opt_fwhm=False, plot=True):
         """
         Perform an exponential fit to an integrated are of the spectral range of
@@ -1150,28 +1155,39 @@ class Experiment(ExploreData, ExploreResults):
             If True the results are automatically plotted
         """
         taus = list(taus)
-        indexes = [np.argmax(abs(self.wavelength-wave_range[0])), np.argmax(abs(self.wavelength-wave_range[1]))]
-        trace = np.array([np.trapz(self.data[i,indexes[0]:indexes[1]], x=self.wavelength[indexes[0]:indexes[1]])
+        indexes = [np.argmax(abs(self.wavelength-wave_range[0])),
+                   np.argmax(abs(self.wavelength-wave_range[1]))]
+
+        trace = np.array([np.trapz(self.data[i, indexes[0]:indexes[1]],
+                                   x=self.wavelength[indexes[0]:indexes[1]])
                           for i in range(len(self.data))])
-        results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary, tau_inf=tau_inf, maxfev=maxfev,
-                                      apply_weights=apply_weights, opt_fwhm=opt_fwhm)
+
+        results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary,
+                                      tau_inf=tau_inf, maxfev=maxfev,
+                                      apply_weights=apply_weights,
+                                      opt_fwhm=opt_fwhm)
         results.details['integral band'] = wave_range
         key = len(self.fit_records.integral_band_fits) + 1
         self.fit_records.single_fits[key] = results
-        self._add_action(f'Integral band fit between {wave_range[0]} and {wave_range[1]} performed')
+
+        msg = f'Integral band fit between {wave_range[0]} and ' \
+              f'{wave_range[1]} performed'
+        self._add_action(msg)
         if plot:
             self.plot_integral_band_fit(key)
 
-    def _one_trace_fit(self, trace, t0, fwhm, *taus, vary=True, tau_inf=1E12,
-                       maxfev=5000, apply_weights=False, opt_fwhm=False, y0=None):
+    def _one_trace_fit(self, trace, t0, fwhm, *taus,
+                       vary=True, tau_inf=1E12,
+                       maxfev=5000, apply_weights=False,
+                       opt_fwhm=False, y0=None):
         """
         Real fitting function used by "integral_band_exp_fit" and "single_exp_fit"
         """
-        print(taus)
+        # print(taus)
         param_creator = GlobExpParameters(1, taus)
         param_creator.adjustParams(t0, vary, fwhm, opt_fwhm, self.GVD_corrected,
                                    tau_inf, y0)
-        print(param_creator.params)
+        # print(param_creator.params)
         deconv = True if fwhm is not None else False
         minimizer = GlobalFitExponential(self.x, trace, len(taus),
                                          params=param_creator.params,
@@ -1219,29 +1235,44 @@ class Experiment(ExploreData, ExploreResults):
         """
         if fit_number is None:
             fit_number = len(self.fit_records.integral_band_fits)
+
         if fit_number in self.fit_records.integral_band_fits.keys():
             fig, ax = self._plot_single_trace_fit(self.fit_records.integral_band_fits, fit_number, details)
             rang = self.fit_records.integral_band_fits[fit_number].details['integral band']
-            w_unit = 'cm$^{-1}$' if self._units['wavelength_unit'] == 'cm-1' else self._units['wavelength_unit']
+
+            if self._units['wavelength_unit'] == 'cm-1':
+                w_unit = 'cm$^{-1}$'
+            else:
+                w_unit = self._units['wavelength_unit']
             ax[1].legend(['_', f'Integral band {rang[0]}-{rang[1]} {w_unit}'])
             return fig, ax
         else:
             msg = 'Fit number not in records'
             raise ExperimentException(msg)
 
-    def _plot_single_trace_fit (self, container, fit_number, details):
+    def _plot_single_trace_fit (self, container, fit_number, add_details=True):
         """
         Base plot function used by "plot_integral_band_fit" and "plot_single_fit"
         """
         plotter = ExploreResults(container[fit_number], **self._units)
-        _, _, _, params, exp_no, deconv, tau_inf, _, _, _ = plotter._get_values(fit_number=fit_number)
+        _, data, _, params, exp_no, deconv, tau_inf, _, _, _ = plotter._get_values(fit_number=fit_number)
         fig, ax = plotter.plot_fit()
-        if details:
+
+        if add_details:
+            if data[0] <= 0:
+                anchor_location = "lower center"
+            else:
+                anchor_location = "upper center"
             testx = plotter._legend_plot_DAS(params, exp_no, deconv,
                                              tau_inf, 'Exponential', 2)
+            # next if statement is rot remove the 'offset' word from the text
+            # only in case there was no deconvolution
+            if not deconv:
+                testx = testx[:-1]
             textstr = '\n'.join(testx)
-            texto = AnchoredText(s=textstr, loc=9)
+            texto = AnchoredText(s=textstr, loc=anchor_location)
             ax[1].add_artist(texto)
+
         return fig, ax
 
     def refit_with_SVD_fit_result(self, fit_number=None, fit_data='all'):
@@ -1251,10 +1282,12 @@ class Experiment(ExploreData, ExploreResults):
         # _get_values is a heritage function from ExploreResults class
         x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
+
         if fit_data == 'all':
             data_fit = self.selected_traces
         else:
             data_fit = self.data
+
         if type_fit == 'Exponential':
             taus = [params['tau%i_1' % (i+1)].value for i in range(exp_no)]
             t0 = params['t0_1'].value
