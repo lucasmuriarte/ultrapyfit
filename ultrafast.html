@@ -643,6 +643,10 @@ corrected. Allows to fit the t0 globally (setting True), which is
 faster. In case this first option fit does not give good results
 in the short time scale the t0 can be independently fitted (slower)
 (setting False) which may give better results.</p></li>
+<li><p><strong>y0</strong> (<em>int or array (default None)</em>) – Important: only applicable if fwhm is given.
+If given this value will fix the initial offset as a fix parameter.
+In case an array is given each trace will have a different value.
+In case an integer is pass all the traces will have this value fix</p></li>
 </ul>
 </dd>
 </dl>
@@ -664,7 +668,7 @@ decreases or disappears.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>wave_range</strong> (<em>list (lenght 2) or float</em>) – The area between the two entries of the wavelength range is
+<li><p><strong>wave_range</strong> (<em>list (length 2) or float</em>) – The area between the two entries of the wavelength range is
 integrated and fitted.</p></li>
 <li><p><strong>t0</strong> (<em>int or float</em>) – the t0 for the fitting</p></li>
 <li><p><strong>fwhm</strong> (<em>float or None</em>) – FWHM of the the laser pulse use in the experiment
@@ -683,7 +687,8 @@ Each entry defines if a initial taus should be optimized or not.</p></li>
 <li><p><strong>maxfev</strong> (<em>int (default 5000)</em>) – maximum number of iterations of the fit.</p></li>
 <li><p><strong>apply_weights</strong> (<em>bool (default False)</em>) – If True and weights have been defined, this will be applied in the
 fit (for defining weights) check the function define_weights.</p></li>
-<li><p><strong>plot</strong> (<em>bool (default True)</em>) – If True the results are automatically plotted</p></li>
+<li><p><strong>plot</strong> (<em>bool (default True)</em>) – If True the results are automatically plotted and a figure and axes
+are return.</p></li>
 </ul>
 </dd>
 </dl>
@@ -789,12 +794,13 @@ the last fit in  will be considered.</p>
 <span class="sig-name descname"><span class="pre">restore_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.experiment.Experiment.restore_data" title="Permalink to this definition"></a></dt>
 <dd><p>Restore the data to a point previous to a preprocesing action
 actions should be the name of the function.
-e.g.: “baseline substraction” or “baseline_substraction”</p>
+e.g.: “baseline substraction” or “baseline_substraction” are both valid</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>action</strong> –</p>
 <dl class="simple">
-<dt>Possible actions:</dt><dd><p>baseline_substraction,
+<dt>Possible actions:</dt><dd><p>original_data,
+baseline_substraction,
 average_time,
 cut_time,
 cut_wavelength,
@@ -920,7 +926,8 @@ Each entry defines if a initial taus should be optimized or not.</p></li>
 <li><p><strong>maxfev</strong> (<em>int (default 5000)</em>) – maximum number of iterations of the fit.</p></li>
 <li><p><strong>apply_weights</strong> (<em>bool (default False)</em>) – If True and weights have been defined, this will be applied in the
 fit (for defining weights) check the function define_weights.</p></li>
-<li><p><strong>plot</strong> (<em>bool (default True)</em>) – If True the results are automatically plotted</p></li>
+<li><p><strong>plot</strong> (<em>bool (default True)</em>) – If True the results are automatically plotted and a figure and axes
+are return.</p></li>
 </ul>
 </dd>
 </dl>
