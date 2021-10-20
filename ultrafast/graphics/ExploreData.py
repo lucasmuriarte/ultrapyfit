@@ -340,14 +340,8 @@ class ExploreData(PlotSVD):
         if hasattr(points, '__iter__'):
             if len(points) == len(self.wavelength):
                 points = 'all'
-        if points == 'all':
-            self.selected_traces = copy(self.data)
-            self.selected_wavelength = copy(self.wavelength)
-        else:
-            # print(len(points), average, avoid_regions)
-            res = select_traces(self.data, self.wavelength, points,
-                                average, avoid_regions)
-            self.selected_traces, self.selected_wavelength = res
+        super().select_traces(points, average, avoid_regions)
+
 
     def _verify_plot_spectra(self, times, data, legend, average):
         """

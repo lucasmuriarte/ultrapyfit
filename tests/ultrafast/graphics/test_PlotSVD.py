@@ -100,7 +100,7 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue((svd_explorer._number_of_vectors_plot is None))
         self.assertTrue((svd_explorer._specSVD is None))
         self.assertTrue((svd_explorer._button_svd_select is None))
-        self.assertTrue((svd_explorer.vertical_SVD is None))
+        self.assertTrue((svd_explorer._vertical_line_SVD is None))
 
 
 if __name__ == '__main__':

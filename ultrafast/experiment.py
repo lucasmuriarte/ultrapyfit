@@ -1202,7 +1202,7 @@ class Experiment(ExploreData, ExploreResults):
                                    tau_inf, y0)
         # print(param_creator.params)
         deconv = True if fwhm is not None else False
-        print(trace.shape)
+
         minimizer = GlobalFitExponential(self.x, trace, len(taus),
                                          params=param_creator.params,
                                          deconv=deconv, tau_inf=tau_inf,
