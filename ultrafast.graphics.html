@@ -277,14 +277,16 @@ where the transient signal is maximum. If from_max_to_min is True
 the range will be given from the time point where the data amplitude
 is maximum to the end. If False from the initial time to the maximum
 in amplitude of the data.</p></li>
-<li><p><strong>legend</strong> (<em>bool (default True)</em>) – If True a legend will be display, If False color-bar with the times
-will be display</p></li>
-<li><p><strong>legend_decimal</strong> (<em>int (default 2)</em>) – number of decimal values in the legend names</p></li>
+<li><p><strong>legend</strong> (<em>True, False or bar</em>) – If True a legend will be display.
+If False no legend will be display.
+If bar a color-bar with the times is add to the side.</p></li>
+<li><p><strong>legend_decimal</strong> (<em>int (default 2)</em>) – Only applicable if legend=True
+number of decimal values in the legend names</p></li>
 <li><p><strong>ncol</strong> (<em>int (default 1)</em>) – Number of legend columns</p></li>
 <li><p><strong>cmap</strong> (<em>str or None (default None)</em>) – Name of matplotlib color map if None the attribute color_map will
 be use</p></li>
 <li><p><strong>size</strong> (<em>int (default 14)</em>) – (deprecated) size of the figure text labels including tick labels
-axis labels and legend</p></li>
+axis labels and legend, (the size should be defined in the style)</p></li>
 <li><p><strong>include_rango_max</strong> (<em>bool (default True)</em>) – If True, spectra are auto-plotted in a given range the last spectrum
 plotted will be the closest to the range limit</p></li>
 </ul>
