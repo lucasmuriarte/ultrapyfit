@@ -917,6 +917,12 @@ class Experiment(ExploreData, ExploreResults):
             faster. In case this first option fit does not give good results
             in the short time scale the t0 can be independently fitted (slower)
             (setting False) which may give better results.
+
+        y0: int or array (default None)
+            Important: only applicable if fwhm is given.
+            If given this value will fix the initial offset as a fix parameter.
+            In case an array is given each trace will have a different value.
+            In case an integer is pass all the traces will have this value fix
         """
         taus = list(taus)
         self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': taus,
@@ -973,7 +979,7 @@ class Experiment(ExploreData, ExploreResults):
             destination = i[1]
             rate = i[2]
             vary = i[3]
-            if (source != destination):
+            if source != destination:
                 self.params['k_%i%i' % (destination, source)].set(rate,
                                                                   vary=vary)
                 sources[source - 1] += '-k_%i%i' % (destination, source)
@@ -984,7 +990,7 @@ class Experiment(ExploreData, ExploreResults):
                                                                   vary=vary)
 
         for i in range(self._exp_no):
-            if (len(sources[i]) > 0):
+            if len(sources[i]) > 0:
                 self.params['k_%i%i' % (i + 1, i + 1)].set(expr=sources[i])
         self._kmatrix_manual = True
         self._params_initialized = False
@@ -1086,10 +1092,10 @@ class Experiment(ExploreData, ExploreResults):
             fit (for defining weights) check the function define_weights.
 
         plot: bool (default True)
-            If True the results are automatically plotted
+            If True the results are automatically plotted and a figure and axes
+            are return.
         """
         taus = list(taus)
-        # print(taus)
         trace, wave = select_traces(self.data, self.wavelength, [wave], average)
         results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary,
                                       tau_inf=tau_inf, maxfev=maxfev,
@@ -1100,7 +1106,8 @@ class Experiment(ExploreData, ExploreResults):
         self.fit_records.single_fits[key] = results
         self._add_action('Exponential single fit performed')
         if plot:
-            self.plot_single_fit(key)
+            fig, ax = self.plot_single_fit(key)
+            return fig, ax
 
     def integral_band_exp_fit(self, wave_range: list, t0: float, fwhm: float,
                               *taus, vary=True, tau_inf=1E12, maxfev=5000,
@@ -1114,7 +1121,7 @@ class Experiment(ExploreData, ExploreResults):
 
         Parameters
         ----------
-        wave_range: list (lenght 2) or float
+        wave_range: list (length 2) or float
             The area between the two entries of the wavelength range is
             integrated and fitted.
 
@@ -1152,29 +1159,32 @@ class Experiment(ExploreData, ExploreResults):
             fit (for defining weights) check the function define_weights.
 
         plot: bool (default True)
-            If True the results are automatically plotted
+            If True the results are automatically plotted and a figure and axes
+            are return.
         """
         taus = list(taus)
-        indexes = [np.argmax(abs(self.wavelength-wave_range[0])),
-                   np.argmax(abs(self.wavelength-wave_range[1]))]
+        indexes = [np.argmin(abs(self.wavelength-wave_range[0])),
+                   np.argmin(abs(self.wavelength-wave_range[1]))]
 
         trace = np.array([np.trapz(self.data[i, indexes[0]:indexes[1]],
                                    x=self.wavelength[indexes[0]:indexes[1]])
                           for i in range(len(self.data))])
 
+        trace = trace.reshape((trace.shape[0], 1))
         results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary,
                                       tau_inf=tau_inf, maxfev=maxfev,
                                       apply_weights=apply_weights,
                                       opt_fwhm=opt_fwhm)
         results.details['integral band'] = wave_range
         key = len(self.fit_records.integral_band_fits) + 1
-        self.fit_records.single_fits[key] = results
+        self.fit_records.integral_band_fits[key] = results
 
         msg = f'Integral band fit between {wave_range[0]} and ' \
               f'{wave_range[1]} performed'
         self._add_action(msg)
         if plot:
-            self.plot_integral_band_fit(key)
+            fig, ax = self.plot_integral_band_fit(key)
+            return fig, ax
 
     def _one_trace_fit(self, trace, t0, fwhm, *taus,
                        vary=True, tau_inf=1E12,
@@ -1189,6 +1199,7 @@ class Experiment(ExploreData, ExploreResults):
                                    tau_inf, y0)
         # print(param_creator.params)
         deconv = True if fwhm is not None else False
+        print(trace.shape)
         minimizer = GlobalFitExponential(self.x, trace, len(taus),
                                          params=param_creator.params,
                                          deconv=deconv, tau_inf=tau_inf,
@@ -1250,12 +1261,12 @@ class Experiment(ExploreData, ExploreResults):
             msg = 'Fit number not in records'
             raise ExperimentException(msg)
 
-    def _plot_single_trace_fit (self, container, fit_number, add_details=True):
+    def _plot_single_trace_fit(self, container, fit_number, add_details=True):
         """
         Base plot function used by "plot_integral_band_fit" and "plot_single_fit"
         """
         plotter = ExploreResults(container[fit_number], **self._units)
-        _, data, _, params, exp_no, deconv, tau_inf, _, _, _ = plotter._get_values(fit_number=fit_number)
+        _, data, _, params, exp_no, deconv, tau_inf, _, _, _ = plotter._get_values(fit_number=1)
         fig, ax = plotter.plot_fit()
 
         if add_details:
@@ -1362,7 +1373,9 @@ class Experiment(ExploreData, ExploreResults):
         maxi: int, float or None
           data lower than this value is kept
         """
-        new_data, new_wave = Preprocessing.cut_columns(self.data, self.wavelength, mini, maxi, True)
+        new_data, new_wave = Preprocessing.cut_columns(self.data,
+                                                       self.wavelength,
+                                                       mini, maxi, True)
         self.selected_traces, self.selected_wavelength = new_data, new_wave
         self._readapt_params()
         self._averige_selected_traces = 0
@@ -1372,12 +1385,13 @@ class Experiment(ExploreData, ExploreResults):
         """
         Restore the data to a point previous to a preprocesing action
         actions should be the name of the function.
-        e.g.: "baseline substraction" or "baseline_substraction"
+        e.g.: "baseline substraction" or "baseline_substraction" are both valid
 
         Parameters
         ----------
         action:
             Possible actions:
+                original_data,
                 baseline_substraction,
                 average_time,
                 cut_time,
@@ -1395,7 +1409,8 @@ class Experiment(ExploreData, ExploreResults):
         if len(key) == 1:
             key = key[0]
         elif len(key) >= 1:
-            msg = f'{action} is not ambiguous specify time or wave'
+            msg = f'"{action}" is ambiguous specify "cut time" or "cut wave"'
+            key = 'Not_an_action'
         else:
             key = 'Not_an_action'
         if hasattr(self.data_sets, key):
@@ -1414,8 +1429,8 @@ class Experiment(ExploreData, ExploreResults):
                     atr = getattr(container.report, i)
                     setattr(self.preprocessing_report, i, atr)
             self.preprocessing_report._last_action = None
-            msg = ' '.join(key.split('_'))
-            self._add_action(f'restore {msg}')
+            write_action = ' '.join(key.split('_'))
+            self._add_action(f'restore {write_action}')
         else:
             raise ExperimentException(msg)
 
