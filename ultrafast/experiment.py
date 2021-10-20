@@ -837,7 +837,7 @@ class Experiment(ExploreData, ExploreResults):
         self._add_action("shift time")
         
     """
-    Fitting functions
+    Parameters functions
     """
     def define_weights(self, rango, typo='constant', val=5):
         """
@@ -954,7 +954,7 @@ class Experiment(ExploreData, ExploreResults):
         # TODO
         pass
 
-    def set_init_concentrations_manual(self, concentrations):
+    def set_init_concentrations_manually(self, concentrations):
         # TODO check functionality and add documentation
         if self.params is None or not self._kmatrix_manual:
             self.params = Parameters()
@@ -966,7 +966,7 @@ class Experiment(ExploreData, ExploreResults):
         self._init_concentrations_manual = True
         self._params_initialized = False
 
-    def set_kmatrix_manual(self, paths):
+    def set_kmatrix_manually(self, paths):
         # TODO check functionality and add documentation
         # array of (source, destination, rate, vary)
         if self.params is None or not self._init_concentrations_manual:
@@ -995,6 +995,9 @@ class Experiment(ExploreData, ExploreResults):
         self._kmatrix_manual = True
         self._params_initialized = False
 
+    """
+    Fitting functions
+    """
     def global_fit(self, vary=True, maxfev=5000, apply_weights=False):
         """
         Perform a exponential or a target global fits to the selected traces.
@@ -1444,7 +1447,10 @@ class Experiment(ExploreData, ExploreResults):
             key = self.preprocessing_report._last_action
             self.restore_data(key)
             self.preprocessing_report._last_action = None
-    
+
+    """
+    Other private methods
+    """
     def _update_last_params(self, params):
         """
         Function updating parameters after a global fit

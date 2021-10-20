@@ -44,7 +44,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/tests/ultrafast/test_experiment.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
@@ -186,7 +186,8 @@
       <workItem from="1633713502633" duration="19286000" />
       <workItem from="1634548135179" duration="3388000" />
       <workItem from="1634551564122" duration="95000" />
-      <workItem from="1634553916349" duration="35427000" />
+      <workItem from="1634553916349" duration="39603000" />
+      <workItem from="1634737133715" duration="4876000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>
