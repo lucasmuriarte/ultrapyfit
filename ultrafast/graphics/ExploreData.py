@@ -231,10 +231,12 @@ class ExploreData(PlotSVD):
             the range will be given from the time point where the data amplitude
             is maximum to the end. If False from the initial time to the maximum
             in amplitude of the data.
-        legend: bool (default True)
-            If True a legend will be display, If False color-bar with the times
-            will be display
+        legend: True, False or bar
+            If True a legend will be display.
+            If False no legend will be display.
+            If bar a color-bar with the times is add to the side.
         legend_decimal: int (default 2)
+            Only applicable if legend=True
             number of decimal values in the legend names
         ncol: int (default 1)
             Number of legend columns
@@ -243,7 +245,7 @@ class ExploreData(PlotSVD):
             be use
         size: int (default 14)
             (deprecated) size of the figure text labels including tick labels
-            axis labels and legend
+            axis labels and legend, (the size should be defined in the style)
         include_rango_max: bool (default True)
             If True, spectra are auto-plotted in a given range the last spectrum
             plotted will be the closest to the range limit
@@ -424,15 +426,18 @@ class ExploreData(PlotSVD):
         return fig, cursor
 
     def _legend_spectra_figure(self, legend, ncol, cmap, times):
-        if legend:
-            leg = plt.legend(loc='best', ncol=ncol)
-            leg.set_zorder(np.inf)
-        else:
+        if legend == "bar":
             cnorm = Normalize(vmin=times[0], vmax=times[-1])
             cpickmap = plt.cm.ScalarMappable(norm=cnorm, cmap=cmap)
             cpickmap.set_array([])
             plt.colorbar(cpickmap).set_label(
                 label='Time (' + self._units["time_unit"] + ')', size=15)
+        elif legend:
+            print(1)
+            leg = plt.legend(loc='best', ncol=ncol)
+            leg.set_zorder(np.inf)
+        else:
+            pass
 
     def _get_wavelength(self):
         if self.wavelength is not None:

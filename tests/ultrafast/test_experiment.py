@@ -139,6 +139,7 @@ class TestExperiment(unittest.TestCase):
         sys.stdout = captured_output  # and redirect stdout.
         experiment.general_report()  # Call function.
         output = captured_output.getvalue()
+
         # the middle part of the report changes every time is run since the
         # hour is printed out and other parameter are different
         # thus we verify only that the initial and end are idential
@@ -206,6 +207,77 @@ class TestExperiment(unittest.TestCase):
         value = self.check_preprocessing_function("shift_time")
         self.assertEqual(value, True)
 
+    @parameterized.expand([[[5, 30], 'constant', 5],
+                           [[5, 30], 'constant', 8],
+                           [[5, 30], 'exponential', 5]])
+    def test_define_weights(self, rango, typo, val):
+        self.experiment.define_weights(rango, typo, val)
+        vec_res = self.experiment.weights['vector']
+        self.assertEqual(self.experiment.weights['apply'], True)
+        self.assertEqual(len(self.experiment.weights), 5)
+        self.assertEqual(len(vec_res), len(self.experiment.x))
+
+    #                     t0, fwhm, taus, tau_inf, opt_fwhm, vary_t0, global_t0, y0
+    @parameterized.expand([[0, None, [2, 8, 30], 1E12, False, True, True, None],
+                           [5, 0.12, [2, 8, 30], None, True, True, True, 0],
+                           [0, None, [2, 25, 90], 1E12, False, True, True, 8],
+                           [0, 0.008, [5, 90], None, False, False, True, 0],
+                           [0, 0.16, [5, 90], 1E12, False, True, False, None],
+                           [5, 0.16, [5, 90], 1E12, False, True, False, None]])
+    def test_initialize_exp_params(self, t0, fwhm, taus, tau_inf,
+                                   opt_fwhm, vary_t0,
+                                   global_t0, y0):
+
+        # the next "if" statement is to have two cases where the correction of
+        # GVD is set to True ato verify the global_t0 parameter
+        if t0 == 5:
+            self.experiment.chirp_corrected = True
+
+        if len(taus) == 3:
+            self.experiment.initialize_exp_params(t0,
+                                                  fwhm,
+                                                  taus[0], taus[1], taus[2],
+                                                  tau_inf=tau_inf,
+                                                  vary_t0=vary_t0,
+                                                  opt_fwhm=opt_fwhm,
+                                                  global_t0=global_t0,
+                                                  y0=y0)
+        elif len(taus) == 2:
+            self.experiment.initialize_exp_params(t0,
+                                                  fwhm,
+                                                  taus[0], taus[1],
+                                                  tau_inf=tau_inf,
+                                                  vary_t0=vary_t0,
+                                                  opt_fwhm=opt_fwhm,
+                                                  global_t0=global_t0,
+                                                  y0=y0)
+
+        self.assertTrue(self.experiment._params_initialized, 'Exponential')
+        self.assertEqual(self.experiment.params['t0_1'].value, t0)
+        self.assertEqual(self.experiment._exp_no, len(taus))
+        if fwhm is not None:
+            self.assertTrue(self.experiment._deconv)
+            self.assertEqual(self.experiment.params['t0_1'].vary, vary_t0)
+            self.assertEqual(self.experiment.params['fwhm_1'].vary, opt_fwhm)
+            self.assertEqual(self.experiment.params['fwhm_1'].value, fwhm)
+            self.assertEqual(self.experiment._tau_inf, tau_inf)
+        else:
+            self.assertFalse(self.experiment.params['t0_1'].vary)
+        if y0 is not None:
+            self.assertEqual(self.experiment.params["y0_1"].value, y0)
+
+        if self.experiment.chirp_corrected:
+            if global_t0:
+                self.assertEqual(self.experiment.params['t0_2'].expr, 't0_1')
+            else:
+                self.assertEqual(self.experiment.params['t0_2'].expr, None)
+
+        self.experiment.chirp_corrected = False
+
+    def test_initialized_target_params(self):
+        # TODO
+        pass
+
     def test_undo_last_preprocesing(self):
         experiment1 = Experiment.load_data(self.path, wave_is_row=True)
         experiment2 = Experiment.load_data(self.path, wave_is_row=True)
@@ -215,6 +287,17 @@ class TestExperiment(unittest.TestCase):
         experiment2.undo_last_preprocesing()
         equal = (experiment1.data == experiment2.data).all()
         self.assertTrue(equal)
+
+    def test_global_fit(self):
+        self.experiment.select_traces()
+        self.experiment.initialize_exp_params(0, None, 5, 20, 300)
+        self.experiment.global_fit()
+        recovered_times = [self.experiment.params["tau1_1"].value,
+                           self.experiment.params["tau2_1"].value,
+                           self.experiment.params["tau3_1"].value]
+        self.assertNearlyEqualArray(recovered_times, [8, 30, 200], decimal=8)
+        self.assertTrue(self.experiment._fit_number == 1)
+        self.assertTrue(len(self.experiment.fit_records.global_fits) == 1)
 
     @parameterized.expand([["baseline_substraction"],
                            ["average_time"],
@@ -266,76 +349,6 @@ class TestExperiment(unittest.TestCase):
                                            container.wavelength)
         self.assertTrue(equal_wave)
 
-    @parameterized.expand([[[5, 30], 'constant', 5],
-                           [[5, 30], 'constant', 8],
-                           [[5, 30], 'exponential', 5]])
-    def test_define_weights(self, rango, typo, val):
-        self.experiment.define_weights(rango, typo, val)
-        vec_res = self.experiment.weights['vector']
-        self.assertEqual(self.experiment.weights['apply'], True)
-        self.assertEqual(len(self.experiment.weights), 5)
-        self.assertEqual(len(vec_res), len(self.experiment.x))
-
-    #                         t0, fwhm, taus, tau_inf, opt_fwhm, vary_t0, global_t0, y0
-    @parameterized.expand([[0, None, [2, 8, 30], 1E12, False, True, True, None],
-                           [5, 0.12, [2, 8, 30], None, True, True, True, 0],
-                           [0, None, [2, 25, 90], 1E12, False, True, True, 8],
-                           [0, 0.008, [5, 90], None, False, False, True, 0],
-                           [0, 0.16, [5, 90], 1E12, False, True, False, None],
-                           [5, 0.16, [5, 90], 1E12, False, True, False, None]])
-    def test_initialize_exp_params(self, t0, fwhm, taus, tau_inf,
-                                   opt_fwhm, vary_t0,
-                                   global_t0, y0):
-
-        # the next if statement is to have two cases where the correction of GVD
-        # is set to True and we can verify the global_t0
-        if t0 == 5:
-            self.experiment.chirp_corrected = True
-
-        if len(taus) == 3:
-            self.experiment.initialize_exp_params(t0,
-                                                  fwhm,
-                                                  taus[0], taus[1], taus[2],
-                                                  tau_inf=tau_inf,
-                                                  vary_t0=vary_t0,
-                                                  opt_fwhm=opt_fwhm,
-                                                  global_t0=global_t0,
-                                                  y0=y0)
-        elif len(taus) == 2:
-            self.experiment.initialize_exp_params(t0,
-                                                  fwhm,
-                                                  taus[0], taus[1],
-                                                  tau_inf=tau_inf,
-                                                  vary_t0=vary_t0,
-                                                  opt_fwhm=opt_fwhm,
-                                                  global_t0=global_t0,
-                                                  y0=y0)
-
-        self.assertTrue(self.experiment._params_initialized, 'Exponential')
-        self.assertEqual(self.experiment.params['t0_1'].value, t0)
-        self.assertEqual(self.experiment._exp_no, len(taus))
-        if fwhm is not None:
-            self.assertTrue(self.experiment._deconv)
-            self.assertEqual(self.experiment.params['t0_1'].vary, vary_t0)
-            self.assertEqual(self.experiment.params['fwhm_1'].vary, opt_fwhm)
-            self.assertEqual(self.experiment.params['fwhm_1'].value, fwhm)
-            self.assertEqual(self.experiment._tau_inf, tau_inf)
-        else:
-            self.assertFalse(self.experiment.params['t0_1'].vary)
-        if y0 is not None:
-            self.assertEqual(self.experiment.params["y0_1"].value, y0)
-
-        if self.experiment.chirp_corrected:
-            if global_t0:
-                self.assertEqual(self.experiment.params['t0_2'].expr, 't0_1')
-            else:
-                self.assertEqual(self.experiment.params['t0_2'].expr, None)
-
-        self.experiment.chirp_corrected = False
-
-    def test_initialized_target_params(self):
-        # TODO
-        pass
 
 if __name__ == '__main__':
     unittest.main()
