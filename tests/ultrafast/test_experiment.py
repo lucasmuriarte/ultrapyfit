@@ -1,9 +1,12 @@
 import unittest
+import unittest.mock
 from ultrafast.experiment import Experiment
 import os
 import numpy as np
 from copy import deepcopy
 from parameterized import parameterized
+import io
+import sys
 
 
 class TestExperiment(unittest.TestCase):
@@ -92,6 +95,55 @@ class TestExperiment(unittest.TestCase):
         # TODO
         # self.experiment.load_fit(self.path_save + ".exp")
         pass
+
+    def test_describe_data(self):
+        path_output = "resources/describe_data_test_output.txt"
+        path_output = os.path.abspath(path_output)
+        with open(path_output) as f:
+            lines = f.readlines()
+            expected_output = "".join(lines).replace("NÂ", "N")
+        captured_output = io.StringIO()  # Create StringIO object
+        sys.stdout = captured_output  # and redirect stdout.
+        self.experiment.describe_data()  # Call function.
+        # sys.stdout = sys.__stdout__
+        output = captured_output.getvalue()
+        self.assertEqual(expected_output, output)
+
+    def test_print_results(self):
+        path_output = "resources/print_fit_results_test_output.txt"
+        path_output = os.path.abspath(path_output)
+        with open(path_output) as f:
+            lines = f.readlines()
+            expected_output = "".join(lines).replace("NÂ", "N")
+        experiment = Experiment.load_data(self.path, wave_is_row=True)
+        experiment.select_traces()
+        experiment.initialize_exp_params(0, None, 5, 20, 300)
+        experiment.global_fit()
+        captured_output = io.StringIO()  # Create StringIO object
+        sys.stdout = captured_output  # and redirect stdout.
+        experiment.print_results()  # Call function.
+        output = captured_output.getvalue()
+        self.assertEqual(expected_output, output)
+
+    def test_general_report(self):
+        path_output = "resources/general_report_test_output.txt"
+        path_output = os.path.abspath(path_output)
+        with open(path_output) as f:
+            lines = f.readlines()
+            expected_output = "".join(lines).replace("NÂ", "N")
+        experiment = Experiment.load_data(self.path, wave_is_row=True)
+        experiment.select_traces()
+        experiment.initialize_exp_params(0, None, 5, 20, 300)
+        experiment.global_fit()
+        captured_output = io.StringIO()  # Create StringIO object
+        sys.stdout = captured_output  # and redirect stdout.
+        experiment.general_report()  # Call function.
+        output = captured_output.getvalue()
+        # the middle part of the report changes every time is run since the
+        # hour is printed out and other parameter are different
+        # thus we verify only that the initial and end are idential
+        self.assertEqual(expected_output[0:30], output[0:30])
+        self.assertEqual(expected_output[-30:], output[-30:])
 
     def test_baseline_correction(self):
         self.experiment.baseline_substraction()

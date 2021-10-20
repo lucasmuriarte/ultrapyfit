@@ -1,0 +1,11 @@
+	 data description
+--------------------------
+	Data set		Nº traces	Nº spectra
+	Loaded data:	 301			66
+	Current data:	 301			66
+	Selected traces: 301
+
+	 units
+---------------
+	Time unit: ps
+	Wavelength unit: nm

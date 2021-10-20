@@ -1,0 +1,48 @@
+	 data description
+--------------------------
+	Data set		Nº traces	Nº spectra
+	Loaded data:	 301			66
+	Current data:	 301			66
+	Selected traces: 30
+
+	 units
+---------------
+	Time unit: ps
+	Wavelength unit: nm
+============================================
+
+	 Pre-processing
+------------------------
+	 loaded file:
+		 C:\Users\lucas\git project\ultrafast\examples\data\exp3_data_denoised.csv
+
+	 creation: day: 20 Oct 2021 | hour: 17:04:53
+
+============================================
+
+Fit number 1: 	Global Exponential fit
+-------------------------------------------------
+Results:	Parameter		Initial value	Final value		Vary
+			time 0:   		0.0000   		0.0000   		False
+			tau 1:   		5.0000   		1.0000   		True
+			tau 2:   		20.0000   		8.0000   		True
+			tau 3:   		300.0000   		30.0000   		True
+Details:
+		Nº of traces: 30; average: 1
+		Fit with 3 exponential; Deconvolution False
+		Tau inf: None
+		Number of iterations: 1617
+		Number of parameters optimized: 240
+		Weights: False
+
+
+============================================
+
+	 Sequence of actions
+-----------------------------
+	 (p) _1: Selected traces
+
+	 (p) _2: new Exponential parameters initialized
+
+	 (p) _3: Exponential fit performed
+
