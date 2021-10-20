@@ -16,13 +16,20 @@ class TestExperiment(unittest.TestCase):
         self.experiment = Experiment.load_data(self.path, wave_is_row=True)
         self.original_time = deepcopy(self.experiment.time)
 
+    def assertEqualArray(self, array1, array2):
+        """
+        returns "True" if all elements of two arrays are identical
+        """
+        value = (array1 == array2).all()
+        return value
+
     def assertNearlyEqualArray(self, array1, array2, decimal):
         """
         returns "True" if all elements of two arrays
         are identical until decimal
         """
         dif = np.array(array1) - np.array(array2)
-        value = (dif < 10**(-decimal)).all()
+        value = (dif < 10 ** (-decimal)).all()
         return value
 
     def check_preprocessing_function(self, name, extra=None):
@@ -35,7 +42,7 @@ class TestExperiment(unittest.TestCase):
             suppose_action += f" {extra}"
         # print(action, suppose_action)
         action_written = action == suppose_action
-        data_added = hasattr(self.experiment.data_sets, "before_"+name)
+        data_added = hasattr(self.experiment.data_sets, "before_" + name)
         report_updated = hasattr(self.experiment.preprocessing_report, name)
         # print(action_written, data_added, report_updated)
         values_true = (action_written, data_added,
@@ -47,8 +54,9 @@ class TestExperiment(unittest.TestCase):
                          True)
         self.assertEqual(hasattr(self.experiment.fit_records, "single_fits"),
                          True)
-        self.assertEqual(hasattr(self.experiment.fit_records, "bootstrap_record"),
-                         True)
+        self.assertEqual(
+            hasattr(self.experiment.fit_records, "bootstrap_record"),
+            True)
         self.assertEqual(hasattr(self.experiment.fit_records, "conf_interval"),
                          True)
         self.assertEqual(hasattr(self.experiment.fit_records, "target_models"),
@@ -70,6 +78,10 @@ class TestExperiment(unittest.TestCase):
         self.assertEqual(val, True)
         self.experiment.x = self.original_time
 
+    def test_load_data(self):
+        experiment = Experiment.load_data(self.path, wave_is_row=True)
+        self.assertTrue(type(experiment) == Experiment)
+
     def test_save(self):
         self.experiment.save(self.path_save)
         is_file = os.path.isfile(self.path_save + ".exp")
@@ -89,7 +101,8 @@ class TestExperiment(unittest.TestCase):
     def test_subtract_polynomial_baseline(self):
         wave_points = self.experiment.wavelength[::10]
         self.experiment.subtract_polynomial_baseline(wave_points)
-        value = self.check_preprocessing_function("subtract_polynomial_baseline")
+        value = self.check_preprocessing_function(
+            "subtract_polynomial_baseline")
         self.assertEqual(value, True)
 
     def test_cut_time(self):
@@ -116,7 +129,8 @@ class TestExperiment(unittest.TestCase):
 
     def test_calibrate_wavelength(self):
         original_wavelengths = self.experiment.wavelength
-        values = [(a*100, b) for a, b in enumerate(self.experiment.wavelength[::100])]
+        values = [(a * 100, b) for a, b in
+                  enumerate(self.experiment.wavelength[::100])]
         pixels = [i[0] for i in values]
         waves = [i[1] for i in values]
         pix = np.array([a for a, b in enumerate(self.experiment.wavelength)])
@@ -150,6 +164,56 @@ class TestExperiment(unittest.TestCase):
         equal = (experiment1.data == experiment2.data).all()
         self.assertTrue(equal)
 
+    @parameterized.expand([["baseline_substraction"],
+                           ["average_time"],
+                           ["cut_time"],
+                           ["cut_wavelength"],
+                           ["delete_points"],
+                           ["derivate_data"],
+                           ["shift_time"],
+                           ["subtract_polynomial_baseline"],
+                           ["calibrate_wavelength"]])
+    def test_restore_data(self, action):
+        experiment = Experiment.load_data(self.path, wave_is_row=True)
+        exception_raise = False
+        message = None
+        try:
+            experiment.restore_data(action)
+        except Exception as error:
+            exception_raise = True
+            message = error.msg
+        self.assertTrue(exception_raise)
+        self.assertEqual(f"data has not been {action}", message)
+        if action == "baseline_substraction":
+            experiment.baseline_substraction()
+        elif action == "delete_points":
+            experiment.delete_points(55, "time")
+            experiment.delete_points(1575, "wavelength")
+        elif action == "subtract_polynomial_baseline":
+            wave_points = experiment.wavelength[::10]
+            experiment.subtract_polynomial_baseline(wave_points)
+        elif action == "calibrate_wavelength":
+            experiment.calibrate_wavelength([1500, 1600, 1650], [1, 200, 300])
+        elif action == "shift_time":
+            experiment.shift_time(1)
+        elif action == "derivate_data":
+            experiment.derivate_data(5, 3)
+        elif action == "cut_wavelength":
+            experiment.cut_wavelength(1550, 1600, "cut")
+        elif action == "cut_time":
+            experiment.cut_time(10, 300)
+        elif action == "average_time":
+            experiment.average_time(50, 10)
+        experiment.restore_data(action)
+        container = getattr(experiment.data_sets, f"before_{action}")
+        equal_data = self.assertEqualArray(experiment.data, container.data)
+        self.assertTrue(equal_data)
+        equal_time = self.assertEqualArray(experiment.x, container.x)
+        self.assertTrue(equal_time)
+        equal_wave = self.assertEqualArray(experiment.wavelength,
+                                           container.wavelength)
+        self.assertTrue(equal_wave)
+
     @parameterized.expand([[[5, 30], 'constant', 5],
                            [[5, 30], 'constant', 8],
                            [[5, 30], 'exponential', 5]])
@@ -160,7 +224,7 @@ class TestExperiment(unittest.TestCase):
         self.assertEqual(len(self.experiment.weights), 5)
         self.assertEqual(len(vec_res), len(self.experiment.x))
 
-#                         t0, fwhm, taus, tau_inf, opt_fwhm, vary_t0, global_t0, y0
+    #                         t0, fwhm, taus, tau_inf, opt_fwhm, vary_t0, global_t0, y0
     @parameterized.expand([[0, None, [2, 8, 30], 1E12, False, True, True, None],
                            [5, 0.12, [2, 8, 30], None, True, True, True, 0],
                            [0, None, [2, 25, 90], 1E12, False, True, True, 8],
@@ -217,6 +281,9 @@ class TestExperiment(unittest.TestCase):
 
         self.experiment.chirp_corrected = False
 
+    def test_initialized_target_params(self):
+        # TODO
+        pass
 
 if __name__ == '__main__':
     unittest.main()
