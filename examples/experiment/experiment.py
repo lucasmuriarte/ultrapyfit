@@ -8,7 +8,7 @@ from ultrafast.utils.divers import read_data, select_traces
 from ultrafast.experiment import Experiment
 import os
 
-path= 'C:\\Users\\lucas\\git project\\ultrafast\\examples\\data\\3_exp_data_denoised_2.csv'
+path = 'C:\\Users\\lucas\\git project\\ultrafast\\examples\\data\\exp3_data_denoised.csv'
 
 # path_2 = "C:/Users/lucas/Downloads/dataluc.csv"
 path = '../data/exp3_data_denoised.csv'

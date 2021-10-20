@@ -299,6 +299,14 @@ class TestExperiment(unittest.TestCase):
         self.assertTrue(self.experiment._fit_number == 1)
         self.assertTrue(len(self.experiment.fit_records.global_fits) == 1)
 
+    def test_single_exp_fit(self):
+        self.experiment.single_exp_fit(1480, 1, 0, None, 0.7, 40, plot=False)
+        self.assertTrue(len(self.experiment.fit_records.single_fits) == 1)
+        tau1 = self.experiment.fit_records.single_fits[1].params["tau1_1"].value
+        tau2 = self.experiment.fit_records.single_fits[1].params["tau2_1"].value
+        self.assertEqual(round(tau1), 1)
+        self.assertEqual(round(tau2), 8)
+
     @parameterized.expand([["baseline_substraction"],
                            ["average_time"],
                            ["cut_time"],
