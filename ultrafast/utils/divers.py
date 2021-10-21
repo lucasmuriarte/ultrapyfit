@@ -17,6 +17,7 @@ from ultrafast.fit.ModelCreator import ModelCreator
 from enum import Enum
 from decimal import Decimal
 import traceback
+import pathlib
 
 class TimeMultiplicator(Enum):
     y = 1E-24
@@ -163,6 +164,8 @@ class TimeUnitFormater:
         else:
             return f"{str(formatted.quantize(Decimal(10) ** - decimal))} {name}"
 
+def get_root_directory():
+    return pathlib.Path(__file__).parent.parent.parent
 
 def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None):
     """ select traces in the wavelength range

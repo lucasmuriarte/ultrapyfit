@@ -247,6 +247,9 @@ class ExploreData(PlotSVD):
         include_rango_max: bool (default True)
             If True, spectra are auto-plotted in a given range the last spectrum
             plotted will be the closest to the range limit
+        figsize: tuple (default (8, 12))
+            Sets the size of the matplotlib figure
+
 
         Returns
         ----------
@@ -273,6 +276,7 @@ class ExploreData(PlotSVD):
             ax.plot(wavelength, trace, c=colors[i], label=legenda[i])
         self._format_spectra_figure(ax, cover_range)
         self._legend_spectra_figure(legend, ncol, cmap, times)
+
         return fig, ax
 
     def plot3D(self, cmap=None):
