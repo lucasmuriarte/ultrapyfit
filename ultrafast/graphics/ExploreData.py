@@ -372,7 +372,8 @@ class ExploreData(PlotSVD):
             data = self.selected_traces
             if self.selected_wavelength is not None and self._SVD_fit is False:
                 values = np.where(np.in1d(self.wavelength,
-                                          self.selected_wavelength))
+                                          self.selected_wavelength))[0]
+                # print(values[0])
             else:
                 values = [i for i in range(data.shape[1])]
         elif type(traces) == list:

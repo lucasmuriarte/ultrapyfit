@@ -71,10 +71,10 @@ class SaveExperiment:
                    'deconv': self.experiment._deconv,
                    'n_fits':self.experiment._fit_number}
 
-        self.save_object["report"] = self.experiment.preprocessing_report
+        self.save_object["report"] = self.experiment.preprocessing.report
         self.save_object['fits'] = self.experiment.fit_records
         self.save_object['actions'] = self.experiment.action_records
-        self.save_object['datas'] = self.experiment.data_sets
+        self.save_object['datas'] = self.experiment.preprocessing.data_sets
         self.save_object['data'] = self.experiment.data
         self.save_object['x'] = self.experiment.x
         self.save_object['wavelength'] = self.experiment.wavelength
@@ -114,8 +114,8 @@ class Experiment(ExploreData, ExploreResults):
         is update
 
     time_unit: str (default ps)
-        Contains the strings of the time units to format axis labels and legends
-        automatically:
+        Contains the strings of the time units to format axis labels and 
+        legends automatically:
         time_unit str of the unit. >>> e.g.: 'ps' for picosecond
         Can be passes as kwargs when instantiating the object
 
@@ -134,24 +134,24 @@ class Experiment(ExploreData, ExploreResults):
         automatically re-adapted.
 
     weights: dict
-        contains the weigthing vector that will be apply if apply_weights is set
-        to True in any of the fitting functions. The weight can be define with
-        the define weights function.
+        contains the weigthing vector that will be apply if apply_weights is 
+        set to True in any of the fitting functions. The weight can be define 
+        with the define weights function.
 
     GVD_corrected/chirp_corrected: (default False)
         Indicates if the data has been chirp corrected. It set to True after
         calling the chrip_correction method.
 
-    preprocessing_report: class LabBook
-        Object containing and keeping track of the preprocessing actions done to
-        the data set. The preprocessing_report.print() method will print the
+    preprocesing.report: class LabBook
+        Object containing and keeping track of the preprocessing actions done 
+        to the data set. The preprocesing.report.print() method will print the
         status of the actions done and parameters passed to each of the
         preprocesing functions. The general report method of the
         Experiment class will also print it.
 
     action_records: class UnvariableContainer
         Object containing and keeping track of the important actions done.
-        similar to the preprocessing_report t content can be printed.
+        similar to the preprocesing.report t content can be printed.
         The general report method of the Experiment class will also print it.
 
     fit_records: class UnvariableContainer
@@ -202,7 +202,6 @@ class Experiment(ExploreData, ExploreResults):
         self.data = data
         self.selected_traces = data
         self.selected_wavelength = wavelength
-        self.data_sets = UnvariableContainer()
         self.excitation = None
         self.GVD_corrected = False
         self.action_records = UnvariableContainer(name="Sequence of actions")
@@ -210,7 +209,7 @@ class Experiment(ExploreData, ExploreResults):
         self.params = None
         self.weights = {'apply': False, 'vector': None, 'range': [],
                         'type': 'constant', 'value': 2}
-        self.preprocessing_report = LabBook(name="Pre-processing")
+        # self.preprocessing.report = LabBook(name="Pre-processing")
         self.data_path = path
         self._units = units
         self._averige_selected_traces = 0
@@ -219,17 +218,16 @@ class Experiment(ExploreData, ExploreResults):
         # _fit_number take record of global exponential and target fits ran.
         self._fit_number = 0
         self._params_initialized = False
-        self._last_data_sets = None
         self._tau_inf = 1E12
         self._allow_stop = False
         # _silent_selection_of_traces is an attribute that defines if the
         # selection of traces should be add to record of actions.
         self._silent_selection_of_traces = False
         self._initialized()
-        self._chirp_corrector = None
         self._kmatrix_manual = False
         self._init_concentrations_manual = False
         self._last_params = None
+        self.preprocessing = self._Preprocessing(self)
         ExploreData.__init__(self, self.x, self.data, self.wavelength,
                              self.selected_traces, self.selected_wavelength,
                              'viridis', **self._units)
@@ -240,26 +238,15 @@ class Experiment(ExploreData, ExploreResults):
         """
         Finalize the initialization of the Experiment class
         """
-        self.data_sets.original_data = UnvariableContainer(time=self.x, data=self.data, wavelength=self.wavelength)
-        self.preprocessing_report._last_action = None
+        #self.preprocessing.report._last_action = None
         self.fit_records.single_fits = {}
         self.fit_records.bootstrap_record = {}
         self.fit_records.conf_interval = {}
         self.fit_records.target_models = {}
         self.fit_records.global_fits = {}
         self.fit_records.integral_band_fits = {}
-        self.baseline_substraction = book_annotate(self.preprocessing_report)(self.baseline_substraction)
-        # self.chirp_correction = book_annotate(self.preprocessing_report)(self.chirp_correction)
-        self.subtract_polynomial_baseline = book_annotate(self.preprocessing_report)(self.subtract_polynomial_baseline)
-        self.cut_time = book_annotate(self.preprocessing_report)(self.cut_time)
-        self.average_time = book_annotate(self.preprocessing_report)(self.average_time)
-        self.derivate_data = book_annotate(self.preprocessing_report)(self.derivate_data)
-        self.calibrate_wavelength = book_annotate(self.preprocessing_report)(self.calibrate_wavelength)
-        self.cut_wavelength = book_annotate(self.preprocessing_report)(self.cut_wavelength)
-        self.delete_points = book_annotate(self.preprocessing_report)(self.delete_points)
-        self.shift_time = book_annotate(self.preprocessing_report)(self.shift_time)
         self._unit_formater = TimeUnitFormater(self._units['time_unit'])
-    
+
     """
     Properties and structural functions
     """
@@ -350,7 +337,7 @@ class Experiment(ExploreData, ExploreResults):
             raise ExperimentException(exception)
         else:
             experiment = Experiment(x, data, wave, path)
-            experiment.preprocessing_report.loaded_file = path
+            experiment.preprocessing.report.loaded_file = path
         return experiment
 
     @staticmethod
@@ -372,9 +359,10 @@ class Experiment(ExploreData, ExploreResults):
                 wavelength = object_load['wavelength']
                 instantiate = True
                 experiment = Experiment(x, data, wavelength)
-                experiment.preprocessing_report = object_load["report"]
+                experiment.preprocessing.report = object_load["report"]
                 experiment.fit_records = object_load['fits']
                 experiment.action_records = object_load['actions']
+                experiment.preprocessing.data_sets = object_load['datas']
                 experiment._units = object_load['detail']['units']
                 experiment.GVD_corrected = object_load['detail']['GVD']
                 experiment.excitation = object_load['detail']['excitation']
@@ -418,14 +406,14 @@ class Experiment(ExploreData, ExploreResults):
             path where to save the Experiment
         """
         save = SaveExperiment(path, self)
-        
+
     def createNewDir(self, path):
         # Probably will be removed
         if not os.path.exists(path):
             os.makedirs(path)
         self.working_directory = path
         self.save['path'] = self.working_directory
-    
+
     """
     Check status functions
     """
@@ -438,7 +426,8 @@ class Experiment(ExploreData, ExploreResults):
         print('-'*(len(name)+10))
         print('\tData set\t\tNº traces\tNº spectra')
         name = ['Loaded data','Current data']
-        for ii, i in enumerate([self.data_sets.original_data.data, self.data]):
+        for ii, i in enumerate([self.preprocessing.data_sets.original_data.data,
+                                self.data]):
             print(f'\t{name[ii]}:\t {i.shape[1]}\t\t\t{i.shape[0]}')
         print(f'\tSelected traces: {self.selected_traces.shape[1]}')
         print('\n\t units')
@@ -477,7 +466,7 @@ class Experiment(ExploreData, ExploreResults):
         def printing():
             self.describe_data()
             print('============================================\n')
-            self.preprocessing_report.print()
+            self.preprocessing.report.print()
             print('============================================\n')
             for i in range(len(self.fit_records.global_fits)):
                 self.print_results(i+1)
@@ -505,337 +494,474 @@ class Experiment(ExploreData, ExploreResults):
                 print(msg)
         else:
             printing()
-        
+
     """
     Preprocessing functions
     """
-    def chirp_correction_graphically(self, method, excitation=None):
+    class _Preprocessing:
         """
-        Function to correct the chrip or GVD dispersion graphically.
+        Class that aggregate all preprocessing functions under the name
+        Preprocessing. Therefore, the functions should be used as follow:
 
-        Parameters
-        ----------
-
-        method: str (valid strings "sellmeier"; "polynomial")
-            defines the method use, either using the Sellmeier equation or
-            fitting a polynomial.
-
-        excitation: float (default None)
-            give the excitation uses in the experiment; only needed if the
-            method is "sellmeier"
+        experiment = Experiment(time, data, wavelength) #create an instance
+        experiment.Preprocessing.function(*arg,*+kwargs) #preprocess function
         """
-        if method == 'sellmeier':
-            if excitation is None:
-                msg = 'The excitation must be defined'
+        def __init__(self, experiment):
+            self._experiment = experiment
+            # self.x = x
+            # self.data = data
+            # self.wavelength = wavelength
+            self.report = LabBook(name="Pre-processing")
+            self._chirp_corrector = None
+            self._last_data_sets = None
+            self.data_sets = UnvariableContainer()
+            self.data_sets.original_data = UnvariableContainer(time=self._experiment.x,
+                                                               data=self._experiment.data,
+                                                               wavelength=self._experiment.wavelength)
+
+            # modified functions to the decorator book anotate
+            self.baseline_substraction = book_annotate(
+                self.report)(self.baseline_substraction)
+            self.subtract_polynomial_baseline = book_annotate(
+                self.report)(self.subtract_polynomial_baseline)
+            self.cut_time = book_annotate(self.report)(self.cut_time)
+            self.average_time = book_annotate(self.report)(self.average_time)
+            self.derivate_data = book_annotate(self.report)(self.derivate_data)
+            self.calibrate_wavelength = book_annotate(
+                self.report)(self.calibrate_wavelength)
+            self.cut_wavelength = book_annotate(self.report)(self.cut_wavelength)
+            self.delete_points = book_annotate(self.report)(self.delete_points)
+            self.shift_time = book_annotate(self.report)(self.shift_time)
+
+        def chirp_correction_graphically(self, method, excitation=None):
+            """
+            Function to correct the chrip or GVD dispersion graphically.
+
+            Parameters
+            ----------
+
+            method: str (valid strings "sellmeier"; "polynomial")
+                defines the method use, either using the Sellmeier equation or
+                fitting a polynomial.
+
+            excitation: float (default None)
+                give the excitation uses in the experiment; only needed if the
+                method is "sellmeier"
+            """
+            func = self._change_data_after_chrip_correction
+            if method == 'sellmeier':
+                if excitation is None:
+                    msg = 'The excitation must be defined'
+                    raise ExperimentException(msg)
+                self._chirp_corrector = EstimationGVDSellmeier(self._experiment.x,
+                                                               self._experiment.data,
+                                                               self._experiment.wavelength,
+                                                               excitation,
+                                                               function=func)
+            elif method == 'polynomial':
+                self._chirp_corrector = EstimationGVDPolynom(self._experiment.x,
+                                                             self._experiment.data,
+                                                             self._experiment.wavelength,
+                                                             function=func)
+            else:
+                msg = 'Method can only be "sellmeier" or "polynomial"'
                 raise ExperimentException(msg)
-            self._chirp_corrector = EstimationGVDSellmeier(self.x, 
-                                                           self.data, 
-                                                           self.wavelength, 
-                                                           excitation,
-                                                           function=self._change_data_after_chrip_correction)
-        elif method == 'polynomial':
-            self._chirp_corrector = EstimationGVDPolynom(self.x, 
-                                                         self.data, 
-                                                         self.wavelength,
-                                                         function=self._change_data_after_chrip_correction)
-        else:
-            msg = 'Method can only be "sellmeier" or "polynomial"'
-            raise ExperimentException(msg)
-        self._chirp_corrector.estimate_GVD_from_grath()
-        # self.data = self._chirp_corrector.corrected_data
-        # capture_chirp_correction(self)
+            self._chirp_corrector.estimate_GVD_from_grath()
+            # self.data = self._chirp_corrector.corrected_data
+            # capture_chirp_correction(self)
 
-    def _change_data_after_chrip_correction(self):
-        """
-        Internal function to update data after chrip correction
-        """
-        self.data = self._chirp_corrector.corrected_data
-        details = self._chirp_corrector.estimation_params.details
-        self.preprocessing_report.__setattr__('chrip_correction', details, True)
+        def _change_data_after_chrip_correction(self):
+            """
+            Internal function to update data after chrip correction
+            """
+            self._experiment.data = self._chirp_corrector.corrected_data
+            details = self._chirp_corrector.estimation_params.details
+            self.report.__setattr__('chrip_correction', details, True)
+            self._experiment._add_action("correct chirp", True)
+            self._experiment.GVD_corrected = True
 
-    def calibrate_wavelength(self, pixels: list, wavelength: list,
-                             order=2):
-        """
-        Calibrates the wavelength vector from a set of given lists of points,
-        pixels and wavelength, using a polynomial fit between the point in the
-        two list.
+        def calibrate_wavelength(self, pixels: list, wavelength: list,
+                                 order=2):
+            """
+            Calibrates the wavelength vector from a set of given lists of 
+            points pixels and wavelength, using a polynomial fit between the 
+            point in the two list.
 
 
-        Parameters
-        ----------
-        pixels: list
-            list containing a set of values from the original array.
+            Parameters
+            ----------
+            pixels: list
+                list containing a set of values from the original array.
 
-        wavelength: list
-            list containing a set of values to which the values given in the
-             pixels list correspond in reality.
+            wavelength: list
+                list containing a set of values to which the values given in 
+                the pixels list correspond in reality.
 
-        order: int (default 2)
-            Order of the polynomial use to fit pixels and wavelength.
-            Notice that the order should be smaller than the len of the list
-        """
-        self._add_to_data_set("before_calibrate_wavelength")
-        new_wave = Preprocessing.calibration_with_polynom(self.wavelength,
-                                                          pixels, wavelength,
-                                                          order)
+            order: int (default 2)
+                Order of the polynomial use to fit pixels and wavelength.
+                Notice that the order should be smaller than the len of the 
+                list
+            """
+            self._add_to_data_set("before_calibrate_wavelength")
+            new_wave = Preprocessing.calibration_with_polynom(self._experiment.wavelength,
+                                                              pixels,
+                                                              wavelength,
+                                                              order)
 
-        self.wavelength = new_wave
-        self._add_action("calibrate wavelength", True)
+            self._experiment.wavelength = new_wave
+            self._experiment._add_action("calibrate wavelength", True)
 
-    def GVD_correction_graphically(self, method, excitation=None):
-        """
-        Identical to chirp_correction method
-        """
-        self.chirp_correction_graphically(method, excitation)
+        def GVD_correction_graphically(self, method, excitation=None):
+            """
+            Identical to chirp_correction method
+            """
+            self.chirp_correction_graphically(method, excitation)
 
-    def baseline_substraction(self, number_spec=2, only_one=False):
-        """
-        Subtract a initial spectrum or an average of initial spectra
-        (normally before time = 0) to the entire data set.
-
-
-        Parameters
-        ----------
-        number_spec: int or list
-            This parameter defines the number of spectra to be subtracted.
-            If int should be the index of the spectrum to be subtracted
-            If list should be of length 2 and contain initial and final spectra
-            index that want to be subtracted
-
-        only_one: bool (default False)
-            if True only the spectrum (at index number_spec) is subtracted
-            if False an average from the spectrum 0 to number_spec is subtracted
-            (only applicable if number_spec is an int)
-
-        e.g.1: number_spec = [2,5] an average from spectra 2 to 5 is subtracted
-                (where 2 and 5 are included)
-
-        e.g.2: number_spec = 5 an average from spectra 0 to 5 is subtracted
-                if only_one = False; if not only spectrum 5 is subtracted
-        """
-        self._add_to_data_set("before_baseline_substraction")
-        new_data = Preprocessing.baseline_substraction(self.data,
-                                                       number_spec=number_spec,
-                                                       only_one=only_one)
-
-        self.data = new_data
-        self._add_action("baseline substraction", True)
-
-    def subtract_polynomial_baseline(self, points, order=3):
-        """
-        Fit and subtract a polynomial to the data in the spectral range (rows).
-        This function can be used to correct for baseline fluctuations typically
-        found in time resolved IR spectroscopy.
+        def baseline_substraction(self, number_spec=2, only_one=False):
+            """
+            Subtract a initial spectrum or an average of initial spectra
+            (normally before time = 0) to the entire data set.
 
 
-        Parameters
-        ----------
-        points: list
-            list containing the wavelength values where the different transient
-            spectra should be zero
+            Parameters
+            ----------
+            number_spec: int or list
+                This parameter defines the number of spectra to be subtracted.
+                If int should be the index of the spectrum to be subtracted
+                If list should be of length 2 and contain initial and final
+                spectra index that want to be subtracted
 
-        order: int or float (default: 3)
-           order of the polynomial fit
-        """
-        self._add_to_data_set("before_subtract_polynomial_baseline")
-        new_data = Preprocessing.subtract_polynomial_baseline(self.data,
-                                                              self.wavelength,
-                                                              points=points,
-                                                              order=order)
-        self.data = new_data
-        self._add_action("subtract polynomial baseline", True)
+            only_one: bool (default False)
+                if True only the spectrum (at index number_spec) is subtracted
+                if False an average from the spectrum 0 to number_spec is
+                subtracted (only applicable if number_spec is an int)
 
-    def cut_time(self, mini=None, maxi=None):
-        """
-        Cut time point of the data set according to the closest values of mini
-        and maxi margins given to the time vector. Contrary to cut_wavelength
-        function, inner cut are not available since in time resolved
-        spectroscopy is not logical to cut a complete area of recorded times.
-        Therefore, giving mini and maxi margins will result in selection of
-        inner time values.
-        (The function assumes rows vector is sorted from low to high values)
+            e.g.1: number_spec = [2,5] an average from spectra 2 to 5 is
+            subtracted (where 2 and 5 are included)
 
+            e.g.2: number_spec = 5 an average from spectra 0 to 5 is subtracted
+                    if only_one = False; if not only spectrum 5 is subtracted
+            """
+            self._add_to_data_set("before_baseline_substraction")
+            new_data = Preprocessing.baseline_substraction(self._experiment.data,
+                                                           number_spec=number_spec,
+                                                           only_one=only_one)
 
-        Parameters
-        ----------
-        mini: int, float or None (default: None)
-          data higher than this value is kept
+            self._experiment.data = new_data
+            self._experiment._add_action("baseline substraction", True)
 
-        maxi: int, float or None (default: None)
-          data lower than this value is kept
-        """
-        self._add_to_data_set("before_cut_time")
-        new_data, new_x = Preprocessing.cut_rows(self.data, self.x, mini, maxi)
-        self.data, self.x = new_data, new_x
-        self._add_action("cut time", True)
-
-    def average_time(self, starting_point, step, method='log', grid_dense=5):
-        """
-        Average time points collected (rows). This function can be use to
-        average time points. Useful in multiprobe time-resolved experiments or
-        flash-photolysis experiments recorded with a Photo multiplier tube where
-        the number of time points is very long and are equally spaced.
-        (The function assumes time vector is sorted from low to high values)
+        def subtract_polynomial_baseline(self, points, order=3):
+            """
+            Fit and subtract a polynomial to the data in the spectral range
+            (rows). This function can be used to correct for baseline
+            fluctuations typically found in time resolved IR spectroscopy.
 
 
-        Parameters
-        ----------
-        starting_point: int or float
-          time points higher than this the function will be applied
+            Parameters
+            ----------
+            points: list
+                list containing the wavelength values where the different
+                transient spectra should be zero
 
-        step: int, float or None
-          step to consider for averaging data points
+            order: int or float (default: 3)
+               order of the polynomial fit
+            """
+            self._add_to_data_set("before_subtract_polynomial_baseline")
+            new_data = Preprocessing.subtract_polynomial_baseline(self._experiment.data,
+                                                                  self._experiment.wavelength,
+                                                                  points=points,
+                                                                  order=order)
+            self._experiment.data = new_data
+            self._experiment._add_action("subtract polynomial baseline", True)
 
-        method: 'log' or 'constant' (default: 'log')
-            If constant: after starting_point the the function will return
-            average time points between the step.
-
-            If log the firsts step is step/grid_dense and the following points
-            are (step/grid_dense)*n where n is point number
-
-        grid_dense: int or float higher than 1 (default: 5)
-            density of the log grid that will be applied. To high values will
-            not have effect if: start_point + step/grid_dense is lower than the
-            difference between the first two consecutive points higher than
-            start_point. The higher the value the higher the grid dense will be.
-            return.
-            (only applicable if method is 'log')
-
-        e.g.:
-            time [1,2,3,4 .... 70,71,72,73,74]
-            step = 10
-            starting_point = 5
-            method 'constant'
-                time points return are [1,2,3,4,5,10,20,30,40...]
-            method 'log'
-                time points return are [1,2,3,4,5,6,9,14,21,30,41,54,67.5]
-        """
-        self._add_to_data_set("before_average_time")
-        new_data, new_x = Preprocessing.average_time_points(self.data, self.x,
-                                                            starting_point,
-                                                            step, method,
-                                                            grid_dense)
-        self.data, self.x = new_data, new_x
-        self._add_action("average time", True)
-
-    def derivate_data(self, window_length=25, polyorder=3,
-                      deriv=1, mode='mirror'):
-        """
-        Apply a Savitky-Golay filter to the data in the spectral range (rows).
-        After the Savitky-Golay filter the data can be derivate which can be
-        used to correct for baseline fluctuations and still perform a global
-        fit or a single fit to obtain the decay times.
-
-        Uses scipy.signal.savgol_filter
-        (check scipy documentation for more information)
+        def cut_time(self, mini=None, maxi=None):
+            """
+            Cut time point of the data set according to the closest values of
+            mini and maxi margins given to the time vector. Contrary to
+            cut_wavelength function, inner cut are not available since in time
+            resolved spectroscopy is not logical to cut a complete area of
+            recorded times. Therefore, giving mini and maxi margins will result
+             in selection of inner time values.
+            (The function assumes rows vector is sorted from low to high values)
 
 
-        Parameters
-        ----------
-        window_length: odd int value (default: 25)
-            length defining the points for polynomial fitting
+            Parameters
+            ----------
+            mini: int, float or None (default: None)
+              data higher than this value is kept
 
-        polyorder: int or float (default: 3)
-          order of the polynomial fit
+            maxi: int, float or None (default: None)
+              data lower than this value is kept
+            """
+            self._add_to_data_set("before_cut_time")
+            new_data, new_x = Preprocessing.cut_rows(self._experiment.data,
+                                                     self._experiment.x,
+                                                     mini,
+                                                     maxi)
+            self._experiment.data, self._experiment.x = new_data, new_x
+            self._experiment._add_action("cut time", True)
 
-        deriv: int, float or None (default: 1)
-          order of the derivative after fitting
+        def average_time(self, starting_point, step,
+                         method='log', grid_dense=5):
+            """
+            Average time points collected (rows). This function can be use to
+            average time points. Useful in multiprobe time-resolved experiments
+            or flash-photolysis experiments recorded with a Photo multiplier
+            tube where the number of time points is very long and are equally
+            spaced.
+            (The function assumes time vector is sorted from low to high values)
 
-        mode: (default: 'mirror')
-            mode to evaluate bounders after derivation, check
-            scipy.signal.savgol_filter for the different options
-        """
-        self._add_to_data_set("before_derivate_data")
-        new_data = Preprocessing.derivate_data(self.data, window_length,
-                                               polyorder, deriv, mode)
-        self.data = new_data
-        self._add_action("derivate data", True)
 
-    def cut_wavelength(self, mini=None, maxi=None, innerdata=None):
-        """
-        Cut columns of the data set and wavelength vector according to the
-        closest values of mini and maxi margins given.
-        (The function assumes column vector is sorted from low to high values)
+            Parameters
+            ----------
+            starting_point: int or float
+              time points higher than this the function will be applied
 
-        Parameters
-        ----------
-        mini: int, float or None (default: None)
-          data higher than this value is kept
+            step: int, float or None
+              step to consider for averaging data points
 
-        maxi: int, float or None (default: None)
-          data lower than this value is kept
+            method: 'log' or 'constant' (default: 'log')
+                If constant: after starting_point the the function will return
+                average time points between the step.
 
-        innerdata: cut or select (default: None)
-            Only need if both mini and right maxi are given
-            indicates if data inside the mini and maxi limits should be cut or
-            selected.
-        """
-        self._add_to_data_set("before_cut_wavelength")
-        new_data, new_wave = Preprocessing.cut_columns(self.data,
-                                                       self.wavelength,
-                                                       mini, maxi, innerdata)
-        # no need to work on selected data set
-        self.data, self.wavelength = new_data, new_wave
-        self._add_action("cut wavelength", True)
+                If log the firsts step is step/grid_dense and the following
+                points are (step/grid_dense)*n where n is point number
 
-    def delete_points(self, points, dimension='time'):
-        """
-        Delete rows or columns from the data set according to the closest values
-        given in points to the values found in dimension_vector. The length of
-        dimension_vector should be equivalent to one of the data dimensions.
+            grid_dense: int or float higher than 1 (default: 5)
+                density of the log grid that will be applied. To high values
+                will not have effect if: start_point + step/grid_dense is lower
+                than the difference between the first two consecutive points
+                higher than start_point. The higher the value the higher the
+                grid dense will be return.
+                (only applicable if method is 'log')
 
-        Notice that the function will automatically detect the dimension of the
-        delete rows or columns in data if any of their dimensions is equal to
-        the length of the dimension_vector. In case that both dimensions are the
-        same the axis should be given, by default is 0, which is equivalent to
-        the time dimension.
+            e.g.:
+                time [1,2,3,4 .... 70,71,72,73,74]
+                step = 10
+                starting_point = 5
+                method 'constant'
+                    time points return are [1,2,3,4,5,10,20,30,40...]
+                method 'log'
+                    time points return are [1,2,3,4,5,6,9,14,21,30,41,54,67.5]
+            """
+            self._add_to_data_set("before_average_time")
+            new_data, new_x = Preprocessing.average_time_points(self._experiment.data,
+                                                                self._experiment.x,
+                                                                starting_point,
+                                                                step, method,
+                                                                grid_dense)
+            self._experiment.data, self._experiment.x = new_data, new_x
+            self._experiment._add_action("average time", True)
 
-        i.e.:
-        points = [3,5]
-        dimension_vector = [0.7, 1.4, 2.1, 2.8, 3.5, 4.2, 4.9, 5.6]
-        len(dimension_vector) >>> 8
-        data.shape >>> (8, 10)
+        def derivate_data(self, window_length=25, polyorder=3,
+                          deriv=1, mode='mirror'):
+            """
+            Apply a Savitky-Golay filter to the data in the spectral range
+            (rows). After the Savitky-Golay filter the data can be derivate
+            which can be used to correct for baseline fluctuations and still
+            perform a global fit or a single fit to obtain the decay times.
 
-        Parameters
-        ----------
-        points: int, list or None
-            estimate values of time, the closes values of dimension_vector to t
-            he points given will be deleted
+            Uses scipy.signal.savgol_filter
+            (check scipy documentation for more information)
 
-        dimension: str (default "time")
-                can be "wavelength" or "time" indicate where points should be
-                deleted
-        """
-        self._add_to_data_set("before_delete_points")
-        if dimension == 'time':
-            new_data, new_x = Preprocessing.del_points(points, self.data,
-                                                       self.x, 0)
-            self.data, self.x = new_data, new_x
-            self._add_action(f"delete points {dimension}", True)
-        elif dimension == 'wavelength':
-            new_data, new_wave = Preprocessing.del_points(points, self.data,
-                                                          self.wavelength, 1)
+
+            Parameters
+            ----------
+            window_length: odd int value (default: 25)
+                length defining the points for polynomial fitting
+
+            polyorder: int or float (default: 3)
+              order of the polynomial fit
+
+            deriv: int, float or None (default: 1)
+              order of the derivative after fitting
+
+            mode: (default: 'mirror')
+                mode to evaluate bounders after derivation, check
+                scipy.signal.savgol_filter for the different options
+            """
+            self._add_to_data_set("before_derivate_data")
+            new_data = Preprocessing.derivate_data(self._experiment.data,
+                                                   window_length,
+                                                   polyorder, deriv, mode)
+            self._experiment.data = new_data
+            self._experiment._add_action("derivate data", True)
+
+        def cut_wavelength(self, mini=None, maxi=None, innerdata=None):
+            """
+            Cut columns of the data set and wavelength vector according to the
+            closest values of mini and maxi margins given.
+            (The function assumes column vector is sorted from low to high
+            values)
+
+            Parameters
+            ----------
+            mini: int, float or None (default: None)
+              data higher than this value is kept
+
+            maxi: int, float or None (default: None)
+              data lower than this value is kept
+
+            innerdata: cut or select (default: None)
+                Only need if both mini and right maxi are given
+                indicates if data inside the mini and maxi limits should be cut
+                or selected.
+            """
+            self._add_to_data_set("before_cut_wavelength")
+            new_data, new_wave = Preprocessing.cut_columns(self._experiment.data,
+                                                           self._experiment.wavelength,
+                                                           mini, maxi,
+                                                           innerdata)
             # no need to work on selected data set
-            self.data, self.wavelength = new_data, new_wave
-            self._add_action(f"delete points {dimension}", True)
-        else:
-            msg = 'dimension should be "time" or "wavelength"'
-            raise ExperimentException(msg)
+            self._experiment.data = new_data
+            self._experiment.wavelength = new_wave
+            self._experiment._add_action("cut wavelength", True)
 
-    def shift_time(self, value):
-        """
-        Shift the time vector by a value
+        def delete_points(self, points, dimension='time'):
+            """
+            Delete rows or columns from the data set according to the closest
+            values given in points to the values found in dimension_vector.
+            The length of dimension_vector should be equivalent to one of the
+            data dimensions.
+
+            Notice that the function will automatically detect the dimension of
+            the delete rows or columns in data if any of their dimensions is
+            equal to the length of the dimension_vector. In case that both
+            dimensions are the same the axis should be given, by default is 0,
+             which is equivalent to the time dimension.
+
+            i.e.:
+            points = [3,5]
+            dimension_vector = [0.7, 1.4, 2.1, 2.8, 3.5, 4.2, 4.9, 5.6]
+            len(dimension_vector) >>> 8
+            data.shape >>> (8, 10)
+
+            Parameters
+            ----------
+            points: int, list or None
+                estimate values of time, the closes values of dimension_vector to t
+                he points given will be deleted
+
+            dimension: str (default "time")
+                    can be "wavelength" or "time" indicate where points should be
+                    deleted
+            """
+            self._add_to_data_set("before_delete_points")
+            if dimension == 'time':
+                new_data, new_x = Preprocessing.del_points(points,
+                                                           self._experiment.data,
+                                                           self._experiment.x,
+                                                           0)
+                self._experiment.data, self._experiment.x = new_data, new_x
+                self._experiment._add_action(f"delete points {dimension}", True)
+            elif dimension == 'wavelength':
+                new_data, new_wave = Preprocessing.del_points(points,
+                                                              self._experiment.data,
+                                                              self._experiment.wavelength,
+                                                              1)
+                # no need to work on selected data set
+                self._experiment.data = new_data
+                self._experiment.wavelength = new_wave
+                self._experiment._add_action(f"delete points {dimension}", True)
+            else:
+                msg = 'dimension should be "time" or "wavelength"'
+                raise ExperimentException(msg)
+
+        def shift_time(self, value):
+            """
+            Shift the time vector by a value
 
 
-        Parameters
-        ----------
-        value: int or float
-            value shifting the time vector
-        """
-        self._add_to_data_set("before_shift_time")
-        self.x = self.x - value
-        self._add_action("shift time")
-        
+            Parameters
+            ----------
+            value: int or float
+                value shifting the time vector
+            """
+            self._add_to_data_set("before_shift_time")
+            self._experiment.x = self._experiment.x - value
+            self._experiment._add_action("shift time")
+
+        def restore_data(self, action: str):
+            """
+            Restore the data to a point previous to a preprocessing action
+            actions should be the name of the function.
+            e.g.: "baseline substraction" or "baseline_substraction" are both 
+            valid
+
+            Parameters
+            ----------
+            action:
+                Possible actions:
+                    original_data,
+                    baseline_substraction,
+                    average_time,
+                    cut_time,
+                    cut_wavelength,
+                    delete_points,
+                    derivate_data,
+                    shift_time,
+                    subtract_polynomial_baseline,
+                    correct_chirp/correct_GVD,
+                    calibrate_wavelength,
+            """
+            action = '_'.join(action.split(' '))
+            key = [i for i in self.data_sets.__dict__.keys() if action in i]
+            msg = f'data has not been {action}'
+            if len(key) == 1:
+                key = key[0]
+            elif len(key) >= 1:
+                msg = f'"{action}" is ambiguous specify "cut time" or "cut wave"'
+                key = 'Not_an_action'
+            else:
+                key = 'Not_an_action'
+            if hasattr(self.data_sets, key):
+                container = getattr(self.data_sets, key)
+                self._experiment.data = container.data
+                self._experiment.x = container.x
+                self._experiment.wavelength = container.wavelength
+                self._experiment.selected_traces = container.data
+                self._experiment.selected_wavelength = container.wavelength
+                keys = [i for i in self.report.__dict__.keys()]
+                for i in keys:
+                    if i not in container.report.__dict__.keys():
+                        delattr(self.report, i)
+                for i in container.report.__dict__.keys():
+                    if i not in self.report.__dict__.keys():
+                        atr = getattr(container.report, i)
+                        setattr(self.report, i, atr)
+                self.report._last_action = None
+                write_action = ' '.join(key.split('_'))
+                self._experiment._add_action(f'restore {write_action}')
+            else:
+                raise ExperimentException(msg)
+
+        def undo_last_preprocesing(self):
+            """
+            Undo the last preprocesing action perform to the data
+            """
+            if self.report._last_action is None:
+                print('No preprocesing action run or already undo last action')
+            else:
+                key = self.report._last_action
+                self.restore_data(key)
+                self.report._last_action = None
+
+        def _add_to_data_set(self, key):
+            """
+            add data to data sets after a preprocesing action
+            """
+            if hasattr(self.data_sets, key):
+                pass
+            else:
+                report = copy.copy(self.report)
+                container = UnvariableContainer(x=self._experiment.x,
+                                                data=self._experiment.data,
+                                                wavelength=self._experiment.wavelength,
+                                                report=report)
+                self.report._last_action = key
+                self.data_sets.__setattr__(key, container)
+                self._last_data_sets = container
+
     """
     Parameters functions
     """
@@ -1017,7 +1143,7 @@ class Experiment(ExploreData, ExploreResults):
             If True and weights have been defined, this will be applied in the
             fit (for defining weights) check the function define_weights.
         """
-        if hasattr(self.preprocessing_report, 'derivate_data'):
+        if hasattr(self.preprocessing.report, 'derivate_data'):
             derivative = True
         else:
             derivative = False
@@ -1320,7 +1446,7 @@ class Experiment(ExploreData, ExploreResults):
             ## Todo
 
             pass
-    
+
     """
     Data selection and restoration functions
     """
@@ -1360,7 +1486,7 @@ class Experiment(ExploreData, ExploreResults):
             self._silent_selection_of_traces = False
         else:
             self._add_action("Selected traces")
-        
+
     def select_region(self, mini, maxi):
         """
         Select a region of the data as selected traces according to the closest
@@ -1384,70 +1510,6 @@ class Experiment(ExploreData, ExploreResults):
         self._averige_selected_traces = 0
         self._add_action("Selected region as traces")
 
-    def restore_data(self, action: str):
-        """
-        Restore the data to a point previous to a preprocesing action
-        actions should be the name of the function.
-        e.g.: "baseline substraction" or "baseline_substraction" are both valid
-
-        Parameters
-        ----------
-        action:
-            Possible actions:
-                original_data,
-                baseline_substraction,
-                average_time,
-                cut_time,
-                cut_wavelength,
-                delete_points,
-                derivate_data,
-                shift_time,
-                subtract_polynomial_baseline,
-                correct_chirp/correct_GVD,
-                calibrate_wavelength,
-        """
-        action = '_'.join(action.split(' '))
-        key = [i for i in self.data_sets.__dict__.keys() if action in i]
-        msg = f'data has not been {action}'
-        if len(key) == 1:
-            key = key[0]
-        elif len(key) >= 1:
-            msg = f'"{action}" is ambiguous specify "cut time" or "cut wave"'
-            key = 'Not_an_action'
-        else:
-            key = 'Not_an_action'
-        if hasattr(self.data_sets, key):
-            container = getattr(self.data_sets, key)
-            self.data = container.data
-            self.x = container.x
-            self.wavelength = container.wavelength
-            self.selected_traces = container.data
-            self.selected_wavelength = container.wavelength
-            keys = [i for i in self.preprocessing_report.__dict__.keys()]
-            for i in keys:
-                if i not in container.report.__dict__.keys():
-                    delattr(self.preprocessing_report, i)
-            for i in container.report.__dict__.keys():
-                if i not in self.preprocessing_report.__dict__.keys():
-                    atr = getattr(container.report, i)
-                    setattr(self.preprocessing_report, i, atr)
-            self.preprocessing_report._last_action = None
-            write_action = ' '.join(key.split('_'))
-            self._add_action(f'restore {write_action}')
-        else:
-            raise ExperimentException(msg)
-
-    def undo_last_preprocesing(self):
-        """
-        Undo the last preprocesing action perform to the data
-        """
-        if self.preprocessing_report._last_action is None:
-            print('No preprocesing action run or already undo last action')
-        else:
-            key = self.preprocessing_report._last_action
-            self.restore_data(key)
-            self.preprocessing_report._last_action = None
-
     """
     Other private methods
     """
@@ -1463,21 +1525,6 @@ class Experiment(ExploreData, ExploreResults):
             pass
         else:
             pass
-    
-    def _add_to_data_set(self, key):
-        """
-        add data to data sets after a preprocesing action
-        """
-        if hasattr(self.data_sets, key):
-            pass
-        else:
-            report = copy.copy(self.preprocessing_report)
-            container = UnvariableContainer(x=self.x, data=self.data,
-                                            wavelength=self.wavelength,
-                                            report=report)
-            self.preprocessing_report._last_action = key
-            self.data_sets.__setattr__(key, container)
-            self._last_data_sets = container
 
     def _add_action(self, value, re_select_traces=False):
         """
@@ -1521,7 +1568,7 @@ class Experiment(ExploreData, ExploreResults):
             t0 = self._last_params['t0']
             fwhm = self._last_params['fwhm']
             self.initialize_target_params(t0, fwhm,)
+        else:
             # self.initialize_target_params()
             # TODO
-        else:
             pass
