@@ -65,14 +65,14 @@ class SaveExperiment:
         save_object dictionary
         """
         details = {'units': self.experiment._units,
-                   'GVD': self.experiment.GVD_corrected,
+                   'GVD': self.experiment.preporcessing.GVD_corrected,
                    'excitation': self.experiment.excitation,
-                   'path': self.experiment.data_path,
+                   'path': self.experiment._data_path,
                    'deconv': self.experiment._deconv,
                    'n_fits':self.experiment._fit_number}
 
         self.save_object["report"] = self.experiment.preprocessing.report
-        self.save_object['fits'] = self.experiment.fit_records
+        self.save_object['fits'] = self.experiment.fit.fit_records
         self.save_object['actions'] = self.experiment.action_records
         self.save_object['datas'] = self.experiment.preprocessing.data_sets
         self.save_object['data'] = self.experiment.data
@@ -81,7 +81,7 @@ class SaveExperiment:
         self.save_object['detail'] = details
 
 
-class Experiment(ExploreData, ExploreResults):
+class Experiment(ExploreData):
     """
     Class to work with a time resolved data sets. To easily preprocess the data,
     obtain quality fits and result. Is possible to explore the data set and keep
@@ -203,49 +203,22 @@ class Experiment(ExploreData, ExploreResults):
         self.selected_traces = data
         self.selected_wavelength = wavelength
         self.excitation = None
-        self.GVD_corrected = False
+        # self.GVD_corrected = False
         self.action_records = UnvariableContainer(name="Sequence of actions")
-        self.fit_records = UnvariableContainer(name="Fits")
-        self.params = None
-        self.weights = {'apply': False, 'vector': None, 'range': [],
-                        'type': 'constant', 'value': 2}
+
         # self.preprocessing.report = LabBook(name="Pre-processing")
-        self.data_path = path
+        self._data_path = path
         self._units = units
-        self._averige_selected_traces = 0
-        self._deconv = True
-        self._exp_no = 1
-        # _fit_number take record of global exponential and target fits ran.
-        self._fit_number = 0
-        self._params_initialized = False
-        self._tau_inf = 1E12
-        self._allow_stop = False
-        # _silent_selection_of_traces is an attribute that defines if the
-        # selection of traces should be add to record of actions.
+        self._average_selected_traces = 0
+        self._unit_formater = TimeUnitFormater(self._units['time_unit'])
         self._silent_selection_of_traces = False
-        self._initialized()
-        self._kmatrix_manual = False
-        self._init_concentrations_manual = False
-        self._last_params = None
+        # _fit_number take record of global exponential and target fits ran.
         self.preprocessing = self._Preprocessing(self)
+        self.fit = self._Fit(self)
         ExploreData.__init__(self, self.x, self.data, self.wavelength,
                              self.selected_traces, self.selected_wavelength,
                              'viridis', **self._units)
-        ExploreResults.__init__(self, self.fit_records.global_fits,
-                                **self._units)
-    # finish initialization
-    def _initialized(self):
-        """
-        Finalize the initialization of the Experiment class
-        """
-        #self.preprocessing.report._last_action = None
-        self.fit_records.single_fits = {}
-        self.fit_records.bootstrap_record = {}
-        self.fit_records.conf_interval = {}
-        self.fit_records.target_models = {}
-        self.fit_records.global_fits = {}
-        self.fit_records.integral_band_fits = {}
-        self._unit_formater = TimeUnitFormater(self._units['time_unit'])
+
 
     """
     Properties and structural functions
@@ -257,40 +230,6 @@ class Experiment(ExploreData, ExploreResults):
     @time.setter
     def time(self, time):
         self.x = time
-
-    @property
-    def allow_stop(self):
-        return self._allow_stop
-
-    @allow_stop.setter
-    def allow_stop(self, value):
-        if type(value) == bool:
-            self._allow_stop = value
-        else:
-            msg = "Type error, allow_stop should be a boolean"
-            raise ExperimentException(msg)
-
-    @property
-    def chirp_corrected(self):
-        return self.GVD_corrected
-
-    @chirp_corrected.setter
-    def chirp_corrected(self, value):
-        if type(value) == bool:
-            self.GVD_corrected = value
-
-    @property
-    def type_fit(self):
-        if not self._params_initialized:
-            return "Not ready to fit data"
-        else:
-            msg = f"parameters for {self._params_initialized} " \
-                  f"fit  with {self._exp_no} components"
-            return msg
-
-    @type_fit.setter
-    def type_fit(self, value):
-        print("type_fit property cannot be set by the user")
 
     @staticmethod
     def load_data(path: str, wavelength=0, time=0, wave_is_row=False,
@@ -364,9 +303,10 @@ class Experiment(ExploreData, ExploreResults):
                 experiment.action_records = object_load['actions']
                 experiment.preprocessing.data_sets = object_load['datas']
                 experiment._units = object_load['detail']['units']
-                experiment.GVD_corrected = object_load['detail']['GVD']
+                gvd = object_load['detail']['GVD']
+                experiment.preprocessing.GVD_corrected = gvd
                 experiment.excitation = object_load['detail']['excitation']
-                experiment.data_path = object_load['detail']['path']
+                experiment._data_path = object_load['detail']['path']
                 experiment._deconv = object_load['detail']['deconv']
                 experiment._fit_number = object_load['detail']['n_fits']
 
@@ -408,7 +348,7 @@ class Experiment(ExploreData, ExploreResults):
         save = SaveExperiment(path, self)
 
     def createNewDir(self, path):
-        # Probably will be removed
+        # Probably will be removed; for the moment is not working
         if not os.path.exists(path):
             os.makedirs(path)
         self.working_directory = path
@@ -435,24 +375,6 @@ class Experiment(ExploreData, ExploreResults):
         print(f'\tTime unit: {self.time_unit}')
         print(f'\tWavelength unit: {self.wavelength_unit}')
 
-    def print_results(self, fit_number=None):
-        """
-        Print out a summarize result of a global fit.
-
-        Parameters
-        ----------
-        fit_number: int or None (default None)
-            defines the fit number of the results all_fit dictionary. If None
-            the last fit in  will be considered.
-        """
-        if fit_number is None:
-            fit_number = max(self._fits.keys())
-        super().print_results(fit_number=fit_number)
-        if fit_number in self.fit_records.bootstrap_record.keys():
-            print('\t The error has been calculated by bootstrap')
-        if fit_number in self.fit_records.bootstrap_record.keys():
-            print('\t The error has been calculated by an F-test')
-        print('\n')
 
     def general_report(self, output_file=None):
         """
@@ -468,14 +390,14 @@ class Experiment(ExploreData, ExploreResults):
             print('============================================\n')
             self.preprocessing.report.print()
             print('============================================\n')
-            for i in range(len(self.fit_records.global_fits)):
-                self.print_results(i+1)
+            for i in range(len(self.fit.fit_records.global_fits)):
+                self.fit.print_results(i+1)
             print('============================================\n')
             self.action_records.print(False, True, True)
 
         if output_file is not None:
+            total_path = os.path.abspath(output_file)
             try:
-                total_path = os.path.abspath(output_file)
                 path, extension = os.path.splitext(total_path)
                 original_stdout = sys.stdout
                 if extension == "txt":
@@ -514,6 +436,7 @@ class Experiment(ExploreData, ExploreResults):
             self.report = LabBook(name="Pre-processing")
             self._chirp_corrector = None
             self._last_data_sets = None
+            self.GVD_corrected = False
             self.data_sets = UnvariableContainer()
             self.data_sets.original_data = UnvariableContainer(time=self._experiment.x,
                                                                data=self._experiment.data,
@@ -532,6 +455,15 @@ class Experiment(ExploreData, ExploreResults):
             self.cut_wavelength = book_annotate(self.report)(self.cut_wavelength)
             self.delete_points = book_annotate(self.report)(self.delete_points)
             self.shift_time = book_annotate(self.report)(self.shift_time)
+
+        @property
+        def chirp_corrected(self):
+            return self.GVD_corrected
+
+        @chirp_corrected.setter
+        def chirp_corrected(self, value):
+            if type(value) == bool:
+                self.GVD_corrected = value
 
         def chirp_correction_graphically(self, method, excitation=None):
             """
@@ -578,7 +510,7 @@ class Experiment(ExploreData, ExploreResults):
             details = self._chirp_corrector.estimation_params.details
             self.report.__setattr__('chrip_correction', details, True)
             self._experiment._add_action("correct chirp", True)
-            self._experiment.GVD_corrected = True
+            self.GVD_corrected = True
 
         def calibrate_wavelength(self, pixels: list, wavelength: list,
                                  order=2):
@@ -965,491 +897,702 @@ class Experiment(ExploreData, ExploreResults):
     """
     Parameters functions
     """
-    def define_weights(self, rango, typo='constant', val=5):
-        """
-        Defines a an array that can be apply  in global fit functions as weights.
-        The weights can be use to define areas where the minimizing functions is
-        not reaching a good results, or to define areas that are more important
-        than others in the fit. The fit with weights can be inspect as any other
-        fit with the residual plot. A small constant value is generally enough
-        to achieve the desire goal.
 
-        Parameters
-        ----------
-        rango: list (length 2)
-            list containing initial and final time values of the range
-            where the weights will be applied
-
-        typo: str (constant, exponential, r_exponential or exp_mix)
-            defines the type of weighting vector returned
-
-            constant: constant weighting value in the range
-            exponential: the weighting value increase exponentially
-            r_exponential: the weighting value decrease exponentially
-            mix_exp: the weighting value increase and then decrease
-            exponentially
-
-            example:
-            ----------
-                constant value 5, [1,1,1,1,...5,5,5,5,5,....1,1,1,1,1]
-                exponential for val= 2 [1,1,1,1,....2,4,9,16,25,....,1,1,1,]
-                        for val= 3 [1,1,1,1,....3,8,27,64,125,....,1,1,1,]
-                r_exponential [1,1,1,1,...25,16,9,4,2,...1,1,1,]
-                exp_mix [1,1,1,1,...2,4,9,4,2,...1,1,1,]
-
-        val: int (default 5)
-            value for defining the weights
-        """
-        self.weights = define_weights(self.x, rango, typo=typo, val=val)
-        self._add_action("define weights")
-
-    def initialize_exp_params(self, t0, fwhm, *taus, tau_inf=1E12,
-                              opt_fwhm=False, vary_t0=True,
-                              global_t0=True, y0=None):
-        """
-        function to initialize parameters for global fitting
-
-        Parameters
-        ----------
-        t0: int or float
-            the t0 for the fitting
-
-        fwhm: float or None
-            FWHM of the the laser pulse use in the experiment
-            If None. the deconvolution parameters will not be added
-
-        taus: int or float
-            initial estimations of the decay times
-
-        tau_inf: int or float (default 1E12)
-            allows to add a constant decay value to the parameters.
-            This constant modelled photoproducts formation with long decay times
-            If None tau_inf is not added.
-            (only applicable if fwhm is given)
-
-        opt_fwhm: bool (default False)
-            allows to optimized the FWHM.
-            Theoretically this should be measured externally and be fix
-            (only applicable if fwhm is given)
-
-        vary_t0: bool (default False)
-            allows to optimized the t0.
-            We recommend to always set it True
-            (only applicable if fwhm is given)
-
-        global_t0: bool (default True)
-            Important: only applicable if fwhm is given and data is chirp
-            corrected. Allows to fit the t0 globally (setting True), which is
-            faster. In case this first option fit does not give good results
-            in the short time scale the t0 can be independently fitted (slower)
-            (setting False) which may give better results.
-
-        y0: int or array (default None)
-            Important: only applicable if fwhm is given.
-            If given this value will fix the initial offset as a fix parameter.
-            In case an array is given each trace will have a different value.
-            In case an integer is pass all the traces will have this value fix
-        """
-        taus = list(taus)
-        self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': taus,
-                             'tau_inf': tau_inf, 'opt_fwhm': opt_fwhm,
-                             'y0': y0}
-        self._exp_no = len(taus)
-        param_creator = GlobExpParameters(self.selected_traces.shape[1], taus)
-        if fwhm is None:
-            self._deconv = False
-            vary_t0 = False
-            correction = False
-        else:
-            if global_t0 and not self.GVD_corrected:
-                correction = False
-            elif not global_t0:
-                correction = False
-            else:
-                correction = True
+    class _Fit(ExploreResults):
+        def __init__(self, experiment):
+            self._experiment = experiment
+            self._params_initialized = False
+            self._tau_inf = 1E12
+            self._allow_stop = False
+            # _silent_selection_of_traces is an attribute that defines if the
+            # selection of traces should be add to record of actions.
+            self._silent_selection_of_traces = False
+            self._kmatrix_manual = False
+            self._init_concentrations_manual = False
+            self._last_params = None
             self._deconv = True
-            self._tau_inf = tau_inf
-        param_creator.adjustParams(t0, vary_t0, fwhm, opt_fwhm,
-                                   correction, tau_inf, y0)
-        self.params = param_creator.params
-        self._params_initialized = 'Exponential'
-        self._add_action(f'new {self._params_initialized} parameters initialized')
+            self._exp_no = 1
+            self.params = None
+            self.weights = {'apply': False, 'vector': None, 'range': [],
+                            'type': 'constant', 'value': 2}
+            # _fit_number take record of global exponential and target fits ran.
+            self._fit_number = 0
+            self._params_initialized = False
+            self._tau_inf = 1E12
+            self._allow_stop = False
+            self.fit_records = UnvariableContainer(name="Fits")
+            self._initialized()
+            super().__init__(self.fit_records.global_fits, 
+                             **self._experiment._units)
 
-    def initialize_target_params(self, t0, fwhm, opt_fwhm=False, vary_t0=True,
-                                 global_t0=True, y0=None):
-        # TODO
-        pass
+        def _initialized(self):
+            """
+            Finalize the initialization of the Experiment._Fit class
+            """
+            self.fit_records.global_fits = {}
+            self.fit_records.single_fits = {}
+            self.fit_records.bootstrap_record = {}
+            self.fit_records.conf_interval = {}
+            self.fit_records.target_models = {}
+            self.fit_records.integral_band_fits = {}
 
-    def set_init_concentrations_manually(self, concentrations):
-        # TODO check functionality and add documentation
-        if self.params is None or not self._kmatrix_manual:
-            self.params = Parameters()
-        total = sum(concentrations)
-        self._exp_no = len(concentrations)
-        for i in range(self._exp_no):
-            self.params['c_%i' % (i + 1)].set(concentrations[i] / total,
-                                              vary=False)
-        self._init_concentrations_manual = True
-        self._params_initialized = False
+        @property
+        def _units(self):
+            return self._experiment._units
 
-    def set_kmatrix_manually(self, paths):
-        # TODO check functionality and add documentation
-        # array of (source, destination, rate, vary)
-        if self.params is None or not self._init_concentrations_manual:
-            self.params = Parameters()
-        exp = [i[0] for i in paths]
-        self._exp_no = np.max(exp)
-        sources = ["" for i in range(self._exp_no)]
-        for i in paths:
-            source = i[0]
-            destination = i[1]
-            rate = i[2]
-            vary = i[3]
-            if source != destination:
-                self.params['k_%i%i' % (destination, source)].set(rate,
-                                                                  vary=vary)
-                sources[source - 1] += '-k_%i%i' % (destination, source)
-
-            else:
-                # if destination == source, it means that this is the terminal component or parallel decay
-                self.params['k_%i%i' % (destination, source)].set(-rate,
-                                                                  vary=vary)
-
-        for i in range(self._exp_no):
-            if len(sources[i]) > 0:
-                self.params['k_%i%i' % (i + 1, i + 1)].set(expr=sources[i])
-        self._kmatrix_manual = True
-        self._params_initialized = False
-
-    """
-    Fitting functions
-    """
-    def global_fit(self, vary=True, maxfev=5000, apply_weights=False):
-        """
-        Perform a exponential or a target global fits to the selected traces.
-        The type of fits depends on the parameters initialized.
-
-        Parameters
-        ----------
-        vary: bool or list of bool
-            If True or False all taus are optimized or fixed. If a list, should
-            be a list of bool equal with len equal to the number of taus. Each
-            entry defines if a initial taus should be optimized or not.
-
-        maxfev: int (default 5000)
-            maximum number of iterations of the fit.
-
-        apply_weights: bool (default False)
-            If True and weights have been defined, this will be applied in the
-            fit (for defining weights) check the function define_weights.
-        """
-        if hasattr(self.preprocessing.report, 'derivate_data'):
-            derivative = True
-        else:
-            derivative = False
-        if self._params_initialized == 'Exponential':
-            minimizer = GlobalFitExponential(self.x, self.selected_traces,
-                                             self._exp_no, self.params,
-                                             self._deconv, self._tau_inf,
-                                             GVD_corrected=self.GVD_corrected,
-                                             derivative=derivative)
-        elif self._params_initialized == 'Target':
-            minimizer = GlobalFitTarget(self.selected_traces,
-                                        self.selected_wavelength,
-                                        self.params, derivative=derivative)
-        else:
-            msg = 'Parameters need to be initialized first'
-            raise ExperimentException(msg)
-        if apply_weights:
-            minimizer.weights = self.weights
-        if self.allow_stop:
-            minimizer.allow_stop = True
-        results = minimizer.global_fit(vary, maxfev, apply_weights)
-        results.details['svd_fit'] = self._SVD_fit
-        results.wavelength = self.selected_wavelength
-        results.details['avg_traces'] = self._averige_selected_traces
-        self._fit_number += 1
-        self.fit_records.global_fits[self._fit_number] = results
-        self._add_action(f'{self._params_initialized} fit performed')
-        self._update_last_params(results.params)
-
-    def single_exp_fit(self, wave: int, average: int, t0: float, fwhm: float,
-                       *taus, vary=True, tau_inf=1E12, maxfev=5000,
-                       apply_weights=False, opt_fwhm=False, plot=True):
-        """
-        Perform an exponential fit to a single trace
-
-        Parameters
-        ----------
-        wave: int or float
-            the closest value in the wavelength vector traces will be selected.
-
-        average: int (default 1)
-            Binning points surrounding the selected wavelengths.
-            e. g.: if point is 1 trace = mean(index-1, index, index+1)
-        t0: int or float
-            the t0 for the fitting
-
-        fwhm: float or None
-            FWHM of the the laser pulse use in the experiment
-            If None. the deconvolution parameters will not be added
-
-        taus: int or float
-            initial estimations of the decay times
-
-        tau_inf: int or float (default 1E12)
-            allows to add a constant decay value to the parameters.
-            This modelled photoproducts formation with long decay times
-            If None tau_inf is not added.
-            (only applicable if fwhm is given)
-
-        opt_fwhm: bool (default False)
-            allows to optimized the FWHM.
-            Theoretically this should be measured externally and be fix
-            (only applicable if fwhm is given)
-
-        vary: bool or list of bool
-            If True or False all taus are optimized or fixed. If a list, should
-            be a list of bool equal with len equal to the number of taus.
-            Each entry defines if a initial taus should be optimized or not.
-
-        maxfev: int (default 5000)
-            maximum number of iterations of the fit.
-
-        apply_weights: bool (default False)
-            If True and weights have been defined, this will be applied in the
-            fit (for defining weights) check the function define_weights.
-
-        plot: bool (default True)
-            If True the results are automatically plotted and a figure and axes
-            are return.
-        """
-        taus = list(taus)
-        trace, wave = select_traces(self.data, self.wavelength, [wave], average)
-        results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary,
-                                      tau_inf=tau_inf, maxfev=maxfev,
-                                      apply_weights=apply_weights,
-                                      opt_fwhm=opt_fwhm)
-        results.wavelength = wave
-        key = len(self.fit_records.single_fits) + 1
-        self.fit_records.single_fits[key] = results
-        self._add_action('Exponential single fit performed')
-        if plot:
-            fig, ax = self.plot_single_fit(key)
-            return fig, ax
-
-    def integral_band_exp_fit(self, wave_range: list, t0: float, fwhm: float,
-                              *taus, vary=True, tau_inf=1E12, maxfev=5000,
-                              apply_weights=False, opt_fwhm=False, plot=True):
-        """
-        Perform an exponential fit to an integrated are of the spectral range of
-        the data set. This type of fits allows for example to identify time
-        constants attributed to cooling since the integration compensate the
-        effects and the contribution of this type of phenomena to the decay
-        decreases or disappears.
-
-        Parameters
-        ----------
-        wave_range: list (length 2) or float
-            The area between the two entries of the wavelength range is
-            integrated and fitted.
-
-        t0: int or float
-            the t0 for the fitting
-
-        fwhm: float or None
-            FWHM of the the laser pulse use in the experiment
-            If None. the deconvolution parameters will not be added
-
-        taus: int or float
-            initial estimations of the decay times
-
-        tau_inf: int or float (default 1E12)
-            allows to add a constant decay value to the parameters.
-            This modelled photoproducts formation with long decay times
-            If None tau_inf is not added.
-            (only applicable if fwhm is given)
-
-        opt_fwhm: bool (default False)
-            allows to optimized the FWHM.
-            Theoretically this should be measured externally and be fix
-            (only applicable if fwhm is given)
-
-        vary: bool or list of bool
-            If True or False all taus are optimized or fixed. If a list, should
-            be a list of bool equal with len equal to the number of taus.
-            Each entry defines if a initial taus should be optimized or not.
-
-        maxfev: int (default 5000)
-            maximum number of iterations of the fit.
-
-        apply_weights: bool (default False)
-            If True and weights have been defined, this will be applied in the
-            fit (for defining weights) check the function define_weights.
-
-        plot: bool (default True)
-            If True the results are automatically plotted and a figure and axes
-            are return.
-        """
-        taus = list(taus)
-        indexes = [np.argmin(abs(self.wavelength-wave_range[0])),
-                   np.argmin(abs(self.wavelength-wave_range[1]))]
-
-        trace = np.array([np.trapz(self.data[i, indexes[0]:indexes[1]],
-                                   x=self.wavelength[indexes[0]:indexes[1]])
-                          for i in range(len(self.data))])
-
-        trace = trace.reshape((trace.shape[0], 1))
-        results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary,
-                                      tau_inf=tau_inf, maxfev=maxfev,
-                                      apply_weights=apply_weights,
-                                      opt_fwhm=opt_fwhm)
-        results.details['integral band'] = wave_range
-        key = len(self.fit_records.integral_band_fits) + 1
-        self.fit_records.integral_band_fits[key] = results
-
-        msg = f'Integral band fit between {wave_range[0]} and ' \
-              f'{wave_range[1]} performed'
-        self._add_action(msg)
-        if plot:
-            fig, ax = self.plot_integral_band_fit(key)
-            return fig, ax
-
-    def _one_trace_fit(self, trace, t0, fwhm, *taus,
-                       vary=True, tau_inf=1E12,
-                       maxfev=5000, apply_weights=False,
-                       opt_fwhm=False, y0=None):
-        """
-        Real fitting function used by "integral_band_exp_fit" and "single_exp_fit"
-        """
-        # print(taus)
-        param_creator = GlobExpParameters(1, taus)
-        param_creator.adjustParams(t0, vary, fwhm, opt_fwhm, self.GVD_corrected,
-                                   tau_inf, y0)
-        # print(param_creator.params)
-        deconv = True if fwhm is not None else False
-
-        minimizer = GlobalFitExponential(self.x, trace, len(taus),
-                                         params=param_creator.params,
-                                         deconv=deconv, tau_inf=tau_inf,
-                                         GVD_corrected=False)
-        results = minimizer.global_fit(vary, maxfev, apply_weights)
-        return results
-
-    def plot_single_fit(self, fit_number=None, details=True):
-        """
-        Function that generates a figure with the results of the fit stored in
-        the single_fits
-
-        Parameters
-        ----------
-        fit_number: int or None (default None)
-            defines the fit number of the results single_fits dictionary. If
-            None the last fit in  will e considered
-
-        details: bool (default True)
-            If True the decay times obtained in the fit are included in the
-            figure
-        """
-        if fit_number in self.fit_records.single_fits.keys():
-            return self._plot_single_trace_fit(self.fit_records.single_fits,
-                                               fit_number, details)
-        else:
-            msg = 'Fit number not in records'
-            raise ExperimentException(msg)
-
-    def plot_integral_band_fit(self, fit_number=None, details=True):
-        """
-        Function that generates a figure with the results of the fit stored in
-        the integral_band_fits
-
-        Parameters
-        ----------
-        fit_number: int or None (default None)
-            defines the fit number of the results integral_band_fits dictionary.
-            If None the last fit in  will be considered
-
-        details: bool (default True)
-            If True the decay times obtained in the fit are included in the
-            figure
-        """
-        if fit_number is None:
-            fit_number = len(self.fit_records.integral_band_fits)
-
-        if fit_number in self.fit_records.integral_band_fits.keys():
-            fig, ax = self._plot_single_trace_fit(self.fit_records.integral_band_fits, fit_number, details)
-            rang = self.fit_records.integral_band_fits[fit_number].details['integral band']
-
-            if self._units['wavelength_unit'] == 'cm-1':
-                w_unit = 'cm$^{-1}$'
-            else:
-                w_unit = self._units['wavelength_unit']
-            ax[1].legend(['_', f'Integral band {rang[0]}-{rang[1]} {w_unit}'])
-            return fig, ax
-        else:
-            msg = 'Fit number not in records'
-            raise ExperimentException(msg)
-
-    def _plot_single_trace_fit(self, container, fit_number, add_details=True):
-        """
-        Base plot function used by "plot_integral_band_fit" and "plot_single_fit"
-        """
-        plotter = ExploreResults(container[fit_number], **self._units)
-        _, data, _, params, exp_no, deconv, tau_inf, _, _, _ = plotter._get_values(fit_number=1)
-        fig, ax = plotter.plot_fit()
-
-        if add_details:
-            if data[0] <= 0:
-                anchor_location = "lower center"
-            else:
-                anchor_location = "upper center"
-            testx = plotter._legend_plot_DAS(params, exp_no, deconv,
-                                             tau_inf, 'Exponential', 2)
-            # next if statement is rot remove the 'offset' word from the text
-            # only in case there was no deconvolution
-            if not deconv:
-                testx = testx[:-1]
-            textstr = '\n'.join(testx)
-            texto = AnchoredText(s=textstr, loc=anchor_location)
-            ax[1].add_artist(texto)
-
-        return fig, ax
-
-    def refit_with_SVD_fit_result(self, fit_number=None, fit_data='all'):
-        """
-        Not finished
-        """
-        # _get_values is a heritage function from ExploreResults class
-        x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
-            self._get_values(fit_number=fit_number)
-
-        if fit_data == 'all':
-            data_fit = self.selected_traces
-        else:
-            data_fit = self.data
-
-        if type_fit == 'Exponential':
-            taus = [params['tau%i_1' % (i+1)].value for i in range(exp_no)]
-            t0 = params['t0_1'].value
-            if deconv:
-                fwhm = params['fwhm_1'].value
-            param_creator = GlobExpParameters(data_fit.shape[1], taus)
-            param_creator.adjustParams(t0, True, fwhm, False,
-                                       self.GVD_corrected, tau_inf)
-
-            params_fit = param_creator.params
-            minimizer = GlobalFitExponential(self.x, self.selected_traces,
-                                             exp_no, params_fit,
-                                             deconv, tau_inf, False)
-            minimizer.pre_fit()
-        else:
-            ## Todo
-
+        @_units.setter
+        def _units(self, values):
             pass
 
-    """
-    Data selection and restoration functions
-    """
+        @property
+        def _unit_formater(self):
+            return self._experiment._unit_formater
+
+        @_unit_formater.setter
+        def _unit_formater(self, values):
+            pass
+
+        @property
+        def time_unit(self):
+            return f'{self._experiment._unit_formater._multiplicator.name}s'
+
+        @property
+        def wavelength_unit(self):
+            return self._experiment._units['wavelength_unit']
+
+        @time_unit.setter
+        def time_unit(self, val: str):
+            try:
+                val = val.lower()
+                self._experiment._units['time_unit'] = val
+                self._experiment._unit_formater.multiplicator = val
+            except Exception:
+                msg = 'An unknown time unit cannot be set'
+                raise ExperimentException(msg)
+
+        @wavelength_unit.setter
+        def wavelength_unit(self, val: str):
+            val = val.lower()
+            if 'nanom' in val or 'wavelen' in val:
+                val = 'nm'
+            if 'centim' in val or 'wavenum' in val or 'cm' in val:
+                val = 'cm-1'
+            self._experiment._units['wavelength_unit'] = val
+
+        @property
+        def allow_stop(self):
+            return self._allow_stop
+
+        @allow_stop.setter
+        def allow_stop(self, value):
+            if type(value) == bool:
+                self._allow_stop = value
+            else:
+                msg = "Type error, allow_stop should be a boolean"
+                raise ExperimentException(msg)
+
+        @property
+        def type_fit(self):
+            if not self._params_initialized:
+                return "Not ready to fit data"
+            else:
+                msg = f"parameters for {self._params_initialized} " \
+                      f"fit  with {self._exp_no} components"
+                return msg
+
+        @type_fit.setter
+        def type_fit(self, value):
+            print("type_fit property cannot be set by the user")
+
+        def print_results(self, fit_number=None):
+            """
+            Print out a summarize result of a global fit.
+
+            Parameters
+            ----------
+            fit_number: int or None (default None)
+                defines the fit number of the results all_fit dictionary. If None
+                the last fit in  will be considered.
+            """
+            if fit_number is None:
+                fit_number = max(self._fits.keys())
+            super().print_results(fit_number=fit_number)
+            if fit_number in self.fit_records.bootstrap_record.keys():
+                print('\t The error has been calculated by bootstrap')
+            if fit_number in self.fit_records.bootstrap_record.keys():
+                print('\t The error has been calculated by an F-test')
+            print('\n')
+
+        def define_weights(self, rango, typo='constant', val=5):
+            """
+            Defines a an array that can be apply  in global fit functions as weights.
+            The weights can be use to define areas where the minimizing functions is
+            not reaching a good results, or to define areas that are more important
+            than others in the fit. The fit with weights can be inspect as any other
+            fit with the residual plot. A small constant value is generally enough
+            to achieve the desire goal.
+
+            Parameters
+            ----------
+            rango: list (length 2)
+                list containing initial and final time values of the range
+                where the weights will be applied
+
+            typo: str (constant, exponential, r_exponential or exp_mix)
+                defines the type of weighting vector returned
+
+                constant: constant weighting value in the range
+                exponential: the weighting value increase exponentially
+                r_exponential: the weighting value decrease exponentially
+                mix_exp: the weighting value increase and then decrease
+                exponentially
+
+                example:
+                ----------
+                    constant value 5, [1,1,1,1,...5,5,5,5,5,....1,1,1,1,1]
+                    exponential for val= 2 [1,1,1,1,....2,4,9,16,25,....,1,1,1,]
+                            for val= 3 [1,1,1,1,....3,8,27,64,125,....,1,1,1,]
+                    r_exponential [1,1,1,1,...25,16,9,4,2,...1,1,1,]
+                    exp_mix [1,1,1,1,...2,4,9,4,2,...1,1,1,]
+
+            val: int (default 5)
+                value for defining the weights
+            """
+            self.weights = define_weights(self._experiment.x, rango, typo=typo,
+                                          val=val)
+            self._experiment._add_action("define weights")
+
+        def initialize_exp_params(self, t0, fwhm, *taus, tau_inf=1E12,
+                                  opt_fwhm=False, vary_t0=True,
+                                  global_t0=True, y0=None):
+            """
+            function to initialize parameters for global fitting
+
+            Parameters
+            ----------
+            t0: int or float
+                the t0 for the fitting
+
+            fwhm: float or None
+                FWHM of the the laser pulse use in the experiment
+                If None. the deconvolution parameters will not be added
+
+            taus: int or float
+                initial estimations of the decay times
+
+            tau_inf: int or float (default 1E12)
+                allows to add a constant decay value to the parameters.
+                This constant modelled photoproducts formation with long decay times
+                If None tau_inf is not added.
+                (only applicable if fwhm is given)
+
+            opt_fwhm: bool (default False)
+                allows to optimized the FWHM.
+                Theoretically this should be measured externally and be fix
+                (only applicable if fwhm is given)
+
+            vary_t0: bool (default False)
+                allows to optimized the t0.
+                We recommend to always set it True
+                (only applicable if fwhm is given)
+
+            global_t0: bool (default True)
+                Important: only applicable if fwhm is given and data is chirp
+                corrected. Allows to fit the t0 globally (setting True), which is
+                faster. In case this first option fit does not give good results
+                in the short time scale the t0 can be independently fitted (slower)
+                (setting False) which may give better results.
+
+            y0: int or array (default None)
+                Important: only applicable if fwhm is given.
+                If given this value will fix the initial offset as a fix parameter.
+                In case an array is given each trace will have a different value.
+                In case an integer is pass all the traces will have this value fix
+            """
+            taus = list(taus)
+            self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': taus,
+                                 'tau_inf': tau_inf, 'opt_fwhm': opt_fwhm,
+                                 'y0': y0}
+            self._exp_no = len(taus)
+            shape = self._experiment.selected_traces.shape[1]
+            param_creator = GlobExpParameters(shape, taus)
+            if fwhm is None:
+                self._deconv = False
+                vary_t0 = False
+                correction = False
+            else:
+                # TODO check self.GVD corrected
+                gvd_corrected = self._experiment.preporcessing.GVD_corrected
+                if global_t0 and not gvd_corrected:
+                    correction = False
+                elif not global_t0:
+                    correction = False
+                else:
+                    correction = True
+                self._deconv = True
+                self._tau_inf = tau_inf
+            param_creator.adjustParams(t0, vary_t0, fwhm, opt_fwhm,
+                                       correction, tau_inf, y0)
+            self.params = param_creator.params
+            self._params_initialized = 'Exponential'
+            self._experiment._add_action(f'new {self._params_initialized} '
+                                         f'parameters initialized')
+
+        def initialize_target_params(self, t0, fwhm, opt_fwhm=False, vary_t0=True,
+                                     global_t0=True, y0=None):
+            # TODO
+            pass
+
+        def set_init_concentrations_manually(self, concentrations):
+            # TODO check functionality and add documentation
+            if self.params is None or not self._kmatrix_manual:
+                self.params = Parameters()
+            total = sum(concentrations)
+            self._exp_no = len(concentrations)
+            for i in range(self._exp_no):
+                self.params['c_%i' % (i + 1)].set(concentrations[i] / total,
+                                                  vary=False)
+            self._init_concentrations_manual = True
+            self._params_initialized = False
+
+        def set_kmatrix_manually(self, paths):
+            # TODO check functionality and add documentation
+            # array of (source, destination, rate, vary)
+            if self.params is None or not self._init_concentrations_manual:
+                self.params = Parameters()
+            exp = [i[0] for i in paths]
+            self._exp_no = np.max(exp)
+            sources = ["" for i in range(self._exp_no)]
+            for i in paths:
+                source = i[0]
+                destination = i[1]
+                rate = i[2]
+                vary = i[3]
+                if source != destination:
+                    self.params['k_%i%i' % (destination, source)].set(rate,
+                                                                      vary=vary)
+                    sources[source - 1] += '-k_%i%i' % (destination, source)
+
+                else:
+                    # if destination == source, it means that this is the terminal component or parallel decay
+                    self.params['k_%i%i' % (destination, source)].set(-rate,
+                                                                      vary=vary)
+
+            for i in range(self._exp_no):
+                if len(sources[i]) > 0:
+                    self.params['k_%i%i' % (i + 1, i + 1)].set(expr=sources[i])
+            self._kmatrix_manual = True
+            self._params_initialized = False
+
+        """
+        Fitting functions
+        """
+        def global_fit(self, vary=True, maxfev=5000, apply_weights=False):
+            """
+            Perform a exponential or a target global fits to the selected traces.
+            The type of fits depends on the parameters initialized.
+
+            Parameters
+            ----------
+            vary: bool or list of bool
+                If True or False all taus are optimized or fixed.
+                If a list, should be a list of bool equal with len equal to the
+                number of  taus. Each element of the list defines if a initial
+                taus should be optimized or not.
+
+            maxfev: int (default 5000)
+                maximum number of iterations of the fit.
+
+            apply_weights: bool (default False)
+                If True and weights have been defined, this will be applied in the
+                fit (for defining weights) check the function define_weights.
+            """
+            gvd_corrected = self._experiment.preporcessing.GVD_corrected
+            if hasattr(self._experiment.preprocessing.report, 'derivate_data'):
+                derivative = True
+            else:
+                derivative = False
+            if self._params_initialized == 'Exponential':
+                minimizer = GlobalFitExponential(self._experiment.x,
+                                                 self._experiment.selected_traces,
+                                                 self._exp_no, self.params,
+                                                 self._deconv, self._tau_inf,
+                                                 GVD_corrected=gvd_corrected,
+                                                 derivative=derivative)
+            elif self._params_initialized == 'Target':
+                minimizer = GlobalFitTarget(self._experiment.selected_traces,
+                                            self._experiment.selected_wavelength,
+                                            self._exp_no,
+                                            self.params,
+                                            GVD_corrected=gvd_corrected,
+                                            derivative=derivative)
+            else:
+                msg = 'Parameters need to be initialized first'
+                raise ExperimentException(msg)
+            if apply_weights:
+                minimizer.weights = self.weights
+            if self.allow_stop:
+                minimizer.allow_stop = True
+            results = minimizer.global_fit(vary, maxfev, apply_weights)
+            results.details['svd_fit'] = self._experiment._SVD_fit
+            results.wavelength = self._experiment.selected_wavelength
+            results.details['avg_traces'] = self._experiment._average_selected_traces
+            self._fit_number += 1
+            self.fit_records.global_fits[self._fit_number] = results
+            self._experiment._add_action(f'{self._params_initialized} fit performed')
+            self._update_last_params(results.params)
+
+        def _update_last_params(self, params):
+            """
+            Function updating parameters after a global fit
+            """
+            if self._params_initialized == 'Exponential':
+                self._last_params['t0'] = params['t0_1'].value
+                self._last_params['taus'] = [params['tau%i_1' % (i + 1)].value
+                                             for i in range(self._exp_no)]
+            elif self._params_initialized == 'Target':
+                ## todo
+                pass
+            else:
+                pass
+
+        def single_exp_fit(self, wave: int, average: int, t0: float, fwhm: float,
+                           *taus, vary=True, tau_inf=1E12, maxfev=5000,
+                           apply_weights=False, opt_fwhm=False, plot=True):
+            """
+            Perform an exponential fit to a single trace
+
+            Parameters
+            ----------
+            wave: int or float
+                the closest value in the wavelength vector traces will be
+                selected.
+
+            average: int (default 1)
+                Binning points surrounding the selected wavelengths.
+                e. g.: if point is 1 trace = mean(index-1, index, index+1)
+            t0: int or float
+                the t0 for the fitting
+
+            fwhm: float or None
+                FWHM of the the laser pulse use in the experiment
+                If None. the deconvolution parameters will not be added
+
+            taus: int or float
+                initial estimations of the decay times
+
+            tau_inf: int or float (default 1E12)
+                allows to add a constant decay value to the parameters.
+                This modelled photoproducts formation with long decay times
+                If None tau_inf is not added.
+                (only applicable if fwhm is given)
+
+            opt_fwhm: bool (default False)
+                allows to optimized the FWHM.
+                Theoretically this should be measured externally and be fix
+                (only applicable if fwhm is given)
+
+            vary: bool or list of bool
+                If True or False all taus are optimized or fixed. If a list,
+                should be a list of bool equal with len equal to the number of
+                taus. Each entry defines if a initial taus should be optimized
+                or not.
+
+            maxfev: int (default 5000)
+                maximum number of iterations of the fit.
+
+            apply_weights: bool (default False)
+                If True and weights have been defined, this will be applied in
+                the fit (for defining weights) check the function define_weights.
+
+            plot: bool (default True)
+                If True the results are automatically plotted and a figure and
+                axes are return.
+            """
+            taus = list(taus)
+            trace, wave = select_traces(self._experiment.data,
+                                        self._experiment.wavelength,
+                                        [wave], average)
+            results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary,
+                                          tau_inf=tau_inf, maxfev=maxfev,
+                                          apply_weights=apply_weights,
+                                          opt_fwhm=opt_fwhm)
+            results.wavelength = wave
+            key = len(self.fit_records.single_fits) + 1
+            self.fit_records.single_fits[key] = results
+            self._experiment._add_action('Exponential single fit performed')
+            if plot:
+                fig, ax = self.plot_single_fit(key)
+                return fig, ax
+
+        def integral_band_exp_fit(self, wave_range: list, t0: float, fwhm: float,
+                                  *taus, vary=True, tau_inf=1E12, maxfev=5000,
+                                  apply_weights=False, opt_fwhm=False, plot=True):
+            """
+            Perform an exponential fit to an integrated are of the spectral
+            range of the data set. This type of fits allows for example to
+            identify time constants attributed to cooling since the integration
+            compensate the effects and the contribution of this type of
+            phenomena to the decay decreases or disappears.
+
+            Parameters
+            ----------
+            wave_range: list (length 2) or float
+                The area between the two entries of the wavelength range is
+                integrated and fitted.
+
+            t0: int or float
+                the t0 for the fitting
+
+            fwhm: float or None
+                FWHM of the the laser pulse use in the experiment
+                If None. the deconvolution parameters will not be added
+
+            taus: int or float
+                initial estimations of the decay times
+
+            tau_inf: int or float (default 1E12)
+                allows to add a constant decay value to the parameters.
+                This modelled photo-products formation with long decay times
+                If None tau_inf is not added.
+                (only applicable if fwhm is given)
+
+            opt_fwhm: bool (default False)
+                allows to optimized the FWHM.
+                Theoretically this should be measured externally and be fix
+                (only applicable if fwhm is given)
+
+            vary: bool or list of bool
+                If True or False all taus are optimized or fixed. If a list,
+                should be a list of bool equal with len equal to the number of
+                taus. Each entry defines if a initial taus should be
+                optimized or not.
+
+            maxfev: int (default 5000)
+                maximum number of iterations of the fit.
+
+            apply_weights: bool (default False)
+                If True and weights have been defined, this will be applied in
+                the fit (for defining weights) check the function define_weights.
+
+            plot: bool (default True)
+                If True the results are automatically plotted and a figure and
+                axes are return.
+            """
+            taus = list(taus)
+            indexes = [np.argmin(abs(self._experiment.wavelength-wave_range[0])),
+                       np.argmin(abs(self._experiment.wavelength-wave_range[1]))]
+
+            x_to_integrate = self._experiment.wavelength[indexes[0]:indexes[1]]
+            trace = np.array([np.trapz(self._experiment.data[i, indexes[0]:indexes[1]],
+                                       x=x_to_integrate)
+                              for i in range(len(self._experiment.data))])
+
+            trace = trace.reshape((trace.shape[0], 1))
+            results = self._one_trace_fit(trace, t0, fwhm, *taus, vary=vary,
+                                          tau_inf=tau_inf, maxfev=maxfev,
+                                          apply_weights=apply_weights,
+                                          opt_fwhm=opt_fwhm)
+            results.details['integral band'] = wave_range
+            key = len(self.fit_records.integral_band_fits) + 1
+            self.fit_records.integral_band_fits[key] = results
+
+            msg = f'Integral band fit between {wave_range[0]} and ' \
+                  f'{wave_range[1]} performed'
+            self._experiment._add_action(msg)
+            if plot:
+                fig, ax = self.plot_integral_band_fit(key)
+                return fig, ax
+
+        def _one_trace_fit(self, trace, t0, fwhm, *taus,
+                           vary=True, tau_inf=1E12,
+                           maxfev=5000, apply_weights=False,
+                           opt_fwhm=False, y0=None):
+            """
+            Real fitting function used by "integral_band_exp_fit"
+            and "single_exp_fit"
+            """
+            # print(taus)
+            param_creator = GlobExpParameters(1, list(taus))
+            param_creator.adjustParams(t0, vary, fwhm, opt_fwhm,
+                                       self._experiment.preporcessing.GVD_corrected,
+                                       tau_inf, y0)
+            # print(param_creator.params)
+            deconv = True if fwhm is not None else False
+
+            minimizer = GlobalFitExponential(self._experiment.x,
+                                             trace,
+                                             len(taus),
+                                             params=param_creator.params,
+                                             deconv=deconv, tau_inf=tau_inf,
+                                             GVD_corrected=False)
+            results = minimizer.global_fit(vary, maxfev, apply_weights)
+            return results
+
+        def plot_single_fit(self, fit_number=None, details=True):
+            """
+            Function that generates a figure with the results of the fit stored
+             in the single_fits
+
+            Parameters
+            ----------
+            fit_number: int or None (default None)
+                defines the fit number of the results single_fits dictionary. If
+                None the last fit in  will e considered
+
+            details: bool (default True)
+                If True the decay times obtained in the fit are included in the
+                figure
+            """
+            if fit_number in self.fit_records.single_fits.keys():
+                return self._plot_single_trace_fit(self.fit_records.single_fits,
+                                                   fit_number, details)
+            else:
+                msg = 'Fit number not in records'
+                raise ExperimentException(msg)
+
+        def plot_integral_band_fit(self, fit_number=None, details=True):
+            """
+            Function that generates a figure with the results of the fit stored
+            in the integral_band_fits
+
+            Parameters
+            ----------
+            fit_number: int or None (default None)
+                defines the fit number of the results integral_band_fits
+                dictionary.
+                If None the last fit in  will be considered
+
+            details: bool (default True)
+                If True the decay times obtained in the fit are included in the
+                figure
+            """
+            if fit_number is None:
+                fit_number = len(self.fit_records.integral_band_fits)
+
+            if fit_number in self.fit_records.integral_band_fits.keys():
+                fig, ax = self._plot_single_trace_fit(self.fit_records.integral_band_fits,
+                                                      fit_number, details)
+                rang = self.fit_records.integral_band_fits[fit_number].details['integral band']
+
+                if self._units['wavelength_unit'] == 'cm-1':
+                    w_unit = 'cm$^{-1}$'
+                else:
+                    w_unit = self._units['wavelength_unit']
+                ax[1].legend(['_', f'Integral band {rang[0]}-{rang[1]} {w_unit}'])
+                return fig, ax
+            else:
+                msg = 'Fit number not in records'
+                raise ExperimentException(msg)
+
+        def _plot_single_trace_fit(self, container, fit_number,
+                                   add_details=True):
+            """
+            Base plot function used by "plot_integral_band_fit"
+            and "plot_single_fit"
+            """
+            plotter = ExploreResults(container[fit_number], **self._units)
+            values = plotter._get_values(fit_number=1)
+            data = values[1]
+            params = values[3]
+            exp_no = values[4]
+            deconv = values[5]
+            tau_inf = values[6]
+            fig, ax = plotter.plot_fit()
+
+            if add_details:
+                if data[0] <= 0:
+                    anchor_location = "lower center"
+                else:
+                    anchor_location = "upper center"
+                text = plotter._legend_plot_DAS(params, exp_no, deconv,
+                                                 tau_inf, 'Exponential', 2)
+                # next if statement is rot remove the 'offset' word from the
+                # text only in case there was no deconvolution
+                if not deconv:
+                    text = text[:-1]
+                textstr = '\n'.join(text)
+                texto = AnchoredText(s=textstr, loc=anchor_location)
+                ax[1].add_artist(texto)
+
+            return fig, ax
+
+        def refit_with_SVD_fit_result(self, fit_number=None, fit_data='all'):
+            # TODO finish function
+            """
+            Not finished
+            """
+            # _get_values is a heritage function from ExploreResults class
+            values = self._get_values(fit_number=1)
+            x = values[0]
+            data = values[1]
+            wavelength = values[2]
+            params = values[3]
+            exp_no = values[4]
+            deconv = values[5]
+            tau_inf = values[6]
+            svd_fit = values[7]
+            type_fit = values[8]
+            derivative_space = values[6]
+
+
+            if fit_data == 'all':
+                data_fit = self._experiment.selected_traces
+            elif fit_data == 'selected':
+                data_fit = self._experiment.data
+            else:
+                msg = "fit_data should be 'all' or 'selected'"
+                raise ExperimentException(msg)
+
+            if type_fit == 'Exponential':
+                taus = [params['tau%i_1' % (i+1)].value for i in range(exp_no)]
+                t0 = params['t0_1'].value
+                if deconv:
+                    fwhm = params['fwhm_1'].value
+                else:
+                    fwhm = None
+                param_creator = GlobExpParameters(data_fit.shape[1], taus)
+                param_creator.adjustParams(t0, True, fwhm, False,
+                                           self._experiment.preporcessing.GVD_corrected,
+                                           tau_inf)
+
+                params_fit = param_creator.params
+                minimizer = GlobalFitExponential(self._experiment.x,
+                                                 data_fit,
+                                                 exp_no, params_fit,
+                                                 deconv, tau_inf, False)
+                minimizer.pre_fit()
+            else:
+                # Todo
+
+                pass
+
+        def _readapt_params(self):
+            """
+            Function to automatically re-adapt parameters to a new selection of
+            traces from the original data set.
+            """
+            if self._params_initialized == 'Exponential':
+                previous_taus = self._last_params['taus']
+                t0 = self._last_params['t0']
+                fwhm = self._last_params['fwhm']
+                tau_inf = self._last_params['tau_inf']
+                opt_fwhm = self._last_params['opt_fwhm']
+                y0 = self._last_params['y0']
+                self.initialize_exp_params(t0, fwhm, *previous_taus,
+                                           tau_inf=tau_inf, opt_fwhm=opt_fwhm,
+                                           y0=y0)
+            elif self._params_initialized == 'Target':
+                print('to be coded')
+                # todo
+                t0 = self._last_params['t0']
+                fwhm = self._last_params['fwhm']
+                self.initialize_target_params(t0, fwhm, )
+            else:
+                pass
+        """
+        Data selection and restoration functions
+        """
     def select_traces(self, points=10, average=1, avoid_regions=None):
         """
         Method to select traces from the data, the selected traces are stored
@@ -1480,8 +1623,8 @@ class Experiment(ExploreData, ExploreResults):
                     380-450 and 520-530 will not be selected
         """
         super().select_traces(points, average, avoid_regions)
-        self._readapt_params()
-        self._averige_selected_traces = average if points != 'all' else 0
+        self.fit._readapt_params()
+        self._average_selected_traces = average if points != 'all' else 0
         if self._silent_selection_of_traces:
             self._silent_selection_of_traces = False
         else:
@@ -1492,7 +1635,8 @@ class Experiment(ExploreData, ExploreResults):
         Select a region of the data as selected traces according to the closest
         values of mini and maxi to the wavelength vector. If the parameters have
         been initialize automatically re-adapts them to the new selected traces
-        (The function assumes wavelength vector is sorted from low to high values)
+        (The function assumes wavelength vector is sorted from low to
+        high values)
 
         Parameters
         ----------
@@ -1506,26 +1650,13 @@ class Experiment(ExploreData, ExploreResults):
                                                        self.wavelength,
                                                        mini, maxi, True)
         self.selected_traces, self.selected_wavelength = new_data, new_wave
-        self._readapt_params()
-        self._averige_selected_traces = 0
+        self.fit._readapt_params()
+        self._average_selected_traces = 0
         self._add_action("Selected region as traces")
 
     """
     Other private methods
     """
-    def _update_last_params(self, params):
-        """
-        Function updating parameters after a global fit
-        """
-        if self._params_initialized == 'Exponential':
-            self._last_params['t0'] = params['t0_1'].value
-            self._last_params['taus'] = [params['tau%i_1' % (i + 1)].value for i in range(self._exp_no)]
-        elif self._params_initialized == 'Target':
-            ## todo
-            pass
-        else:
-            pass
-
     def _add_action(self, value, re_select_traces=False):
         """
         add action to action records
@@ -1541,34 +1672,8 @@ class Experiment(ExploreData, ExploreResults):
             self._calculateSVD()
             self.select_SVD_vectors(self.selected_traces.shape[1])
         else:
-            avg = self._averige_selected_traces
+            avg = self._average_selected_traces
             wave = list(self.selected_wavelength)
             self.select_traces(wave, avg)
             # val = len(self.action_records.__dict__) - 3
             # delattr(self.action_records, f"_{val}" )
-
-    def _readapt_params(self):
-        """
-        Function to automatically re-adapt parameters to a new selection of
-        traces from the original data set.
-        """
-        if self._params_initialized == 'Exponential':
-            previous_taus = self._last_params['taus']
-            t0 = self._last_params['t0']
-            fwhm = self._last_params['fwhm']
-            tau_inf = self._last_params['tau_inf']
-            opt_fwhm = self._last_params['opt_fwhm']
-            y0 = self._last_params['y0']
-            self.initialize_exp_params(t0, fwhm, *previous_taus,
-                                       tau_inf=tau_inf, opt_fwhm=opt_fwhm,
-                                       y0=y0)
-        elif self._params_initialized == 'Target':
-            print('to be coded')
-            # to do
-            t0 = self._last_params['t0']
-            fwhm = self._last_params['fwhm']
-            self.initialize_target_params(t0, fwhm,)
-        else:
-            # self.initialize_target_params()
-            # TODO
-            pass

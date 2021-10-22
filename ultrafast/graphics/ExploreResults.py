@@ -160,7 +160,7 @@ class ExploreResults:
             puntos = [i for i in range(data.shape[1])]
         else:
             puntos = [min(range(len(wavelength)), key=lambda i: abs(wavelength[i] - num)) for num in selection]
-        xlabel = 'Time (' + self._units['time_unit'] + ')'
+        xlabel = f'Time ({self.time_unit})'
         if plot_residues is False:
             fig, ax = plt.subplots(figsize=(8, 6))
             ax = ['_', ax]
@@ -202,7 +202,7 @@ class ExploreResults:
         plt.subplots_adjust(left=0.145, right=0.95)
         return fig, ax
 
-    def DAS(self, number='all', fit_number=None, convert_to_EAS=False):
+    def get_DAS(self, number='all', fit_number=None, convert_to_EAS=False):
         """
         returns an array of the Decay associated spectra. The number of rows is
         the number of species and the number of columns correspond to the
@@ -306,8 +306,8 @@ class ExploreResults:
         # verify type of fit is: either fit to Singular vectors or global fit to traces
         x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
-        das = self.DAS(number=number, fit_number=fit_number,
-                       convert_to_EAS=convert_to_EAS)
+        das = self.get_DAS(number=number, fit_number=fit_number,
+                           convert_to_EAS=convert_to_EAS)
 
         xlabel = self._get_wave_label_res(wavelength)
         legenda = self._legend_plot_DAS(params, exp_no, deconv, tau_inf, type_fit, precision)
@@ -475,7 +475,7 @@ class ExploreResults:
         """
         x, self._data_fit, self._wavelength_fit, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
-        xlabel = 'Time (' + self._units['time_unit'] + ')'
+        xlabel = f'Time ({self.time_unit})'
         self._fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10, 8), gridspec_kw={'height_ratios': [1, 5]})
         self._fittes = self.results(fit_number=None)
         self._x_verivefit = x * 1.0
@@ -564,7 +564,7 @@ class ExploreResults:
         if type_fit == 'Exponential':
             msg = 'This function is only available for target fit'
             raise ExperimentException(msg)
-        xlabel = 'Time (' + self._units['time_unit'] + ')'
+        xlabel = f'Time ({self.time_unit})'
         maxi_tau = -1 / params['k_%i%i' % (exp_no - 1, exp_no - 1)].value
         if maxi_tau > x[-1]:
             maxi_tau = x[-1]
@@ -641,23 +641,25 @@ class ExploreResults:
         """
         if wavelength is None:
             xlabel = 'pixel'
-        elif self._units['wavelength_unit'] == 'cm-1':
+        elif self.wavelength_unit == 'cm-1':
             xlabel = 'Wavenumber (cm$^{-1}$)'
         else:
-            xlabel = f'Wavelength ({self._units["wavelength_unit"]})'
+            xlabel = f'Wavelength ({self.wavelength_unit})'
         return xlabel
 
     def _legend_plot_DAS(self, params, exp_no, deconv, tau_inf, type_fit, precision):
         """
         returns legend for plot_DAS function
         """
-        legenda = [self._unit_formater.value_formated(params['tau%i_1' % (i + 1)].value, precision)
-                   for i in range(exp_no)]
+        legenda = [self._unit_formater.value_formated(
+            params['tau%i_1' % (i + 1)].value, precision)
+            for i in range(exp_no)]
         if deconv and type_fit == 'Exponential':
             if tau_inf is None:
                 pass
             elif tau_inf != 1E+12:
-                legenda.append(self._unit_formater.value_formated(tau_inf, precision))
+                legenda.append(self._unit_formater.value_formated(tau_inf,
+                                                                  precision))
             else:
                 legenda.append(r'$\tau$ = inf')
         elif not deconv:
@@ -666,18 +668,24 @@ class ExploreResults:
 
     def _legend_plot_fit(self, data, wavelength, svd_fit, puntos):
         """
-        returns legend for plot_fit function in case the number of fits are less or equal to 10
+        returns legend for plot_fit function in case the number of fits are
+        less or equal to 10
         """
         if wavelength is None:
             wavelength = np.array([i for i in range(len(data[1]))])
         if svd_fit:
-            legend = ['_' for i in range(data.shape[1])] + ['left SV %i' % i for i in
-                                                                 range(1, data.shape[1] + 1)]
+            legend = ['_' for i in range(data.shape[1])] + \
+                     ['left SV %i' % i for i in range(1, data.shape[1] + 1)]
         elif wavelength is not None:
-            val = 'cm$^{-1}$' if self._units['wavelength_unit'] == 'cm-1' else self._units['wavelength_unit']
-            legend = ['_' for i in range(len(puntos))] + [f'{round(wavelength[i])} {val}' for i in puntos]
+            if self.wavelength_unit == 'cm-1':
+                val = 'cm$^{-1}$'
+            else:
+                val =self.wavelength_unit
+            legend = ['_' for i in range(len(puntos))] + \
+                     [f'{round(wavelength[i])} {val}' for i in puntos]
         else:
-            legend = ['_' for i in range(len(puntos))] + [f'curve {i}' for i in range(data.shape[1])]
+            legend = ['_' for i in range(len(puntos))] + \
+                     [f'curve {i}' for i in range(data.shape[1])]
         return legend
 
     @staticmethod
