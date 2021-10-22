@@ -68,8 +68,8 @@ class SaveExperiment:
                    'GVD': self.experiment.preporcessing.GVD_corrected,
                    'excitation': self.experiment.excitation,
                    'path': self.experiment._data_path,
-                   'deconv': self.experiment._deconv,
-                   'n_fits':self.experiment._fit_number}
+                   'deconv': self.experiment.fit._deconv,
+                   'n_fits':self.experiment.fit._fit_number}
 
         self.save_object["report"] = self.experiment.preprocessing.report
         self.save_object['fits'] = self.experiment.fit.fit_records
@@ -299,7 +299,7 @@ class Experiment(ExploreData):
                 instantiate = True
                 experiment = Experiment(x, data, wavelength)
                 experiment.preprocessing.report = object_load["report"]
-                experiment.fit_records = object_load['fits']
+                experiment.fit.fit_records = object_load['fits']
                 experiment.action_records = object_load['actions']
                 experiment.preprocessing.data_sets = object_load['datas']
                 experiment._units = object_load['detail']['units']
@@ -307,8 +307,8 @@ class Experiment(ExploreData):
                 experiment.preprocessing.GVD_corrected = gvd
                 experiment.excitation = object_load['detail']['excitation']
                 experiment._data_path = object_load['detail']['path']
-                experiment._deconv = object_load['detail']['deconv']
-                experiment._fit_number = object_load['detail']['n_fits']
+                experiment.fit._deconv = object_load['detail']['deconv']
+                experiment.fit._fit_number = object_load['detail']['n_fits']
 
         except Exception:
             error = True
@@ -895,9 +895,8 @@ class Experiment(ExploreData):
                 self._last_data_sets = container
 
     """
-    Parameters functions
+    Parameters functions and fitting
     """
-
     class _Fit(ExploreResults):
         def __init__(self, experiment):
             self._experiment = experiment
