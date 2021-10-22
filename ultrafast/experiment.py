@@ -22,6 +22,7 @@ import sys
 
 
 class SaveExperiment:
+    # TODO updat to new structure
     """
     Class that extract and save important features of an Experiment instance
     and saved them as a dictionary that can be later on reload and used.
@@ -65,7 +66,7 @@ class SaveExperiment:
         save_object dictionary
         """
         details = {'units': self.experiment._units,
-                   'GVD': self.experiment.preporcessing.GVD_corrected,
+                   'GVD': self.experiment.preprocessing.GVD_corrected,
                    'excitation': self.experiment.excitation,
                    'path': self.experiment._data_path,
                    'deconv': self.experiment.fit._deconv,
@@ -1121,7 +1122,7 @@ class Experiment(ExploreData):
                 correction = False
             else:
                 # TODO check self.GVD corrected
-                gvd_corrected = self._experiment.preporcessing.GVD_corrected
+                gvd_corrected = self._experiment.preprocessing.GVD_corrected
                 if global_t0 and not gvd_corrected:
                     correction = False
                 elif not global_t0:
@@ -1206,7 +1207,7 @@ class Experiment(ExploreData):
                 If True and weights have been defined, this will be applied in the
                 fit (for defining weights) check the function define_weights.
             """
-            gvd_corrected = self._experiment.preporcessing.GVD_corrected
+            gvd_corrected = self._experiment.preprocessing.GVD_corrected
             if hasattr(self._experiment.preprocessing.report, 'derivate_data'):
                 derivative = True
             else:
@@ -1414,7 +1415,7 @@ class Experiment(ExploreData):
             # print(taus)
             param_creator = GlobExpParameters(1, list(taus))
             param_creator.adjustParams(t0, vary, fwhm, opt_fwhm,
-                                       self._experiment.preporcessing.GVD_corrected,
+                                       self._experiment.preprocessing.GVD_corrected,
                                        tau_inf, y0)
             # print(param_creator.params)
             deconv = True if fwhm is not None else False
