@@ -9,10 +9,12 @@ from lmfit import Parameters
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.graphics.ExploreData import ExploreData
 from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrafast.fit.GlobalFitBootstrap import BootStrap
 from ultrafast.utils.ChirpCorrection import EstimationGVDPolynom, EstimationGVDSellmeier
 from ultrafast.utils.divers import define_weights, UnvariableContainer, LabBook,\
     book_annotate, read_data, TimeUnitFormater, select_traces
-from ultrafast.utils.Preprocessing import Preprocessing, ExperimentException
+from ultrafast.utils.Preprocessing import ExperimentException
+from ultrafast.utils.Preprocessing import Preprocessing as Prep
 from ultrafast.fit.GlobalFit import GlobalFitExponential, GlobalFitTarget
 import os
 from matplotlib.offsetbox import AnchoredText
@@ -536,10 +538,10 @@ class Experiment(ExploreData):
                 list
             """
             self._add_to_data_set("before_calibrate_wavelength")
-            new_wave = Preprocessing.calibration_with_polynom(self._experiment.wavelength,
-                                                              pixels,
-                                                              wavelength,
-                                                              order)
+            new_wave = Prep.calibration_with_polynom(self._experiment.wavelength,
+                                                     pixels,
+                                                     wavelength,
+                                                     order)
 
             self._experiment.wavelength = new_wave
             self._experiment._add_action("calibrate wavelength", True)
@@ -576,9 +578,9 @@ class Experiment(ExploreData):
                     if only_one = False; if not only spectrum 5 is subtracted
             """
             self._add_to_data_set("before_baseline_substraction")
-            new_data = Preprocessing.baseline_substraction(self._experiment.data,
-                                                           number_spec=number_spec,
-                                                           only_one=only_one)
+            new_data = Prep.baseline_substraction(self._experiment.data,
+                                                  number_spec=number_spec,
+                                                  only_one=only_one)
 
             self._experiment.data = new_data
             self._experiment._add_action("baseline substraction", True)
@@ -600,10 +602,10 @@ class Experiment(ExploreData):
                order of the polynomial fit
             """
             self._add_to_data_set("before_subtract_polynomial_baseline")
-            new_data = Preprocessing.subtract_polynomial_baseline(self._experiment.data,
-                                                                  self._experiment.wavelength,
-                                                                  points=points,
-                                                                  order=order)
+            new_data = Prep.subtract_polynomial_baseline(self._experiment.data,
+                                                         self._experiment.wavelength,
+                                                         points=points,
+                                                         order=order)
             self._experiment.data = new_data
             self._experiment._add_action("subtract polynomial baseline", True)
 
@@ -627,10 +629,10 @@ class Experiment(ExploreData):
               data lower than this value is kept
             """
             self._add_to_data_set("before_cut_time")
-            new_data, new_x = Preprocessing.cut_rows(self._experiment.data,
-                                                     self._experiment.x,
-                                                     mini,
-                                                     maxi)
+            new_data, new_x = Prep.cut_rows(self._experiment.data,
+                                            self._experiment.x,
+                                            mini,
+                                            maxi)
             self._experiment.data, self._experiment.x = new_data, new_x
             self._experiment._add_action("cut time", True)
 
@@ -678,11 +680,11 @@ class Experiment(ExploreData):
                     time points return are [1,2,3,4,5,6,9,14,21,30,41,54,67.5]
             """
             self._add_to_data_set("before_average_time")
-            new_data, new_x = Preprocessing.average_time_points(self._experiment.data,
-                                                                self._experiment.x,
-                                                                starting_point,
-                                                                step, method,
-                                                                grid_dense)
+            new_data, new_x = Prep.average_time_points(self._experiment.data,
+                                                       self._experiment.x,
+                                                       starting_point,
+                                                       step, method,
+                                                       grid_dense)
             self._experiment.data, self._experiment.x = new_data, new_x
             self._experiment._add_action("average time", True)
 
@@ -714,9 +716,9 @@ class Experiment(ExploreData):
                 scipy.signal.savgol_filter for the different options
             """
             self._add_to_data_set("before_derivate_data")
-            new_data = Preprocessing.derivate_data(self._experiment.data,
-                                                   window_length,
-                                                   polyorder, deriv, mode)
+            new_data = Prep.derivate_data(self._experiment.data,
+                                          window_length,
+                                          polyorder, deriv, mode)
             self._experiment.data = new_data
             self._experiment._add_action("derivate data", True)
 
@@ -741,10 +743,10 @@ class Experiment(ExploreData):
                 or selected.
             """
             self._add_to_data_set("before_cut_wavelength")
-            new_data, new_wave = Preprocessing.cut_columns(self._experiment.data,
-                                                           self._experiment.wavelength,
-                                                           mini, maxi,
-                                                           innerdata)
+            new_data, new_wave = Prep.cut_columns(self._experiment.data,
+                                                  self._experiment.wavelength,
+                                                  mini, maxi,
+                                                  innerdata)
             # no need to work on selected data set
             self._experiment.data = new_data
             self._experiment.wavelength = new_wave
@@ -772,26 +774,26 @@ class Experiment(ExploreData):
             Parameters
             ----------
             points: int, list or None
-                estimate values of time, the closes values of dimension_vector to t
-                he points given will be deleted
+                estimate values of time, the closes values of dimension_vector
+                to the points given will be deleted
 
             dimension: str (default "time")
-                    can be "wavelength" or "time" indicate where points should be
-                    deleted
+                    can be "wavelength" or "time" indicate where points should
+                     be deleted
             """
             self._add_to_data_set("before_delete_points")
             if dimension == 'time':
-                new_data, new_x = Preprocessing.del_points(points,
-                                                           self._experiment.data,
-                                                           self._experiment.x,
-                                                           0)
+                new_data, new_x = Prep.del_points(points,
+                                                  self._experiment.data,
+                                                  self._experiment.x,
+                                                  0)
                 self._experiment.data, self._experiment.x = new_data, new_x
                 self._experiment._add_action(f"delete points {dimension}", True)
             elif dimension == 'wavelength':
-                new_data, new_wave = Preprocessing.del_points(points,
-                                                              self._experiment.data,
-                                                              self._experiment.wavelength,
-                                                              1)
+                new_data, new_wave = Prep.del_points(points,
+                                                     self._experiment.data,
+                                                     self._experiment.wavelength,
+                                                     1)
                 # no need to work on selected data set
                 self._experiment.data = new_data
                 self._experiment.wavelength = new_wave
@@ -1590,9 +1592,38 @@ class Experiment(ExploreData):
                 self.initialize_target_params(t0, fwhm, )
             else:
                 pass
-        """
-        Data selection and restoration functions
-        """
+
+        def bootstrap_fit(self, fit_number, boots, size=25,
+                          data_from="residues", workers=2):
+            # TODO
+            can_run = self._assert_boot_strap_can_run(fit_number)
+            if not can_run:
+                msg = "Please perform a global fit first"
+                raise ExperimentException(msg)
+            previous_results = self._bootstrap_previous_results(fit_number)
+            fit = self.fit_records.global_fits[fit_number]
+            boot_strap = BootStrap(fit, previous_results, workers, self.time)
+            boot_strap.generate_data_sets(boots, data_from=data_from, size=size)
+            boot_strap.fit_bootstrap()
+            self.fit_records.bootstrap_records[fit_number] = boot_strap.bootstrap_result
+            #TODO verify working fucntion
+
+        def _bootstrap_previous_results(self, fit_number):
+            if fit_number in self.fit_records.bootstrap_record.keys():
+                results = self.fit_records.bootstrap_records[fit_number]
+            else:
+                results = None
+            return results
+
+        def _assert_boot_strap_can_run(self, fit_number):
+            if fit_number in self.fit_records.global_fits.key():
+                can_run = True
+            else:
+                can_run = False
+            return can_run
+    """
+    Data selection and restoration functions
+    """
     def select_traces(self, points=10, average=1, avoid_regions=None):
         """
         Method to select traces from the data, the selected traces are stored
@@ -1646,9 +1677,9 @@ class Experiment(ExploreData):
         maxi: int, float or None
           data lower than this value is kept
         """
-        new_data, new_wave = Preprocessing.cut_columns(self.data,
-                                                       self.wavelength,
-                                                       mini, maxi, True)
+        new_data, new_wave = Prep.cut_columns(self.data,
+                                              self.wavelength,
+                                              mini, maxi, True)
         self.selected_traces, self.selected_wavelength = new_data, new_wave
         self.fit._readapt_params()
         self._average_selected_traces = 0
