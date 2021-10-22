@@ -16,7 +16,8 @@ path = os.path.abspath(path)
 
 # time, data, wave = read_data(path, wave_is_row= True)
 
-# original_taus = [8, 30, 200]
+# either original_taus = [8, 30, 200]
+# or original_taus = [1, 8, 30]
 
 experiment = Experiment.load_data(path, wave_is_row=True)
 

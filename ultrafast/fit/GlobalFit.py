@@ -133,6 +133,7 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         else:
             self.wavelength = np.array([i for i in
                                         range(1, self.data.shape[1] + 1)])
+        self.verbose = True
         self.params = params
         self._capture_params = []
         self.deconv = deconv
@@ -360,9 +361,12 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         if get_stop:
             return True
         else:
-            if self._number_it % 200 == 0:
-                print("Iteration: " + str(self._number_it) + ", chi2: " +
-                      str(sum(np.abs(resid.flatten()))))
+            if self.verbose:
+                if self._number_it % 200 == 0:
+                    print("Iteration: " + str(self._number_it) + ", chi2: " +
+                          str(sum(np.abs(resid.flatten()))))
+            else:
+                pass
             # self._update_progress_result(params)
             # if self._plot:
             #     self.plot_progress()
