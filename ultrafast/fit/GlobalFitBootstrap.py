@@ -72,6 +72,9 @@ class BootStrap:
         self.datas = None
         self.workers = workers
         self.fitter, self.params = self._get_original_fitter()
+        self._names_futures = None
+        self._future_calculations = 0
+        self._cal_conf = False
 
     def generate_data_sets(self,
                            n_boots: int,
@@ -138,20 +141,6 @@ class BootStrap:
             If True the calculations will be run parallel using dask library
 
         """
-        def single_fit_round(boot):
-            data = data_sets[:, :, boot]
-            fitter = self.fitter(x, data, exp_no, self.params,
-                                 deconv, tau_inf)
-            if apply_weight:
-                fitter.weights = weight
-
-            results = fitter.global_fit(variations, maxfev=maxfev,
-                                        time_constraint=time_constraint,
-                                        apply_weights=apply_weight)
-            print(f'Start fit number: {boot}')
-            self._append_results_pandas_dataframe(self.bootstrap_result,
-                                                  results, names)
-            # print(f'the number of boots is: {boot}')
         data_sets = self.datas
         if data_sets is None:
             msg = 'Generate the data sets before'
@@ -171,20 +160,41 @@ class BootStrap:
                                               self.fit_results, names)
         # fit all the generated data_sets
         if parallel_computing and self.workers != 1:
+            self._cal_conf = cal_conf
+            self._names_futures = names
+            self._future_calculations = 0
             calculations = []
             print("parallel")
             with concurrent.futures.ProcessPoolExecutor(
-                max_workers=self.workers) as executor:
+                    max_workers=self.workers) as executor:
                 for boot in range(data_sets.shape[2]):
-                    print("parallel")
-                    calculations.append(
-                        executor.submit(single_fit_round, boot))
+                    data = data_sets[:, :, boot]
+                    fitter = self.fitter(x, data, exp_no, self.params,
+                                         deconv, tau_inf)
+                    if apply_weight:
+                        fitter.weights = weight
+                    future_obj = executor.submit(fitter.global_fit, variations,
+                                                 maxfev,
+                                                 time_constraint,
+                                                 apply_weight)
+                    fnc = self._append_results_pandas_dataframe_future
+                    future_obj.add_done_callback(fnc)
+                    calculations.append(future_obj)
+                    print(f"parallel calculation {boot + 1} submitted")
         else:
             for boot in range(data_sets.shape[2]):
-                single_fit_round(boot)
-
-
-        if cal_conf:
+                data = data_sets[:, :, boot]
+                fitter = self.fitter(x, data, exp_no, self.params,
+                                     deconv, tau_inf)
+                if apply_weight:
+                    fitter.weights = weight
+                results = fitter.global_fit(variations, maxfev=maxfev,
+                                            time_constraint=time_constraint,
+                                            apply_weights=apply_weight)
+                self._append_results_pandas_dataframe(self.bootstrap_result,
+                                                      results, names)
+                print(f'Finished fit number: {boot + 1}')
+        if cal_conf and not parallel_computing:
             self.bootConfInterval(data=self.bootstrap_result)
 
     def _fit_iteration(self, number):
@@ -456,6 +466,22 @@ class BootStrap:
             initial_values = [params[name].init_value for name in names]
             final_values = [params[name].value for name in names]
         return initial_values, final_values
+
+    def _append_results_pandas_dataframe_future(self, future):
+        """
+        Function for parallel computing
+        """
+        names = self._names_futures
+        data_frame = self.bootstrap_result
+        results = future.result()
+        self._future_calculations += 1
+        print(f"Finished calculation {self._future_calculations}")
+        self._append_results_pandas_dataframe(data_frame, results, names)
+        if self._future_calculations == self.datas.shape[2]:
+            print("All calculation  finished")
+            if self._cal_conf:
+                self.bootConfInterval(data=self.bootstrap_result)
+                self._cal_conf = False
 
     def _append_results_pandas_dataframe(self, data_frame, results, names):
         """
