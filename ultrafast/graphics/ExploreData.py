@@ -135,7 +135,7 @@ class ExploreData(PlotSVD):
         self._units['wavelength_unit'] = val
 
     @use_style
-    def plot_traces(self, traces='select', style='lmu_trac'):
+    def plot_traces(self, traces='select', style='lmu_trac', legend='auto'):
         """
         Plots either the selected traces or 9-10 trace equally space in the
         wavelength range. If less than 10 (included) traces are plotted a
@@ -147,10 +147,17 @@ class ExploreData(PlotSVD):
             1--> If auto between 9 and 10 traces equally spaced in the
                 wavelength range will be plotted.
             2--> If select the selected traces will be plotted
-            3--> If a list conatining the traces wave values
+            3--> If a list containing the traces wave values
+
+        legend: "auto", True or False, (default "auto")
+            If auto, a legend is display if there are less than 10 traces in the
+            Figure plotted.
+            If True or False, a legend will be displayed or not independently of
+            the number of traces in the Figure.
+
         size: int (default 14)
-            size of the figure text labels including tick labels axis labels
-            and legend
+            (deprecated)size of the figure text labels including tick labels
+            axis labels and legend
 
         Returns
         ----------
@@ -161,7 +168,11 @@ class ExploreData(PlotSVD):
         alpha = 0.60
         for i in values:
             ax.plot(self.x, data[:, i], marker='o', alpha=alpha, ms=4, ls='')
-        if len(values) <= 10 or traces == 'auto':
+        if legend == 'auto':
+            if len(values) <= 10 or traces == 'auto':
+                legenda = self._traces_legend(traces, values)
+                ax.legend(legenda, loc='best', ncol=2)
+        elif legend:
             legenda = self._traces_legend(traces, values)
             ax.legend(legenda, loc='best', ncol=2)
         FiguresFormating.axis_labels(ax, f'Time ({self._units["time_unit"]})',
