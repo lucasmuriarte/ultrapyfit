@@ -270,14 +270,19 @@ class ExploreResults:
             defines the fit number of the results all_fit dictionary. If None
             the last fit in  will be considered.
         
-        number: list of inst or 'all'
+        number: list of inst or 'all' (default 'all')
             Defines the DAS spectra wanted, if there is tau_inf include -1 in
             the list (Note we start counting by '0', thus for tau1 '0' should be
             pass):
             e.g.: for a fit with three exponential, if the last two are wanted;
                   number = [1, 2]
             e.g.2: the last two exponential plus tau_inf; number = [1, 2, -1]
-        
+
+        plot_offset: bool (default True)
+            If True the offset of a global fit without deconvolution will be
+            plot. (Only applicable for exponential or target fit without
+            deconvolution)
+
         precision: int (default 2)
             Defines the number of decimal places of the legend legend
         
@@ -604,36 +609,8 @@ class ExploreResults:
         """
         if fit_number is None:
             fit_number = max(self._fits.keys())
-        _, data, _, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
-            self._get_values(fit_number=fit_number)
-        names = ['t0_1']+['tau%i_1'%(i+1) for i in range(exp_no)]
-        print_names = ['time 0']
-        if type(deconv) == bool:
-            if deconv:
-                names = ['t0_1', 'fwhm_1']+['tau%i_1'%(i+1) for i in range(exp_no)]
-                print_names.append( 'fwhm')
-        print_names = print_names + ['tau %i' %i for i in range(1,exp_no + 1)] 
-        # print_resultados='\t'+',\n\t'.join([f'{name.split("_")[0]}:\t{round(params[name].value,4)}\t{params[name].vary}' for name in names])
-        print(f'Fit number {fit_number}: \tGlobal {type_fit} fit')
-        print('-------------------------------------------------')
-        print('Results:\tParameter\t\tInitial value\tFinal value\t\tVary')
-        for i in range(len(names)):
-            line = [f'\t{print_names[i]}:', '{:.4f}'.format(params[names[i]].init_value),
-                      '{:.4f}'.format(params[names[i]].value), f'{params[names[i]].vary}']
-            print('\t\t'+'   \t\t'.join(line))
-        print('Details:')
-        if svd_fit:
-            trace, avg = 'Nº of singular vectors', '0'
-        else:
-            trace = 'Nº of traces'
-            avg = self._fits[fit_number].details["avg_traces"]
-        print(f'\t\t{trace}: {data.shape[1]}; average: {avg}')
-        if type_fit == 'Exponential':
-            print(f'\t\tFit with {exp_no} exponential; Deconvolution {deconv}')
-            print(f'\t\tTau inf: {tau_inf}')
-        print(f'\t\tNumber of iterations: {self._fits[fit_number].nfev}')
-        print(f'\t\tNumber of parameters optimized: {len(params)}')
-        print(f'\t\tWeights: {self._fits[fit_number].weights}')
+        fit = self._fits[fit_number]
+        print(f"Fit number {fit_number}: \t" + fit.__str__())
         
     def _get_wave_label_res(self, wavelength):
         """
@@ -705,15 +682,5 @@ class ExploreResults:
         """
         if fit_number is None:
             fit_number = max(self._fits.keys())
-        params = self._fits[fit_number].params
-        data = self._fits[fit_number].data
-        x = self._fits[fit_number].x
-        svd_fit = self._fits[fit_number].details['svd_fit']
-        wavelength = self._fits[fit_number].wavelength
-        deconv = self._fits[fit_number].details['deconv']
-        tau_inf = self._fits[fit_number].details['tau_inf']
-        exp_no = self._fits[fit_number].details['exp_no']
-        derivative_space = self._fits[fit_number].details['derivative']
-        # check for type of fit done target or exponential
-        type_fit = self._fits[fit_number].details['type']
-        return x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space
+        fit = self._fits[fit_number]
+        return fit.get_values()

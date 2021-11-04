@@ -5,9 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
+      <change afterPath="$PROJECT_DIR$/ultrafast/fit/jacobian.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_fitting.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_fitting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_jacobian.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_jacobian.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalFitBootstrap.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +25,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="Python Unit Test" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -86,6 +94,9 @@
       <module name="chempyspec" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\lucas\Anaconda3\envs\chempyspec_env\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/ultrafast" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -188,7 +199,9 @@
       <workItem from="1634551564122" duration="95000" />
       <workItem from="1634553916349" duration="39603000" />
       <workItem from="1634737133715" duration="11285000" />
-      <workItem from="1634886047749" duration="25853000" />
+      <workItem from="1634886047749" duration="27258000" />
+      <workItem from="1635359948454" duration="1144000" />
+      <workItem from="1635929542781" duration="21763000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>

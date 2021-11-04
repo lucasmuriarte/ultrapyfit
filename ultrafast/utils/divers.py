@@ -734,41 +734,59 @@ class LabBook(object):
                 If True attributes that are not a list, the name and value will
                 be printed in a single line
         """
+        to_print = self.__str__(creation=creation,
+                                print_protected=print_protected,
+                                single_line=single_line)
+        print(to_print)
+
+    def __str__(self, creation=True, print_protected=False, single_line=False):
+        """
+        Allows to do print(LabBook)
+        """
+        to_print = []
         if hasattr(self, 'name'):
             name = getattr(self, 'name')
-            print(f'\t {name}')
-            print(''.join(['-' for i in range(len(name)+10)]))
+            to_print.append(f'\t {name}')
+            to_print.append(''.join(['-' for i in range(len(name) + 10)]))
         for key, value in self.__dict__.items():
-            if key != 'notes' and key != 'name' and key != 'creation' and key[0] != "_":
-                self._print_attribute(key, single_line, False)
+            if key != 'notes' and key != 'name' and key != 'creation' and \
+                    key[0] != "_":
+                to_print.append(self._print_attribute(key,
+                                                      single_line,
+                                                      False))
         if hasattr(self, 'notes'):
-            self._print_attribute('notes', False, False)
+            to_print.append(self._print_attribute('notes', False, False))
         if print_protected:
             for key, value in self.__dict__.items():
                 if key[0] == "_" and key[1] != "_":
-                    self._print_attribute(key, single_line, True)
+                    to_print.append(self._print_attribute(key,
+                                                          single_line,
+                                                          True))
         if creation:
-            self._print_attribute('creation', True, False)
+            to_print.append(self._print_attribute('creation', True, False))
+        return "\n".join(to_print)
 
     def _print_attribute(self, key, single_line=True, protected=True):
         """
         print single attribute
         """
+        to_print = []
         value = getattr(self, key)
         if protected:
             val = f'(p) {key}'
         else:
             val = ' '.join(key.split('_'))
         if type(value) == list:
-            print(f'\t {val}:')
+            to_print.append(f'\t {val}:')
             for i in value:
-                print(f'\t\t {i}')
+                to_print.append(f'\t\t {i}')
         else:
             if single_line:
-                print(f'\t {val}: {value}')
+                to_print.append(f'\t {val}: {value}')
             else:
-                print(f'\t {val}:\n\t\t {value}')
-        print('')
+                to_print.append(f'\t {val}:\n\t\t {value}')
+        to_print.append('')
+        return "\n".join(to_print)
 
 
 @froze_it

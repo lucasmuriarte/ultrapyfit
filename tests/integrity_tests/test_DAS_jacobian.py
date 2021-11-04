@@ -75,7 +75,7 @@ class TestDatasetsDAS(unittest.TestCase):
         
         #print(params) #diagnostics
         
-        self.tmp_fitter._prepareJacobian(params)
+        self.tmp_fitter._prepare_jacobian(params)
         params_no = len(self.tmp_fitter.recent_key_array)
  
         ndata, nx = self.tmp_fitter.data.shape #(no of taus,no of lambdas)

@@ -24,23 +24,29 @@ class BootStrap:
     fit_results: lmfit results Object
         Should be an lmfit result object obtained either from
         GlobalFitTarget, GlobalFitExponential or Experiment classes
+
     bootstrap_result: pandas dataFrame (default None)
         Pandas data frame containing where the bootstrap results are appended
         initially can be None, which will imply creating a new one from zero.
         Alternatively the results of a previous bootstrap may be passed to
         increase the number of analysis.
+
     data_simulated: string
         contain the type of data sets simulated: "data" if they are simulated by
         random shuffling the data, or residues if they are obtained by random
-        shuffling a part of the residuals .
+        shuffling a part of the residuals.
+
     confidence_interval: lmfit parameters object
         contains the confidence interval for the decay times calculated from the
         bootstrap_result dataFrame
-    datas: numpy array
+
+    datasets: numpy array
         contain the simulated data sets for fitting produced either directly
         from the sample or from the residues.
+
     fitter: GlobalFitTarget / GlobalFitExponential
         Contains the fitter used to obtained the fit_results passed
+
     params: lmfit Parameter object
         Contains the parameters used to obtained the fit_results passed
     """
@@ -54,11 +60,20 @@ class BootStrap:
         fit_results: lmfit results Object
             Should be an lmfit result object obtained either from
             GlobalFitTarget, GlobalFitExponential or Experiment classes
+
         bootstrap_result: pandas dataFrame (default None)
             Pandas data frame containing where the bootstrap results are
             appended initially can be None, which will imply creating a new one
             from zero. Alternatively the results of a previous bootstrap may be
             passed to increase the number of analysis.
+
+        workers: int (default 2)
+            number of workers (CPU cores) that will be used if the fit fit is
+            run in parallel. Recommend to used as maximum half of the CPU cores,
+            and up to 4 if the analysis is run in a regular computer.
+
+        time_unit: string (default 'ps')
+            String value use in the plotting axis when the results are display
         """
         self.fit_results = fit_results
         if bootstrap_result is None:
@@ -69,18 +84,24 @@ class BootStrap:
             self.data_simulated = bootstrap_result._type
         self.time_unit = time_unit
         self.confidence_interval = None
-        self.datas = None
+        self.datasets = None
         self.workers = workers
         self.fitter, self.params = self._get_original_fitter()
-        self._names_futures = None
-        self._future_calculations = 0
-        self._cal_conf = False
 
-    def generate_data_sets(self,
-                           n_boots: int,
-                           data_from='residues',
-                           size=25,
-                           return_data=False):
+        # THE FOLLOWING ATTRIBUTES ARE FOR THE END OF THE PARALLEL COMPUTATION
+        # self._cal_conf defines if to calculate the confidence interval at the
+        # end of bootstrap for parallel computing. In that case
+        # self._future_calculations is use to verify calculations are finished
+        # self._names_futures store the conf-interval pandas DF columns names
+        self._cal_conf = False
+        self._future_calculations = 0
+        self._names_futures = None
+
+    def generate_datasets(self,
+                          n_boots: int,
+                          data_from='residues',
+                          size=25,
+                          return_data=False):
         """
         Method for generating simulated data sets from the data (shuffling), or
         from the residues. The las t approach shuffles the residues with the
@@ -93,9 +114,19 @@ class BootStrap:
             everything is working simulate the rest and fit them.
 
         data_from: str (default residues)
-            If "residues" data are simulated shuffling residues with the model
-            If "data" data are simulated random selection of original data
-            traces with replacement.
+            If "residues" data are simulated shuffling residues with the model.
+
+            If "fitted_data" data are simulated from a random selection of the
+            original fitted traces with replacement.
+
+            If "full_data_matrix" data are simulated from a random selection of
+            the original entire full data matrix with replacement.
+
+            We recommend to either use 'residues' or 'full_data_matrix'.
+
+            (Note that the globalfit, if run out of the experiment class, does
+            not have access to the entire data matrix this data can be added
+            with the fitResult.add_full_data_matrix(data, wavelength)
 
         size: int (default 25)
             Only important if the data_from is residues, defines the percentage
@@ -117,14 +148,18 @@ class BootStrap:
             self.bootstrap_result._type = 'residues'
             self.bootstrap_result._size = size
             self.data_simulated = 'residues'
-        elif data_from == 'data':
-            data = self._data_sets_from_residues(n_boots)
-            self.data_simulated = 'data'
-            self.bootstrap_result._type = 'data'
+        elif data_from == 'fitted_data':
+            data = self._data_sets_from_data(n_boots, full_matrix=False)
+            self.data_simulated = 'fitted_data'
+            self.bootstrap_result._type = 'fitted_data'
+        elif data_from == 'full_data_matrix':
+            data = self._data_sets_from_data(n_boots, full_matrix=True)
+            self.data_simulated = 'full_data_matrix'
+            self.bootstrap_result._type = 'full_data_matrix'
         else:
             msg = 'data_from should be "residues" or "data"'
             raise ExperimentException(msg)
-        self.datas = data
+        self.datasets = data
         if return_data:
             return data
 
@@ -141,14 +176,15 @@ class BootStrap:
             If True the calculations will be run parallel using dask library
 
         """
-        data_sets = self.datas
+        data_sets = self.datasets
         if data_sets is None:
             msg = 'Generate the data sets before'
             raise ExperimentException(msg)
         # extract parameters from the fit
-        exp_no, type_fit, deconv, maxfev, tau_inf = self._details()
+        exp_no, type_fit, deconv, maxfev, tau_inf, use_jacobian = self._details()
         time_constraint = self.fit_results.details['time_constraint']
         weight = self.fit_results.weights
+        method = self.fit_results.method
         if type(weight) == dict:
             apply_weight = weight['apply']
         else:
@@ -160,23 +196,28 @@ class BootStrap:
                                               self.fit_results, names)
         # fit all the generated data_sets
         if parallel_computing and self.workers != 1:
-            self._cal_conf = cal_conf
+            self._cal_conf = cal_conf  # value recover by the add_done_callback
             self._names_futures = names
             self._future_calculations = 0
             calculations = []
-            print("parallel")
+            print("parallel computing")
+
             with concurrent.futures.ProcessPoolExecutor(
                     max_workers=self.workers) as executor:
+
                 for boot in range(data_sets.shape[2]):
                     data = data_sets[:, :, boot]
                     fitter = self.fitter(x, data, exp_no, self.params,
                                          deconv, tau_inf)
                     if apply_weight:
                         fitter.weights = weight
+
                     future_obj = executor.submit(fitter.global_fit, variations,
                                                  maxfev,
                                                  time_constraint,
-                                                 apply_weight)
+                                                 apply_weight,
+                                                 use_jacobian,
+                                                 method)
                     fnc = self._append_results_pandas_dataframe_future
                     future_obj.add_done_callback(fnc)
                     calculations.append(future_obj)
@@ -190,21 +231,21 @@ class BootStrap:
                     fitter.weights = weight
                 results = fitter.global_fit(variations, maxfev=maxfev,
                                             time_constraint=time_constraint,
-                                            apply_weights=apply_weight)
+                                            apply_weights=apply_weight,
+                                            use_jacobian=use_jacobian,
+                                            method=method)
                 self._append_results_pandas_dataframe(self.bootstrap_result,
                                                       results, names)
                 print(f'Finished fit number: {boot + 1}')
-        if cal_conf and not parallel_computing:
-            self.bootConfInterval(data=self.bootstrap_result)
-
-    def _fit_iteration(self, number):
-        pass
+            if cal_conf:
+                conf = self.boot_conf_interval(data=self.bootstrap_result)
+                self.confidence_interval = conf
 
     @staticmethod
-    def bootConfInterval(data):
+    def boot_conf_interval(data):
         """
         Static method to calculate the confidence intervals from a dataFrame
-        object obatined with the BootStrap class
+        object obtained with the BootStrap class
         Parameters
         ----------
         data: dataFrame
@@ -323,7 +364,7 @@ class BootStrap:
         residue_set_boot = residue_set_boot[:, :, 1:]
         return residue_set_boot
 
-    def _data_sets_from_data(self, n_boots):
+    def _data_sets_from_data(self, n_boots, full_matrix=True):
         """
         Method for generating simulated data sets from the data (shuffling).
         The method used numpy.random.choice  with replacement
@@ -335,12 +376,23 @@ class BootStrap:
             to start with a low number, for example 5, fit this data and if
             everything is working simulate the rest and fit them.
         """
-        data = self.fit_results.data
+        # TODO full matrix
+        number_traces = self.fit_results.data.shape[1]
+        if full_matrix:
+            if self.fit_results.full_matrix is not None:
+                data = self.fit_results.full_matrix
+            else:
+                print("WARNING: the fit result does not contain the full data "
+                      "matrix, the data sets have been generated from the "
+                      "fitted traces. This is identical to the argument "
+                      "'fitted_data'.")
+        else:
+            data = self.fit_results.data
         data_set_boot = data * 1.0
         for boot in range(n_boots):
             new_data = data * 0.0
             index = np.random.choice(np.linspace(0, len(data[1]) - 1,
-                                                 len(data[1])), len(data[1]))
+                                                 len(data[1])), number_traces)
             for i, ii in enumerate(index):
                 new_data[:, i] = data[:, int(ii)]
             data_set_boot = np.dstack((data_set_boot, new_data))
@@ -358,7 +410,7 @@ class BootStrap:
         returns which fitter was used in the original fit.
         Either GlobalFitTarget or GlobalFitExponential
         """
-        exp_no, type_fit, deconv, maxfev, tau_inf = self._details()
+        exp_no, type_fit, deconv, maxfev, tau_inf, _ = self._details()
         initial_prams = deepcopy(self.fit_results.params)
         for i in initial_prams:
             initial_prams[i].value = initial_prams[i].init_value
@@ -375,12 +427,13 @@ class BootStrap:
         """
         returns the detail of the original fit.
         """
+        use_jacobian = self.fit_results.details['use_jacobian']
         exp_no = self.fit_results.details['exp_no']
         type_fit = self.fit_results.details['type']
         deconv = self.fit_results.details['deconv']
         maxfev = self.fit_results.details['maxfev']
         tau_inf = self.fit_results.details['tau_inf']
-        return exp_no, type_fit, deconv, maxfev, tau_inf
+        return exp_no, type_fit, deconv, maxfev, tau_inf, use_jacobian
 
     def _get_division_number(self, size):
         """
@@ -477,11 +530,12 @@ class BootStrap:
         self._future_calculations += 1
         print(f"Finished calculation {self._future_calculations}")
         self._append_results_pandas_dataframe(data_frame, results, names)
-        if self._future_calculations == self.datas.shape[2]:
+        if self._future_calculations == self.datasets.shape[2]:
             print("All calculation  finished")
             if self._cal_conf:
-                self.bootConfInterval(data=self.bootstrap_result)
+                conf = self.boot_conf_interval(data=self.bootstrap_result)
                 self._cal_conf = False
+                self.confidence_interval = conf
 
     def _append_results_pandas_dataframe(self, data_frame, results, names):
         """

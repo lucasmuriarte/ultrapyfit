@@ -145,8 +145,8 @@ class TestDatasetsDAS(unittest.TestCase):
         
         fitter.allow_stop = False #in my case it just hangs.
 
-        result = fitter.global_fit(maxfev=10000, 
-                                   use_jacobian = True, 
+        result = fitter.global_fit(maxfev=10000,
+                                   use_jacobian = True,
                                    method='leastsq')
         
         explorer = ExploreResults(result)
