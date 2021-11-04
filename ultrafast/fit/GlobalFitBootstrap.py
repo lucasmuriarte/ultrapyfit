@@ -6,7 +6,7 @@ from ultrafast.utils.Preprocessing import ExperimentException
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.fit.GlobalFit import GlobalFitExponential
 from ultrafast.fit.GlobalFit import GlobalFitTarget
-from seaborn import distplot
+from seaborn import histplot, kdeplot
 from matplotlib.offsetbox import AnchoredText
 import concurrent
 
@@ -268,18 +268,40 @@ class BootStrap:
             table.loc[i.split(' ')[0]] = line
         return table
 
-    def plotBootStrapResults(self, param, kde=True):
+    def plotBootStrapResults(self, param_1, param_2=None, kde=True):
         """
-        Plot the bootstarp histogram of the paramter calculated
-        (WARNING: In future will be taken out of the class)
+        Plot the bootstrap histogram of the decay times calculated
+        If param_1 and param_2 are given a correlation plot with the
+        histogram distributions is plot. If a single param is given only the
+        histogram distribution is plot.
+
         Parameters
         ----------
-        param: str
-            name of the parameter to be plotted
+        param_1: str or int
+           name of the tau to be plotted;
+            i.e.: for first decay time --> if string: tau1, if integer: 1
+
+        param_2: str or int or None
+            name of the tau to be plotted;
+            i.e.: for third decay time --> if string: tau3, if integer: 3
+
         kde: bool (default True)
             Defines if the kernel density estimation is plotted
         """
-        fig, axes = plt.subplots(1, 1)
+        if type(param_1) == int:
+            param_1 = f"tau{param_1}"
+        if type(param_2) == int:
+            param_2 = f"tau{param_2}"
+        if param_2 is None:
+            return self._plot_single_param(param_1, kde)
+        else:
+            return self._plot_double_param(param_1, param_2, kde)
+
+    def _plot_single_param(self, param, kde=True):
+        """
+        Plot the histogram of a single param
+        """
+        fig, ax = plt.subplots(1, 1)
         bootstrap = self.bootstrap_result
         names = [i.split(' ')[0] for i in bootstrap.keys() if 'final' in i]
         stats = bootstrap.describe()
@@ -289,22 +311,21 @@ class BootStrap:
                 round(stats[name + ' final']['mean'], 4)
             stats_values[name + ' std'] = \
                 round(stats[name + ' final']['std'], 4)
-        axes = distplot(bootstrap[param + ' final'].values,
-                        rug=False,
-                        norm_hist=False, kde=kde,
-                        hist_kws=dict(edgecolor="k",
-                                      linewidth=2))
+        if not kde:
+            plt.ylabel('Counts')
+            # plt.xlim(mini - maxi * 0.1, maxi + maxi * 0.1)
+            stat = 'count'
+        else:
+            plt.ylabel('Density function')
+            stat = 'density'
+        ax = histplot(bootstrap[param + ' final'].values, kde=kde, stat=stat)
+        
         plt.xlabel(f'Time ({self.time_unit})')
         maxi = bootstrap[param + ' final'].max()
         mini = bootstrap[param + ' final'].min()
         mean = bootstrap[param + ' final'].mean()
         dif_max = abs(maxi - mean)
         dif_min = abs(mini - mean)
-        if not kde:
-            plt.ylabel('Counts')
-            plt.xlim(mini - maxi * 0.1, maxi + maxi * 0.1)
-        else:
-            plt.ylabel('Density function')
         if dif_max > dif_min:
             pos = 1
         else:
@@ -313,8 +334,58 @@ class BootStrap:
         std = stats_values[param + ' std']
         tex = f'$\mu={mean}$ {self.time_unit}\n $\sigma={std}$ {self.time_unit}'
         texto = AnchoredText(s=tex, loc=pos)
-        axes.add_artist(texto)
-        return fig, axes
+        ax.add_artist(texto)
+        return fig, ax
+
+    def _plot_double_param(self, param_1, param_2, kde=True):
+        """
+        Plot a correlation plot between 2 decay times
+        """
+        if kde:
+            label = 'Density'
+            stat = 'density'
+        else:
+            label = 'Counts'
+            stat = 'count'
+        if 'k' not in param_1:  # in case exponential fit
+            first_label = f'{self.time_unit}'
+            second_label = f'{self.time_unit}'
+        else:  # in case target fit
+            first_label = f'1/{self.time_unit}'
+            second_label = f'1/{self.time_unit}'
+
+        grid_kw = {'height_ratios': [2, 5], 'width_ratios': [5, 2]}
+        fig, ax = plt.subplots(2, 2, figsize=(8, 8), gridspec_kw=grid_kw)
+        bootstrap = self.bootstrap_result
+        alpha = self._get_alpha_for_plot_double_param(len(bootstrap))
+        ax[0, 1].axis('off')
+        ax[0, 0].set_xticklabels([])
+        ax[1, 1].set_yticklabels([])
+        fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+        # plot lateral histograms
+        histplot(bootstrap[param_1 + ' final'].values, kde=kde, stat=stat,
+                 ax=ax[0, 0])
+        histplot(bootstrap, y=param_2 + ' final', kde=kde, stat=stat,
+                 ax=ax[1, 1])
+
+        # plot central area
+        kdeplot(x=bootstrap[param_1 + ' final'].values, 
+                y=bootstrap[param_2 + ' final'].values,
+                ax=ax[1, 0], cmap='Spectral_r', shade=True)
+        ax[1, 0].scatter(bootstrap[param_1 + ' final'],
+                         bootstrap[param_2 + ' final'],
+                         color='r', marker='+', alpha=alpha)
+
+        # format axes
+        ax[0, 0].set_ylabel(label)
+        ax[1, 1].set_xlabel(label)
+        ax[0, 0].set_xlabel('')
+        ax[1, 1].set_ylabel('')
+        ax[1, 0].set_xlabel(param_1.split(' ')[0] + f' ({first_label})')
+        ax[1, 0].set_ylabel(param_2.split(' ')[0] + f' ({second_label})')
+
+        return fig, ax
 
     def _data_sets_from_residues(self, n_boots, size=25):
         """
@@ -561,3 +632,12 @@ class BootStrap:
         fit_details = [float(results.nfev), float(results.redchi),
                        results.success]
         data_frame.loc[key] = fit_time_values + fit_details
+
+    def _get_alpha_for_plot_double_param(self, number):
+        if number > 250:
+            alpha = 0.5
+        elif number > 500:
+            alpha = 0.25
+        else:
+            alpha = 1
+        return alpha
