@@ -378,7 +378,6 @@ class Experiment(ExploreData):
         print(f'\tTime unit: {self.time_unit}')
         print(f'\tWavelength unit: {self.wavelength_unit}')
 
-
     def general_report(self, output_file=None):
         """
         Print the general report of the experiment
@@ -1189,7 +1188,8 @@ class Experiment(ExploreData):
         """
         Fitting functions
         """
-        def global_fit(self, vary=True, maxfev=5000, apply_weights=False):
+        def global_fit(self, vary=True, maxfev=5000, apply_weights=False,
+                       use_jacobian=False, verbose=True):
             """
             Perform a exponential or a target global fits to the selected traces.
             The type of fits depends on the parameters initialized.
@@ -1208,6 +1208,9 @@ class Experiment(ExploreData):
             apply_weights: bool (default False)
                 If True and weights have been defined, this will be applied in the
                 fit (for defining weights) check the function define_weights.
+
+            verbose: bool (default True)
+                If True, every 200 iterations the X2 will be printed out
             """
             gvd_corrected = self._experiment.preprocessing.GVD_corrected
             if hasattr(self._experiment.preprocessing.report, 'derivate_data'):
@@ -1221,6 +1224,7 @@ class Experiment(ExploreData):
                                                  self._deconv, self._tau_inf,
                                                  GVD_corrected=gvd_corrected,
                                                  derivative=derivative)
+
             elif self._params_initialized == 'Target':
                 minimizer = GlobalFitTarget(self._experiment.selected_traces,
                                             self._experiment.selected_wavelength,
@@ -1235,10 +1239,22 @@ class Experiment(ExploreData):
                 minimizer.weights = self.weights
             if self.allow_stop:
                 minimizer.allow_stop = True
-            results = minimizer.global_fit(vary, maxfev, apply_weights)
+            results = minimizer.global_fit(vary_taus=vary, maxfev=maxfev,
+                                           apply_weights=apply_weights,
+                                           use_jacobian=use_jacobian,
+                                           verbose=verbose)
+
+            # indicate if the fit is singular vectors
             results.details['svd_fit'] = self._experiment._SVD_fit
+            # add selected wavelengths
             results.wavelength = self._experiment.selected_wavelength
+            # add info on the average used in the selection of traces
             results.details['avg_traces'] = self._experiment._average_selected_traces
+            # add the entire data set  and wavelengths in case the bootstrap is
+            # done on the data and not the residues
+            results.add_full_data_matrix(self._experiment.data,
+                                         self._experiment.wavelength)
+
             self._fit_number += 1
             self.fit_records.global_fits[self._fit_number] = results
             self._experiment._add_action(f'{self._params_initialized} fit performed')
@@ -1593,30 +1609,117 @@ class Experiment(ExploreData):
             else:
                 pass
 
-        def bootstrap_fit(self, fit_number, boots, size=25,
+        def bootstrap_fit(self, fit_number: int, boots: int, size=25,
                           data_from="residues", workers=2):
-            # TODO
+            """
+            Perform a bootstrap fit. It can be done to either the residues or to
+            the data.
+
+            Parameters
+            ----------
+            fit_number: int
+                Defines the fit number  that will be consider to perform the
+                bootstrap. Is the key of the results all_fit dictionary.
+
+            boots: int
+                Defines the number of data sets that will be generated from
+                either the residues or the original data.
+
+            size: int (default 25)
+                Only important if the data_from is residues, defines the
+                percentage of residues that will be shuffle.
+                can be 10, 15, 20, 25, 33 or 50. We recommend to uses 25 or 33.
+
+            data_from: valid "residues"; "fitted_data"; "full_data_matrix"
+                If "residues" data are simulated shuffling residues with the
+                model.
+
+                If "fitted_data" data are simulated from a random selection of
+                the  original fitted traces with replacement.
+
+                If "full_data_matrix" data are simulated from a random selection
+                of the original entire full data matrix with replacement.
+
+                We recommend to either use 'residues' or 'full_data_matrix'.
+
+            workers: int (default 2)
+                If workers > 1, then the calculation will be run in parallel in
+                different CPU cores.Workers define the number of CPU cores that
+                will be used. We recommend to used as maximum half of the CPU
+                cores, and up to 4 if the analysis is run in a regular computer.
+
+            """
             can_run = self._assert_boot_strap_can_run(fit_number)
             if not can_run:
                 msg = "Please perform a global fit first"
                 raise ExperimentException(msg)
+
             previous_results = self._bootstrap_previous_results(fit_number)
-            fit = self.fit_records.global_fits[fit_number]
-            boot_strap = BootStrap(fit, previous_results, workers, self.time)
-            boot_strap.generate_data_sets(boots, data_from=data_from, size=size)
-            boot_strap.fit_bootstrap()
-            self.fit_records.bootstrap_records[fit_number] = boot_strap.bootstrap_result
-            #TODO verify working fucntion
+            fit_results = self.fit_records.global_fits[fit_number]
+
+            if workers >= 2:
+                parallel_compute = True
+            elif workers == 1:
+                parallel_compute = False
+
+            boot_strap = BootStrap(fit_results,
+                                   previous_results,
+                                   workers, self._experiment.time_unit)
+
+            boot_strap.generate_datasets(boots, data_from=data_from, size=size)
+            boot_strap.fit_bootstrap(parallel_computing=parallel_compute)
+            self.fit_records.bootstrap_record[fit_number] = \
+                boot_strap.bootstrap_result
+            conf = boot_strap.confidence_interval
+            self.fit_records.conf_interval[fit_number] = conf
+            # TODO verify working fucntion
+
+        def get_result(self, fit_number=None, fit_type="global"):
+            """
+            Returns the result of a fit performed. Each type_fit has
+            independent fit_number
+
+            Parameters
+            ----------
+            fit_number: int or None
+                The fit number that will return
+
+            fit_type: valid "global", "single", "integral", "bootstrap"
+                Defines the fit that will be return if has been performed
+                For "global", "single" and "integral" an GlobalFitResult will be
+                return. This object can be pass to ExploreResults class.
+                For "bootstrap" a pandasDataFrame is return
+            """
+
+            if fit_type == "global":
+                container = self.fit_records.global_fits
+            elif fit_type == "single":
+                container = self.fit_records.integral_band_fits
+            elif fit_type == "integral":
+                container = self.fit_records.single_fits
+            elif fit_type == "bootstrap":
+                container = self.fit_records.bootstrap_record
+            if fit_number is None:
+                fit_number = max(self._fits.keys())
+            if fit_number in container.keys():
+                return container[fit_number]
+            else:
+                msg = f"Fit number {fit_number}, not in {fit_type} fit records"
+                raise ExperimentException(msg)
 
         def _bootstrap_previous_results(self, fit_number):
+            """
+            Return the results of the bootstrap for a given fit_number
+            if there are any
+            """
             if fit_number in self.fit_records.bootstrap_record.keys():
                 results = self.fit_records.bootstrap_records[fit_number]
             else:
                 results = None
             return results
 
-        def _assert_boot_strap_can_run(self, fit_number):
-            if fit_number in self.fit_records.global_fits.key():
+        def _assert_boot_strap_can_run(self, fit_number: int) -> bool:
+            if fit_number in self.fit_records.global_fits.keys():
                 can_run = True
             else:
                 can_run = False
