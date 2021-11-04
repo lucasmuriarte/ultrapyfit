@@ -1672,7 +1672,38 @@ class Experiment(ExploreData):
                 boot_strap.bootstrap_result
             conf = boot_strap.confidence_interval
             self.fit_records.conf_interval[fit_number] = conf
-            # TODO verify working fucntion
+
+        def plot_bootstrap_result(self, fit_number,  param_1,
+                                  param_2=None, kde=False):
+            """
+            Plot the bootstrap histogram of the decay times calculated
+            If param_1 and param_2 are given a correlation plot with the
+            histogram distributions is plot. If a single param is given only the
+            histogram distribution is plot.
+
+            Parameters
+            ----------
+            fit_number: int
+                Defines the fit number  that will be consider to perform the
+                bootstrap. Is the key of the results all_fit dictionary
+
+            param_1: str or int
+               name of the tau to be plotted;
+                i.e.: for first decay time --> if string: tau1, if integer: 1
+
+            param_2: str or int or None
+                name of the tau to be plotted;
+                i.e.: for third decay time --> if string: tau3, if integer: 3
+
+            kde: bool (default True)
+                Defines if the kernel density estimation is plotted.
+            """
+            previous_results = self._bootstrap_previous_results(fit_number)
+            fit_results = self.fit_records.global_fits[fit_number]
+            boot_strap = BootStrap(fit_results,
+                                   previous_results,
+                                   1, self._experiment.time_unit)
+            return boot_strap.plotBootStrapResults(param_1, param_2, kde)
 
         def get_result(self, fit_number=None, fit_type="global"):
             """
@@ -1713,7 +1744,7 @@ class Experiment(ExploreData):
             if there are any
             """
             if fit_number in self.fit_records.bootstrap_record.keys():
-                results = self.fit_records.bootstrap_records[fit_number]
+                results = self.fit_records.bootstrap_record[fit_number]
             else:
                 results = None
             return results
