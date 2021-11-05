@@ -8,7 +8,7 @@ import numpy as np
 from lmfit import Parameters
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.graphics.ExploreData import ExploreData
-from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrafast.fit.GlobalParams import GlobExpParameters, GlobalTargetParameters
 from ultrafast.fit.GlobalFitBootstrap import BootStrap
 from ultrafast.utils.ChirpCorrection import EstimationGVDPolynom, EstimationGVDSellmeier
 from ultrafast.utils.divers import define_weights, UnvariableContainer, LabBook,\
@@ -1115,8 +1115,8 @@ class Experiment(ExploreData):
                                  'tau_inf': tau_inf, 'opt_fwhm': opt_fwhm,
                                  'y0': y0}
             self._exp_no = len(taus)
-            shape = self._experiment.selected_traces.shape[1]
-            param_creator = GlobExpParameters(shape, taus)
+            number_traces = self._experiment.selected_traces.shape[1]
+            param_creator = GlobExpParameters(number_traces, taus)
             if fwhm is None:
                 self._deconv = False
                 vary_t0 = False
@@ -1139,51 +1139,17 @@ class Experiment(ExploreData):
             self._experiment._add_action(f'new {self._params_initialized} '
                                          f'parameters initialized')
 
-        def initialize_target_params(self, t0, fwhm, opt_fwhm=False, vary_t0=True,
-                                     global_t0=True, y0=None):
-            # TODO
-            pass
+        def initialize_target_params(self, t0, fwhm, k_matrix: list,
+                                     concentrations: list, opt_fwhm=False,
+                                     vary_t0=True, global_t0=True, y0=None):
+            number_traces = self._experiment.selected_traces.shape[1]
+            if fwhm is None:
+                self._deconv = False
+                vary_t0 = False
+                correction = False
+            param_creator = GlobalTargetParameters(number_traces, None)
+            param_creator.params_from_matrix(k_matrix, concentrations)
 
-        def set_init_concentrations_manually(self, concentrations):
-            # TODO check functionality and add documentation
-            if self.params is None or not self._kmatrix_manual:
-                self.params = Parameters()
-            total = sum(concentrations)
-            self._exp_no = len(concentrations)
-            for i in range(self._exp_no):
-                self.params['c_%i' % (i + 1)].set(concentrations[i] / total,
-                                                  vary=False)
-            self._init_concentrations_manual = True
-            self._params_initialized = False
-
-        def set_kmatrix_manually(self, paths):
-            # TODO check functionality and add documentation
-            # array of (source, destination, rate, vary)
-            if self.params is None or not self._init_concentrations_manual:
-                self.params = Parameters()
-            exp = [i[0] for i in paths]
-            self._exp_no = np.max(exp)
-            sources = ["" for i in range(self._exp_no)]
-            for i in paths:
-                source = i[0]
-                destination = i[1]
-                rate = i[2]
-                vary = i[3]
-                if source != destination:
-                    self.params['k_%i%i' % (destination, source)].set(rate,
-                                                                      vary=vary)
-                    sources[source - 1] += '-k_%i%i' % (destination, source)
-
-                else:
-                    # if destination == source, it means that this is the terminal component or parallel decay
-                    self.params['k_%i%i' % (destination, source)].set(-rate,
-                                                                      vary=vary)
-
-            for i in range(self._exp_no):
-                if len(sources[i]) > 0:
-                    self.params['k_%i%i' % (i + 1, i + 1)].set(expr=sources[i])
-            self._kmatrix_manual = True
-            self._params_initialized = False
 
         """
         Fitting functions

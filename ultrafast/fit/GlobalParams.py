@@ -7,6 +7,7 @@ Created on Fri Nov 13 18:48:51 2020
 from lmfit import Parameters
 import numpy as np
 from ultrafast.fit.targetmodel import Model
+from ultrafast.utils.Preprocessing import ExperimentException
 
 
 class GlobExpParameters:
@@ -53,15 +54,15 @@ class GlobExpParameters:
         for iy in range(self.number_traces):
             self.params.add_many(
                 ('y0_' + str(iy+1), 0, True, None, None, None, None),
-                ('t0_' + str(iy+1), t0, vary_t0,  None, None, None, None))
-                #SN: I chaned min for t0 to None, because zero value seems to be
-                #a mistake (sometimes it can be slightly <0 due to bad correction)
+                ('t0_' + str(iy+1), t0, vary_t0, None, None, None, None))
             
             for i in range(self.exp_no):
                 # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
                 self.params.add_many(
-                    ('pre_exp%i_' % (i+1) + str(iy+1), 0.1*10**(-i), True, None, None, None, None),
-                    ('tau%i_' % (i+1) + str(iy+1), self.taus[i], True, 0.00000001, None, None, None))
+                    ('pre_exp%i_' % (i+1) + str(iy+1), 0.1*10**(-i), True,
+                     None, None, None, None),
+                    ('tau%i_' % (i+1) + str(iy+1), self.taus[i], True,
+                     0.00000001, None, None, None))
 
     def _add_deconvolution(self, fwhm: float, opt_fwhm: bool, tau_inf=1E12):
         """
@@ -160,7 +161,7 @@ class GlobalTargetParameters:
     params: lmFit Parameters class
         contains the parameters for the fit
     """
-    def __init__(self, number_traces, model: Model):
+    def __init__(self, number_traces, model=None):
         """
         constructor function
 
@@ -172,10 +173,76 @@ class GlobalTargetParameters:
         model: Model type object
             contains model to be fitted
         """
-        self.model = model
+        self.params = None
+        self.exp_no = None
+        if model is not None:
+            try:
+                self.params_from_model(model)
+            except Exception as e:
+                model = None
+                print("WARNING: Unable to generate parameters from model;" + e)
+            finally:
+                self.model = model
+        else:
+            self.model = None
+        self.number_traces = number_traces
+
+    def params_from_matrix(self, k_matrix: list, concentrations: list):
+        """
+        Build the k_matrix manually.
+
+        Parameters
+        ----------
+        k_matrix: list of lists
+            Contains all the information of k, rates. This parameter should be a
+            list of list/tuples where every sub list should be of length and
+            with the following form: [source, destination, rate constant, vary]
+            if destination == source, parallel decay or terminal component.
+                i.e.: [1, 3, 1/0.7, True] --> component 1 gives component 3 with
+                a rate constant of 1/0.7, and this parameter can be optimized.
+
+        concentrations: list
+            a list containing the initial concentrations
+        """
+        self.params = Parameters()
+        # find number of components/species
+        sources = [i[0] for i in k_matrix]
+        self.exp_no = np.max(sources)
+        # verify length of concentrations agrees with the number of exponentials
+        if len(concentrations) != self.exp_no:
+            msg = "The number of concentrations and exponents do not match"
+            raise ExperimentException(msg)
+        else:
+            total = sum(concentrations)
+            for i in range(self.exp_no):
+                self.params.add('c_%i' % (i+1), concentrations[i]/total, False)
+        # generate params
+        for i in range(self.exp_no):
+            for ii in range(self.exp_no):
+                self.params.add('k_%i%i' % (i+1, ii+1), 0, False)
+
+        expresion = ["" for _ in range(self.exp_no)]
+        for i in k_matrix:
+            source = i[0]
+            destination = i[1]
+            rate = i[2]
+            varied = i[3]
+            if source != destination:
+                self.params['k_%i%i' % (destination, source)].set(rate,
+                                                                  vary=varied)
+                expresion[source - 1] += '-k_%i%i' % (destination, source)
+            else:
+                # if destination == source, parallel decay or terminal component
+                self.params['k_%i%i' % (destination, source)].set(-rate,
+                                                                  vary=varied)
+
+        for i in range(self.exp_no):
+            if len(expresion[i]) > 0:
+                self.params['k_%i%i' % (i + 1, i + 1)].set(expr=expresion[i])
+
+    def params_from_model(self, model: Model):
         self.params = model.genParameters()
         self.exp_no = self.params['exp_no'].value
-        self.number_traces = number_traces
 
     def adjustParams(self, t0, vary_t0=True, fwhm=0.12, opt_fwhm=False,
                      GVD_corrected=True):
@@ -243,7 +310,7 @@ class GlobalTargetParameters:
                                 0.1 * 10 ** (-i), True, None, None, None, None)
 
         for i in range(self.exp_no):
-            if (self.params['k_%i%i' % (i + 1, i + 1)].value != 0):
+            if self.params['k_%i%i' % (i + 1, i + 1)].value != 0:
                 self.params.add('tau%i_1' % (i + 1),
                                 1/self.params['k_%i%i' % (i + 1, i + 1)].value,
                                 vary=False)

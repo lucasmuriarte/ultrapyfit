@@ -5,12 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
-      <change afterPath="$PROJECT_DIR$/ultrafast/fit/targetmodel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_target_fit_using class.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_target_fit_using class.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalParams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/targetmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/old/targetmodel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/targetmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/targetmodel.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +45,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/ultrafast/fit" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../chempyspec" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
@@ -199,6 +197,7 @@
       <workItem from="1634886047749" duration="27258000" />
       <workItem from="1635359948454" duration="1144000" />
       <workItem from="1635929542781" duration="27379000" />
+      <workItem from="1636132884849" duration="3379000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>
