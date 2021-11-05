@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
+      <change afterPath="$PROJECT_DIR$/ultrafast/fit/targetmodel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/fit/exponential_target_fit_using class.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fit/exponential_target_fit_using class.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ultrafast/fit/test_GlobalParams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/targetmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/old/targetmodel.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,16 +47,18 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/ultrafast/fit" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\fit" />
+      <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\old" />
       <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\ultrafast" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\old" />
       <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\fit" />
+      <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\old" />
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\fit" />
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\graphics" />
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\utils" />

@@ -8,7 +8,7 @@ Created on Mon Nov 23 11:10:17 2020
 import unittest
 from ultrafast.fit.GlobalParams import GlobExpParameters, GlobalTargetParameters
 from parameterized import parameterized
-from ultrafast.graphics.targetmodel import Model
+from ultrafast.fit.targetmodel import Model
 
 
 taus = [8, 30, 200]

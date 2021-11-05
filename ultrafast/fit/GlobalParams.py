@@ -6,7 +6,7 @@ Created on Fri Nov 13 18:48:51 2020
 """
 from lmfit import Parameters
 import numpy as np
-from ultrafast.graphics.targetmodel import Model
+from ultrafast.fit.targetmodel import Model
 
 
 class GlobExpParameters:
