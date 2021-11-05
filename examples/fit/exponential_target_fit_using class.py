@@ -5,10 +5,10 @@ Created on Sun Jan 10 23:02:19 2021
 @author: lucas
 """
 from ultrafast.fit.GlobalFit import GlobalFitTarget
-from ultrafast.utils.divers import read_data, select_traces
+from ultrafast.utils.divers import read_data
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.fit.GlobalParams import GlobalTargetParameters
-from ultrafast.graphics.targetmodel import Model
+from ultrafast.fit.targetmodel import Model
 
 
 path = 'C:/Users/lucas/git project/ultrafast/examples/data/data for igor 3 exp.txt'
