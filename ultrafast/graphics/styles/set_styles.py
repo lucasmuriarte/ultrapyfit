@@ -160,11 +160,8 @@ def use_style(func):
                     kwargs.pop("style")
                 with plt.style.context(style):
                     res = func(*args, **kwargs)
-                    print('style applied')
             except Exception as m:
-                print(m)
-                print(1)
-                print('style not applied')
+                print('{m}, style not applied')
                 res = func(*args, **kwargs)
             finally:
                 if func_plot is not None:

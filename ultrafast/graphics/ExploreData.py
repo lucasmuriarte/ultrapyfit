@@ -247,9 +247,6 @@ class ExploreData(PlotSVD):
         include_rango_max: bool (default True)
             If True, spectra are auto-plotted in a given range the last spectrum
             plotted will be the closest to the range limit
-        figsize: tuple (default (8, 12))
-            Sets the size of the matplotlib figure
-
 
         Returns
         ----------
@@ -276,7 +273,6 @@ class ExploreData(PlotSVD):
             ax.plot(wavelength, trace, c=colors[i], label=legenda[i])
         self._format_spectra_figure(ax, cover_range)
         self._legend_spectra_figure(legend, ncol, cmap, times)
-
         return fig, ax
 
     def plot3D(self, cmap=None):
@@ -570,7 +566,7 @@ class ExploreData(PlotSVD):
                     point[np.argmin(point)] = 0
             if rango is not None and include_rango_max:
                 point[np.argmax(point)] = -1
-            print(wavelength[idx[1]])
+            # print(wavelength[idx[1]])
             return np.sort(np.array(x)[point])
         else:
             if wavelength is not None:
@@ -592,7 +588,7 @@ class ExploreData(PlotSVD):
                         point[np.argmin(point)] = 0
                 if rango is not None and include_rango_max:
                     point[np.argmax(point)] = -1
-                print(wavelength[wave_idx])
+                # print(wavelength[wave_idx])
                 return np.sort(np.array(x)[point])
             else:
                 msg = 'Wavelength is not defined'

@@ -27,7 +27,7 @@ if __name__ == '__main__':
 	# By default all spectra will be plotted 
 	# (Except if there are more than 250 which is the case here)
 	experiment.plot_spectra('auto')
-	plt.show()
+
 	# You might need to run plt.show() from here
 
 	# From the figure we observe that 8 spectra equally spaced

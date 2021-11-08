@@ -246,7 +246,6 @@ class Experiment(ExploreData, ExploreResults):
         self.shitTime = book_annotate(self.preprocessing_report)(self.shit_time)
         self._unit_formater = TimeUnitFormater(self._units['time_unit'])
     
-    
     """
     Properties and structural functions
     """
