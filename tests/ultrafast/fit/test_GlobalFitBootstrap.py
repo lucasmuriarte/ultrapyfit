@@ -2,7 +2,7 @@ import unittest
 import pickle
 from ultrafast.fit.GlobalFitBootstrap import BootStrap
 from parameterized import parameterized
-from ultrafast.fit.ExponentialFit import GlobalFitExponential
+from ultrafast.old.ExponentialFit import GlobalFitExponential
 from ultrafast.utils.Preprocessing import ExperimentException
 from copy import deepcopy
 
@@ -90,7 +90,7 @@ class TestBootStrap(unittest.TestCase):
                            [6, 10, 'data']])
     def test_generate_data_sets(self, n_boots, size, data_from):
         boot_2 = BootStrap(result)
-        data2 = boot_2.generate_data_sets(n_boots, size, data_from, True)
+        data2 = boot_2.generate_datasets(n_boots, size, data_from, True)
         self.assertEqual(data_from, boot_2.data_simulated)
         self.assertEqual(data2.shape[2], n_boots)
         if size == 'residues':
@@ -98,7 +98,7 @@ class TestBootStrap(unittest.TestCase):
 
     def test_fit_bootstrap(self):
         boot_2 = BootStrap(result)
-        boot_2.generate_data_sets(3, 25, 'data')
+        boot_2.generate_datasets(3, 25, 'data')
         boot_2.fit_bootstrap()
         for i in range(1, boot_2.bootstrap_result.shape[0]+1):
             val1 = round(boot_2.bootstrap_result['tau1 final'][i])

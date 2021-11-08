@@ -1,5 +1,5 @@
 import unittest
-from ultrafast.fit.ExponentialFit import globalfit_exponential, \
+from ultrafast.old.ExponentialFit import globalfit_exponential, \
     globalfit_gauss_exponential
 from ultrafast.utils.divers import read_data, select_traces
 import numpy as np

@@ -218,26 +218,32 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
         else:
             wavelengths = pd.Series(wavelength)
         if space == 'auto':
-            values = [i for i in range(len(wavelength))[::round(len(wavelength) / 11)]]
+            number = round(len(wavelength) / 11)
+            values = [i for i in range(len(wavelength))[::number]]
             selected_traces = values[1:]
             points = 0
         elif type(space) is int:
             if wavelength is not None:
-                wavelength_unit = 1 / ((wavelength[-1] - wavelength[0]) / len(wavelength))
-                if wavelength_unit >= 1:
-                    space = round(space * wavelength_unit)
+                wavelength_unit = (wavelength[-1] - wavelength[0]) / len(wavelength)
+                # print(wavelength_unit)
+                # if wavelength_unit >= 1:
+                #    space = round(space * wavelength_unit)
+                #    print("aa")
             first = wavelengths.iloc[0 + points]
             values = [first + space * i for i in range(len(wavelengths)) if first + space * i < wavelengths.iloc[-1]]
             selected_traces = [(wavelengths - values[i]).abs().sort_values().index[0] for i in range(len(values))]
+            # print(len(selected_traces))
         else:
             selected_traces = [np.argmin(abs(wavelengths.values - i)) for i in space]
         avoid_regions_index = []
         if avoid_regions is not None:
-            assert type(avoid_regions) is list, 'Please regions should be indicated as a list'
+            msg = 'Please regions should be indicated as a list'
+            assert type(avoid_regions) is list, msg
             if type(avoid_regions[0]) is not list:
                 avoid_regions = [avoid_regions]
             for i in avoid_regions:
-                assert len(i) == 2, 'Please indicate 2 number to declare a region'
+                msg = 'Please indicate 2 number to declare a region'
+                assert len(i) == 2, msg
                 i = sorted(i)
                 avoid_wavelength = np.where((wavelength > i[0]) & (wavelength < i[1]))[0]
                 if len(avoid_wavelength) > 0:
@@ -541,6 +547,7 @@ def book_annotate_all_methods(book=None, cls=None):
 
 def froze_it(cls):
     cls.__frozen = False
+    cls.__modified = False
 
     def frozen_setattr(self, key, value, code=None):
         """
@@ -551,11 +558,17 @@ def froze_it(cls):
         if code is not None:
             x = np.random.RandomState(code)
             val = x.randint(10000, size=1)[0]
+
         if self.__frozen and hasattr(self, key) and val != 2603:
+            if val != 1:
+                print("INCORRECT CODE: Contact creator for more information")
             print("Class {} is frozen. Cannot modified {} = {}"
                   .format(cls.__name__, key, value))
         else:
             object.__setattr__(self, key, value)
+            if val == 2603:
+                print("CORRECT CODE: Attribute modified")
+                object.__setattr__(self, '__modified', True)
 
     def init_decorator(func):
         @wraps(func)
@@ -669,6 +682,11 @@ class LabBook(object):
         actions = [i for i in self.__dict__.keys() if i not in ["name", "creation"] and i[0] != '_']
         return actions
 
+    @property
+    def protected_actions(self):
+        actions = [i for i in self.__dict__.keys() if i not in ["name", "creation"] and i[0] == '_']
+        return actions
+
     def clean(self):
         """
         Clean the LabBook except name attribute if given
@@ -719,41 +737,59 @@ class LabBook(object):
                 If True attributes that are not a list, the name and value will
                 be printed in a single line
         """
+        to_print = self.__str__(creation=creation,
+                                print_protected=print_protected,
+                                single_line=single_line)
+        print(to_print)
+
+    def __str__(self, creation=True, print_protected=False, single_line=False):
+        """
+        Allows to do print(LabBook)
+        """
+        to_print = []
         if hasattr(self, 'name'):
             name = getattr(self, 'name')
-            print(f'\t {name}')
-            print(''.join(['-' for i in range(len(name)+10)]))
+            to_print.append(f'\t {name}')
+            to_print.append(''.join(['-' for i in range(len(name) + 10)]))
         for key, value in self.__dict__.items():
-            if key != 'notes' and key != 'name' and key != 'creation' and key[0] != "_":
-                self._print_attribute(key, single_line, False)
+            if key != 'notes' and key != 'name' and key != 'creation' and \
+                    key[0] != "_":
+                to_print.append(self._print_attribute(key,
+                                                      single_line,
+                                                      False))
         if hasattr(self, 'notes'):
-            self._print_attribute('notes', False, False)
+            to_print.append(self._print_attribute('notes', False, False))
         if print_protected:
             for key, value in self.__dict__.items():
                 if key[0] == "_" and key[1] != "_":
-                    self._print_attribute(key, single_line, True)
+                    to_print.append(self._print_attribute(key,
+                                                          single_line,
+                                                          True))
         if creation:
-            self._print_attribute('creation', True, False)
+            to_print.append(self._print_attribute('creation', True, False))
+        return "\n".join(to_print)
 
     def _print_attribute(self, key, single_line=True, protected=True):
         """
         print single attribute
         """
+        to_print = []
         value = getattr(self, key)
         if protected:
             val = f'(p) {key}'
         else:
             val = ' '.join(key.split('_'))
         if type(value) == list:
-            print(f'\t {val}:')
+            to_print.append(f'\t {val}:')
             for i in value:
-                print(f'\t\t {i}')
+                to_print.append(f'\t\t {i}')
         else:
             if single_line:
-                print(f'\t {val}: {value}')
+                to_print.append(f'\t {val}: {value}')
             else:
-                print(f'\t {val}:\n\t\t {value}')
-        print('')
+                to_print.append(f'\t {val}:\n\t\t {value}')
+        to_print.append('')
+        return "\n".join(to_print)
 
 
 @froze_it
@@ -764,6 +800,10 @@ class UnvariableContainer(LabBook):
     """
     def __init__(self, **kws):
         super().__init__(**kws)
+
+    def __delattr__(self, name):
+        print(f"The class UnvariableContainer is frozen and attribute"
+              f" '{name}' cannot be deleted")
 
 
 class FiguresFormating:

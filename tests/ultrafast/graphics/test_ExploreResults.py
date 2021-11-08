@@ -50,7 +50,7 @@ class TestExploreResultsClass(unittest.TestCase):
     @parameterized.expand([[1],
                            [None]])
     def test_DAS(self, fit_number):
-        dat = result.DAS(fit_number)
+        dat = result.get_DAS(fit_number)
         row, col = dat.shape
         self.assertEqual(len(dat), len(original_taus))
         self.assertEqual(len(row), data_select.shape[1])

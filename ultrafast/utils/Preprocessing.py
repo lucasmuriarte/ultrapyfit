@@ -7,7 +7,7 @@ Created on Sun Nov 22 12:52:02 2020
 import pandas as pd
 import numpy as np
 from scipy.signal import savgol_filter as SF
-from ultrafast.utils.ChirpCorrection import ChripCorrection
+from ultrafast.old.ChirpCorrection import ChripCorrection
 
 
 class ExperimentException(Exception):
@@ -536,7 +536,6 @@ class Preprocessing:
             index = [np.argmin(abs(wavelength-i)) for i in points]
             data_corr = data*1.0
             for i in range(n_r):
-                print(i)
                 polynom = np.poly1d(np.polyfit(wavelength[index], data[i, index], order))
                 data_corr[i, :] = data[i, :] - polynom(wavelength)
             return data_corr

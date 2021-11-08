@@ -4,16 +4,19 @@ Created on Sat Mars 13 14:35:39 2021
 @author: Lucas
 """
 import numpy as np
+import re
 import lmfit
-from ultrafast.fit.ModelCreator import ModelCreator
-from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrafast.fit.jacobian import Jacobian
+from ultrafast.utils.Preprocessing import ExperimentException
+# from ultrafast.fit.GlobalParams import GlobExpParameters
 from ultrafast.utils.divers import UnvariableContainer, solve_kmatrix
 import copy
 import pickle
-from ultrafast.graphics.ExploreResults import ExploreResults
-import matplotlib.pyplot as plt
+# from ultrafast.graphics.ExploreResults import ExploreResults
+# import matplotlib.pyplot as plt
 import ctypes
 import threading
+from packaging import version
 
 
 # define a thread which takes input
@@ -79,6 +82,31 @@ class GlobalFitResult:
         for key in result.__dict__.keys():
             setattr(self, key, result.__dict__[key])
         self.details = None
+        # actually it is useful to access also methods sometimes
+        self.model_result = result
+        self.x = None
+        self.data = None
+        self.wavelength = None
+
+        # These two attributes are used in the experiment class in case the
+        # the fit is done to a selection of traces. They are later used in the
+        # bootstrap fit, in case the datasets are generated from the data and
+        # not from the residues. These data should be added after the fit is run
+        # since only the selected traces that will be fit need to be passed to
+        # the Globalfit class. The full_wavelengths contain all wavelengths and
+        # full_matrix all the traces. The x (time vector) is the same.
+        self.full_wavelengths = None
+        self.full_matrix = None
+
+    def add_full_data_matrix(self, full_matrix, full_wavelengths):
+        """
+        Add the full data matrix to the result. The full_data_matrix is not
+        needed to explore the fit results it might only be needed to do the
+        bootstrap_fit on the entire full data matrix (Check
+        Bootstrap.generate_datasets() for more info)
+        """
+        self.full_matrix = full_matrix
+        self.full_wavelengths = full_wavelengths
 
     def add_data_details(self, data, details):
         """
@@ -94,6 +122,24 @@ class GlobalFitResult:
         self.details = details
         self.details['time_constraint'] = False
 
+    def get_values(self):
+        """
+        return important values from the results object
+        """
+        params = self.params
+        data = self.data
+        x = self.x
+        svd_fit = self.details['svd_fit']
+        wavelength = self.wavelength
+        deconv = self.details['deconv']
+        tau_inf = self.details['tau_inf']
+        exp_no = self.details['exp_no']
+        derivative_space = self.details['derivative']
+        # check for type of fit done target or exponential
+        type_fit = self.details['type']
+        return x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit,\
+               type_fit, derivative_space
+
     def save(self, name):
         path = name + '.res'
         with open(path, 'wb') as file:
@@ -105,8 +151,44 @@ class GlobalFitResult:
             loaded_results = pickle.load(f)
         return loaded_results
 
+    def __str__(self):
+        _, data, _, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
+            self.get_values()
+        names = ['t0_1'] + ['tau%i_1' % (i + 1) for i in range(exp_no)]
+        print_names = ['time 0']
+        if type(deconv) == bool:
+            if deconv:
+                names = ['t0_1', 'fwhm_1'] + ['tau%i_1' % (i + 1) for i in
+                                              range(exp_no)]
+                print_names.append('fwhm')
+        print_names = print_names + ['tau %i' % i for i in range(1, exp_no + 1)]
+        to_print = [f'Global {type_fit} fit']
+        # print_resultados='\t'+',\n\t'.join([f'{name.split("_")[0]}:\t{round(params[name].value,4)}\t{params[name].vary}' for name in names])
+        to_print.append('-------------------------------------------------')
+        to_print.append('Results:\tParameter\t\tInitial value\tFinal value\t\tVary')
+        for i in range(len(names)):
+            line = [f'\t{print_names[i]}:',
+                    '{:.4f}'.format(params[names[i]].init_value),
+                    '{:.4f}'.format(params[names[i]].value),
+                    f'{params[names[i]].vary}']
+            to_print.append('\t\t' + '   \t\t'.join(line))
+        to_print.append('Details:')
+        if svd_fit:
+            trace, avg = 'Nº of singular vectors', '0'
+        else:
+            trace = 'Nº of traces'
+            avg = self.details["avg_traces"]
+        to_print.append(f'\t\t{trace}: {data.shape[1]}; average: {avg}')
+        if type_fit == 'Exponential':
+            to_print.append(f'\t\tFit with {exp_no} exponential; Deconvolution {deconv}')
+            to_print.append(f'\t\tTau inf: {tau_inf}')
+        to_print.append(f'\t\tNumber of iterations: {self.nfev}')
+        to_print.append(f'\t\tNumber of parameters optimized: {len(params)}')
+        to_print.append(f'\t\tWeights: {self.weights}')
+        return "\n".join(to_print)
 
-class GlobalFit(lmfit.Minimizer, ModelCreator):
+
+class GlobalFit(lmfit.Minimizer, Jacobian):
     def __init__(self,
                  x,
                  data,
@@ -129,6 +211,7 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         else:
             self.wavelength = np.array([i for i in
                                         range(1, self.data.shape[1] + 1)])
+        self.verbose = True
         self.params = params
         self._capture_params = []
         self.deconv = deconv
@@ -142,28 +225,53 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         self._data_ensemble = UnvariableContainer(x=x, data=data,
                                                   wavelength=self.wavelength)
         # self._progress_result = None
-        # self._allow_stop = False
         self._allow_stop = False
         self.thread = None
         self.fit_completed = False
         self._ax = None
         self._fig = None
-        ModelCreator.__init__(self, self.exp_no, self.x, self.tau_inf)
+        Jacobian.__init__(self, self.exp_no, self.x, self.tau_inf)
         lmfit.Minimizer.__init__(self, self._objective, params,
                                  nan_policy='propagate',
                                  iter_cb=self.print_progress)
 
-    def minimize(self, method='leastsq', params=None, max_nfev=None, **kws):
+    def minimize(self, method='leastsq', params=None, max_nfev=None,
+                 use_jacobian=False, **kws):
         """
         Modified minimize function to output GloablFitResult instead of
         lmfit results, except for this works identically as lmfit minimize.
         Check lmfit minimize for more information
         """
-        result = super().minimize(method=method, params=params,
-                                  max_nfev=max_nfev, **kws)
+        # pass correct parameter based on lmfit version, please modify
+        # the version cases if some problem arises with maxfev keyword
+
+        if not use_jacobian:
+            if version.parse(lmfit.__version__) >= version.parse("1.0.1"):
+                result = super().minimize(method=method, params=params,
+                                          max_nfev=max_nfev, **kws)
+            else:
+                result = super().minimize(method=method, params=params,
+                                          maxfev=max_nfev, **kws)
+        else:
+            if version.parse(lmfit.__version__) >= version.parse("1.0.1"):
+                self._prepare_jacobian(params=self.params)
+                results = self.minimize(method=method,
+                                        params=self.params,
+                                        max_nfev=max_nfev,
+                                        Dfun=self._jacobian,
+                                        col_deriv=True, **kws)
+            else:
+                self._prepare_jacobian(params=self.params)
+                results = self.minimize(method=method,
+                                        params=self.params,
+                                        maxfev=max_nfev,
+                                        Dfun=self._jacobian,
+                                        col_deriv=True, **kws)
+            
         result = GlobalFitResult(result)
         details = self._get_fit_details()
         details['maxfev'] = max_nfev
+        details['use_jacobian'] = use_jacobian
         result.add_data_details(self._data_ensemble, details)
         if not self.weights['apply']:
             result.weights = False
@@ -200,9 +308,24 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         flatten. Check lmfit for more details.
         """
         pass
+    
+    def _jacobian(self, params): 
+        """
+        The function that should implement jacobian.It should be compatible with
+        _objective method.
+        """
+        raise Exception("Not implemented _jacobian method!")
+    
+    def _prepare_jacobian(self, params):
+        """
+        Run before fit if analytical jacobian will be used. It should prepare
+        variables to speed up calculation.
+        """
+        msg = "Not implemented _prepareJacobian method!"
+        raise ExperimentException(msg)
 
-    def global_fit(self, maxfev=None, apply_weights=False, method='leastsq', 
-                   **kws):
+    def global_fit(self, maxfev=None, apply_weights=False, use_jacobian=False,
+                   method='leastsq', verbose=True, **kws):
         """
         Method to fit the data to a model. Returns a modified lmfit result
         object.
@@ -216,14 +339,24 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
             If True and weights have been defined, this will be applied in the
             fit (for defining weights) check the function define_weights.
 
+        use_jacobian: bool
+            decide if generate and apply analytic jacobian matrix
+            False will result in usage of standard numeric estimation of the
+            jacobian matrix, which is slow. assumes that jacobian function is 
+            implemented.
+
         method: default (leastsq)
             Any valid method that can be used by lmfit minimize function
+
+        verbose: bool (default True)
+            If True, every 200 iterations the X2 will be printed out
 
         kws:
             Any valid kwarg that can be used by lmfit minimize function
         """
         # if plot:
         #     self._plot = True
+        self.verbose = verbose
         self.fit_completed = False
         if not self._prefit_done:
             print('Preparing Fit')
@@ -231,6 +364,10 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
             print('Starting Fit')
         if apply_weights and len(self.weights['vector']) == len(self.x):
             self.weights['apply'] = True
+        elif apply_weights:
+            print("WARNING: weights are undefined, or need to be updated. "
+                  "There are not been applied")
+            self.weights['apply'] = False
         else:
             self.weights['apply'] = False
         self.fit_completed = False
@@ -238,9 +375,14 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
             user_stop = InputThread(self.stop_fit)
             user_stop.start()
         if maxfev is not None:
-           maxfev = int(maxfev)
-        resultados = self.minimize(method=method, params=self.params, 
-                                   max_nfev=maxfev, **kws)
+            maxfev = int(maxfev)
+
+        resultados = self.minimize(method=method,
+                                   params=self.params,
+                                   max_nfev=maxfev,
+                                   use_jacobian=use_jacobian,
+                                   **kws)
+
         if self._allow_stop:
             user_stop.stop()
             user_stop.join()
@@ -257,7 +399,7 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
 
     def _single_fit(self, params, function, i, extra_params=None):
         """
-        Generate a single residue for one trace (used by prefit)
+        Generate a single residue for one trace (used by prefit method)
         """
         if extra_params is None:
             model = function(params, i)
@@ -315,11 +457,15 @@ class GlobalFit(lmfit.Minimizer, ModelCreator):
         iterations.
         """
         get_stop = self._stop_manually
-        if self._number_it % 200 == 0:
-            print("Iteration: " + str(self._number_it) + ", chi2: " +
-                  str(sum(np.abs(resid.flatten()))))
         if get_stop:
             return True
+        else:
+            if self.verbose:
+                if self._number_it % 200 == 0:
+                    print("Iteration: " + str(self._number_it) + ", chi2: " +
+                          str(sum(np.abs(resid.flatten()))))
+            else:
+                pass
             # self._update_progress_result(params)
             # if self._plot:
             #     self.plot_progress()
@@ -492,9 +638,168 @@ class GlobalFitExponential(GlobalFit):
 
         self._number_it = self._number_it + 1
         return resid.flatten()
+    
+    def _jacobian(self, params): 
+        """
+        The function that should implement jacobian.
+        It should be compatible with _objective method.
+        Edit: NO! It shouldn't. It removed all fixed/constrained params rows,
+        and adds proper contibutions to other params if expr's are defined.
+        """
+        
+        if self.deconv:
+            params_no = len(self.recent_key_array)
+            ndata, nx = self.data.shape  # (no of taus,no of lambdas)
+            out_funcs_no = nx*self.x.shape[0]  # no of residuals
+            
+            real_params_no = params_no - self.recent_constrained_no
+            
+            # prepare space for this monstrosity
+            jacobian = np.zeros((real_params_no, out_funcs_no))
+            
+            real_param_num = 0
+            for par_i in range(params_no):
+            
+                # firstly generate matrix for all independent params
+                if self.recent_constrainted_array[par_i] is True:
+                    continue  # skip constrained or fixed params
+                    
+                resid = np.zeros((ndata, nx))
+                resid[:, self.recent_lambda_array[par_i]-1] = \
+                                        -self.recent_Dfuncs_array[par_i](params, 
+                                                 self.recent_lambda_array[par_i], 
+                                                 self.recent_tauj_array[par_i]) 
+                                        
+                # secondly, add contribution from dependent (shared) params:
+                # for now i assume that they are only simple "=other param"
+                # not expr's.
+                for par_dep_i in range(len(self.recent_dependences_array[par_i])):  
+                    par_dep = self.recent_dependences_array[par_i][par_dep_i]
+                    par_mult = self.recent_dependences_derrivs_array[par_i][par_dep_i]
+                
+                    resid[:, self.recent_lambda_array[par_dep]-1] += \
+                        -par_mult(params)*self.recent_Dfuncs_array[par_dep](params,
+                        self.recent_lambda_array[par_dep],
+                        self.recent_tauj_array[par_dep])                  
+                    
+                jacobian[real_param_num, :] = resid.flatten()
+                # note that all derrivative-jacobian methods assume that "kinetic
+                # of derrivatives" they calculate, normally contained the param
+                # by which derrivative is calculated. i mean it assumes that
+                # derrivative is, for example by the same tau or preexp that
+                # is in the given trace, not some other trace where derrivative
+                # should be obviously zero!
+       
+                real_param_num += 1           
+
+            return jacobian
+        else:
+            msg = "Error! Jacobian not implemented. Disable jacobian and " \
+                  "run optimization again."
+            raise ExperimentException(msg)
+        
+    def _prepare_jacobian(self, params):
+        """
+        Run before fit if analytical jacobian will be used. It should prepare
+        variables to speed up calculation.
+        It just makes table with correct order of keywords for param objects,
+        and functions used to calc proper derrivatives, and exp nums if
+        they are required. So _jacobian method can later smoothly iterate
+        and build while matrix without if statements.
+        """
+        self.recent_key_array = [key for key in params.keys()]
+        # not very elegant, but run once, so who cares....
+        self.recent_Dfuncs_array = []  # proper derivative funcs
+        self.recent_tauj_array = []  # numbers of corresponding tau
+        self.recent_lambda_array = []  # numbers of corresponding lambda
+        self.recent_constrainted_array = []  # if param fixed or constrained,
+        # then =True. it is because lmfit removes these, so jacobian shouldn't
+        # also contain them. so it is to mark the params to be skipped...
+        self.recent_dependences_array = \
+        [[] for i in range(len(self.recent_key_array))]
+        # lists dependencies in other params
+        # from this one. if empty list, then no dependencies anywhere. if
+        # internal list contains some indices, then they are
+        # indices of other params where it is mentioned in expr
+        self.recent_dependences_derrivs_array = \
+        [[] for i in range(len(self.recent_key_array))]
+        # structured as above list,
+        # it will have proper derivatives to multiply by, if this is not just
+        # "share variable", but some more complex expression. required for
+        # target models, but not for DAS, where only simple "shares" happen
+        
+        for key_num in range(len(self.recent_key_array)):
+            key = self.recent_key_array[key_num]
+            
+            # exclude constrained params from the matrix
+            if params[key].vary is False or params[key].expr is not None:
+                self.recent_constrainted_array.append(True)
+            else:
+                self.recent_constrainted_array.append(False)
+                
+            # if this param depends on some other param, then add proper reference
+            if params[key].expr is not None:
+                # note that i don't impement anything except simple "equals
+                # other parameter". and i set lambda func to 1
+                # more complex cases will be implemented for target fit
+                try:
+                    relative_i = self.recent_key_array.index(params[key].expr) 
+                except ValueError:
+                    msg = "Failure in param constraints, not implemented " \
+                          "case! Fix or disable jacobian!"
+                    raise ExperimentException(msg)
+                self.recent_dependences_array[relative_i].append(key_num)
+                derriv_scale = lambda params: 1
+                self.recent_dependences_derrivs_array[relative_i].append(derriv_scale)
+             
+            # associate proper functions for proper parameters
+            m = re.findall("^tau(\d+)_(\d+)$", key)
+            if len(m) > 0:  # check if this is tau param
+                self.recent_lambda_array.append(int(m[0][1]))
+                self.recent_tauj_array.append(int(m[0][0]))
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByTau)
+                continue
+            m = re.findall("^pre_exp(\d+)_(\d+)$", key)
+            if len(m) > 0:  # check if this is pre_exp param
+                self.recent_lambda_array.append(int(m[0][1]))
+                self.recent_tauj_array.append(int(m[0][0]))
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByPreExp)
+                continue
+            m = re.findall("^fwhm_(\d+)$", key)
+            if len(m) > 0:  # check if this is sigma/fhwm param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianBySigma)
+                continue       
+            m = re.findall("^yinf_(\d+)$", key)
+            if len(m) > 0:  # check if this is yinf (infinite offset) param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByYInf)
+                continue
+            m = re.findall("^y0_(\d+)$", key)
+            if len(m) > 0:  # check if this is y0 (global offset) param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByY0)
+                continue
+            m = re.findall("^t0_(\d+)$", key)
+            if len(m) > 0:  # check if this is t0 (time zero) param
+                self.recent_lambda_array.append(int(m[0][0]))
+                self.recent_tauj_array.append(None)
+                self.recent_Dfuncs_array.append(self.expNGaussDatasetJacobianByT0)
+                continue
+            # add all of them or exception will be!
+            
+            raise Exception("Some parameter found for which no derrivative is\
+                            implemented!")
+        
+        self.recent_constrained_no = sum(self.recent_constrainted_array)
+        # number of constrained params, excluded from jacobian
 
     def global_fit(self, vary_taus=True, maxfev=None, time_constraint=False,
-                   apply_weights=False, method='leastsq', **kws):
+                   apply_weights=False, use_jacobian=False,
+                   method='leastsq', verbose=True, **kws):
         """
         Method to fit the data to a model. Returns a modified lmfit result
         object.
@@ -519,9 +824,17 @@ class GlobalFitExponential(GlobalFit):
         apply_weights: bool (default False)
             If True and weights have been defined, this will be applied in the
             fit (for defining weights) check the function define_weights.
+            
+        use_jacobian: bool
+            decide if generate and apply analytic jacobian matrix
+            False will result in usage of standard numeric estimation of the
+            jacobian matrix, which is slow
 
         method: default (leastsq)
             Any valid method that can be used by lmfit minimize function
+
+        verbose: bool (default True)
+            If True, every 200 iterations the X2 will be printed out
 
         kws:
             Any valid kwarg that can be used by lmfit minimize function
@@ -532,8 +845,10 @@ class GlobalFitExponential(GlobalFit):
             self.params['tau%i_1' % (i + 1)].vary = vary_taus[i]
         if time_constraint:
             self._apply_time_constraint()
+
         result = super().global_fit(maxfev=maxfev, apply_weights=apply_weights,
-                                    method=method, **kws)
+                                    use_jacobian=use_jacobian, method=method,
+                                    verbose=verbose, **kws)
         if time_constraint:
             result.details['time_constraint'] = True
             self._unconstraint_times()
@@ -786,7 +1101,7 @@ class GlobalFitWithIRF(GlobalFit):
                          None, False, wavelength)
         self.fit_type = 'Exponential convolved'
         self.deconv = irf
-        self.weights = {'apply': True, 'vector': data[:,1],
+        self.weights = {'apply': True, 'vector': data[:, 1],
                         'range': [x[0], x[-1]],
                         'type': 'poison', 'value': None}
         self.params['t0_1'].vary = True
@@ -884,9 +1199,9 @@ class GlobalFitWithIRF(GlobalFit):
             # resid[index:, i] = data[index:, i] - function(params, i, extra_param)
             resid[:, i] = data[:, i] - function(params, i, extra_param)
             if self.weights['apply']:
-                 w = 1/np.sqrt(data[:, i])
-                 w[w == np.inf] = 0
-                 resid[:, i] = resid[:, i] * w
+                w = 1/np.sqrt(data[:, i])
+                w[w == np.inf] = 0
+                resid[:, i] = resid[:, i] * w
         return resid
 
     def _objective(self, params):

@@ -14,7 +14,7 @@ import scipy.integrate as integral
 from matplotlib.widgets import Slider
 
 
-class ExploreResults():
+class ExploreResults:
     def __init__(self, fits, **kwargs):
         units = dict({'time_unit': 'ps', 'wavelength_unit': 'nm'}, **kwargs)
         if type(fits) == dict:
@@ -160,7 +160,7 @@ class ExploreResults():
             puntos = [i for i in range(data.shape[1])]
         else:
             puntos = [min(range(len(wavelength)), key=lambda i: abs(wavelength[i] - num)) for num in selection]
-        xlabel = 'Time (' + self._units['time_unit'] + ')'
+        xlabel = f'Time ({self.time_unit})'
         if plot_residues is False:
             fig, ax = plt.subplots(figsize=(8, 6))
             ax = ['_', ax]
@@ -202,7 +202,7 @@ class ExploreResults():
         plt.subplots_adjust(left=0.145, right=0.95)
         return fig, ax
 
-    def DAS(self, number='all', fit_number=None):
+    def get_DAS(self, number='all', fit_number=None, convert_to_EAS=False):
         """
         returns an array of the Decay associated spectra. The number of rows is
         the number of species and the number of columns correspond to the
@@ -220,7 +220,11 @@ class ExploreResults():
         fit_number: int or None (default None)
             defines the fit number of the results all_fit dictionary.
             If None the last fit in  will be considered
-
+        
+        convert_to_EAS:
+            return the especies associted spectra, obtained as a linear 
+            combination of the DAS and considering a sequential model.
+            
         Returns
         ----------
         numpy 2d array
@@ -237,21 +241,25 @@ class ExploreResults():
             elif not deconv:
                 values.append([params['y0_' + str(i + 1)].value for i in
                                range(data.shape[1])])
+        das = np.array(values)
+        if convert_to_EAS:
+            das = self.das_to_eas(das, params, wavelength,
+                                  exp_no, tau_inf, deconv)
         if number != 'all':
-            assert type(number) == list, \
-                'Number should be "all" or a list containing the desired species if tau inf include -1 in the list'
-            das = self.DAS(fit_number=fit_number)
+            msg = 'Number should be "all" or a list containing the desired ' \
+                  'species if tau inf include -1 in the list'
+            assert type(number) == list, msg
             wanted = self._wanted_DAS(exp_no, number, tau_inf)
             das = das[wanted, :]
-        else:
-            das = np.array(values)
+
         return das
 
     @use_style
     def plot_DAS(self, fit_number=None, number='all', plot_offset=True,
                  precision=2, style='lmu_spec',
                  cover_range=None,
-                 plot_integrated_DAS=False):
+                 plot_integrated_DAS=False,
+                 convert_to_EAS=False):
         """
         Function that generates a figure with the decay associated spectra (DAS)
          of the fit stored in the all_fit attributes
@@ -262,13 +270,19 @@ class ExploreResults():
             defines the fit number of the results all_fit dictionary. If None
             the last fit in  will be considered.
         
-        number: list of inst or 'all'
+        number: list of inst or 'all' (default 'all')
             Defines the DAS spectra wanted, if there is tau_inf include -1 in
-            the list:
+            the list (Note we start counting by '0', thus for tau1 '0' should be
+            pass):
             e.g.: for a fit with three exponential, if the last two are wanted;
                   number = [1, 2]
             e.g.2: the last two exponential plus tau_inf; number = [1, 2, -1]
-        
+
+        plot_offset: bool (default True)
+            If True the offset of a global fit without deconvolution will be
+            plot. (Only applicable for exponential or target fit without
+            deconvolution)
+
         precision: int (default 2)
             Defines the number of decimal places of the legend legend
         
@@ -285,7 +299,11 @@ class ExploreResults():
         plot_integrated_DAS: bool (default False)
             Defines in case if data has been derivative, to directly integrate
             the DAS.
-            
+        
+        convert_to_EAS:
+            return the especies associted spectra, obtained as a linear 
+            combination of the DAS and considering a sequential model.    
+        
         Returns
         ----------
         Figure and axes matplotlib objects
@@ -293,19 +311,33 @@ class ExploreResults():
         # verify type of fit is: either fit to Singular vectors or global fit to traces
         x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
-        das = self.DAS(number=number, fit_number=fit_number)
+        das = self.get_DAS(number=number, fit_number=fit_number,
+                           convert_to_EAS=convert_to_EAS)
+
         xlabel = self._get_wave_label_res(wavelength)
         legenda = self._legend_plot_DAS(params, exp_no, deconv, tau_inf, type_fit, precision)
+
+        # check DAS that are selected and adapt the legend
         if number != 'all':
             wanted = self._wanted_DAS(exp_no, number, tau_inf)
-            # constants=' '.join([str(i.split('=')[1]) for i in legenda[:number]])
-            # print(f'WARNING! time constants of value {constants} has been used to fit')
+            # print a warning with elements not being plotted
+            select = [legenda[i] for i in wanted]
+            constants = ', '.join([i for i in legenda if i not in select])
+            msg = f'WARNING! the components: {constants}; ' \
+                  f'have been used to fit the data and are not been displayed'
+            print(msg)
             legenda = [legenda[i] for i in wanted]
+
+        # integrate the DAS in case fit is done in derivate data
         if derivative_space and plot_integrated_DAS:
-            das = np.array([integral.cumtrapz(das[i, :], wavelength, initial=0) for i in range(len(das))])
+            das = np.array([integral.cumtrapz(das[i, :], wavelength, initial=0)
+                            for i in range(len(das))])
+
         fig, ax = plt.subplots(1, figsize=(11, 6))
         n_das = das.shape[0]
+
         for i in range(n_das):
+            # if to decide if to plot the offset or not
             if i == n_das-1 and not deconv and not plot_offset:
                 pass
             else:
@@ -318,6 +350,118 @@ class ExploreResults():
         if cover_range is not None:
             FiguresFormating.cover_excitation(ax, cover_range, wavelength)
         return fig, ax
+
+    def das_to_eas(self, das, params, wavelength, n_exp, tau_inf, deconv):
+        """
+        Recalculates DAS spectra into EAS, treating y_inf as final product.
+        Replaces DAS with EAS, so one should treat this data as EAS after
+        calling this method.
+        It works with matrices and should be correct for any number of exp's.
+        """
+
+        no_of_wavelengths = wavelength.shape[0]
+        tau_inf_enabled = tau_inf  # set here if it is enabled
+        no_of_exps = int(n_exp)  # load here number of exponentials
+        # params = self.params.copy()
+        if not deconv:
+            offset = das[-1, :]
+            das = das[:-1, :]
+        eas = np.zeros(das.shape)
+        ##########
+        if tau_inf_enabled:
+            size_of_kmatrix = no_of_exps + 1
+        else:
+            size_of_kmatrix = no_of_exps
+
+
+        # build kmatrix of the sequential model
+        kmatrix = np.zeros((size_of_kmatrix, size_of_kmatrix))
+        k_values = []
+        for i in range(no_of_exps):
+            k_value = 1 / params['tau%i_' % (i + 1) + str(1)].value
+            kmatrix[i, i] = -k_value
+            if (i + 1 < size_of_kmatrix):
+                kmatrix[i + 1, i] = k_value
+            k_values.append(k_value)
+
+        # initialize initial concentration values,
+        c_initials = np.zeros(size_of_kmatrix)
+        # since it's sequential only the first is 1
+        c_initials[0] = 1.0
+
+        # now extract eigenvalues and eigenvectors, to be able to reduce kmatrix
+        # to the only-diagonal form. then we can easily differentiate and get solution
+        eigs_out, vects_out = np.linalg.eig(kmatrix)
+
+        # note that eigenvalues can come out not ordered. we want them in the
+        # same order and values as k1,k2,k3... note that the same values are
+        # obtained only if kmatrix describes sequential model. more complicated
+        # models can give different k values than these used to build kmatrix
+        if tau_inf_enabled and deconv:
+            oryginal_k_order = -np.array(k_values + [0.0])
+        else:
+            oryginal_k_order = -np.array(k_values)
+
+        ks_ordering = np.argsort(oryginal_k_order)
+        ks_reverse_ordering = np.argsort(ks_ordering)
+
+        # sort eigenthings
+        sort_ordering = np.argsort(eigs_out)
+        eigs_sorted = eigs_out[sort_ordering]
+        vects_sorted = vects_out[:, sort_ordering]
+
+        # order eigenthings like k1,k2,k3....
+        eigs = eigs_sorted[ks_reverse_ordering]
+        vects = vects_sorted[:, ks_reverse_ordering]
+
+        # then solve linear equation, where t=0 so you have
+        # eigvects_matrix*vect_of_concentrations = vect_of_initial_values
+        # by this you get coeffs which are before diagonalized exp functions
+        # print(vects.shape)
+        # print(c_initials.shape)
+        coeffs = np.linalg.solve(vects, c_initials)
+
+        # ok, now you make diagonal array with these coeffs
+        em_matrix = np.identity(coeffs.shape[0]) * np.transpose(
+            coeffs[np.newaxis])
+        # and you multiply eigenvector matrix by this. so you have:
+        # fit_of_data = eas_array * d_matrix * exp_matrix
+        # fit_of_data = das_array * exp_matrix
+        d_matrix = np.dot(vects, em_matrix)
+
+        # now you can just transpose that, and by comparison of das and sas,
+        # you can get eas values from linear equation:
+        d_t = np.transpose(d_matrix)
+        # like below, but need to do this in loop for all kinetics:
+        # EASv = np.linalg.solve(d_t, DASv)
+
+        # idea is to iterate slowly over every kinetic, and change exp-associated
+        # preexp factors into species associated preexp factors
+        for wavelength_num in range(no_of_wavelengths):
+            DASv = das[:, wavelength_num]
+            # DASv = [params[
+            #        'pre_exp%i_%i' % (i + 1, wavelength_num + 1)].value
+            #        for i in range(no_of_exps)]
+            # if tau_inf_enabled:
+            #     DASv.append(
+            #         self.params['yinf_%i' % (wavelength_num + 1)].value)
+
+
+            EASv = np.linalg.solve(d_t, np.array(DASv))
+            eas[:, wavelength_num] = EASv
+            # lets replace das with eas:
+            # for i in range(no_of_exps):
+            #    params['pre_exp%i_' % (i + 1) + str(wavelength_num + 1)].set(
+            #        value=EASv[i])
+            # if (tau_inf_enabled):
+            #    params['yinf_' + str(wavelength_num + 1)].set(
+            #        value=EASv[no_of_exps])
+        if not deconv:
+            # add offset (vertical stacking)
+            eas = np.r_[eas, [offset]]
+        return eas
+        # lets put back the params, but now pre_exps are EAS, not DAS!
+        # self.params = params
 
     def verify_fit(self, fit_number=None):
         """
@@ -336,7 +480,7 @@ class ExploreResults():
         """
         x, self._data_fit, self._wavelength_fit, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
-        xlabel = 'Time (' + self._units['time_unit'] + ')'
+        xlabel = f'Time ({self.time_unit})'
         self._fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10, 8), gridspec_kw={'height_ratios': [1, 5]})
         self._fittes = self.results(fit_number=None)
         self._x_verivefit = x * 1.0
@@ -425,7 +569,7 @@ class ExploreResults():
         if type_fit == 'Exponential':
             msg = 'This function is only available for target fit'
             raise ExperimentException(msg)
-        xlabel = 'Time (' + self._units['time_unit'] + ')'
+        xlabel = f'Time ({self.time_unit})'
         maxi_tau = -1 / params['k_%i%i' % (exp_no - 1, exp_no - 1)].value
         if maxi_tau > x[-1]:
             maxi_tau = x[-1]
@@ -465,36 +609,8 @@ class ExploreResults():
         """
         if fit_number is None:
             fit_number = max(self._fits.keys())
-        _, data, _, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
-            self._get_values(fit_number=fit_number)
-        names = ['t0_1']+['tau%i_1'%(i+1) for i in range(exp_no)]
-        print_names = ['time 0']
-        if type(deconv) == bool:
-            if deconv:
-                names = ['t0_1', 'fwhm_1']+['tau%i_1'%(i+1) for i in range(exp_no)]
-                print_names.append( 'fwhm')
-        print_names = print_names + ['tau %i' %i for i in range(1,exp_no + 1)] 
-        # print_resultados='\t'+',\n\t'.join([f'{name.split("_")[0]}:\t{round(params[name].value,4)}\t{params[name].vary}' for name in names])
-        print(f'Fit number {fit_number}: \tGlobal {type_fit} fit')
-        print('-------------------------------------------------')
-        print('Results:\tParameter\t\tInitial value\tFinal value\t\tVary')
-        for i in range(len(names)):
-            line = [f'\t{print_names[i]}:', '{:.4f}'.format(params[names[i]].init_value),
-                      '{:.4f}'.format(params[names[i]].value), f'{params[names[i]].vary}']
-            print('\t\t'+'   \t\t'.join(line))
-        print('Details:')
-        if svd_fit:
-            trace, avg = 'Nº of singular vectors', '0'
-        else:
-            trace = 'Nº of traces'
-            avg = self._fits[fit_number].details["avg_traces"]
-        print(f'\t\t{trace}: {data.shape[1]}; average: {avg}')
-        if type_fit == 'Exponential':
-            print(f'\t\tFit with {exp_no} exponential; Deconvolution {deconv}')
-            print(f'\t\tTau inf: {tau_inf}')
-        print(f'\t\tNumber of iterations: {self._fits[fit_number].nfev}')
-        print(f'\t\tNumber of parameters optimized: {len(params)}')
-        print(f'\t\tWeights: {self._fits[fit_number].weights}')
+        fit = self._fits[fit_number]
+        print(f"Fit number {fit_number}: \t" + fit.__str__())
         
     def _get_wave_label_res(self, wavelength):
         """
@@ -502,23 +618,25 @@ class ExploreResults():
         """
         if wavelength is None:
             xlabel = 'pixel'
-        elif self._units['wavelength_unit'] == 'cm-1':
+        elif self.wavelength_unit == 'cm-1':
             xlabel = 'Wavenumber (cm$^{-1}$)'
         else:
-            xlabel = f'Wavelength ({self._units["wavelength_unit"]})'
+            xlabel = f'Wavelength ({self.wavelength_unit})'
         return xlabel
 
     def _legend_plot_DAS(self, params, exp_no, deconv, tau_inf, type_fit, precision):
         """
         returns legend for plot_DAS function
         """
-        legenda = [self._unit_formater.value_formated(params['tau%i_1' % (i + 1)].value, precision)
-                   for i in range(exp_no)]
+        legenda = [self._unit_formater.value_formated(
+            params['tau%i_1' % (i + 1)].value, precision)
+            for i in range(exp_no)]
         if deconv and type_fit == 'Exponential':
             if tau_inf is None:
                 pass
             elif tau_inf != 1E+12:
-                legenda.append(self._unit_formater.value_formated(tau_inf, precision))
+                legenda.append(self._unit_formater.value_formated(tau_inf,
+                                                                  precision))
             else:
                 legenda.append(r'$\tau$ = inf')
         elif not deconv:
@@ -527,27 +645,35 @@ class ExploreResults():
 
     def _legend_plot_fit(self, data, wavelength, svd_fit, puntos):
         """
-        returns legend for plot_fit function in case the number of fits are less or equal to 10
+        returns legend for plot_fit function in case the number of fits are
+        less or equal to 10
         """
         if wavelength is None:
             wavelength = np.array([i for i in range(len(data[1]))])
         if svd_fit:
-            legend = ['_' for i in range(data.shape[1])] + ['left SV %i' % i for i in
-                                                                 range(1, data.shape[1] + 1)]
+            legend = ['_' for i in range(data.shape[1])] + \
+                     ['left SV %i' % i for i in range(1, data.shape[1] + 1)]
         elif wavelength is not None:
-            val = 'cm$^{-1}$' if self._units['wavelength_unit'] == 'cm-1' else self._units['wavelength_unit']
-            legend = ['_' for i in range(len(puntos))] + [f'{round(wavelength[i])} {val}' for i in puntos]
+            if self.wavelength_unit == 'cm-1':
+                val = 'cm$^{-1}$'
+            else:
+                val =self.wavelength_unit
+            legend = ['_' for i in range(len(puntos))] + \
+                     [f'{round(wavelength[i])} {val}' for i in puntos]
         else:
-            legend = ['_' for i in range(len(puntos))] + [f'curve {i}' for i in range(data.shape[1])]
+            legend = ['_' for i in range(len(puntos))] + \
+                     [f'curve {i}' for i in range(data.shape[1])]
         return legend
 
-    def _wanted_DAS(self, exp_no, number, tau_inf):
+    @staticmethod
+    def _wanted_DAS(exp_no, number, tau_inf):
         """
-        return a sub-array of DAS
+        return a list of numbers equivalent to the sub-array of DAS wanted.
+        Note counting starts at 0.
         """
-        posible = [i + 1 for i in range(exp_no)]
+        posible = [i for i in range(exp_no)]
         posible.append(-1)
-        wanted = [ii for ii, i in enumerate(posible) if i in number]
+        wanted = [posible[ii] for ii, i in enumerate(posible) if i in number]
         return wanted
 
     def _get_values(self, fit_number=None, verify_svd_fit=False):
@@ -556,15 +682,5 @@ class ExploreResults():
         """
         if fit_number is None:
             fit_number = max(self._fits.keys())
-        params = self._fits[fit_number].params
-        data = self._fits[fit_number].data
-        x = self._fits[fit_number].x
-        svd_fit = self._fits[fit_number].details['svd_fit']
-        wavelength = self._fits[fit_number].wavelength
-        deconv = self._fits[fit_number].details['deconv']
-        tau_inf = self._fits[fit_number].details['tau_inf']
-        exp_no = self._fits[fit_number].details['exp_no']
-        derivative_space = self._fits[fit_number].details['derivative'] #TODO 'derivative' KeyError
-        # check for type of fit done target or exponential
-        type_fit = self._fits[fit_number].details['type']
-        return x, data, wavelength, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space
+        fit = self._fits[fit_number]
+        return fit.get_values()

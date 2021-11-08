@@ -8,7 +8,7 @@ Created on Mon Nov 23 11:10:17 2020
 import unittest
 from ultrafast.fit.GlobalParams import GlobExpParameters, GlobalTargetParameters
 from parameterized import parameterized
-from ultrafast.graphics.targetmodel import Model
+from ultrafast.fit.targetmodel import Model
 
 taus = [8, 30, 200]
 n_traces = 5
@@ -51,12 +51,12 @@ class TestGlobExpParameters(unittest.TestCase):
         self.assertEqual(params.params['fwhm_1'].vary, opt_fwhm)
         self.assertEqual(params.params['fwhm_2'].expr, 'fwhm_1')
 
-    @parameterized.expand([[0, True, 0.12, False, True, 1E12],
-                           [0, False, None, True, True, None],
-                           [0, True, None, True, False, None],
-                           [0.5, True, 0.18, False, False, 1E12]])
+    @parameterized.expand([[0, True, 0.12, False, True, 1E12, None],
+                           [0, False, None, True, True, None, 0],
+                           [0, True, None, True, False, None, 5],
+                           [0.5, True, 0.18, False, False, 1E12, 10]])
     def test_adjustParams(self, t0, vary_t0, fwhm, opt_fwhm,
-                          GVD_corrected, tau_inf):
+                          GVD_corrected, tau_inf, y0):
         params = GlobExpParameters(n_traces, taus)
         params.adjustParams(t0, vary_t0, fwhm, opt_fwhm, 
                             GVD_corrected, tau_inf)

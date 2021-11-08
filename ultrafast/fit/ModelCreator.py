@@ -16,8 +16,8 @@ class ModelCreator:
     optimized. The class has several static methods that returns the
     exponential functions from the parameters pass as well as methods that
     return exponential from the parameters inside an lmfit parameters object.
-    This parameter lmfit object can be obtained from the GlobExpParameters
-    class.
+    This parameter is and lmfit object can be obtained from the
+    GlobExpParameters class.
 
     static Methods
     --------------
@@ -155,7 +155,7 @@ class ModelCreator:
         """
         return y0+sum([pre_exp*ModelCreator.expGauss(time-t0, tau, fwhm/2.35482)
                        for pre_exp, tau in values])
-    
+
     def expNGaussDataset(self, params, i):
         """
         calculate a weighted sum of exponential modified Gaussian decay
@@ -240,8 +240,8 @@ class ModelCreator:
         y0 = params['y0_%i' % (i + 1)].value
         t0 = int(params['t0_%i' % (i + 1)].value)
         # print(t0)
-        values = [[params['pre_exp%i_' % (ii + 1) + str(i + 1)].value,
-                   params['tau%i_' % (ii + 1) + str(i + 1)].value]
+        values = [[params['pre_exp%i_%i' % (ii + 1, i + 1)].value,
+                   params['tau%i_%i' % (ii + 1, i + 1)].value]
                   for ii in range(self.exp_no)]
         sum_exp = sum([pre_exp * ModelCreator.exp1(self.x, tau)
                        for pre_exp, tau in values])
@@ -323,7 +323,7 @@ class ModelCreator:
         1darray of size equal to expvects
         """
         y0 = params['y0_%i' % (i+1)].value
-        pre_exp = [params['pre_exp%i_' % (ii+1)+str(i+1)].value
+        pre_exp = [params['pre_exp%i_%i' % (ii+1, i+1)].value
                    for ii in range(self.exp_no)]
         if self.tau_inf is not None:
             yinf = params['yinf_%i' % (i+1)].value
@@ -364,7 +364,7 @@ class ModelCreator:
             deconv = False
         y0 = params['y0_%i' % (i+1)].value
         t0 = params['t0_%i' % (i+1)].value
-        pre_exp = [params['pre_exp%i_' % (ii+1)+str(i+1)].value
+        pre_exp = [params['pre_exp%i_%i' % (ii+1, i+1)].value
                    for ii in range(exp_no)]
         coeffs, eigs, eigenmatrix = cons_eigen[0], cons_eigen[1], cons_eigen[2]
         if deconv:
@@ -379,3 +379,4 @@ class ModelCreator:
                           for i in range(len(eigs))]
         return y0+sum([pre_exp[iii]*concentrations[iii]
                        for iii in range(exp_no)])
+

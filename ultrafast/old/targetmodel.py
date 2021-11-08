@@ -34,6 +34,7 @@ def isIdentifier(identifier): #check if string is valid python identifier
         return False
     return True
 
+
 class ModPopulation:
     def __init__(self, new_name):
         self.arrows = list() #list of processes associated with this population
@@ -386,12 +387,12 @@ class ModProcess:
         model.processes.pop(n3)
         
     def getsetLocation(self):
-        p1 = QtCore.QPointF(self.source.rect.time() + self.source.rect.width() / 2, self.source.rect.y() + self.source.rect.height() / 2)
-        p2 = QtCore.QPointF(self.target.rect.time() + self.target.rect.width() / 2, self.target.rect.y() + self.target.rect.height() / 2)
+        p1 = QtCore.QPointF(self.source.rect.x()+self.source.rect.width()/2, self.source.rect.y()+self.source.rect.height()/2)
+        p2 = QtCore.QPointF(self.target.rect.x()+self.target.rect.width()/2, self.target.rect.y()+self.target.rect.height()/2)
         
         diff = p2 - p1 # just make arrow shorter....
-        correction = abs(diff.time() / math.sqrt(diff.time() * diff.time() + diff.y() * diff.y())) #uzaleznij odjecie od kata...
-        to_substr = (40 * correction + 28) * diff / math.sqrt(diff.time() * diff.time() + diff.y() * diff.y())
+        correction = abs(diff.x() / math.sqrt(diff.x()*diff.x() + diff.y()*diff.y())) #uzaleznij odjecie od kata...
+        to_substr = (40 * correction + 28) * diff / math.sqrt(diff.x()*diff.x() + diff.y()*diff.y())
         p1 = p1 + to_substr
         p2 = p2 - to_substr
         
@@ -422,7 +423,7 @@ class ModProcess:
             b_p1p2 = float(self.p1.y()) - a_p1p2 * float(self.p1.x())
             
             a_point = -1 / a_p1p2 #find linear eq for point which is perpendicular to p1p2
-            b_point = float(point.y()) - a_point * float(point.time())
+            b_point = float(point.y()) - a_point * float(point.x())
             
             x_cross = (b_point - b_p1p2) / (a_p1p2 - a_point) #find crossing point
             y_cross = a_p1p2 * x_cross + b_p1p2
@@ -450,7 +451,7 @@ class ModProcess:
                     cond2 = False                 
                 
             
-            dist = math.sqrt(math.pow(float(point.time()) - x_cross, 2) + math.pow(float(point.y()) - y_cross, 2))
+            dist = math.sqrt(math.pow(float(point.x()) - x_cross,2)+math.pow(float(point.y()) - y_cross,2)) 
             if dist <= self.dist_treshold:
                 cond3 = True
             else:
@@ -498,6 +499,7 @@ class ModProcess:
         
         painter.drawLine(p2, p2 + p_arr1)
         painter.drawLine(p2, p2 + p_arr2)
+
 
 class ParamControl(QWidget):
     def __init__(self, parent, name, callback):
@@ -561,14 +563,15 @@ class ParamControl(QWidget):
         self.check_editable.setGeometry(10, 60, 100, 25)
         self.check_fixed.setGeometry(10, 85, 100, 25)
         
+        
 class ModelWindow(QWidget):
 
-    def __init__(self, model_ref, ):
+    def __init__(self, model_ref):
         super().__init__()
         self.model = model_ref
-#        self.title = 'Model Editor'
-        self.left = 100
-        self.top = 100
+        self.title = 'Model Editor'
+        self.left = 10
+        self.top = 35
         self.width = 800
         self.height = 700
         self.colors = (QtCore.Qt.black, QtCore.Qt.red, QtCore.Qt.green, QtCore.Qt.blue, QtCore.Qt.magenta, \
@@ -576,9 +579,9 @@ class ModelWindow(QWidget):
                        QtCore.Qt.darkYellow, QtCore.Qt.darkGray)  #color order
             #maybe use HSV system instead???
 
-#        self.setWindowTitle(self.title)
+        self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
-#        self.show()
+        self.show()
         
         self.mouse_position = None #mouse position from las mouse move event
         
@@ -684,7 +687,7 @@ class ModelWindow(QWidget):
 #            self.eps_table.setItem(added_row,0,tmp1)
 #            self.eps_table.setItem(added_row,1,tmp2)
         
-    def button3Func(self): #saves params to population
+    def button3Func(self): #saves epsilons to population
         #num_rows = self.eps_table.rowCount() ##in future ensure that values are not rounded during this process (dict->txt->dict)
         #new_dict = dict()
         #for row in range(num_rows):
@@ -825,7 +828,7 @@ class ModelWindow(QWidget):
             rmpen.setWidth(3)
             if self.mousepressed is r:
                 tmprect = copy.deepcopy(r.rect)
-                tmprect.setX(tmprect.time() + self.mouse_dx)
+                tmprect.setX(tmprect.x() + self.mouse_dx)
                 tmprect.setY(tmprect.y() + self.mouse_dy)
                 tmprect.setWidth(r.rect_w)
                 tmprect.setHeight(r.rect_h)  
@@ -835,7 +838,11 @@ class ModelWindow(QWidget):
                     if(r.rect.contains(self.mouse_position)): rmpen.setWidth(5)
             painter.setPen(rmpen)
             painter.drawRoundedRect(tmprect,10,10)
-            painter.drawText(tmprect.time() + marg, tmprect.y() + marg, tmprect.width() - 2 * marg, tmprect.height() - 2 * marg, QtCore.Qt.AlignCenter, r.name)
+            painter.drawText(tmprect.x()+marg, 
+                             tmprect.y()+marg, 
+                             tmprect.width()-2*marg, 
+                             tmprect.height()-2*marg,
+                             QtCore.Qt.AlignCenter, r.name)
         
         for r in self.model.processes:
             rmpen.setWidth(3)
@@ -851,13 +858,13 @@ class ModelWindow(QWidget):
         if event.type() == QtCore.QEvent.MouseMove:
             self.mouse_position = event.pos()
             if self.mousepressed != False:
-                self.mouse_dx = self.mouse_position.time() - self.ref_mouse.time()
+                self.mouse_dx = self.mouse_position.x() - self.ref_mouse.x()
                 self.mouse_dy = self.mouse_position.y() - self.ref_mouse.y()
             self.repaint()
             
         elif event.type() == QtCore.QEvent.MouseButtonRelease:
             if self.mousepressed != False:
-                self.mousepressed.rect.setX(self.mousepressed.rect.time() + self.mouse_dx)
+                self.mousepressed.rect.setX(self.mousepressed.rect.x() + self.mouse_dx)
                 self.mousepressed.rect.setY(self.mousepressed.rect.y() + self.mouse_dy)
                 self.mousepressed.rect.setWidth(self.mousepressed.rect_w)
                 self.mousepressed.rect.setHeight(self.mousepressed.rect_h)
@@ -927,10 +934,21 @@ class ModelWindow(QWidget):
                 for r in self.model.populations:
                     if r.rect.contains(event.pos()):
                         self.pop_edit = r
-                        self.label2.setText('Edit ' + r.name + ' :')
-                        self.c_edit.loadState(r.c_enabled, r.c_active, r.c_fixed, r.c)
-                        self.k_all_edit.loadState(r.k_all_enabled, r.k_all_active, r.k_all_fixed, r.k_all)                        
-                        self.tau_edit.loadState(r.tau_enabled, r.tau_active, r.tau_fixed, r.tau)                        
+                        self.label2.setText('Edit population ' + r.name + ' :')
+                        self.c_edit.loadState(r.c_enabled, 
+                                              r.c_active,
+                                              r.c_fixed, 
+                                              r.c)
+                        
+                        self.k_all_edit.loadState(r.k_all_enabled,
+                                                  r.k_all_active,
+                                                  r.k_all_fixed,
+                                                  r.k_all)    
+                        
+                        self.tau_edit.loadState(r.tau_enabled,
+                                                r.tau_active, 
+                                                r.tau_fixed,
+                                                r.tau)                        
                         #self.eps_table.setRowCount(len(r.epsilon))
                         #ct_tmp = 0
                         #for k, v in r.epsilon.items():
@@ -946,7 +964,7 @@ class ModelWindow(QWidget):
         return False
         
 class Model:
-    def __init__(self): 
+    def __init__(self):    
         self.populations = list()
         self.processes = list()
         self.psplit = False
@@ -959,12 +977,11 @@ class Model:
 
     def manualModelBuild(self):
         return ModelWindow(self)
-     
+        
     def save(self, filename):
         with open(filename, "wb") as f:
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
-
-    @staticmethod
+        
     def load(filename): #this is static method intentionally
         with open(filename, "rb") as f:
             loaded = pickle.load(f)
@@ -991,8 +1008,8 @@ class Model:
     def genParameters(self): #parameters are fixed by default, unfix some of them before fitting procedure
         self.params = lmfit.Parameters()
         #ASSUMES THAT SFs are not zero or 1!!!
-        self.params.add('exp_no', value=len(self.populations), vary = False)
-        if(len(self.populations) < 1):
+        self.params.add('exp_no', value = len(self.populations), vary = False)
+        if len(self.populations) < 1:
             raise Exception("Algorithm failure, because model is empty!") 
         
         for i in range(len(self.populations)):        
@@ -1002,14 +1019,16 @@ class Model:
         
         for i in range(len(self.populations)):
             popul = self.populations[i]
+            print(popul.name)
             source = i
-            if(len(popul.arrows) == 0):
-                self.params['k_%i%i' % (source+1,source+1)].set(-popul.k_all, vary=not(popul.k_all_fixed or popul.tau_fixed))
+            if popul.countOutgoingArrows() == 0:
+                vary = not(popul.k_all_fixed or popul.tau_fixed)
+                self.params['k_%i%i' % (source+1,source+1)].set(-popul.k_all, vary=vary)
             else:
                 #NOW YOU ARE GOING INTO BRANCH
                 k_all_fixed = False
                 total_sfs = 0.0
-                if(popul.k_all_fixed or popul.tau_fixed): #if k_all fixed then do it
+                if popul.k_all_fixed or popul.tau_fixed: #if k_all fixed then do it
                     self.params['k_%i%i' % (source+1,source+1)].set(-popul.k_all, vary=False)
                     k_all_fixed = True #name should be done not fixed, but nevermind
                     
@@ -1017,16 +1036,16 @@ class Model:
                     arr.done = False #indicator if arrow remains to be done
                     if(arr.source is popul):
                         target = self.populations.index(arr.target)
-                        if(arr.k_fixed and arr.sf_fixed and not(k_all_fixed)): #if k_all can be fixed based on arrow then do it
+                        if arr.k_fixed and arr.sf_fixed and not k_all_fixed: #if k_all can be fixed based on arrow then do it
                             self.params['k_%i%i' % (source+1,source+1)].set(expr="-"+'k_%i%i' % (target+1,source+1)+"/"+str(arr.sf))
                             self.params['k_%i%i' % (target+1,source+1)].set(arr.k, vary=False)
                             k_all_fixed = True
                             total_sfs += arr.sf
                             arr.done = True
-                        elif(arr.k_fixed): #fix all direclty fixed k's
+                        elif arr.k_fixed: #fix all direclty fixed k's
                             self.params['k_%i%i' % (target+1,source+1)].set(arr.k, vary=False)
                             arr.done = True
-                        elif(arr.sf_fixed): #set proper expression for defined sf's
+                        elif arr.sf_fixed: #set proper expression for defined sf's
                             self.params['k_%i%i' % (target+1,source+1)].set(expr="-"+'k_%i%i' % (source+1,source+1)+"*"+str(arr.sf))
                             total_sfs += arr.sf
                             arr.done = True
@@ -1114,6 +1133,11 @@ class Model:
        
 
 
+app = QApplication(sys.argv)
+model1 = Model()
+ex = model1.manualModelBuild()
+ex.show()
+app.exec_()
 
 
 

@@ -7,7 +7,8 @@
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalParams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/targetmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/targetmodel.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,33 +40,29 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
-  </component>
-  <component name="PyConsoleOptionsProvider">
-    <option name="myPythonConsoleState">
-      <console-settings>
-        <option name="useSoftWraps" value="true" />
-      </console-settings>
-    </option>
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../chempyspec" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\fit" />
+      <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\old" />
       <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\ultrafast" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\fit" />
+      <recent name="C:\Users\lucas\git project\ultrafast\ultrafast\old" />
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\fit" />
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\graphics" />
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\utils" />
-      <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\old" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.example lab_book">
+  <component name="RunManager" selected="Python.test_experiment">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="chempyspec" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -88,20 +85,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="example lab_book" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="test_experiment" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="chempyspec" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="C:\Users\lucas\Anaconda3\envs\chempyspec_env\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/ultrafast" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/example lab_book.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/ultrafast/test_experiment.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -126,13 +123,13 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.example lab_book" />
+      <item itemvalue="Python.test_experiment" />
       <item itemvalue="Python tests.Unittests in C:/Users/lucas/git project/ultrafast/test/ultrafast/tes_outils.py" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.example lab_book" />
-        <item itemvalue="Python.example lab_book" />
+        <item itemvalue="Python.test_experiment" />
+        <item itemvalue="Python.test_experiment" />
         <item itemvalue="Python tests.Unittests in C:/Users/lucas/git project/ultrafast/test/ultrafast/tes_outils.py" />
       </list>
     </recent_temporary>
@@ -185,6 +182,22 @@
       <workItem from="1624887054235" duration="580000" />
       <workItem from="1625410394337" duration="144000" />
       <workItem from="1626344827950" duration="14880000" />
+      <workItem from="1627467735531" duration="1311000" />
+      <workItem from="1630943781676" duration="112000" />
+      <workItem from="1631607140646" duration="4391000" />
+      <workItem from="1631863657490" duration="3421000" />
+      <workItem from="1632488244412" duration="1943000" />
+      <workItem from="1632732921882" duration="6488000" />
+      <workItem from="1633593462183" duration="11833000" />
+      <workItem from="1633713502633" duration="19286000" />
+      <workItem from="1634548135179" duration="3388000" />
+      <workItem from="1634551564122" duration="95000" />
+      <workItem from="1634553916349" duration="39603000" />
+      <workItem from="1634737133715" duration="11285000" />
+      <workItem from="1634886047749" duration="27258000" />
+      <workItem from="1635359948454" duration="1144000" />
+      <workItem from="1635929542781" duration="27379000" />
+      <workItem from="1636132884849" duration="3379000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>
@@ -219,7 +232,7 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/ultrafast/fit/TargetFit.py</url>
+          <url>file://$PROJECT_DIR$/ultrafast/old/TargetFit.py</url>
           <line>5</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
@@ -227,6 +240,11 @@
           <url>file://$PROJECT_DIR$/ultrafast/old/Global_Fit_class.py</url>
           <line>6</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/ultrafast/experiment.py</url>
+          <line>6</line>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
