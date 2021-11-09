@@ -1,6 +1,6 @@
 	 data description
 --------------------------
-	Data set		Nº traces	Nº spectra
+	Data set		Nï¿½ traces	Nï¿½ spectra
 	Loaded data:	 301			66
 	Current data:	 301			66
 	Selected traces: 30
@@ -28,7 +28,7 @@ Results:	Parameter		Initial value	Final value		Vary
 			tau 2:   		20.0000   		8.0000   		True
 			tau 3:   		300.0000   		30.0000   		True
 Details:
-		Nº of traces: 30; average: 1
+		Nï¿½ of traces: 30; average: 1
 		Fit with 3 exponential; Deconvolution False
 		Tau inf: None
 		Number of iterations: 1617

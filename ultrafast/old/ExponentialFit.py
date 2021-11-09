@@ -454,9 +454,9 @@ class GlobalFitExponential(lmfit.Minimizer, ModelCreator):
             #pass correct parameter based on lmfit version, please modify
             #the version cases if some problem arises with maxfev keyword
             if(version.parse(lmfit.__version__) >= version.parse("1.0.1")):
-                resultados = self.minimize(params=fit_params, max_nfev=maxfev)
+                results = self.minimize(params=fit_params, max_nfev=maxfev)
             else:
-                resultados = self.minimize(params=fit_params, maxfev=maxfev) 
+                results = self.minimize(params=fit_params, maxfev=maxfev) 
         else:
             results = self.minimize(params=fit_params)
 

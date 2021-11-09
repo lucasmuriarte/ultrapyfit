@@ -1,9 +1,9 @@
 import unittest
 from ultrafast.old.ExponentialFit import globalfit_exponential, \
     globalfit_gauss_exponential
-from ultrafast.utils.divers import read_data, select_traces
+from ultrafast.utils.divers import get_root_directory, read_data, select_traces
 import numpy as np
-
+import os
 
 def assertNearlyEqualArray(array1, array2, decimal):
     """
@@ -20,11 +20,10 @@ def assertNearlyEqualArray(array1, array2, decimal):
 
 
 class TestGlobalFitClass(unittest.TestCase):
-
     @classmethod
-    def setUpClass(self):
-        path = 'examples/data/denoised_2.csv'
-        path2 = 'examples/data/gauss_denoised.csv'
+    def setUpClass(cls):
+        path = os.path.join(get_root_directory(), 'examples/data/denoised_2.csv')
+        path2 = os.path.join(get_root_directory(), 'examples/data/gauss_denoised.csv')
 
         self.original_taus = [8, 30, 200]
 
@@ -51,7 +50,7 @@ class TestGlobalFitClass(unittest.TestCase):
 
         params_result = result.params
         final_taus = [params_result['tau1_1'].value, params_result['tau2_1'].value, params_result['tau3_1'].value]
-        self.assertTrue(assertNearlyEqualArray(self.original_taus, final_taus, 5))
+        self.assertTrue(assertNearlyEqualArray(self.original_taus, final_taus, 3))
 
 
 if __name__ == '__main__':

@@ -5,27 +5,9 @@ from ultrafast.utils.divers import read_data, select_traces
 import numpy as np
 from ultrafast.fit.ModelCreator import ModelCreator
 from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrafast.utils.divers import get_root_directory
 from copy import deepcopy
-
-
-time_simulated = np.logspace(0, 3, 150)
-
-path = 'examples/data/denoised_2.csv'
-original_taus = [8, 30, 200]
-
-time, data, wave = read_data(path, wave_is_row=True)
-data_select, wave_select = select_traces(data, wave, 'auto')
-
-
-param_generator = GlobExpParameters(10, [8, 30, 200])
-param_generator.adjustParams(0, fwhm=None)
-params = param_generator.params
-model = ModelCreator(3, time_simulated)
-data_simulated = np.zeros((150, 10))
-
-for i in range(10):
-    data_simulated[:, i] = model.expNDataset(params, i)
-
+import os
 
 def assertNearlyEqualArray(array1, array2, decimal):
     """
@@ -42,19 +24,39 @@ def assertNearlyEqualArray(array1, array2, decimal):
 
 
 class TestGlobalFit(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.time_simulated = np.logspace(0, 3, 150)
+        path = os.path.join(get_root_directory(), 'examples/data/denoised_2.csv')
+        cls.original_taus = [8, 30, 200]
+
+        cls.time, data, wave = read_data(path, wave_is_row=True)
+        cls.data_select, cls.wave_select = select_traces(data, wave, 10)
+
+
+        param_generator = GlobExpParameters(10, [8, 30, 200])
+        param_generator.adjustParams(0, fwhm=None)
+        cls.params = param_generator.params
+        model = ModelCreator(3, cls.time_simulated)
+        cls.data_simulated = np.zeros((150, 10))
+
+        for i in range(10):
+            cls.data_simulated[:, i] = model.expNDataset(cls.params, i)
+        return super().setUpClass()
+
     def test__generate_residues(self):
-        fitter = GlobalFit(time_simulated, data_simulated, 3, params)
-        res = fitter._generate_residues(fitter.expNDataset, params)
+        fitter = GlobalFit(self.time_simulated, self.data_simulated, 3, self.params)
+        res = fitter._generate_residues(fitter.expNDataset, self.params)
         self.assertTrue((res == 0).all())
         
     @parameterized.expand([[2], [7], [9]])
     def test__single_fit(self, val):
-       fitter = GlobalFit(time_simulated, data_simulated, 3, params)
-       res = fitter._single_fit(params, fitter.expNDataset, val) 
+       fitter = GlobalFit(self.time_simulated, self.data_simulated, 3, self.params)
+       res = fitter._single_fit(self.params, fitter.expNDataset, val) 
        self.assertTrue((res == 0).all())
        
     def test__get_fit_details(self):
-        fitter = GlobalFit(time_simulated, data_simulated, 3, params)
+        fitter = GlobalFit(self.time_simulated, self.data_simulated, 3, self.params)
         details = fitter._get_fit_details()
         self.assertTrue(type(details) == dict)
 
@@ -65,11 +67,10 @@ class TestContainer(unittest.TestCase):
         container.data = 1
         self.assertTrue(hasattr(container, 'data'))
 
-
-class TestGlobalFitResult(unittest.TestCase):
+class TestGlobalFitResult(TestGlobalFit):
     def test_add_data_details(self):
-        fitter = GlobalFit(time_simulated, data_simulated, 3, params)
-        results = Container(params=params)
+        fitter = GlobalFit(self.time_simulated, self.data_simulated, 3, self.params)
+        results = Container(params=self.params)
         results_test = GlobalFitResult(results)
         details = fitter._get_fit_details()
         results_test.add_data_details(fitter._data_ensemble, details)
@@ -79,40 +80,41 @@ class TestGlobalFitResult(unittest.TestCase):
         self.assertTrue(hasattr(results_test, 'details'))
         self.assertTrue(hasattr(results_test, 'params'))
 
-class TestGlobalFitExponential(unittest.TestCase):
+class TestGlobalFitExponential(TestGlobalFit):
     def test_global_fit(self):
-        params = GlobExpParameters(data_select.shape[1], [4, 40, 400])
+        params = GlobExpParameters(self.data_select.shape[1], [4, 40, 400])
         params.adjustParams(0, False, None)
         parameters = params.params
 
-        fitter = GlobalFitExponential(time, data_select, 3, parameters, False,
-                                      wavelength=wave_select)
+        fitter = GlobalFitExponential(self.time, self.data_select, 3, parameters, False,
+                                      wavelength=self.wave_select)
+                                      
         result = fitter.global_fit()
         params_result = result.params
         final_taus = [params_result['tau1_1'].value,
                       params_result['tau2_1'].value,
                       params_result['tau3_1'].value]
-        self.assertTrue(assertNearlyEqualArray(original_taus, final_taus, 7))
+        self.assertTrue(assertNearlyEqualArray(self.original_taus, final_taus, 7))
         
     def test__apply_time_constraint(self):
-        params = GlobExpParameters(data_select.shape[1], [4, 40, 400])
+        params = GlobExpParameters(self.data_select.shape[1], [4, 40, 400])
         params.adjustParams(0, False, None)
         parameters = params.params
 
-        fitter = GlobalFitExponential(time, data_select, 3, parameters, False,
-                                      wavelength=wave_select)
+        fitter = GlobalFitExponential(self.time, self.data_select, 3, parameters, False,
+                                      wavelength=self.wave_select)
         fitter._apply_time_constraint()
         params = fitter.params
         self.assertTrue(params['tau2_1'].min == params['tau1_1'].value)
         self.assertTrue(params['tau3_1'].min == params['tau2_1'].value)
         
     def test__uncontraint_times(self):
-        params = GlobExpParameters(data_select.shape[1], [4, 40, 400])
+        params = GlobExpParameters(self.data_select.shape[1], [4, 40, 400])
         params.adjustParams(0, False, None)
         parameters = params.params
 
-        fitter = GlobalFitExponential(time, data_select, 3, parameters, False,
-                                      wavelength=wave_select)
+        fitter = GlobalFitExponential(self.time, self.data_select, 3, parameters, False,
+                                      wavelength=self.wave_select)
         fitter._apply_time_constraint()
         fitter._unconstraint_times()
         params = fitter.params
@@ -120,17 +122,17 @@ class TestGlobalFitExponential(unittest.TestCase):
         self.assertTrue(params['tau3_1'].min is None)
         
     def test__objective(self):
-        fitter = GlobalFitExponential(time_simulated, data_simulated, 3,
-                                      params, False)
+        fitter = GlobalFitExponential(self.time_simulated, self.data_simulated, 3,
+                                      self.params, False)
         res = fitter._objective(fitter.params)
         self.assertTrue((res == 0).all())
 
     def test__pre_fit(self):
-        params = GlobExpParameters(data_select.shape[1], [4, 40, 400])
+        params = GlobExpParameters(self.data_select.shape[1], [4, 40, 400])
         params.adjustParams(0, False, None)
         parameters = params.params
-        fitter = GlobalFitExponential(time, data_select, 3, parameters, False,
-                                      wavelength=wave_select)
+        fitter = GlobalFitExponential(self.time, self.data_select, 3, parameters, False,
+                                      wavelength=self.wave_select)
         fitter.pre_fit()
         param = fitter.params
         for par in param:

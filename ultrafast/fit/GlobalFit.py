@@ -267,7 +267,6 @@ class GlobalFit(lmfit.Minimizer, Jacobian):
                                         maxfev=max_nfev,
                                         Dfun=self._jacobian,
                                         col_deriv=True, **kws)
-            
         result = GlobalFitResult(result)
         details = self._get_fit_details()
         details['maxfev'] = max_nfev

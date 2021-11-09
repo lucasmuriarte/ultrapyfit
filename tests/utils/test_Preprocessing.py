@@ -1,31 +1,31 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jan  5 16:00:33 2021
-
-@author: lucas
-"""
-
 import unittest
 import numpy as np
 from ultrafast.utils.Preprocessing import Preprocessing, ExperimentException
 from parameterized import parameterized
-
-data_wave = np.ones((75, 150))
-for i in range(data_wave.shape[0]):
-    data_wave[i, :] = data_wave[i, :]*i
-    
-data_time = np.ones((75, 150))
-for i in range(data_time.shape[1]):
-    data_time[:, i] = data_time[:, i]*i
-wave = np.linspace(351, 350+50, 150)
-time = np.linspace(0, 49, 75)
-
+import sys
 
 class TestPreprocessing(unittest.TestCase):
     """
     test for Preprocessing Class
     """
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.data_wave = np.ones((75, 150))
+
+        for i in range(cls.data_wave.shape[0]):
+            cls.data_wave[i,:] = cls.data_wave[i, :] * i
+            
+        cls.data_time = np.ones((75, 150))
+
+        for i in range(cls.data_time.shape[1]):
+            cls.data_time[:,i] = cls.data_time[:, i] * i
+
+        cls.wave = np.linspace(351, 350 + 50, 150)
+        cls.time = np.linspace(0, 49, 75)
+
+        return super().setUpClass()
     
+    @staticmethod
     def assertEqualArray(self, array1, array2):
         """
         returns "True" if all elements of two arrays are identical
@@ -33,6 +33,7 @@ class TestPreprocessing(unittest.TestCase):
         value = (array1 == array2).all()
         return value
     
+    @staticmethod
     def assertNearlyEqualArray(self, array1, array2, decimal):
         """ 
         returns "True" if all elements of two arrays 
@@ -55,7 +56,7 @@ class TestPreprocessing(unittest.TestCase):
         test for baseline sbtarction considering all rows of data_wave have only
         one number increassing from 0 to 74
         """
-        result = Preprocessing.baseline_substraction(data_wave, number_spec, only_one)
+        result = Preprocessing.baseline_substraction(self.data_wave, number_spec, only_one)
         exp = data_wave*0.0
         if only_one or number_spec == 0:
             resta = np.ones((1, 150))*number_spec

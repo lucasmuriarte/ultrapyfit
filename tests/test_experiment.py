@@ -8,12 +8,14 @@ from parameterized import parameterized
 import io
 import sys
 
+from ultrafast.utils.divers import get_root_directory
+
 
 class TestExperiment(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
         super(TestExperiment, self).__init__(*args, **kwargs)
-        path = '../../examples/data/exp3_data_denoised.csv'
+        path = os.path.join(get_root_directory(), 'examples/data/exp3_data_denoised.csv')
         self.path_save = os.path.abspath("my_test")
         self.path = os.path.abspath(path)
         self.experiment = Experiment.load_data(self.path, wave_is_row=True)
@@ -102,7 +104,7 @@ class TestExperiment(unittest.TestCase):
         pass
 
     def test_describe_data(self):
-        path_output = "resources/describe_data_test_output.txt"
+        path_output = os.path.join(get_root_directory(), "tests/resources/describe_data_test_output.txt")
         path_output = os.path.abspath(path_output)
         with open(path_output) as f:
             lines = f.readlines()
@@ -115,7 +117,7 @@ class TestExperiment(unittest.TestCase):
         self.assertEqual(expected_output, output)
 
     def test_print_results(self):
-        path_output = "resources/print_fit_results_test_output.txt"
+        path_output = os.path.join(get_root_directory(), "tests/resources/print_fit_results_test_output.txt")
         path_output = os.path.abspath(path_output)
         with open(path_output) as f:
             lines = f.readlines()
@@ -131,7 +133,8 @@ class TestExperiment(unittest.TestCase):
         self.assertEqual(expected_output, output)
 
     def test_general_report(self):
-        path_output = "resources/general_report_test_output.txt"
+        path_output = os.path.join(
+            get_root_directory(), "resources/general_report_test_output.txt")
         path_output = os.path.abspath(path_output)
         with open(path_output) as f:
             lines = f.readlines()
