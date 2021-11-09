@@ -220,9 +220,9 @@ class GlobalFitTargetModel(lmfit.Minimizer, ModelCreator):
                               'derivate': False,
                               'avg_traces': 'unknown'}
         if not self.weights['apply']:
-            resultados.weights = False
+            resultados._weights = False
         else:
-            resultados.weights = self.weights
+            resultados._weights = self.weights
         return resultados
 
     def _single_fit(self, params, function, i, extra_params):

@@ -183,7 +183,7 @@ class BootStrap:
         # extract parameters from the fit
         exp_no, type_fit, deconv, maxfev, tau_inf, use_jacobian = self._details()
         time_constraint = self.fit_results.details['time_constraint']
-        weight = self.fit_results.weights
+        weight = self.fit_results._weights
         method = self.fit_results.method
         if type(weight) == dict:
             apply_weight = weight['apply']
@@ -410,7 +410,7 @@ class BootStrap:
         x = resultados.x
         deconv = resultados.details['deconv']
         result_explorer = ExploreResults(resultados)
-        fittes = result_explorer.results()
+        fittes = result_explorer.get_gloabl_fit_curve_results()
         residue_set_boot = resultados.data.copy()
         for boot in range(n_boots):
             residues = 0.0 * data

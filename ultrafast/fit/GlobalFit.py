@@ -152,6 +152,9 @@ class GlobalFitResult:
         return loaded_results
 
     def __str__(self):
+        """
+        Function for printing
+        """
         _, data, _, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self.get_values()
         names = ['t0_1'] + ['tau%i_1' % (i + 1) for i in range(exp_no)]
@@ -991,7 +994,7 @@ class GlobalFitTarget(GlobalFit):
         ndata, nx = self.data.shape
         coeffs, eigs, eigenmatrix = solve_kmatrix(self.exp_no, fit_params)
         for iy in range(nx):
-            print(iy)
+            # print(iy)
             single_param = lmfit.Parameters()
             for i in range(self.exp_no):
                 single_param['pre_exp%i_' % (i + 1) + str(iy + 1)] = \
@@ -1052,17 +1055,18 @@ class GlobalFitTarget(GlobalFit):
             index = np.argmin([abs(i - t0) for i in self.x])
             values = [params['tau%i_1' % (ii + 1)].value
                       for ii in range(self.exp_no)]
-            expvects = [self.exp1(self.x - t0, tau) for tau in values]
-            resid = self._generate_residues(self.expNGaussDatasetTM, params,
-                                            (coeffs, eigs, eigenmatrix))[
-                    index:,
-                    :]
+            # expvects = [self.exp1(self.x - t0, tau) for tau in values]
+            res = self._generate_residues(self.expNGaussDatasetTM, params,
+                                          (coeffs, eigs, eigenmatrix))
+            resid = res[index:, :]
+
         self._number_it = self._number_it + 1
         return resid.flatten()
 
 
 class GlobalFitWithIRF(GlobalFit):
     """
+    WARNING: Not working properly
     Class that does a global fit using exponential models convolved with an
     instrument response function (IRF) array. A global fit evaluate the times
     from all the traces (taus are globally fitted), while the pre_exponential

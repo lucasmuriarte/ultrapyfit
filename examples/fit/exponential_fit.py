@@ -17,8 +17,8 @@ result = globalfit_exponential(time, data_select, 4, 40, 400, t0 =2)
 
 
 explorer = ExploreResults(result)
-explorer.print_results()
-explorer.plot_fit()
+explorer.print_fit_results()
+explorer.plot_global_fit()
 explorer.plot_DAS()
 
 
