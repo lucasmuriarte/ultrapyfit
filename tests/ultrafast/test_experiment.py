@@ -123,10 +123,10 @@ class TestExperiment(unittest.TestCase):
         experiment = Experiment.load_data(self.path, wave_is_row=True)
         experiment.select_traces()
         experiment.fit.initialize_exp_params(0, None, 5, 20, 300)
-        experiment.fit.global_fit()
+        experiment.fit.fit_global()
         captured_output = io.StringIO()  # Create StringIO object
         sys.stdout = captured_output  # and redirect stdout.
-        experiment.fit.print_results()  # Call function.
+        experiment.fit.print_fit_results()  # Call function.
         output = captured_output.getvalue()
         self.assertEqual(expected_output, output)
 
@@ -139,7 +139,7 @@ class TestExperiment(unittest.TestCase):
         experiment = Experiment.load_data(self.path, wave_is_row=True)
         experiment.select_traces()
         experiment.fit.initialize_exp_params(0, None, 5, 20, 300)
-        experiment.fit.global_fit()
+        experiment.fit.fit_global()
         captured_output = io.StringIO()  # Create StringIO object
         sys.stdout = captured_output  # and redirect stdout.
         experiment.general_report()  # Call function.
@@ -217,9 +217,9 @@ class TestExperiment(unittest.TestCase):
                            [[5, 30], 'exponential', 5]])
     def test_define_weights(self, rango, typo, val):
         self.experiment.fit.define_weights(rango, typo, val)
-        vec_res = self.experiment.fit.weights['vector']
-        self.assertEqual(self.experiment.fit.weights['apply'], True)
-        self.assertEqual(len(self.experiment.fit.weights), 5)
+        vec_res = self.experiment.fit._weights['vector']
+        self.assertEqual(self.experiment.fit._weights['apply'], True)
+        self.assertEqual(len(self.experiment.fit._weights), 5)
         self.assertEqual(len(vec_res), len(self.experiment.x))
 
     #                     t0, fwhm, taus, tau_inf, opt_fwhm, vary_t0, global_t0, y0
@@ -297,7 +297,7 @@ class TestExperiment(unittest.TestCase):
     def test_global_fit(self):
         self.experiment.select_traces()
         self.experiment.fit.initialize_exp_params(0, None, 5, 20, 300)
-        self.experiment.fit.global_fit()
+        self.experiment.fit.fit_global()
         recovered_times = [self.experiment.fit.params["tau1_1"].value,
                            self.experiment.fit.params["tau2_1"].value,
                            self.experiment.fit.params["tau3_1"].value]
@@ -306,7 +306,7 @@ class TestExperiment(unittest.TestCase):
         self.assertTrue(len(self.experiment.fit.fit_records.global_fits) == 1)
 
     def test_single_exp_fit(self):
-        self.experiment.fit.single_exp_fit(1480, 1, 0, None,
+        self.experiment.fit.fit_single_exp(1480, 1, 0, None,
                                            0.7, 40, plot=False)
         self.assertTrue(len(self.experiment.fit.fit_records.single_fits) == 1)
         tau1 = self.experiment.fit.fit_records.single_fits[1].params["tau1_1"]

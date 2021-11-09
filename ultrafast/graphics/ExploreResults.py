@@ -64,7 +64,7 @@ class ExploreResults:
             val = 'cm-1'
         self._units['wavelength_unit'] = val
 
-    def results(self, fit_number=None, verify_svd_fit=False):
+    def get_gloabl_fit_curve_results(self, fit_number=None, verify_svd_fit=False):
         """
         Returns a data set created from the best parameters values.
 
@@ -118,8 +118,8 @@ class ExploreResults:
         return curve_resultados
 
     @use_style
-    def plot_fit(self, fit_number=None, selection=None,
-                 plot_residues=True, style='lmu_res',):
+    def plot_global_fit(self, fit_number=None, selection=None,
+                        plot_residues=True, style='lmu_res', ):
         """
         Function that generates a figure with the results of the fit stored in
         the all_fit attributes.  If less than 10 traces are fitted or selected
@@ -167,7 +167,7 @@ class ExploreResults:
         else:
             fig, ax = plt.subplots(2, 1, sharex=True, figsize=(8, 6),
                                    gridspec_kw={'height_ratios': [1, 5]})
-        fittes = self.results(fit_number=fit_number)
+        fittes = self.get_gloabl_fit_curve_results(fit_number=fit_number)
         alpha, s = 0.80, 8
         if type(deconv) == bool:
             if deconv:
@@ -463,7 +463,7 @@ class ExploreResults:
         # lets put back the params, but now pre_exps are EAS, not DAS!
         # self.params = params
 
-    def verify_fit(self, fit_number=None):
+    def plot_verify_fit(self, fit_number=None):
         """
         Function that generates a figure with a slider to evaluate every single
         trace fitted independently.
@@ -482,7 +482,7 @@ class ExploreResults:
             self._get_values(fit_number=fit_number)
         xlabel = f'Time ({self.time_unit})'
         self._fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10, 8), gridspec_kw={'height_ratios': [1, 5]})
-        self._fittes = self.results(fit_number=None)
+        self._fittes = self.get_gloabl_fit_curve_results(fit_number=None)
         self._x_verivefit = x * 1.0
         if type(deconv) == bool:
             if not deconv:
@@ -597,7 +597,7 @@ class ExploreResults:
         plt.xlim(-3, round(maxi_tau * 7))
         return fig, ax
     
-    def print_results(self, fit_number=None):
+    def print_fit_results(self, fit_number=None):
         """
         Print out a summarize result of the fit.
         
@@ -629,7 +629,7 @@ class ExploreResults:
         returns legend for plot_DAS function
         """
         legenda = [self._unit_formater.value_formated(
-            params['tau%i_1' % (i + 1)].value, precision)
+            abs(params['tau%i_1' % (i + 1)].value), precision)
             for i in range(exp_no)]
         if deconv and type_fit == 'Exponential':
             if tau_inf is None:

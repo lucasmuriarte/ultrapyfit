@@ -8,7 +8,7 @@ import keyword
 import copy
 import math
 import pickle
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 # from kineticdata import Experiment
 
@@ -40,7 +40,7 @@ class ModPopulation:
         self.color = QtCore.Qt.black
         self.rect_w = 120
         self.rect_h = 40
-        self.rect = QtCore.QRect(150, 20, self.rect_w, self.rect_h)
+        self.rect = QtCore.QRect(250, 50, self.rect_w, self.rect_h)
         
         self.c = 0
         self.k_all = 1  # both used depending on mode selected
@@ -354,8 +354,8 @@ class ModPopulation:
             
             
 class ModProcess:
-    def __init__(self, new_name, pop_source, pop_target):
-        self.name = new_name  # name of the process
+    def __init__(self, pop_source, pop_target):
+        self.name = f"{pop_source.name}_to_{pop_target.name}"  # name of the process
         self.source = pop_source  # initialize yourself with both neighbour populations
         self.target = pop_target
         self.source.arrows.append(self)  # initialize neighbour populations with yourself
@@ -525,7 +525,7 @@ class ModProcess:
         path = QtGui.QPainterPath(p1)
         
         for i in range(1, iters+1):
-            path.lineTo(p1 + unit_vect * i + perp_vect * math.sin(i * math.pi / iters) * math.sin(i * 1))
+            path.lineTo(p1 + unit_vect * i + perp_vect * math.sin(i * math.pi/iters) * math.sin(i * 1))
         
         path.lineTo(p2)
         painter.drawPath(path)
@@ -562,12 +562,18 @@ class ParamControl(QWidget):
         self.check_editable.clicked.connect(callback)
         self.check_fixed.clicked.connect(callback)
         self.text.editingFinished.connect(callback)
+        self.layout = QVBoxLayout(self)
+        self.layout.setAlignment(QtCore.Qt.AlignTop)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.text)
+        self.layout.addWidget(self.check_editable)
+        self.layout.addWidget(self.check_fixed)
         
         self.setActive(False)
         self.setEnabled(False)
         
     def loadState(self, enabled, active, fixed, value):
-        self.text.setText("%.9f" % value)
+        self.text.setText("%.6f" % value)
         self.setActive(active)
         self.setEnabled(enabled)
         self.check_fixed.setChecked(fixed)
@@ -602,24 +608,92 @@ class ParamControl(QWidget):
                 self.check_fixed.setEnabled(False)
                 self.text.setEnabled(False)  
                 self.isactive = False
-        
-    def paintEvent(self, event):
-        self.label.setGeometry(10, 0, 100, 25)
-        self.text.setGeometry(10, 30, 100, 25)
-        self.check_editable.setGeometry(10, 60, 100, 25)
-        self.check_fixed.setGeometry(10, 85, 100, 25)
-        
-        
+
+
+class VLayout(QVBoxLayout):
+    def __init__(self, parent=None):
+        super(VLayout, self).__init__(parent)
+        self.added_widgets = []
+
+    def addSeveralWidgets(self, lista):
+        for i in lista:
+            if type(i) is list:
+                self.addWidget(i[0], *i[1:])
+            else:
+                self.addWidget(i)
+
+    def addWidget(self, a0, *args):
+        super().addWidget(a0, *args)
+        self.added_widgets.append(a0)
+
+    def hide_all(self):
+        for i in self.added_widgets:
+            i.setVisible(False)
+
+    def show_all(self):
+        for i in self.added_widgets:
+            i.show()
+
+
 class ModelWindow(QWidget):
 
-    def __init__(self, model_ref):
-        super().__init__()
-        self.model = model_ref
+    def __init__(self, model_ref=None, call_back=None, app=None, parent=None):
+        super().__init__(parent)
+        self.app = app
+        if model_ref is None:
+            self.model = Model()
+        else:
+            self.model = model_ref
+        self.call_back = call_back
         self.title = 'Model Editor'
         self.left = 10
         self.top = 35
         self.width = 800
         self.height = 700
+        self.layout = VLayout(self)
+        # self._bottom = QtWidgets.QSplitter(QtCore.Qt.Vertical)
+        self._middle = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
+        self._middle.splitterMoved.connect(self.splitterMoved)
+        self._middle.setStretchFactor(0, 1)
+        self._middle.show()
+        self.layout.addWidget(self._middle)
+        # self.layout.addWidget(self._bottom)
+        # self._bottom.addWidget(self._middle)
+        # self._bottom.setStretchFactor(0, 1)
+        msg ="Generate parameters and close"
+        bottom_layout = QHBoxLayout(self)
+        bottom_layout.setContentsMargins(500, 0, 0, 0)
+        self.layout.addLayout(bottom_layout)
+        self.generate_params_button = QtWidgets.QPushButton(msg, self)
+        self.generate_params_button.setMaximumHeight(35)
+        self.close_button = QtWidgets.QPushButton("Close window", self)
+        self.close_button.setMaximumHeight(35)
+        self.load_model = QtWidgets.QPushButton("Load model", self)
+        self.load_model.setMaximumHeight(35)
+        self.Save_model = QtWidgets.QPushButton("Save model", self)
+        self.Save_model.setMaximumHeight(35)
+        bottom_layout.addWidget(self.Save_model)
+        bottom_layout.addWidget(self.load_model)
+        bottom_layout.addWidget(self.close_button)
+        bottom_layout.addWidget(self.generate_params_button)
+        self.close_button.clicked.connect(self.close)
+        self.generate_params_button.clicked.connect(self.genParametersAndClose)
+        self.load_model.clicked.connect(self.loadModel)
+        self.Save_model.clicked.connect(self.saveModel)
+        # TODO conect close load/save model and generate parameters
+
+        self.main_widget = QtWidgets.QFrame(self)
+        self.main_widget.setMinimumWidth(180)
+        self.main_widget.setLayout(VLayout(self))
+        self.main_widget.layout().setAlignment(QtCore.Qt.AlignTop)
+        self.paint_widget = QtWidgets.QGroupBox("Designed model")
+        self.paint_widget.setMinimumWidth(400)
+        self.paint_widget.setStyleSheet("border:2px solid %s" % "blue")
+        # self.paint_widget.setStyleSheet("background-color: %s" % 'darkGray')
+#        p = self.paint_widget.palette()
+#        p.setColor(self.paint_widget.backgroundRole(), QtCore.Qt.red)
+#        self.paint_widget.show()
+#        self.paint_widget.setPalette(p)
 
         # color order maybe use HSV system instead???
         self.colors = (QtCore.Qt.black, QtCore.Qt.red,
@@ -632,29 +706,36 @@ class ModelWindow(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.show()
-        
+
         self.mouse_position = None  # mouse position from las mouse move event
-        
+
         # Create some widgets to be placed inside
-        self.label1 = QtWidgets.QLabel('Population name:', self)
-        self.text1 = QtWidgets.QLineEdit('', self)
-        self.button1 = QtWidgets.QPushButton('Add population', self)
-        self.button1.clicked.connect(self.button1Func)
-        self.label5 = QtWidgets.QLabel('Process name:', self)
-        self.text5 = QtWidgets.QLineEdit('', self)
-        # self.select_process = QtWidgets.QComboBox(self)
-        # self.select_process.addItem("Thermal")
-        # self.select_process.addItem("Light activated")
-        self.button5 = QtWidgets.QPushButton('Add process', self)
-        self.button5.clicked.connect(self.button5Func)
+        self.label1 = QtWidgets.QLabel('Population name:', self.main_widget)
+        self.text1 = QtWidgets.QLineEdit('', self.main_widget)
+        self.add_population_button = QtWidgets.QPushButton('Add population',
+                                                           self.main_widget)
+        self.add_population_button.clicked.connect(self.button1Func)
+        self.add_process_button = QtWidgets.QPushButton('Add process',
+                                                        self.main_widget)
+        self.add_process_button.clicked.connect(self.add_process_function)
+        self.label2 = QtWidgets.QLabel('', self.main_widget)
+
+        self.main_widget.layout().addWidget(self.label1)
+        self.main_widget.layout().addWidget(self.text1)
+        self.main_widget.layout().addWidget(self.add_population_button)
+        self.main_widget.layout().addWidget(self.add_process_button)
+        self.main_widget.layout().addWidget(self.label2)
+        self.main_widget.show()
+        self._middle.addWidget(self.main_widget)
+        self._middle.addWidget(self.paint_widget)
+        self._middle.setCollapsible(1, False)
+
         self.label1.show()
         self.text1.show()
-        self.button1.show()
-        self.label5.show()
-        self.text5.show()
-        # self.select_process.show()
-        self.button5.show()        
+        self.add_population_button.show()
+        self.add_process_button.show()
 
+        # install the event filter
         self.installEventFilter(self)
         self.setMouseTracking(True)
 
@@ -662,45 +743,118 @@ class ModelWindow(QWidget):
         self.mouse_dx = 0  # markers of relative mouse move from the moment of click
         self.mouse_dy = 0
         self.ref_mouse = QtCore.QPoint(0, 0)  # marker of mouse position when population was clicked
-        
+
         self.pop_edit = False  # to edit populatiions
-        self.label2 = QtWidgets.QLabel('', self)
 
-        self.button3 = QtWidgets.QPushButton('Done!', self)
-        self.button3.clicked.connect(self.button3Func)
-        self.button31 = QtWidgets.QPushButton('Delete', self)
-        self.button31.clicked.connect(self.button31Func)    
-        
-        self.c_edit = ParamControl(self, "Initial population",
+        #Population widgets
+        self.population_widget = QtWidgets.QFrame(self)
+        self.population_layout = VLayout(self)
+        self.population_widget.setLayout(self.population_layout)
+        self.population_widget.layout().setAlignment(QtCore.Qt.AlignTop)
+
+        self.button3 = QtWidgets.QPushButton('Done!', self.population_widget)
+        self.button3.clicked.connect(self.population_done)
+        self.button31 = QtWidgets.QPushButton('Delete', self.population_widget)
+        self.button31.clicked.connect(self.button31Func)
+
+        self.c_edit = ParamControl(self.population_widget, "Initial population",
                                    self.populationEditFunc)
-        self.tau_edit = ParamControl(self, "Time constant",
+        self.tau_edit = ParamControl(self.population_widget, "Time constant",
                                      self.populationEditFunc)
-        self.k_all_edit = ParamControl(self, "Rate constant",
+        self.k_all_edit = ParamControl(self.population_widget, "Rate constant",
                                        self.populationEditFunc)
-        
-        self.proc_edit = False  # to edit processes
-        # self.text_proc = QtWidgets.QLineEdit('', self)
-        self.button4 = QtWidgets.QPushButton('Done!', self)
-        self.button4.clicked.connect(self.button4Func)
-        self.button41 = QtWidgets.QPushButton('Delete!', self)
-        self.button41.clicked.connect(self.button41Func)
+        self.population_widget.layout().addWidget(self.c_edit)
+        self.population_widget.layout().addWidget(self.tau_edit)
+        self.population_widget.layout().addWidget(self.k_all_edit)
+        self.population_widget.layout().addWidget(self.button3)
+        self.population_widget.layout().addWidget(self.button31)
+        self.main_widget.layout().addWidget(self.population_widget)
 
-        self.k_edit = ParamControl(self, "Rate constant",
+        # process widgets
+        self.proc_edit = False  # to edit processes
+        self.process_widget = QtWidgets.QFrame(self)
+        self.process_layout = VLayout(self)
+        self.process_widget.setLayout(self.process_layout)
+        self.process_widget.layout().setAlignment(QtCore.Qt.AlignTop)
+        self.process_done_button = QtWidgets.QPushButton('Done!',
+                                                         self.process_widget)
+        self.process_done_button.clicked.connect(self.process_done)
+        self.delete_process_button = QtWidgets.QPushButton('Delete!',
+                                                           self.process_widget)
+        self.delete_process_button.clicked.connect(self.delete_process)
+
+        self.k_edit = ParamControl(self.process_widget, "Rate constant",
                                    self.processEditFunc)
-        self.sf_edit = ParamControl(self, "Splitting factor",
+        self.sf_edit = ParamControl(self.process_widget, "Splitting factor",
                                     self.processEditFunc)
+
+        self.process_widget.layout().addWidget(self.k_edit)
+        self.process_widget.layout().addWidget(self.sf_edit)
+        self.process_widget.layout().addWidget(self.process_done_button)
+        self.process_widget.layout().addWidget(self.delete_process_button)
+        self.main_widget.layout().addWidget(self.process_widget)
+
         # self.sf_edit.text.setValidator(QtGui.QDoubleValidator(0, 1, 9,self.sf_edit.text)) #TODO
         # TODO: add validators so sf can be higher than 0 and lower than 1 (or 1 if only one arrow), and k can be only below k_all?
-        
+
         self.process_adding = False  # indicates that process arrow is being added (select populations)
-        
+
+    def splitterMoved(self):
+        for population in self.model.populations:
+            minimum_x = self.paint_widget.pos().x()
+            if population.rect.x() - 60 < minimum_x:
+                population.rect.setX(minimum_x + 60)
+                population.rect.setWidth(population.rect_w)
+                self.repaint()
+
+    def loadModel(self):
+        try:
+            path = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                         'Load kinetic model',
+                                                         'c:\\',
+                                                         "files (*.model)")
+            self.model = Model.load(path[0])
+            self.repaint()
+        except Exception as e:
+            error_dialog = QtWidgets.QMessageBox(self)
+            error_dialog.setText(f'Unable to load the model, the'
+                                 f' following error occur: \n{e}')
+            error_dialog.exec()
+
+    def saveModel(self):
+        try:
+            save_file_name = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                                   'Save Model',
+                                                                   'Model')
+            name = save_file_name[0].rsplit(".", 1)[0]+".model"
+            self.model.save(name)
+            print('Model saved')
+        except Exception as e:
+            error_dialog = QtWidgets.QMessageBox(self)
+            error_dialog.setText(f'Unable to save the model, the'
+                                 f' following error occur: \n{e}')
+            error_dialog.exec()
+
+    def genParametersAndClose(self):
+        try:
+            self.model.genParameters()
+            print('Model created')
+            if self.call_back is not None:
+                self.call_back()
+            self.close()
+        except Exception as e:
+            error_dialog = QtWidgets.QMessageBox(self)
+            error_dialog.setText(f'Unable to generate parameters, the'
+                                 f' following error occur: \n{e}')
+            error_dialog.exec()
+
     def populationEditFunc(self):
         if type(self.pop_edit) != bool:
             self.pop_edit.updateState(self.c_edit,
                                       self.tau_edit,
                                       self.k_all_edit)
-        
-    def processEditFunc(self):   
+
+    def processEditFunc(self):
         if type(self.proc_edit) != bool:
             self.proc_edit.updateState(self.k_edit, self.sf_edit)
 
@@ -709,15 +863,15 @@ class ModelWindow(QWidget):
         for elem in self.model.populations:
             if elem.name == self.text1.text():
                 found = True
-                
+
         for elem in self.model.processes:
             if elem.name == self.text1.text():
                 found = True
-                
+
         if not(isIdentifier(self.text1.text())):  # it has to be a valid python id
             found = True
-            
-        if found == False and len(self.text1.text()) > 0:
+
+        if not found and len(self.text1.text()) > 0:
             tmp_pop = ModPopulation(self.text1.text())
             tmp_pop.color = self.colors[random.randint(0, len(self.colors)-1)]
             if len(self.model.populations) == 0:
@@ -726,47 +880,34 @@ class ModelWindow(QWidget):
             tmp_pop.enableDisableKs()
             self.text1.setText('')
             self.repaint()
-        
-    def button3Func(self):
+
+    def population_done(self):
         self.pop_edit = False
         self.repaint()
-        
+
     def button31Func(self):  # deletes population if possible
         if len(self.pop_edit.arrows) == 0:
             self.pop_edit.remove(self.model)
             self.pop_edit = False
         self.repaint()
-    
-    def button4Func(self):  # finished mały miejski ul pszczołyedition of process
+
+    def process_done(self):  # finished mały miejski ul pszczołyedition of process
         # if self.isStrNumber(self.text_proc.text()):
             # self.proc_edit.k = float(self.text_proc.text())
         self.proc_edit = False
             # self.text_proc.setText('')
         self.repaint()
-            
-    def button41Func(self):  # deletes arrow
+
+    def delete_process(self):  # deletes arrow
         self.proc_edit.remove(self.model)
         self.proc_edit = False
         # self.text_proc.setText('')
         self.repaint()
-            
-    def button5Func(self):  # process and starts selection of connected populations
-        found = False  # ensure that new name is unique
-        for elem in self.model.processes:
-            if elem.name == self.text5.text():
-                found = True
-            
-        for elem in self.model.populations:
-            if elem.name == self.text5.text():
-                found = True
-                
-        if not(isIdentifier(self.text5.text())):  # it has to be a valid python id
-            found = True
-            
-        if found == False and len(self.text5.text()) > 0:
-            self.process_adding = True
-            self.repaint()
-            
+
+    def add_process_function(self):  # process and starts selection of connected populations
+        self.process_adding = True
+        self.repaint()
+
     def countArrows(self, population1, population2):  # gives numer of the existing arrows between populations, and True if some k arrow already exist
         arrows = 0
         for arr in population1.arrows:
@@ -775,88 +916,53 @@ class ModelWindow(QWidget):
             if condition1 or condition2:
                 arrows += 1
         return arrows
-        
+
     def isStrNumber(self, s):
         try:
             float(s)
             return True
         except ValueError:
-            return False    
-        
-    def paintEvent(self, event):
-        self.label1.setGeometry(10, 10, 100, 25)  # standard gui configuration
-        self.text1.setGeometry(10, 40, 100, 25)
-        self.button1.setGeometry(10, 70, 100, 30)
-        self.label5.setGeometry(10, 10+100, 100, 25)
-        self.text5.setGeometry(10, 40+100, 100, 25)
-        # self.select_process.setGeometry(10, 70+100, 100, 25)
-        self.button5.setGeometry(10, 70+100, 100, 30)        
-        self.label2.setGeometry(10, 100+120, 100, 25)
-        # self.eps_table.setGeometry(10, 130+150, 100, 200)
-        # self.button2.setGeometry(10, 350+150, 50, 28)
-        # self.text_proc.setGeometry(10, 130+150, 100, 25)
-        
-        self.c_edit.setGeometry(0, 250, 110, 110)
-        self.tau_edit.setGeometry(0, 250+110, 110, 110)
-        self.k_all_edit.setGeometry(0, 250+110+110, 110, 110)   
-        self.button3.setGeometry(10, 250+110+110+110, 100, 30)
-        self.button31.setGeometry(10, 250+110+110+110+30, 100, 30)        
+            return False
 
-        self.k_edit.setGeometry(0, 250, 110, 110)
-        self.sf_edit.setGeometry(0, 250+110, 110, 110)   
-        self.button4.setGeometry(10, 250+110+110, 100, 30)
-        self.button41.setGeometry(10, 250+110+110+30, 100, 30)
-        
+    def paintEvent(self, event):
         if self.pop_edit == False:  # population edit menu
+            self.population_layout.hide_all()
             self.label2.setVisible(False)
-            # self.eps_table.setVisible(False)
-            # self.button2.setVisible(False)
-            self.button3.setVisible(False)
-            self.button31.setVisible(False)
-            self.c_edit.setVisible(False)
-            self.tau_edit.setVisible(False)
-            self.k_all_edit.setVisible(False) 
+
         else:
             self.label2.show()
-            # self.eps_table.show()
-            # self.button2.show()
-            self.button3.show()
-            self.button31.show()
-            self.c_edit.show()
-            self.tau_edit.show()
-            self.k_all_edit.show()
-            
+            self.population_layout.show_all()
+
         if self.proc_edit == False:
-            self.button4.setVisible(False)
-            self.button41.setVisible(False)
-            # self.text_proc.setVisible(False)
-            self.k_edit.setVisible(False)
-            self.sf_edit.setVisible(False)
+            # check proc_edit is On or Off
+            if self.pop_edit == False:
+                self.label2.setVisible(False)
+            else:
+                self.label2.show()
+            self.process_layout.hide_all()
+
         else:
-            self.button4.show()
-            self.button41.show()
-            # self.text_proc.show()
             self.label2.show()
-            self.k_edit.show()
-            self.sf_edit.show()
-            
+            self.process_layout.show_all()
+
         if self.process_adding != False:
-            self.button5.setText("Select boxes!")
-        else: self.button5.setText("Add process")
-        
+            self.add_process_button.setText("Select boxes!")
+        else:
+            self.add_process_button.setText("Add process")
+
         painter = QtGui.QPainter(self)
         painter.begin(self)
-        
+
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
         # painter.setWorldMatrixEnabled(False)
-        
+
         rmpen = QtGui.QPen()
         rmpen.setWidth(3)
         # colorum = QtCore.Qt.red
         # if self.process_adding != False:
         #     colorum = QtCore.Qt.yellow
         marg = 5
-        
+
         for r in self.model.populations:  # should also call paintYourself function of the population, just like in case of processss
             rmpen.setBrush(r.color)
             rmpen.setWidth(3)
@@ -865,20 +971,20 @@ class ModelWindow(QWidget):
                 tmprect.setX(tmprect.x() + self.mouse_dx)
                 tmprect.setY(tmprect.y() + self.mouse_dy)
                 tmprect.setWidth(r.rect_w)
-                tmprect.setHeight(r.rect_h)  
+                tmprect.setHeight(r.rect_h)
             else:
-                tmprect = r.rect  
+                tmprect = r.rect
                 if self.mouse_position is not None:
                     if r.rect.contains(self.mouse_position):
                         rmpen.setWidth(5)
             painter.setPen(rmpen)
             painter.drawRoundedRect(tmprect, 10, 10)
-            painter.drawText(tmprect.x()+marg, 
-                             tmprect.y()+marg, 
-                             tmprect.width()-2*marg, 
+            painter.drawText(tmprect.x()+marg,
+                             tmprect.y()+marg,
+                             tmprect.width()-2*marg,
                              tmprect.height()-2*marg,
                              QtCore.Qt.AlignCenter, r.name)
-        
+
         for r in self.model.processes:
             rmpen.setWidth(3)
             rmpen.setBrush(r.color)
@@ -889,15 +995,37 @@ class ModelWindow(QWidget):
             r.paintYourself(painter)
 
         painter.end()
-        
+
     def eventFilter(self, obj, event):
         if event.type() == QtCore.QEvent.MouseMove:
             self.mouse_position = event.pos()
             if self.mousepressed != False:
-                self.mouse_dx = self.mouse_position.x() - self.ref_mouse.x()
-                self.mouse_dy = self.mouse_position.y() - self.ref_mouse.y()
+
+                # control of X position dont go out of window
+                small = self.mouse_position.x() > self.paint_widget.pos().x()+40
+                size = self.paint_widget.width() + self.paint_widget.pos().x()
+                big = self.mouse_position.x() < size
+                if small and big:
+                    self.mouse_dx = self.mouse_position.x() - self.ref_mouse.x()
+                else:
+                    if big:
+                        self.mouse_dx = self.paint_widget.pos().x()+60 - self.ref_mouse.x()
+                    else:
+                        self.mouse_dx = size - self.ref_mouse.x() - 40
+
+                # control of Y position dont go out of window
+                small = self.mouse_position.y() > 50
+                size = self.paint_widget.height() + self.paint_widget.pos().y()
+                big = self.mouse_position.y() < size
+                if small and big:
+                    self.mouse_dy = self.mouse_position.y() - self.ref_mouse.y()
+                else:
+                    if big:
+                        self.mouse_dy = 60 - self.ref_mouse.y()
+                    else:
+                        self.mouse_dy = size - self.ref_mouse.y() - 20
             self.repaint()
-            
+
         elif event.type() == QtCore.QEvent.MouseButtonRelease:
             if self.mousepressed != False:
                 self.mousepressed.rect.setX(self.mousepressed.rect.x() +
@@ -916,7 +1044,7 @@ class ModelWindow(QWidget):
                     self.mousepressed = r
                     self.ref_mouse = event.pos()
                     break
-                    
+
             if self.process_adding != True and self.process_adding != False:  # finalize arrow adding process
                 for r in self.model.populations:
                     found = False  # if user clicked something useful
@@ -924,7 +1052,7 @@ class ModelWindow(QWidget):
                         if not(r is self.process_adding):
                             found = r
                             break
-                if found == False:
+                if found == False:  # Don't modify this to: if not found
                     self.process_adding = False
                 else:  # finalize arrow from  self.process_adding to found
                     arrow_count = self.countArrows(self.process_adding, found)
@@ -938,16 +1066,15 @@ class ModelWindow(QWidget):
                             already_exists = True
                         if arr.target is found:
                             already_exists = True
-                    if already_exists == False:
-                        tmp_arrow = ModProcess(self.text5.text(),
-                                               self.process_adding,
+                    if not already_exists:
+                        tmp_arrow = ModProcess(self.process_adding,
                                                found)
                         tmp_arrow.number = arrow_count + 1
                         tmp_arrow.color = self.colors[random.randint(0, len(self.colors)-1)]
                         self.model.addProcess(tmp_arrow)
                         tmp_arrow.source.enableDisableKs()
                         tmp_arrow.source.updateBranchKs()
-                        self.text5.setText('')     
+                        # self.text5.setText('')
                     self.process_adding = False
             if self.process_adding == True:  # process arrow adding, first population needs to be selected
                 for r in self.model.populations:
@@ -958,75 +1085,93 @@ class ModelWindow(QWidget):
                         break
                 if found == False:
                     self.process_adding = False
-                
+
             self.repaint()
-        
+
         elif event.type() == QtCore.QEvent.MouseButtonDblClick:
+            # print(f"double clicked {self.proc_edit}, {self.pop_edit}")
+            # the following loop and  if statements allow to open from one
+            # object to the next one without clicking in done
+            objetc_click = None
+            process, population = False, False
+            # check if click on an arrow process
+            for p in self.model.processes:
+                if p.contains(event.pos()):
+                    process = True
+                    objetc_click = p
+                    break
+            # check if click on a population box
+            for r in self.model.populations:
+                if r.rect.contains(event.pos()):
+                    population = True
+                    objetc_click = r
+                    break
+            if process or population:
+                self.process_done()
+                self.population_done()
+            # print(f"population: {population}; process: {process}")
             if self.proc_edit == False and self.pop_edit == False:  # should edit process?
-                for p in self.model.processes:
-                    if p.contains(event.pos()):
-                        self.proc_edit = p
-                        self.label2.setText('Edit arrow ' + p.name + ' :')
-                        self.k_edit.loadState(p.k_enabled, p.k_active,
-                                              p.k_fixed, p.k)
-                        self.sf_edit.loadState(p.sf_enabled, p.sf_active,
-                                               p.sf_fixed, p.sf)
-                        # self.text_proc.setText(str(p.k))
-                        self.repaint()
-                        break
+                if process:
+                    self.proc_edit = objetc_click
+                    self.label2.setText('Edit arrow ' + p.name + ' :')
+                    self.k_edit.loadState(p.k_enabled, p.k_active,
+                                          p.k_fixed, p.k)
+                    self.sf_edit.loadState(p.sf_enabled, p.sf_active,
+                                           p.sf_fixed, p.sf)
+                    # self.text_proc.setText(str(p.k))
+                    self.repaint()
             if self.pop_edit == False and self.proc_edit == False:  # should edit population?
-                for r in self.model.populations:
-                    if r.rect.contains(event.pos()):
-                        self.pop_edit = r
-                        self.label2.setText('Edit population ' + r.name + ' :')
-                        self.c_edit.loadState(r.c_enabled, 
-                                              r.c_active,
-                                              r.c_fixed, 
-                                              r.c)
-                        
-                        self.k_all_edit.loadState(r.k_all_enabled,
-                                                  r.k_all_active,
-                                                  r.k_all_fixed,
-                                                  r.k_all)    
-                        
-                        self.tau_edit.loadState(r.tau_enabled,
-                                                r.tau_active, 
-                                                r.tau_fixed,
-                                                r.tau)                        
-                        # self.eps_table.setRowCount(len(r.epsilon))
-                        # ct_tmp = 0
-                        # for k, v in r.epsilon.items():
-                        #     tmp1 = QtWidgets.QTableWidgetItem(str(k))
-                        #     tmp2 = QtWidgets.QTableWidgetItem(str(v))
-                        #     #set flags?
-                        #     self.eps_table.setItem(ct_tmp,0,tmp1)
-                        #     self.eps_table.setItem(ct_tmp,1,tmp2)
-                        #     ct_tmp += 1
-                        self.repaint()
-                        break
+                if population:
+                    self.pop_edit = objetc_click
+                    self.label2.setText('Edit population ' + r.name + ' :')
+                    self.c_edit.loadState(r.c_enabled,
+                                          r.c_active,
+                                          r.c_fixed,
+                                          r.c)
+
+                    self.k_all_edit.loadState(r.k_all_enabled,
+                                              r.k_all_active,
+                                              r.k_all_fixed,
+                                              r.k_all)
+
+                    self.tau_edit.loadState(r.tau_enabled,
+                                            r.tau_active,
+                                            r.tau_fixed,
+                                            r.tau)
+                    # self.eps_table.setRowCount(len(r.epsilon))
+                    # ct_tmp = 0
+                    # for k, v in r.epsilon.items():
+                    #     tmp1 = QtWidgets.QTableWidgetItem(str(k))
+                    #     tmp2 = QtWidgets.QTableWidgetItem(str(v))
+                    #     #set flags?
+                    #     self.eps_table.setItem(ct_tmp,0,tmp1)
+                    #     self.eps_table.setItem(ct_tmp,1,tmp2)
+                    #     ct_tmp += 1
+                    self.repaint()
 
         return False
 
 
 class Model:
-    def __init__(self):    
+    def __init__(self):
         self.populations = list()
         self.processes = list()
         self.psplit = False
-        
+
     def addPopulation(self, new_population):
         self.populations.append(new_population)
-        
+
     def addProcess(self, new_process):
         self.processes.append(new_process)
 
-    def manualModelBuild(self):
-        return ModelWindow(self)
-        
+    def manualModelBuild(self, call_back=None, app=None):
+        return ModelWindow(self, app=app)
+
     def save(self, filename):
         with open(filename, "wb") as f:
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
-        
+
+    @staticmethod
     def load(filename):  # this is static method intentionally
         with open(filename, "rb") as f:
             loaded = pickle.load(f)
@@ -1055,18 +1200,17 @@ class Model:
         # ASSUMES THAT SFs are not zero or 1!!!
         self.params.add('exp_no', value=len(self.populations), vary=False)
         if len(self.populations) < 1:
-            raise Exception("Algorithm failure, because model is empty!") 
-        
-        for i in range(len(self.populations)):        
+            raise Exception("Algorithm failure, because model is empty!")
+
+        for i in range(len(self.populations)):
             self.params.add('c_%i' % (i+1), self.populations[i].c, False,
                             None, None, None, None)
             for j in range(len(self.populations)):
                 self.params.add('k_%i%i' % (i+1, j+1), 0, False,
                                 None, None, None, None)
-        
+
         for i in range(len(self.populations)):
             popul = self.populations[i]
-            print(popul.name)
             source = i
             if popul.countOutgoingArrows() == 0:
                 vary = not(popul.k_all_fixed or popul.tau_fixed)
@@ -1080,7 +1224,7 @@ class Model:
                     self.params['k_%i%i' % (source+1, source+1)].set(-popul.k_all,
                                                                      vary=False)
                     k_all_fixed = True  # name should be done not fixed, but nevermind
-                    
+
                 for arr in popul.arrows:
                     arr.done = False  # indicator if arrow remains to be done
                     if arr.source is popul:
@@ -1099,7 +1243,7 @@ class Model:
                             self.params['k_%i%i' % (target+1, source+1)].set(expr=expr)
                             total_sfs += arr.sf
                             arr.done = True
-                    
+
                 freedom = popul.countOutgoingArrows()-popul.countFixed()  # how many free parameters will be
                 if not k_all_fixed and freedom > 0:  # start vary from k_all
                     self.params['k_%i%i' % (source+1, source+1)].set(-popul.k_all, vary=True)
@@ -1109,29 +1253,29 @@ class Model:
                 # go egein over branch and set things to vary
                 for arr in popul.arrows:
                     if arr.source is popul and not arr.done:
-                        target = self.populations.index(arr.target)                            
+                        target = self.populations.index(arr.target)
                         if freedom > 0:
                             self.params['k_%i%i' % (target+1, source+1)].set(arr.k, vary=True)
                             arr.done = True
                             freedom -= 1
                 if freedom > 0:
                     raise Exception("Algorithm failure, id 1002!")
-                    
+
                 expression = "("  # sum all k's which are fixed directly or varied
                 count = 0
                 for arr in popul.arrows:
                     if arr.source is popul and arr.done and not arr.sf_fixed:
-                        target = self.populations.index(arr.target)                            
+                        target = self.populations.index(arr.target)
                         expression += '-k_%i%i' % (target+1, source+1)
                         count += 1
                 expression += ")"
                 if total_sfs == 1:
-                    raise Exception("Algorithm failure, id 1003!") 
+                    raise Exception("Algorithm failure, id 1003!")
 
                 if not k_all_fixed:  # set proper eq for k_all based only on not-sf arrows
                     if count == 0:
                         raise Exception("Algorithm failure, id 1005!")
-                    expression += "/(1-" + str(total_sfs) + ")" 
+                    expression += "/(1-" + str(total_sfs) + ")"
                     self.params['k_%i%i' % (source+1, source+1)].set(expr=expression)
                     k_all_fixed = True
 
@@ -1145,7 +1289,7 @@ class Model:
                     count2 = 0
                     for arr in popul.arrows:  # go egein over branch and set remaining expr's (only one can be found)
                         if arr.source is popul and not arr.done and not arr.sf_fixed:
-                            target = self.populations.index(arr.target)                                                     
+                            target = self.populations.index(arr.target)
                             self.params['k_%i%i' % (target+1, source+1)].set(expr=expression)
                             arr.done = True
                             count2 += 1
@@ -1157,39 +1301,39 @@ class Model:
                     if arr.source is popul:
                         if arr.done == False:
                             raise Exception("Algorithm failure, id 1006!")
-                            
+
         return self.params
-        
+
 #    def updateParameters(self, params):#updates values of existing parameters. does not add new values, does not modify model structure
 #        p = params.valuesdict()
 #        for elem in self.populations:
-#            
+#
 #            if(self.psplit == False):
 #                elem.initial = p[elem.name]
 #            else:
 #                for num in range(len(elem.initial)):
 #                    elem.initial[num] = p['_' + str(num) + '_' + elem.name]
-#            
+#
 #            for l, eps in elem.epsilon.items():
 #                elem.epsilon[l] = p[elem.name + '__' + str(l).replace('.','_')]
-#            
+#
 #        for elem in self.processes:
 #            if elem.type == 'fi':
-#                elem.fi = p[elem.name + '__fi']    
+#                elem.fi = p[elem.name + '__fi']
 #            elif elem.type == 'k':
-#                elem.k = p[elem.name + '__k']           
-        
+#                elem.k = p[elem.name + '__k']
+
     def checkParams(self, experiment):  # run tests if params are correctly set. experiment object is to validiate its compatibility with model
         result = True                   # it should be run after updataParameers for both model and experiment, and assume that funcs loaded them correctly
 
-        return result   
+        return result
 
 
-#app = QApplication(sys.argv)
-#model1 = Model()
-#ex = model1.manualModelBuild()
-#ex.show()
-#app.exec_()
+# app = QApplication(sys.argv)
+# model1 = Model()
+# ex = model1.manualModelBuild()
+# ex.show()
+# app.exec()
 
 # model1 = Model()
 # model1.manualModelBuild()

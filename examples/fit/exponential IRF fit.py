@@ -35,7 +35,7 @@ fitter = GlobalFitWithIRF(time, data, irf, 1, parameters, wavelength=None)
 result = fitter.global_fit(maxfev=5000)
 
 explorer = ExploreResults(result)
-fig, ax = explorer.plot_fit()
+fig, ax = explorer.plot_global_fit()
 ax[0].set_yscale('log')
 ax[1].set_yscale('log')
 ax[0].set_ylim(1, 25000)

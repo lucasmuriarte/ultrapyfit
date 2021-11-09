@@ -245,7 +245,7 @@ class GlobalTargetParameters:
         self.exp_no = self.params['exp_no'].value
 
     def adjustParams(self, t0, vary_t0=True, fwhm=0.12, opt_fwhm=False,
-                     GVD_corrected=True):
+                     GVD_corrected=True, y0=None):
         """
         function to initialize parameters for global fitting
 
@@ -278,6 +278,16 @@ class GlobalTargetParameters:
             self._add_deconvolution(fwhm, opt_fwhm)
         else:
             self._add_preexp_t0_y0(t0, False, True)
+        if y0 is not None:
+            # this allow to pass a spectrum to consider the offset
+            if not hasattr(y0, '__iter__'):
+                # if is in case a single value is passes, create a list of y0
+                # with same value
+                y0 = [y0 for i in range(self.number_traces)]
+            for iy in range(1, self.number_traces + 1):
+                self.params['y0_%i' % iy].value = y0[iy-1]
+                self.params['y0_%i' % iy].vary = False
+
 
     def _add_deconvolution(self, fwhm, opt_fwhm):
         """
@@ -313,7 +323,7 @@ class GlobalTargetParameters:
             if self.params['k_%i%i' % (i + 1, i + 1)].value != 0:
                 self.params.add('tau%i_1' % (i + 1),
                                 1/self.params['k_%i%i' % (i + 1, i + 1)].value,
-                                vary=False)
+                                expr='abs(1/k_%i%i)' % (i + 1, i + 1))
             else:
                 self.params.add('tau%i_1' % (i + 1),
                                 np.inf,

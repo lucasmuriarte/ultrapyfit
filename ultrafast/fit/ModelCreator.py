@@ -219,6 +219,7 @@ class ModelCreator:
 
     def expNDatasetIRF(self, params, i, IRF):
         """
+        WARNING: Not working properly.
         calculate a weighted sum of exponential decay functions with an
         off-set from params for data set i using simple hardwired naming
         convention. This function can be used for datasets having different t0.

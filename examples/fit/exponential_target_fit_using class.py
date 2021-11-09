@@ -27,8 +27,8 @@ fitter = GlobalFitTarget(time, data, exp_no, parameters, False,
 result = fitter.global_fit()
 
 explorer = ExploreResults(result)
-explorer.print_results()
-explorer.plot_fit()
+explorer.print_fit_results()
+explorer.plot_global_fit()
 explorer.plot_DAS()
 
 

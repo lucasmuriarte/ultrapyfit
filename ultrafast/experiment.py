@@ -13,6 +13,7 @@ from ultrafast.fit.GlobalFitBootstrap import BootStrap
 from ultrafast.utils.ChirpCorrection import EstimationGVDPolynom, EstimationGVDSellmeier
 from ultrafast.utils.divers import define_weights, UnvariableContainer, LabBook,\
     book_annotate, read_data, TimeUnitFormater, select_traces
+from ultrafast.fit.targetmodel_changing import Model, ModelWindow
 from ultrafast.utils.Preprocessing import ExperimentException
 from ultrafast.utils.Preprocessing import Preprocessing as Prep
 from ultrafast.fit.GlobalFit import GlobalFitExponential, GlobalFitTarget
@@ -393,7 +394,7 @@ class Experiment(ExploreData):
             self.preprocessing.report.print()
             print('============================================\n')
             for i in range(len(self.fit.fit_records.global_fits)):
-                self.fit.print_results(i+1)
+                self.fit.print_fit_results(i + 1)
             print('============================================\n')
             self.action_records.print(False, True, True)
 
@@ -914,14 +915,16 @@ class Experiment(ExploreData):
             self._deconv = True
             self._exp_no = 1
             self.params = None
-            self.weights = {'apply': False, 'vector': None, 'range': [],
-                            'type': 'constant', 'value': 2}
+            self._weights = {'apply': False, 'vector': None, 'range': [],
+                             'type': 'constant', 'value': 2}
             # _fit_number take record of global exponential and target fits ran.
             self._fit_number = 0
             self._params_initialized = False
             self._tau_inf = 1E12
             self._allow_stop = False
+            self._model_params = None
             self.fit_records = UnvariableContainer(name="Fits")
+            self._model_window = None
             self._initialized()
             super().__init__(self.fit_records.global_fits, 
                              **self._experiment._units)
@@ -993,31 +996,46 @@ class Experiment(ExploreData):
                 raise ExperimentException(msg)
 
         @property
-        def type_fit(self):
+        def fit_ready(self):
             if not self._params_initialized:
-                return "Not ready to fit data"
+                if self._model_params is not None:
+                    msg = "Target Model create. Initialize target parameters " \
+                          "to perform a fit. Not ready to fit data yet"
+                    return msg
+                else:
+                    return "Not ready to fit data"
+            if self._params_initialized == "Model done":
+                return "Target Model create, initialize target parameters;" \
+                       "Not ready to fit data yet"
             else:
                 msg = f"parameters for {self._params_initialized} " \
-                      f"fit  with {self._exp_no} components"
+                      f"fit  with {self._exp_no} components, to " \
+                      f"{self._experiment.selected_traces.shape[1]} traces"
                 return msg
 
-        @type_fit.setter
-        def type_fit(self, value):
-            print("type_fit property cannot be set by the user")
+        @fit_ready.setter
+        def fit_ready(self, value):
+            print("fit_ready property cannot be set by the user")
 
-        def print_results(self, fit_number=None):
+        def get_weights(self):
+            """
+            Return the weights dictionary
+            """
+            return self._weights
+
+        def print_fit_results(self, fit_number=None):
             """
             Print out a summarize result of a global fit.
 
             Parameters
             ----------
             fit_number: int or None (default None)
-                defines the fit number of the results all_fit dictionary. If None
-                the last fit in  will be considered.
+                defines the fit number of the results all_fit dictionary.
+                If None the last fit in  will be considered.
             """
             if fit_number is None:
                 fit_number = max(self._fits.keys())
-            super().print_results(fit_number=fit_number)
+            super().print_fit_results(fit_number=fit_number)
             if fit_number in self.fit_records.bootstrap_record.keys():
                 print('\t The error has been calculated by bootstrap')
             if fit_number in self.fit_records.bootstrap_record.keys():
@@ -1026,12 +1044,12 @@ class Experiment(ExploreData):
 
         def define_weights(self, rango, typo='constant', val=5):
             """
-            Defines a an array that can be apply  in global fit functions as weights.
-            The weights can be use to define areas where the minimizing functions is
-            not reaching a good results, or to define areas that are more important
-            than others in the fit. The fit with weights can be inspect as any other
-            fit with the residual plot. A small constant value is generally enough
-            to achieve the desire goal.
+            Defines a an array that can be apply  in global fit functions as
+            weights. The weights can be use to define areas where the minimizing
+             functions is not reaching a good results, or to define areas that
+             are more important than others in the fit. The fit with weights
+            can be inspect as any other fit with the residual plot. A small
+            constant value is generally enough to achieve the desire goal.
 
             Parameters
             ----------
@@ -1059,8 +1077,8 @@ class Experiment(ExploreData):
             val: int (default 5)
                 value for defining the weights
             """
-            self.weights = define_weights(self._experiment.x, rango, typo=typo,
-                                          val=val)
+            self._weights = define_weights(self._experiment.x, rango, typo=typo,
+                                           val=val)
             self._experiment._add_action("define weights")
 
         def initialize_exp_params(self, t0, fwhm, *taus, tau_inf=1E12,
@@ -1083,8 +1101,8 @@ class Experiment(ExploreData):
 
             tau_inf: int or float (default 1E12)
                 allows to add a constant decay value to the parameters.
-                This constant modelled photoproducts formation with long decay times
-                If None tau_inf is not added.
+                This constant modelled photoproducts formation with long
+                decay times If None tau_inf is not added.
                 (only applicable if fwhm is given)
 
             opt_fwhm: bool (default False)
@@ -1099,21 +1117,24 @@ class Experiment(ExploreData):
 
             global_t0: bool (default True)
                 Important: only applicable if fwhm is given and data is chirp
-                corrected. Allows to fit the t0 globally (setting True), which is
-                faster. In case this first option fit does not give good results
-                in the short time scale the t0 can be independently fitted (slower)
-                (setting False) which may give better results.
+                corrected. Allows to fit the t0 globally (setting True), which
+                is faster. In case this first option fit does not give good
+                results in the short time scale the t0 can be independently
+                setting to False which may give better results, if the
+                correction of the chirp/GVD is not perfect (slower fit).
 
             y0: int or array (default None)
                 Important: only applicable if fwhm is given.
-                If given this value will fix the initial offset as a fix parameter.
-                In case an array is given each trace will have a different value.
-                In case an integer is pass all the traces will have this value fix
+                If given this value will fix the initial offset as a fix
+                parameter. In case an array is given each trace will have a
+                different value. In case an integer is pass all the traces will
+                have this value fix
             """
             taus = list(taus)
             self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': taus,
                                  'tau_inf': tau_inf, 'opt_fwhm': opt_fwhm,
-                                 'y0': y0}
+                                 'y0': y0, "vary_t0": vary_t0,
+                                 "global_t0": global_t0}
             self._exp_no = len(taus)
             number_traces = self._experiment.selected_traces.shape[1]
             param_creator = GlobExpParameters(number_traces, taus)
@@ -1122,7 +1143,6 @@ class Experiment(ExploreData):
                 vary_t0 = False
                 correction = False
             else:
-                # TODO check self.GVD corrected
                 gvd_corrected = self._experiment.preprocessing.GVD_corrected
                 if global_t0 and not gvd_corrected:
                     correction = False
@@ -1139,25 +1159,95 @@ class Experiment(ExploreData):
             self._experiment._add_action(f'new {self._params_initialized} '
                                          f'parameters initialized')
 
-        def initialize_target_params(self, t0, fwhm, k_matrix: list,
-                                     concentrations: list, opt_fwhm=False,
-                                     vary_t0=True, global_t0=True, y0=None):
+        def initialize_target_model_window(self):
+            """
+            Open a PyQT window where a Target model can be created.
+            """
+            if self._model_window is None:
+                self._model_window = ModelWindow(
+                    call_back=self._get_params_from_target_model_window)
+            self._model_window.show()
+
+        def _get_params_from_target_model_window(self):
+            """callback function for self.model_window"""
+            self._model_params = self._model_window.model.params
+            self._experiment._add_action(f'Target model from Window created')
+            print("Initialize target params before running the fit")
+
+        def initialize_target_model_manually(self, k_matrix: list,
+                                             concentrations: list):
+            """
+            Build the k_matrix manually.
+
+            Parameters
+            ----------
+            k_matrix: list of lists
+                Contains all the information of k, rates. This parameter should
+                be a list of list/tuples where every sub list should be of
+                length and with the following form: [source, destination, rate
+                constant, vary].
+                if destination == source, parallel decay or terminal component.
+                    i.e.: [1, 3, 1/0.7, True] --> component 1 gives component 3
+                    with a rate constant of 1/0.7, and this parameter can be
+                    optimized.
+
+            concentrations: list
+                a list containing the initial concentrations
+            """
+            param_creator = GlobalTargetParameters(1, None)
+            param_creator.params_from_matrix(k_matrix=k_matrix,
+                                             concentrations=concentrations)
+            self._model_params = param_creator.params
+            self._experiment._add_action(f'Target model manually created')
+            print("Initialize target params before running the fit")
+
+        def initialize_target_params(self, t0, fwhm, model='auto',
+                                     opt_fwhm=False, vary_t0=True,
+                                     global_t0=True, y0=None):
+            # TODO check if model not auto + documentation
+            if type(model) == int:
+                if model in self.fit_records.target_models.keys():
+                    number_model = self.fit_records.target_models[model]
+                    self._model_params = copy.copy(number_model.params)
+            self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': None,
+                                 'tau_inf': None, 'opt_fwhm': opt_fwhm,
+                                 'y0': y0, "vary_t0": vary_t0,
+                                 "global_t0":global_t0}
+            self._exp_no = self._model_params["exp_no"].value
             number_traces = self._experiment.selected_traces.shape[1]
             if fwhm is None:
                 self._deconv = False
                 vary_t0 = False
                 correction = False
+            else:
+                self._deconv = True
+                gvd_corrected = self._experiment.preprocessing.GVD_corrected
+                if global_t0 and not gvd_corrected:
+                    correction = False
+                elif not global_t0:
+                    correction = False
+                else:
+                    correction = True
             param_creator = GlobalTargetParameters(number_traces, None)
-            param_creator.params_from_matrix(k_matrix, concentrations)
-
+            param_creator.exp_no = self._exp_no
+            param_creator.params = copy.copy(self._model_params)
+            param_creator.adjustParams(t0, vary_t0=vary_t0,
+                                       fwhm=fwhm,
+                                       opt_fwhm=opt_fwhm,
+                                       GVD_corrected=correction,
+                                       y0=y0)
+            self.params = param_creator.params
+            self._params_initialized = "Target"
+            self._experiment._add_action(f'new {self._params_initialized} '
+                                         f'parameters initialized')
 
         """
         Fitting functions
         """
-        def global_fit(self, vary=True, maxfev=5000, apply_weights=False,
+        def fit_global(self, vary=True, maxfev=5000, apply_weights=False,
                        use_jacobian=False, verbose=True):
             """
-            Perform a exponential or a target global fits to the selected traces.
+            Perform a exponential or a target global fit to the selected traces.
             The type of fits depends on the parameters initialized.
 
             Parameters
@@ -1172,8 +1262,8 @@ class Experiment(ExploreData):
                 maximum number of iterations of the fit.
 
             apply_weights: bool (default False)
-                If True and weights have been defined, this will be applied in the
-                fit (for defining weights) check the function define_weights.
+                If True and weights have been defined, this will be applied in
+                the fit (for defining weights) check the function define_weights.
 
             verbose: bool (default True)
                 If True, every 200 iterations the X2 will be printed out
@@ -1192,23 +1282,31 @@ class Experiment(ExploreData):
                                                  derivative=derivative)
 
             elif self._params_initialized == 'Target':
-                minimizer = GlobalFitTarget(self._experiment.selected_traces,
-                                            self._experiment.selected_wavelength,
-                                            self._exp_no,
-                                            self.params,
+                minimizer = GlobalFitTarget(self._experiment.x,
+                                            self._experiment.selected_traces,
+                                            self._exp_no, self.params,
+                                            deconv=self._deconv,
                                             GVD_corrected=gvd_corrected,
                                             derivative=derivative)
             else:
                 msg = 'Parameters need to be initialized first'
                 raise ExperimentException(msg)
             if apply_weights:
-                minimizer.weights = self.weights
+                minimizer.weights = self._weights
             if self.allow_stop:
                 minimizer.allow_stop = True
-            results = minimizer.global_fit(vary_taus=vary, maxfev=maxfev,
-                                           apply_weights=apply_weights,
-                                           use_jacobian=use_jacobian,
-                                           verbose=verbose)
+            
+            if self._params_initialized == 'Exponential':
+                results = minimizer.global_fit(vary_taus=vary, maxfev=maxfev,
+                                               apply_weights=apply_weights,
+                                               use_jacobian=use_jacobian,
+                                               verbose=verbose)
+            else:
+                # TODO add vary_k from vary need to modify Global fit
+                results = minimizer.global_fit(maxfev=maxfev, # vary_k=vary,
+                                               apply_weights=apply_weights,
+                                               use_jacobian=use_jacobian,
+                                               verbose=verbose)
 
             # indicate if the fit is singular vectors
             results.details['svd_fit'] = self._experiment._SVD_fit
@@ -1223,7 +1321,8 @@ class Experiment(ExploreData):
 
             self._fit_number += 1
             self.fit_records.global_fits[self._fit_number] = results
-            self._experiment._add_action(f'{self._params_initialized} fit performed')
+            msg = f'{self._params_initialized} fit performed'
+            self._experiment._add_action(msg)
             self._update_last_params(results.params)
 
         def _update_last_params(self, params):
@@ -1235,12 +1334,15 @@ class Experiment(ExploreData):
                 self._last_params['taus'] = [params['tau%i_1' % (i + 1)].value
                                              for i in range(self._exp_no)]
             elif self._params_initialized == 'Target':
-                ## todo
-                pass
+                self._last_params['t0'] = params['t0_1'].value
+                for i in range(self._exp_no):
+                    for ii in range(self._exp_no):
+                        self._model_params["k_%i%i" % (i+1, ii+1)].value = \
+                            self.params["k_%i%i" % (i+1, ii+1)].value
             else:
                 pass
 
-        def single_exp_fit(self, wave: int, average: int, t0: float, fwhm: float,
+        def fit_single_exp(self, wave: int, average: int, t0: float, fwhm: float,
                            *taus, vary=True, tau_inf=1E12, maxfev=5000,
                            apply_weights=False, opt_fwhm=False, plot=True):
             """
@@ -1309,7 +1411,7 @@ class Experiment(ExploreData):
                 fig, ax = self.plot_single_fit(key)
                 return fig, ax
 
-        def integral_band_exp_fit(self, wave_range: list, t0: float, fwhm: float,
+        def fit_integral_band_exp(self, wave_range: list, t0: float, fwhm: float,
                                   *taus, vary=True, tau_inf=1E12, maxfev=5000,
                                   apply_weights=False, opt_fwhm=False, plot=True):
             """
@@ -1398,8 +1500,9 @@ class Experiment(ExploreData):
             """
             # print(taus)
             param_creator = GlobExpParameters(1, list(taus))
+            chirp_corrected = self._experiment.preprocessing.GVD_corrected
             param_creator.adjustParams(t0, vary, fwhm, opt_fwhm,
-                                       self._experiment.preprocessing.GVD_corrected,
+                                       chirp_corrected,
                                        tau_inf, y0)
             # print(param_creator.params)
             deconv = True if fwhm is not None else False
@@ -1455,8 +1558,12 @@ class Experiment(ExploreData):
                 fit_number = len(self.fit_records.integral_band_fits)
 
             if fit_number in self.fit_records.integral_band_fits.keys():
-                fig, ax = self._plot_single_trace_fit(self.fit_records.integral_band_fits,
-                                                      fit_number, details)
+
+                result = self.fit_records.integral_band_fits
+                fig, ax = self._plot_single_trace_fit(result,
+                                                      fit_number,
+                                                      details)
+
                 rang = self.fit_records.integral_band_fits[fit_number].details['integral band']
 
                 if self._units['wavelength_unit'] == 'cm-1':
@@ -1482,7 +1589,7 @@ class Experiment(ExploreData):
             exp_no = values[4]
             deconv = values[5]
             tau_inf = values[6]
-            fig, ax = plotter.plot_fit()
+            fig, ax = plotter.plot_global_fit()
 
             if add_details:
                 if data[0] <= 0:
@@ -1556,26 +1663,38 @@ class Experiment(ExploreData):
             Function to automatically re-adapt parameters to a new selection of
             traces from the original data set.
             """
-            if self._params_initialized == 'Exponential':
-                previous_taus = self._last_params['taus']
+            if  type(self._params_initialized) != bool:
                 t0 = self._last_params['t0']
                 fwhm = self._last_params['fwhm']
-                tau_inf = self._last_params['tau_inf']
                 opt_fwhm = self._last_params['opt_fwhm']
+                vary_t0 = self._last_params["vary_t0"]
+                global_t0 = self._last_params["global_t0"]
                 y0 = self._last_params['y0']
-                self.initialize_exp_params(t0, fwhm, *previous_taus,
-                                           tau_inf=tau_inf, opt_fwhm=opt_fwhm,
-                                           y0=y0)
-            elif self._params_initialized == 'Target':
-                print('to be coded')
-                # todo
-                t0 = self._last_params['t0']
-                fwhm = self._last_params['fwhm']
-                self.initialize_target_params(t0, fwhm, )
+                if self._params_initialized == 'Exponential':
+                    previous_taus = self._last_params['taus']
+                    tau_inf = self._last_params['tau_inf']
+                    self.initialize_exp_params(t0, fwhm, *previous_taus,
+                                               tau_inf=tau_inf,
+                                               opt_fwhm=opt_fwhm,
+                                               vary_t0=vary_t0,
+                                               global_t0=global_t0,
+                                               y0=y0)
+                elif self._params_initialized == 'Target':
+                    # previous_model = self._last_params['model_params']
+                    # self._model_params = previous_model
+                    fwhm = self._last_params['fwhm']
+    
+                    self.initialize_target_params(t0, fwhm, model='auto',
+                                                  opt_fwhm=opt_fwhm,
+                                                  vary_t0=vary_t0,
+                                                  global_t0=global_t0, 
+                                                  y0=y0)
+
             else:
+                # if parameters are not initialize pass
                 pass
 
-        def bootstrap_fit(self, fit_number: int, boots: int, size=25,
+        def fit_bootstrap(self, fit_number: int, boots: int, size=25,
                           data_from="residues", workers=2):
             """
             Perform a bootstrap fit. It can be done to either the residues or to
