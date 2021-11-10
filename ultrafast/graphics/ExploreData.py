@@ -95,12 +95,10 @@ class ExploreData(PlotSVD):
         super().__init__(self.x, self.data, self.wavelength,
                          self.selected_traces, self.selected_wavelength)
 
-    @property
-    def cmap(self):
+    def get_color_map(self):
         return self._color_map
 
-    @cmap.setter
-    def cmap(self, val: str):
+    def set_color_map(self, val: str):
         if val in cm.__dict__.keys():
             self._color_map = val
         else:
@@ -288,7 +286,7 @@ class ExploreData(PlotSVD):
         self._legend_spectra_figure(legend, ncol, cmap, times)
         return fig, ax
 
-    def plot3D(self, cmap=None):
+    def plot_3D(self, cmap=None):
         """
         Plot the data in 3D
 
@@ -439,7 +437,6 @@ class ExploreData(PlotSVD):
             plt.colorbar(cpickmap).set_label(
                 label='Time (' + self._units["time_unit"] + ')', size=15)
         elif legend:
-            print(1)
             leg = plt.legend(loc='best', ncol=ncol)
             leg.set_zorder(np.inf)
         else:
@@ -454,7 +451,7 @@ class ExploreData(PlotSVD):
 
     def _get_cmap(self, cmap):
         if cmap is None:
-            cmap = self.cmap
+            cmap = self._color_map
         return cmap
 
     def _get_color(self, times, cmap=None):

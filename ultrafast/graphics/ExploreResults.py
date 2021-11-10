@@ -162,10 +162,10 @@ class ExploreResults:
             puntos = [min(range(len(wavelength)), key=lambda i: abs(wavelength[i] - num)) for num in selection]
         xlabel = f'Time ({self.time_unit})'
         if plot_residues is False:
-            fig, ax = plt.subplots(figsize=(8, 6))
+            fig, ax = plt.subplots()
             ax = ['_', ax]
         else:
-            fig, ax = plt.subplots(2, 1, sharex=True, figsize=(8, 6),
+            fig, ax = plt.subplots(2, 1, sharex=True,
                                    gridspec_kw={'height_ratios': [1, 5]})
         fittes = self.get_gloabl_fit_curve_results(fit_number=fit_number)
         alpha, s = 0.80, 8
@@ -333,7 +333,7 @@ class ExploreResults:
             das = np.array([integral.cumtrapz(das[i, :], wavelength, initial=0)
                             for i in range(len(das))])
 
-        fig, ax = plt.subplots(1, figsize=(11, 6))
+        fig, ax = plt.subplots(1)
         n_das = das.shape[0]
 
         for i in range(n_das):
@@ -481,7 +481,8 @@ class ExploreResults:
         x, self._data_fit, self._wavelength_fit, params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number)
         xlabel = f'Time ({self.time_unit})'
-        self._fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10, 8), gridspec_kw={'height_ratios': [1, 5]})
+        self._fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10, 8), 
+                                     gridspec_kw={'height_ratios': [1, 5]})
         self._fittes = self.get_gloabl_fit_curve_results(fit_number=None)
         self._x_verivefit = x * 1.0
         if type(deconv) == bool:
@@ -494,20 +495,35 @@ class ExploreResults:
             self._residues = self._data_fit - self._fittes
             self._x_verivefit_residues = x * 1.0
         initial_i = self._data_fit.shape[1] // 5
-        self._l = ax[1].plot(self._x_verivefit, self._data_fit[:, initial_i], marker='o', ms=3, linestyle=None,
+        
+        self._l = ax[1].plot(self._x_verivefit, 
+                             self._data_fit[:, initial_i], 
+                             marker='o', ms=3, linestyle=None,
                              label='raw data')[0]
-        self._lll = ax[0].plot(self._x_verivefit_residues, self._residues[:, initial_i], marker='o', ms=3, linestyle=None,
+        
+        self._lll = ax[0].plot(self._x_verivefit_residues, 
+                               self._residues[:, initial_i],
+                               marker='o', ms=3, linestyle=None,
                                label='residues')[0]
-        self._ll = ax[1].plot(self._x_verivefit_residues, self._fittes[:, initial_i], alpha=0.5, lw=1.5, color='r', label='fit')[0]
+        
+        self._ll = ax[1].plot(self._x_verivefit_residues, 
+                              self._fittes[:, initial_i], 
+                              alpha=0.5, lw=1.5, color='r', label='fit')[0]
         delta_f = 1.0
         _, maxi = self._data_fit.shape
         axcolor = 'orange'
         axspec = self._fig.add_axes([0.20, .05, 0.60, 0.02], facecolor=axcolor)
-        self._sspec = Slider(axspec, 'curve number', 1, maxi, valstep=delta_f, valinit=maxi//5)
+        
+        self._sspec = Slider(axspec, 'curve number', 1, maxi, 
+                             valstep=delta_f, valinit=maxi//5)
+        
         self._sspec.on_changed(self._update_verified_Fit)
-        FiguresFormating.format_figure(ax[0], self._residues, self._x_verivefit, size=14)
+        FiguresFormating.format_figure(ax[0], self._residues, 
+                                       self._x_verivefit, size=14)
+        
         ax[0].set_ylabel('Residues', size=14)
-        FiguresFormating.format_figure(ax[1], self._data_fit, self._x_verivefit, size=14)
+        FiguresFormating.format_figure(ax[1], self._data_fit,
+                                       self._x_verivefit, size=14)
         ax[1].legend(loc='upper right')
         ax[0].legend(loc='upper right')
         title = round(self._wavelength_fit[initial_i])
@@ -535,15 +551,19 @@ class ExploreResults:
         # redraw canvas while idle
         self._fig.canvas.draw_idle()
 
-    def plot_concentrations(self, fit_number=None, names=None, plot_total_c=True, legend=True,  size=14,):  # tmp function.
+    @use_style
+    def plot_concentrations(self, fit_number=None, names=None,
+                            plot_total_c=True, legend=True,
+                            style='lmu_res'):  # temporal function.
         """
-        Function that generates a figure with the concentration evolution of a Target fit
+        Function that generates a figure with the concentration evolution of a
+        Target fit
         
         Parameters
         ----------
         fit_number: int or None (default None)
-            defines the fit number of the results all_fit dictionary. If None the last fit in  will
-            be considered.
+            defines the fit number of the results all_fit dictionary.
+            If None the last fit in  will be considered.
         
         names: list (default None)
             List that allows to redefine the names of the components. 
@@ -555,10 +575,13 @@ class ExploreResults:
         
         legend: bool (default True)
             Defines if the legend is display
-        
-        size: int (default 14)
-            size of the figure text labels including tick labels axis labels and legend
-            
+
+        style: style valid name (default 'lmu_res')
+            defines the style to format the output figure, it can be any defined
+            matplotlib style, any ultrafast style (utf) or any user defined
+            style that follows matplotlib or utf styles and is saved in the
+            correct folder. Check styles for more information.
+
         Returns
         ----------
         Figure and axes matplotlib objects
@@ -576,15 +599,25 @@ class ExploreResults:
         # size of the matrix = no of exponenses = no of species
         coeffs, eigs, eigenmatrix = solve_kmatrix(exp_no, params)
         t0 = params['t0_1'].value
-        fwhm = params['fwhm_1'].value/2.35482
-        expvects = [coeffs[i] * ModelCreator.expGauss(x - t0, -1/eigs[i], fwhm)
-                    for i in range(len(eigs))]
+        if deconv:
+            fwhm = params['fwhm_1'].value/2.35482
+            expvects = [coeffs[i] * ModelCreator.expGauss(x - t0, -1/eigs[i], 
+                                                          fwhm)
+                        for i in range(len(eigs))]
+        else:
+            expvects = [coeffs[i] * ModelCreator.exp1(x - t0, -1/eigs[i])
+                        for i in range(len(eigs))]
         concentrations = [sum([eigenmatrix[i, j] * expvects[j]
                                for j in range(len(eigs))])
                           for i in range(len(eigs))]
-        if names is None or len(names) != exp_no:
-            names = [f'Specie {i}' for i in range(exp_no)]
-        fig, ax = plt.subplots(1, figsize=(8, 6))
+        if names is None or len(names) != self._exp_no:
+            if fit_number is None:
+                fit_number = max(self._fits.keys())
+            if "model_names" in self._fits[fit_number].details.keys():
+                names = self._fits[fit_number].details["model_names"]
+            else:
+                names = [f"Species {i + 1}" for i in range(self._exp_no)]
+        fig, ax = plt.subplots(1)
         for i in range(len(eigs)):
             ax.plot(x, concentrations[i], label=names[i])
         if plot_total_c:
@@ -592,8 +625,7 @@ class ExploreResults:
             ax.plot(x, allc, label='Total concentration')  # sum of all for checking => should be unity
         if legend:
             plt.legend(loc='best')
-        FiguresFormating.format_figure(ax, concentrations, x, x_tight=True, set_ylim=False)
-        FiguresFormating.axis_labels(ax, xlabel, 'Concentration (A.U.)', size=size)
+        FiguresFormating.axis_labels(ax, xlabel, 'Concentration (A.U.)')
         plt.xlim(-3, round(maxi_tau * 7))
         return fig, ax
     

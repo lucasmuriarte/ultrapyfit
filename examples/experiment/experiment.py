@@ -53,7 +53,7 @@ experiment.plot_traces([1408,1520,1578])
 
 # To explore the number of components is possible to use the singular value decomposition (SVD)
 # The SVD reveal that the data set is compose by three components
-experiment.plotSVD(1, True)
+experiment.plot_full_SVD(1, True)
 
 # After selecting the SV this can be plot again with "plot_traces" function
 experiment.plot_traces()

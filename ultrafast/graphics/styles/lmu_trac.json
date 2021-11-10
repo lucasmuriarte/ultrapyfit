@@ -1,6 +1,6 @@
 {   
     "utf_style": true,
-    "name": "lmu_spec",
+    "name": "lmu_trac",
     "styles": ["lmu", "label_size_14", "fig_size_1"],
     "function": "plot_axhline",
     "function_arguments": {"ls":"--", "c":"k"}

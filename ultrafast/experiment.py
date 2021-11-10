@@ -13,7 +13,7 @@ from ultrafast.fit.GlobalFitBootstrap import BootStrap
 from ultrafast.utils.ChirpCorrection import EstimationGVDPolynom, EstimationGVDSellmeier
 from ultrafast.utils.divers import define_weights, UnvariableContainer, LabBook,\
     book_annotate, read_data, TimeUnitFormater, select_traces
-from ultrafast.fit.targetmodel_changing import Model, ModelWindow
+from ultrafast.fit.targetmodel import ModelWindow
 from ultrafast.utils.Preprocessing import ExperimentException
 from ultrafast.utils.Preprocessing import Preprocessing as Prep
 from ultrafast.fit.GlobalFit import GlobalFitExponential, GlobalFitTarget
@@ -73,11 +73,11 @@ class SaveExperiment:
                    'excitation': self.experiment.excitation,
                    'path': self.experiment._data_path,
                    'deconv': self.experiment.fit._deconv,
-                   'n_fits':self.experiment.fit._fit_number}
+                   'n_fits': self.experiment.fit._fit_number}
 
         self.save_object["report"] = self.experiment.preprocessing.report
         self.save_object['fits'] = self.experiment.fit.fit_records
-        self.save_object['actions'] = self.experiment.action_records
+        self.save_object['actions'] = self.experiment._action_records
         self.save_object['datas'] = self.experiment.preprocessing.data_sets
         self.save_object['data'] = self.experiment.data
         self.save_object['x'] = self.experiment.x
@@ -208,7 +208,7 @@ class Experiment(ExploreData):
         self.selected_wavelength = wavelength
         self.excitation = None
         # self.GVD_corrected = False
-        self.action_records = UnvariableContainer(name="Sequence of actions")
+        self._action_records = UnvariableContainer(name="Sequence of actions")
 
         # self.preprocessing.report = LabBook(name="Pre-processing")
         self._data_path = path
@@ -223,10 +223,15 @@ class Experiment(ExploreData):
                              self.selected_traces, self.selected_wavelength,
                              'viridis', **self._units)
 
-
     """
     Properties and structural functions
     """
+    def get_action_records(self):
+        return self._action_records.get_protected_attributes()
+
+    def print_action_records(self):
+        self._action_records.print(False, True, True)
+
     @property
     def time(self):
         return self.x
@@ -304,7 +309,7 @@ class Experiment(ExploreData):
                 experiment = Experiment(x, data, wavelength)
                 experiment.preprocessing.report = object_load["report"]
                 experiment.fit.fit_records = object_load['fits']
-                experiment.action_records = object_load['actions']
+                experiment._action_records = object_load['actions']
                 experiment.preprocessing.data_sets = object_load['datas']
                 experiment._units = object_load['detail']['units']
                 gvd = object_load['detail']['GVD']
@@ -349,7 +354,7 @@ class Experiment(ExploreData):
         path: string
             path where to save the Experiment
         """
-        save = SaveExperiment(path, self)
+        SaveExperiment(path, self)
 
     def createNewDir(self, path):
         # Probably will be removed; for the moment is not working
@@ -379,7 +384,7 @@ class Experiment(ExploreData):
         print(f'\tTime unit: {self.time_unit}')
         print(f'\tWavelength unit: {self.wavelength_unit}')
 
-    def general_report(self, output_file=None):
+    def print_general_report(self, output_file=None):
         """
         Print the general report of the experiment
 
@@ -396,7 +401,7 @@ class Experiment(ExploreData):
             for i in range(len(self.fit.fit_records.global_fits)):
                 self.fit.print_fit_results(i + 1)
             print('============================================\n')
-            self.action_records.print(False, True, True)
+            self._action_records.print(False, True, True)
 
         if output_file is not None:
             total_path = os.path.abspath(output_file)
@@ -788,7 +793,8 @@ class Experiment(ExploreData):
                                                   self._experiment.x,
                                                   0)
                 self._experiment.data, self._experiment.x = new_data, new_x
-                self._experiment._add_action(f"delete points {dimension}", True)
+                self._experiment._add_action(f"delete points {dimension}",
+                                             True)
             elif dimension == 'wavelength':
                 new_data, new_wave = Prep.del_points(points,
                                                      self._experiment.data,
@@ -797,7 +803,8 @@ class Experiment(ExploreData):
                 # no need to work on selected data set
                 self._experiment.data = new_data
                 self._experiment.wavelength = new_wave
-                self._experiment._add_action(f"delete points {dimension}", True)
+                self._experiment._add_action(f"delete points {dimension}",
+                                             True)
             else:
                 msg = 'dimension should be "time" or "wavelength"'
                 raise ExperimentException(msg)
@@ -1178,7 +1185,8 @@ class Experiment(ExploreData):
             print("Initialize target params before running the fit")
 
         def initialize_target_model_manually(self, k_matrix: list,
-                                             concentrations: list):
+                                             concentrations: list,
+                                             names=None):
             """
             Build the k_matrix manually.
 
@@ -1196,10 +1204,20 @@ class Experiment(ExploreData):
 
             concentrations: list
                 a list containing the initial concentrations
+
+            names: list (default None)
+                A list containing the names of each specie. If given this will
+                be used when reconstruct the model in the window model and in
+                plot_concentration function. If not names will be given by
+                increasing numbers.
             """
             param_creator = GlobalTargetParameters(1, None)
             param_creator.params_from_matrix(k_matrix=k_matrix,
                                              concentrations=concentrations)
+            self._exp_no = param_creator.exp_no
+            if names is None or len(names) != self._exp_no:
+                names = [f"Species {i+1}" for i in range(self._exp_no)]
+            param_creator.params.model_names = names
             self._model_params = param_creator.params
             self._experiment._add_action(f'Target model manually created')
             print("Initialize target params before running the fit")
@@ -1244,11 +1262,13 @@ class Experiment(ExploreData):
                 have the length of the curves that want to be fitted, and for
                 each curve the the y0 value would be different.
             """
-            # TODO check if model not auto + documentation
             if type(model) == int:
                 if model in self.fit_records.target_models.keys():
                     number_model = self.fit_records.target_models[model]
                     self._model_params = copy.copy(number_model.params)
+                else:
+                    msg = f"The model {model} is not in records"
+                    raise ExperimentException(msg)
             self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': None,
                                  'tau_inf': None, 'opt_fwhm': opt_fwhm,
                                  'y0': y0, "vary_t0": vary_t0,
@@ -1305,6 +1325,11 @@ class Experiment(ExploreData):
                 If True and weights have been defined, this will be applied in
                 the fit (for defining weights) check the function define_weights.
 
+            use_jacobian: bool (default False)
+                If True the jacobian matrix is solved analytically. So far is
+                only been implemented for exponential fit; is not available for
+                Target fit
+
             verbose: bool (default True)
                 If True, every 200 iterations the X2 will be printed out
             """
@@ -1348,6 +1373,7 @@ class Experiment(ExploreData):
                                                use_jacobian=use_jacobian,
                                                verbose=verbose)
 
+                results.details['model_names'] = self._model_params.model_names
             # indicate if the fit is singular vectors
             results.details['svd_fit'] = self._experiment._SVD_fit
             # add selected wavelengths
@@ -1451,9 +1477,10 @@ class Experiment(ExploreData):
                 fig, ax = self.plot_single_fit(key)
                 return fig, ax
 
-        def fit_integral_band_exp(self, wave_range: list, t0: float, fwhm: float,
-                                  *taus, vary=True, tau_inf=1E12, maxfev=5000,
-                                  apply_weights=False, opt_fwhm=False, plot=True):
+        def fit_integral_band_exp(self, wave_range: list, t0: float,
+                                  fwhm: float, *taus, vary=True, tau_inf=1E12,
+                                  maxfev=5000, apply_weights=False,
+                                  opt_fwhm=False, plot=True):
             """
             Perform an exponential fit to an integrated are of the spectral
             range of the data set. This type of fits allows for example to
@@ -1499,7 +1526,7 @@ class Experiment(ExploreData):
 
             apply_weights: bool (default False)
                 If True and weights have been defined, this will be applied in
-                the fit (for defining weights) check the function define_weights.
+                the fit (for defining weights) check the function define_weights
 
             plot: bool (default True)
                 If True the results are automatically plotted and a figure and
@@ -1570,12 +1597,18 @@ class Experiment(ExploreData):
             details: bool (default True)
                 If True the decay times obtained in the fit are included in the
                 figure
+                
             """
+            if fit_number is None:
+                fit_number = len(self.fit_records.single_fits)
             if fit_number in self.fit_records.single_fits.keys():
                 return self._plot_single_trace_fit(self.fit_records.single_fits,
                                                    fit_number, details)
             else:
-                msg = 'Fit number not in records'
+                if fit_number == 0:
+                    msg = "So far no single fits are perfomred"
+                else:
+                    msg = 'Fit number not in records'
                 raise ExperimentException(msg)
 
         def plot_integral_band_fit(self, fit_number=None, details=True):
@@ -1613,7 +1646,10 @@ class Experiment(ExploreData):
                 ax[1].legend(['_', f'Integral band {rang[0]}-{rang[1]} {w_unit}'])
                 return fig, ax
             else:
-                msg = 'Fit number not in records'
+                if fit_number == 0:
+                    msg = "So far no single fits are perfomred"
+                else:
+                    msg = 'Fit number not in records'
                 raise ExperimentException(msg)
 
         def _plot_single_trace_fit(self, container, fit_number,
@@ -1637,7 +1673,7 @@ class Experiment(ExploreData):
                 else:
                     anchor_location = "upper center"
                 text = plotter._legend_plot_DAS(params, exp_no, deconv,
-                                                 tau_inf, 'Exponential', 2)
+                                                tau_inf, 'Exponential', 2)
                 # next if statement is rot remove the 'offset' word from the
                 # text only in case there was no deconvolution
                 if not deconv:
@@ -1666,7 +1702,6 @@ class Experiment(ExploreData):
             type_fit = values[8]
             derivative_space = values[6]
 
-
             if fit_data == 'all':
                 data_fit = self._experiment.selected_traces
             elif fit_data == 'selected':
@@ -1683,8 +1718,9 @@ class Experiment(ExploreData):
                 else:
                     fwhm = None
                 param_creator = GlobExpParameters(data_fit.shape[1], taus)
+                gvd_correct = self._experiment.preporcessing.GVD_corrected
                 param_creator.adjustParams(t0, True, fwhm, False,
-                                           self._experiment.preporcessing.GVD_corrected,
+                                           gvd_correct,
                                            tau_inf)
 
                 params_fit = param_creator.params
@@ -1703,7 +1739,7 @@ class Experiment(ExploreData):
             Function to automatically re-adapt parameters to a new selection of
             traces from the original data set.
             """
-            if  type(self._params_initialized) != bool:
+            if type(self._params_initialized) != bool:
                 t0 = self._last_params['t0']
                 fwhm = self._last_params['fwhm']
                 opt_fwhm = self._last_params['opt_fwhm']
@@ -1785,6 +1821,9 @@ class Experiment(ExploreData):
             if workers >= 2:
                 parallel_compute = True
             elif workers == 1:
+                parallel_compute = False
+            else:
+                workers == 1
                 parallel_compute = False
 
             boot_strap = BootStrap(fit_results,
@@ -1951,8 +1990,8 @@ class Experiment(ExploreData):
         """
         add action to action records
         """
-        val = len(self.action_records.__dict__)-2
-        self.action_records.__setattr__(f"_{val}", value)
+        val = len(self._action_records.__dict__) - 2
+        self._action_records.__setattr__(f"_{val}", value)
         if re_select_traces:
             self._re_select_traces()
 

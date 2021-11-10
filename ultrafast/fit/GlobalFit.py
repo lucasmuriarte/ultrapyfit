@@ -1053,8 +1053,8 @@ class GlobalFitTarget(GlobalFit):
         else:
             t0 = params['t0_1'].value
             index = np.argmin([abs(i - t0) for i in self.x])
-            values = [params['tau%i_1' % (ii + 1)].value
-                      for ii in range(self.exp_no)]
+            # values = [params['tau%i_1' % (ii + 1)].value
+            #           for ii in range(self.exp_no)]
             # expvects = [self.exp1(self.x - t0, tau) for tau in values]
             res = self._generate_residues(self.expNGaussDatasetTM, params,
                                           (coeffs, eigs, eigenmatrix))
