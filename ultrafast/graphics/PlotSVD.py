@@ -16,7 +16,8 @@ from ultrafast.graphics.styles.plot_base_functions import *
 
 class PlotSVD:
     """
-    Class to do a singular value decomposition (SVD) of the data and explore the results.
+    Class to do a singular value decomposition (SVD) of the data and explore
+    the results.
 
     Attributes
     ----------
@@ -24,7 +25,8 @@ class PlotSVD:
         x-vector, normally time vector
 
     data: 2darray
-        array containing the data, the number of rows should be equal to the len(x)
+        array containing the data, the number of rows should be equal to
+        the len(x)
 
     wavelength: 1darray
         wavelength vector
@@ -35,13 +37,13 @@ class PlotSVD:
     selected_wavelength: 1darray
         sub dataset of wavelength
 
-    S:
+    _S:
         Number of singular values calculated.
 
-    U:
+    _U:
         Number of left singular vectors calculated  .
 
-    V:
+    _V:
         Number of right singular vectors calculated.
     """
 
@@ -53,7 +55,7 @@ class PlotSVD:
         self.selected_traces = selected_traces
         self.selected_wavelength = selected_wavelength
         self._SVD_fit = False
-        self.U, self.S, self.V = self._calculateSVD()
+        self._U, self._S, self._V = self._calculateSVD()
         self._fig = None
         self._ax = None
         self._number_of_vectors_plot = None
@@ -61,9 +63,17 @@ class PlotSVD:
         self._button_svd_select = None
         self._vertical_line_SVD = None
 
+    def get_svd_decomposition(self):
+        """
+        Return the left singular vectors(U) the eingen values(S) and right
+        singular vectors(V).
+        """
+        return self._U, self._S, self._V
+
     def _calculateSVD(self, vectors=15):
         """
-        Calculated a truncated SVD of the data matrix using scipy.sparse.linalg.svd function
+        Calculated a truncated SVD of the data matrix using
+        scipy.sparse.linalg.svd function
 
         Parameters
         ----------
@@ -73,29 +83,31 @@ class PlotSVD:
         u, s, v = svd(self.data, k=vectors)
         return u[:, ::-1], s[::-1], v[::-1, :]
 
-    def plotSVD(self, vectors=1, select=False, calculate=15):
+    def plot_full_SVD(self, vectors=1, select=False, calculate=15):
         if self._fig is not None:
             self._close_svd_fig()
         wavelength = self.wavelength
-        if self.S is None or len(self.S) != calculate:
-            self.U, self.S, self.V = self._calculateSVD(vectors=15)
-        assert 0 < vectors < len(
-            self.S), 'vector value should be between 1 and the number of calculated values'
+        if self._S is None or len(self._S) != calculate:
+            self._U, self._S, self._V = self._calculateSVD(vectors=15)
+        msg = 'vector value should be between 1 and the number of ' \
+              'calculated values'
+        assert 0 < vectors < len(self._S), msg
         if vectors == 'all':
-            vectors = len(self.S)
+            vectors = len(self._S)
         self._fig, self._ax = plt.subplots(1, 3, figsize=(14, 6))
-        self._ax[1].plot(range(1, len(self.S) + 1), self.S, marker='o')
+        self._ax[1].plot(range(1, len(self._S) + 1), self._S, marker='o')
         for i in range(vectors):
-            self._ax[0].plot(self.x, self.U[:, i])
-            self._ax[2].plot(wavelength, self.V[i, :])
+            self._ax[0].plot(self.x, self._U[:, i])
+            self._ax[2].plot(wavelength, self._V[i, :])
         self._ax[0].set_title('Left singular vectors')
         self._ax[1].set_title('Eingen values')
         self._ax[2].set_title('Right singular vectors')
         self._number_of_vectors_plot = vectors
-        self._vertical_line_SVD = self._ax[1].axvline(vectors, alpha=0.5, color='red',
+        self._vertical_line_SVD = self._ax[1].axvline(vectors, alpha=0.5,
+                                                      color='red',
                                                       zorder=np.inf)
         axspec = self._fig.add_axes([0.20, .02, 0.60, 0.01], facecolor='orange')
-        self._specSVD = Slider(axspec, 'curve number', 1, len(self.S),
+        self._specSVD = Slider(axspec, 'curve number', 1, len(self._S),
                                valstep=1, valinit=vectors)
         self._specSVD.on_changed(self._updatePlotSVD)
         # self._fig.canvas.mpl_connect('close_event', self._close_svd_fig())
@@ -108,8 +120,8 @@ class PlotSVD:
 
     def _close_svd_fig(self):
         """
-        reestablish initial values after closing the svd plot. This is important since this object
-        cannot be pickled
+        reestablish initial values after closing the svd plot. This is important
+         since this object cannot be pickled
         """
         self._fig = None
         self._ax = None
@@ -121,19 +133,23 @@ class PlotSVD:
     @use_style
     def plot_singular_values(self, data='all', size=14, log_scale=True):
         """
-        Plot the singular values of either the whole data set or the selected data set.
+        Plot the singular values of either the whole data set or the selected
+        data set.
 
         Parameters
         ----------
         data: str "all" or "select"
-            If "all" the singular values plotted correspond to the whole data set
-            if select correspond to the singular values of the selected traces
+            If "all" the singular values plotted correspond to the whole data
+            set if "select" correspond to the singular values of the selected
+            traces.
 
         size: int (default 14)
-            size of the figure text labels including tick labels axis labels and legend
+            size of the figure text labels including tick labels axis labels and
+             legend.
 
         log_scale: bool (default True)
-            defines the scale of the y axis, if true a logarithmic scale will be set
+            defines the scale of the y axis, if true a logarithmic scale will
+            be set.
         """
 
         if data == 'selected':
@@ -168,27 +184,31 @@ class PlotSVD:
                 value_c = value * 1.0
                 if value > 10:
                     value_c = value - 10 * (value // 10)
-                self._ax[0].plot(self.x, self.U[:, value],
+                self._ax[0].plot(self.x, self._U[:, value],
                                  color=colores[value_c + 1])
-                self._ax[2].plot(wavelength, self.V[value, :],
+                self._ax[2].plot(wavelength, self._V[value, :],
                                  color=colores[value_c + 1])
             else:
                 for i in range(int(self._number_of_vectors_plot), int(value)):
                     value_c = i
                     if i > 10:
                         value_c = i - 10 * (value // 10)
-                    self._ax[0].plot(self.x, self.U[:, i],
+                    self._ax[0].plot(self.x, self._U[:, i],
                                      color=colores[value_c - 1])
-                    self._ax[2].plot(wavelength, self.V[i, :],
+                    self._ax[2].plot(wavelength, self._V[i, :],
                                      color=colores[value_c - 1])
             self._vertical_line_SVD.remove()
             self._vertical_line_SVD = self._ax[1].axvline(value, alpha=0.5,
-                                                          color='red', zorder=np.inf)
+                                                          color='red',
+                                                          zorder=np.inf)
+
             self._number_of_vectors_plot = value * 1.0
         elif value < self._number_of_vectors_plot:
             self._vertical_line_SVD.remove()
             self._vertical_line_SVD = self._ax[1].axvline(value, alpha=0.5,
-                                                          color='red', zorder=np.inf)
+                                                          color='red',
+                                                          zorder=np.inf)
+
             for i in range(int(value), int(self._number_of_vectors_plot)):
                 del self._ax[0].lines[-1]
                 del self._ax[2].lines[-1]
@@ -199,21 +219,23 @@ class PlotSVD:
 
     def select_SVD_vectors(self, val):
         """
-        function to select the left singular vectors as selected traces. This allows to
-        perform a fit to the singular vector which is much faster than a global fit, since
-        the number of singular vector is lower.
+        function to select the left singular vectors as selected traces.
+        This allows to perform a fit to the singular vector which is much faster
+         than a global fit, since the number of singular vector is lower.
+
         Parameters
         ----------
         val: int
             indicate the number of singular vectors to select
         """
-        self.selected_traces = self.U[:, :val]
+        self.selected_traces = self._U[:, :val]
         self._SVD_fit = True
         self.selected_wavelength = np.linspace(1, val, val)
 
     def _selectSVD(self, val):
         """
-        function to select the left singular vectors as selected traces from the SVD plot.
+        function to select the left singular vectors as selected traces from
+        the SVD plot.
         """
         value = int(round(self._specSVD.val))
         self.select_SVD_vectors(value)
@@ -222,28 +244,28 @@ class PlotSVD:
 
     def select_traces(self, points=10, average=1, avoid_regions=None):
         """
-        Method to select traces from the data attribute ande defines a subset of traces
-        in the selected_traces attribute
+        Method to select traces from the data attribute ande defines a subset
+        of traces in the selected_traces attribute
 
         Parameters
         ----------
         points: int or list or "auto" (default 10)
-            If type(space) =int: a series of traces separated by the value indicated
-            will be selected.
+            If type(space) =int: a series of traces separated by the value
+            indicated will be selected.
             If type(space) = list: the traces in the list will be selected.
-            If space = auto, the number of returned traces is 10 and equally spaced
-            along the wavelength vector and points is set to 0
+            If space = auto, the number of returned traces is 10 and equally
+            spaced along the wavelength vector and points is set to 0
 
         average: int (default 1)
             Binning points surrounding the selected wavelengths.
             e. g.: if point is 1 trace = mean(index-1, index, index+1)
 
         avoid_regions: list of list (default None)
-            Defines wavelength regions that are avoided in the selection when space
-            is an integer. The sub_list should have two elements defining the region
-            to avoid in wavelength values
-            i. e.: [[380,450],[520,530] traces with wavelength values between 380-450
-                   and 520-530 will not be selected
+            Defines wavelength regions that are avoided in the selection when
+            space is an integer. The sub_list should have two elements defining
+            the region to avoid in wavelength values
+            i. e.: [[380,450],[520,530] traces with wavelength values between
+                380-450 and 520-530 will not be selected
         """
         if points == 'all':
             self.selected_traces = copy(self.data)

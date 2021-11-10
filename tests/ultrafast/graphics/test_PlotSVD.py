@@ -57,11 +57,11 @@ class MyTestCase(unittest.TestCase):
     @parameterized.expand([[2, False],
                            [5, True]])
     def test_plotSVD(self, vector, select):
-        svd_explorer.plotSVD(vector, select)
+        svd_explorer.plot_full_SVD(vector, select)
         self.assertEqual(len(svd_explorer._ax), 3)
         self.assertEqual(len(svd_explorer._ax[0].lines), vector)
-        self.assertTrue((svd_explorer.S[:3] > 0).all())
-        self.assertTrue((svd_explorer.S[3:] == 0).all())
+        self.assertTrue((svd_explorer._S[:3] > 0).all())
+        self.assertTrue((svd_explorer._S[3:] == 0).all())
         if select:
             self.assertTrue((svd_explorer._button_svd_select is not None))
         else:
@@ -72,7 +72,7 @@ class MyTestCase(unittest.TestCase):
                            [7],
                            [2]])
     def test__updatePlotSVD(self, val):
-        svd_explorer.plotSVD()
+        svd_explorer.plot_full_SVD()
         svd_explorer._specSVD.val = val
         for cid, func in svd_explorer._specSVD.observers.items():
             func('motion_notify_event')
@@ -84,7 +84,7 @@ class MyTestCase(unittest.TestCase):
         plt.close(svd_explorer._fig)
 
     def test__selectSVD(self):
-        svd_explorer.plotSVD(select=True)
+        svd_explorer.plot_full_SVD(select=True)
         for cid, func in svd_explorer._button_svd_select.observers.items():
             func('button_press_event')
         self.assertTrue(svd_explorer._SVD_fit)
@@ -93,7 +93,7 @@ class MyTestCase(unittest.TestCase):
         plt.close(svd_explorer._fig)
 
     def test__close_svd_fig(self):
-        svd_explorer.plotSVD()
+        svd_explorer.plot_full_SVD()
         svd_explorer._close_svd_fig()
         self.assertTrue((svd_explorer._ax is None))
         self.assertTrue((svd_explorer._fig is None))

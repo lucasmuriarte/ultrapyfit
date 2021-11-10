@@ -37,8 +37,8 @@ class TestExperiment(unittest.TestCase):
 
     def check_preprocessing_function(self, name, extra=None):
         # print(name)
-        action_number = len(self.experiment.action_records.__dict__) - 3
-        action = getattr(self.experiment.action_records, f"_{action_number}")
+        action_number = len(self.experiment._action_records.__dict__) - 3
+        action = getattr(self.experiment._action_records, f"_{action_number}")
         # print(action)
         suppose_action = " ".join(name.split("_"))
         if extra is not None:
@@ -142,7 +142,7 @@ class TestExperiment(unittest.TestCase):
         experiment.fit.fit_global()
         captured_output = io.StringIO()  # Create StringIO object
         sys.stdout = captured_output  # and redirect stdout.
-        experiment.general_report()  # Call function.
+        experiment.print_general_report()  # Call function.
         output = captured_output.getvalue()
 
         # the middle part of the report changes every time is run since the

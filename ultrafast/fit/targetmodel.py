@@ -1009,7 +1009,8 @@ class ModelWindow(QWidget):
                     self.mouse_dx = self.mouse_position.x() - self.ref_mouse.x()
                 else:
                     if big:
-                        self.mouse_dx = self.paint_widget.pos().x()+60 - self.ref_mouse.x()
+                        self.mouse_dx = self.paint_widget.pos().x()+60 - \
+                                        self.ref_mouse.x()
                     else:
                         self.mouse_dx = size - self.ref_mouse.x() - 40
 
@@ -1301,7 +1302,8 @@ class Model:
                     if arr.source is popul:
                         if arr.done == False:
                             raise Exception("Algorithm failure, id 1006!")
-
+        # add the names to the params
+        self.params.model_names = [i.name for i in self.populations]
         return self.params
 
 #    def updateParameters(self, params):#updates values of existing parameters. does not add new values, does not modify model structure

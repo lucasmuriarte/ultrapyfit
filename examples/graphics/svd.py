@@ -9,6 +9,6 @@ time, data, wave = read_data(path, wave_is_row=True)
 
 exp = Experiment(time, data, wave)
 
-exp.plotSVD()
+exp.plot_full_SVD()
 
 plt.show()

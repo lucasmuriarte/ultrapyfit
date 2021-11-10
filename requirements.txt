@@ -3,4 +3,5 @@ pandas
 numpy
 lmfit
 pyqt5
+scipy
 -e .

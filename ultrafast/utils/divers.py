@@ -567,6 +567,10 @@ def froze_it(cls):
                 print("CORRECT CODE: Attribute modified")
                 object.__setattr__(self, '__modified', True)
 
+    def frozen_deleter(self, name):
+        print(f"The class UnvariableContainer is frozen and attribute"
+              f" '{name}' cannot be deleted")
+
     def init_decorator(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
@@ -575,6 +579,7 @@ def froze_it(cls):
 
         return wrapper
 
+    cls.__delattr__ = frozen_deleter
     cls.__setattr__ = frozen_setattr
     cls.__init__ = init_decorator(cls.__init__)
 
@@ -675,13 +680,18 @@ class LabBook(object):
             super().__setattr__(key, val)
     
     @property
-    def actions(self):
-        actions = [i for i in self.__dict__.keys() if i not in ["name", "creation"] and i[0] != '_']
+    def get_attributes(self):
+        """
+        return a list of attributes in the labBokk
+        """
+        actions = [i for i in self.__dict__.keys() if
+                   i not in ["name", "creation"] and i[0] != '_']
         return actions
 
     @property
-    def protected_actions(self):
-        actions = [i for i in self.__dict__.keys() if i not in ["name", "creation"] and i[0] == '_']
+    def get_protected_attributes(self):
+        actions = [i for i in self.__dict__.keys() if
+                   i not in ["name", "creation"] and i[0] == '_']
         return actions
 
     def clean(self):
@@ -797,10 +807,6 @@ class UnvariableContainer(LabBook):
     """
     def __init__(self, **kws):
         super().__init__(**kws)
-
-    def __delattr__(self, name):
-        print(f"The class UnvariableContainer is frozen and attribute"
-              f" '{name}' cannot be deleted")
 
 
 class FiguresFormating:
