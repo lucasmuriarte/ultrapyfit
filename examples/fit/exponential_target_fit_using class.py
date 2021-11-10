@@ -8,7 +8,7 @@ from ultrafast.fit.GlobalFit import GlobalFitTarget
 from ultrafast.utils.divers import read_data
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.fit.GlobalParams import GlobalTargetParameters
-from ultrafast.fit.targetmodel import Model
+from ultrafast.old.targetmodel import Model
 
 
 path = 'C:/Users/lucas/git project/ultrafast/examples/data/data for igor 3 exp.txt'

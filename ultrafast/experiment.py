@@ -369,7 +369,7 @@ class Experiment(ExploreData):
         print(f'\t {name}')
         print('-'*(len(name)+10))
         print('\tData set\t\tNº traces\tNº spectra')
-        name = ['Loaded data','Current data']
+        name = ['Loaded data', 'Current data']
         for ii, i in enumerate([self.preprocessing.data_sets.original_data.data,
                                 self.data]):
             print(f'\t{name[ii]}:\t {i.shape[1]}\t\t\t{i.shape[0]}')
@@ -1171,6 +1171,9 @@ class Experiment(ExploreData):
         def _get_params_from_target_model_window(self):
             """callback function for self.model_window"""
             self._model_params = self._model_window.model.params
+            key = len(self.fit_records.target_models) + 1
+            model = copy.copy(self._model_window.model)
+            self.fit_records.target_models[key] = model
             self._experiment._add_action(f'Target model from Window created')
             print("Initialize target params before running the fit")
 
@@ -1204,6 +1207,43 @@ class Experiment(ExploreData):
         def initialize_target_params(self, t0, fwhm, model='auto',
                                      opt_fwhm=False, vary_t0=True,
                                      global_t0=True, y0=None):
+            """
+            function to initialize parameters for global fitting
+
+            Parameters
+            ----------
+            t0: int or float
+                the t0 for the fitting
+
+            fwhm: float or None (default 0.12)
+                FWHM of the the laser pulse use in the experiment
+                If None. the deconvolution parameters will not be added
+
+            model: auto or int
+                if auto the initialize target model will be considered. If an
+                integer is pass, the current model that will considered is
+                stored in the fit_records.target_model dictionary, and should
+                have been defined before.
+
+            vary_t0: bool (default True)
+                allows to optimize t0 when the sum of exponential is convolve
+                with a gaussian. If there is no deconvolution t0 is always fix
+                to the given value.
+
+            opt_fwhm: bool (default False)
+                allows to optimized the FWHM.
+                Theoretically this should be measured externally and be fix
+                (only applicable if fwhm is given)
+
+            y0: int or float or list/1d-array (default None)
+                If this parameter is pass y0 value will be a fixed parameter
+                to the value passed. This affects fits with and without
+                deconvolution. For a fit with deconvolution y0 is is added to
+                negative delay offsets. For a fit without deconvolution y0 fit
+                the offset of the exponential. If an array is pass this should
+                have the length of the curves that want to be fitted, and for
+                each curve the the y0 value would be different.
+            """
             # TODO check if model not auto + documentation
             if type(model) == int:
                 if model in self.fit_records.target_models.keys():
@@ -1212,7 +1252,7 @@ class Experiment(ExploreData):
             self._last_params = {'t0': t0, 'fwhm': fwhm, 'taus': None,
                                  'tau_inf': None, 'opt_fwhm': opt_fwhm,
                                  'y0': y0, "vary_t0": vary_t0,
-                                 "global_t0":global_t0}
+                                 "global_t0": global_t0}
             self._exp_no = self._model_params["exp_no"].value
             number_traces = self._experiment.selected_traces.shape[1]
             if fwhm is None:
@@ -1608,7 +1648,7 @@ class Experiment(ExploreData):
 
             return fig, ax
 
-        def refit_with_SVD_fit_result(self, fit_number=None, fit_data='all'):
+        def fit_with_SVD_fit_result(self, fit_number=None, fit_data='all'):
             # TODO finish function
             """
             Not finished

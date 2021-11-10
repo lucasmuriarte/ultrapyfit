@@ -6,7 +6,7 @@ Created on Fri Nov 13 18:48:51 2020
 """
 from lmfit import Parameters
 import numpy as np
-from ultrafast.fit.targetmodel import Model
+from ultrafast.old.targetmodel import Model
 from ultrafast.utils.Preprocessing import ExperimentException
 
 
@@ -241,6 +241,9 @@ class GlobalTargetParameters:
                 self.params['k_%i%i' % (i + 1, i + 1)].set(expr=expresion[i])
 
     def params_from_model(self, model: Model):
+        """
+        create parameters from a Model object
+        """
         self.params = model.genParameters()
         self.exp_no = self.params['exp_no'].value
 
@@ -271,6 +274,15 @@ class GlobalTargetParameters:
         GVD_corrected: bool (default True)
             If True all traces will have same t0.
             If False t0 is independent of the trace
+
+        y0: int or float or list/1d-array (default None)
+            If this parameter is pass y0 value will be a fixed parameter to the
+            value passed. This affects fits with and without deconvolution. For
+            a fit with deconvolution y0 is is added to negative delay offsets.
+            For a fit without deconvolution y0 fit the offset of the exponential.
+            If an array is pass this should have the length of the curves that
+            want to be fitted, and for each curve the the y0 value would
+            be different.
         """
         # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
         if fwhm is not None:
