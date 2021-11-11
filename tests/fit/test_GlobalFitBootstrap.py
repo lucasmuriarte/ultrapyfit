@@ -1,5 +1,6 @@
 import unittest
-import pickle, os
+import pickle
+import os
 from ultrafast.fit.GlobalFitBootstrap import BootStrap
 from parameterized import parameterized
 from ultrafast.old.ExponentialFit import GlobalFitExponential
@@ -25,26 +26,26 @@ class TestBootStrap(unittest.TestCase):
         return super().setUpClass()
 
     @parameterized.expand([[10], [7], [15]])
-    def test_data_sets_from_data(self, n_boots):
+    def test__data_sets_from_data(self, n_boots):
         res = self.boot._data_sets_from_data(n_boots)
         self.assertEqual(self.data.shape, res[:, :, 1].shape)
         self.assertEqual(n_boots, res.shape[2])
     
     @parameterized.expand([[10], [7], [15]])
-    def test_data_sets_from_residues(self, n_boots):
+    def test__data_sets_from_residues(self, n_boots):
         res = self.boot._data_sets_from_residues(n_boots)
         self.assertEqual(self.data.shape, res[:, :, 1].shape)
         self.assertEqual(n_boots, res.shape[2])
 
-    def test_get_original_fitter(self):
+    def test__get_original_fitter(self):
         params2 = deepcopy(self.result.estimation_params)
         for i in params2:
             params2[i].value = params2[i].init_value
         fitter, params = self.boot._get_original_fitter()
         self.assertEqual(fitter, GlobalFitExponential)
-        self.assertEqual(params,  params2)
+        self.assertEqual(params, params2)
 
-    def test_details(self):
+    def test__details(self):
         exp_no, type_fit, deconv, maxfev, tau_inf = self.boot._details()
         self.assertEqual(self.result.details['exp_no'], exp_no)
         self.assertEqual(self.result.details['type'], type_fit)
@@ -53,11 +54,11 @@ class TestBootStrap(unittest.TestCase):
         self.assertEqual(self.result.details['tau_inf'], tau_inf)
 
     @parameterized.expand([[10], [15], [20], [25], [33], [50], [14], [38]])
-    def test_get_division_number(self, val):
+    def test__get_division_number(self, val):
         if val in [10, 15, 20, 25, 33, 50]:
             div = self.boot._get_division_number(val)
 
-            self.assertEqual(div, round(100/val))
+            self.assertEqual(div, round(100 / val))
             
         else:
             with self.assertRaises(ExperimentException) as context:
@@ -67,17 +68,17 @@ class TestBootStrap(unittest.TestCase):
 
             self.assertTrue(msg in str(context.exception))
 
-    def test_get_fit_params_names(self):
+    def test__get_fit_params_names(self):
         exp_no, type_fit, deconv, maxfev, tau_inf = self.boot._details()
         names = self.boot._get_fit_params_names(type_fit, exp_no, deconv)
 
         self.assertEqual(names, ['t0_1', 'tau1_1', 'tau2_1', 'tau3_1'])
     
-    def test_generate_pandas_results_dataframe(self):
+    def test__generate_pandas_results_dataframe(self):
         pd_frame = self.boot._generate_pandas_results_dataframe()
         pd_keys = [i for i in pd_frame.keys()]
         df = ['N° Iterations', 'red Xi^2', 'success']
-        suposed_keys = ['tau1 initial', 'tau1 final', 'tau2 initial', 
+        suposed_keys = ['tau1 initial', 'tau1 final', 'tau2 initial',
                         'tau2 final', 'tau3 initial', 'tau3 final'] + df
 
         self.assertEqual(pd_keys, suposed_keys)
@@ -85,7 +86,7 @@ class TestBootStrap(unittest.TestCase):
     @parameterized.expand([[['t0_1', 'tau1_1', 'tau2_1', 'tau3_1'], True],
                            [['t0_1', 'tau1_1', 'tau3_1'], False],
                            [['t0_1', 'tau3_1'], True]])
-    def test_initial_final_values(self, names, only_vary):
+    def test__initial_final_values(self, names, only_vary):
         params = self.result.estimation_params
         initial_values = [params[name].init_value for name in names]
         final_values = [params[name].value for name in names]
@@ -116,7 +117,7 @@ class TestBootStrap(unittest.TestCase):
         boot_2.generate_datasets(3, 25, 'data')
         boot_2.fit_bootstrap()
 
-        for i in range(1, boot_2.bootstrap_result.shape[0]+1):
+        for i in range(1, boot_2.bootstrap_result.shape[0] + 1):
             val1 = round(boot_2.bootstrap_result['tau1 final'][i])
             val2 = round(boot_2.bootstrap_result['tau2 final'][i])
             val3 = round(boot_2.bootstrap_result['tau3 final'][i])
