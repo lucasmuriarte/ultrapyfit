@@ -309,6 +309,7 @@ class Experiment(ExploreData):
                 experiment = cls(x, data, wavelength)
                 experiment.preprocessing.report = object_load["report"]
                 experiment.fitting.fit_records = object_load['fits']
+                experiment.fitting._fits = object_load['fits'].global_fits
                 experiment._action_records = object_load['actions']
                 experiment.preprocessing.data_sets = object_load['datas']
                 experiment._units = object_load['detail']['units']
@@ -932,6 +933,7 @@ class Experiment(ExploreData):
             self._model_params = None
             self.fit_records = UnvariableContainer(name="Fits")
             self._model_window = None
+            self._readapting_params = False
             self._initialized()
             super().__init__(self.fit_records.global_fits, 
                              **self._experiment._units)
@@ -1163,8 +1165,9 @@ class Experiment(ExploreData):
                                        correction, tau_inf, y0)
             self.params = param_creator.params
             self._params_initialized = 'Exponential'
-            self._experiment._add_action(f'new {self._params_initialized} '
-                                         f'parameters initialized')
+            if not self._readapting_params:
+                self._experiment._add_action(f'new {self._params_initialized} '
+                                             f'parameters initialized')
 
         def initialize_target_model_window(self):
             """
@@ -1298,8 +1301,9 @@ class Experiment(ExploreData):
                                        y0=y0)
             self.params = param_creator.params
             self._params_initialized = "Target"
-            self._experiment._add_action(f'new {self._params_initialized} '
-                                         f'parameters initialized')
+            if not self._readapting_params:
+                self._experiment._add_action(f'new {self._params_initialized} '
+                                             f'parameters initialized')
 
         """
         Fitting functions
@@ -1739,6 +1743,7 @@ class Experiment(ExploreData):
             Function to automatically re-adapt parameters to a new selection of
             traces from the original data set.
             """
+            self._readapting_params = True  # avoid to add_action initialize_params
             if type(self._params_initialized) != bool:
                 t0 = self._last_params['t0']
                 fwhm = self._last_params['fwhm']
@@ -1769,6 +1774,7 @@ class Experiment(ExploreData):
             else:
                 # if parameters are not initialize pass
                 pass
+            self._readapting_params = False
 
         def fit_bootstrap(self, fit_number: int, boots: int, size=25,
                           data_from="residues", workers=2):

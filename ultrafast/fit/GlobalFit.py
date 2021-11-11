@@ -164,6 +164,7 @@ class GlobalFitResult:
                 names = ['t0_1', 'fwhm_1'] + ['tau%i_1' % (i + 1) for i in
                                               range(exp_no)]
                 print_names.append('fwhm')
+        print_names = print_names + ['tau %i' % i for i in range(1, exp_no + 1)]
         if type_fit == "Target":
             for i in range(exp_no):
                 for ii in range(exp_no):
@@ -171,7 +172,6 @@ class GlobalFitResult:
                     if params[name].value != 0:
                         names.append(name)
                         print_names.append('k %i%i' % (i + 1, ii + 1))
-        print_names = print_names + ['tau %i' % i for i in range(1, exp_no + 1)]
         to_print = [f'Global {type_fit} fit']
         # print_resultados='\t'+',\n\t'.join([f'{name.split("_")[0]}:\t{round(params[name].value,4)}\t{params[name].vary}' for name in names])
         to_print.append('-------------------------------------------------')
