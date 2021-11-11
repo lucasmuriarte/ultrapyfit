@@ -57,22 +57,22 @@ class TestExperiment(unittest.TestCase):
         self.assertEqual(hasattr(self.experiment.preprocessing.data_sets,
                                  "original_data"),
                          True)
-        self.assertEqual(hasattr(self.experiment.fit.fit_records,
+        self.assertEqual(hasattr(self.experiment.fitting.fit_records,
                                  "single_fits"), True)
         self.assertEqual(
-            hasattr(self.experiment.fit.fit_records, "bootstrap_record"),
+            hasattr(self.experiment.fitting.fit_records, "bootstrap_record"),
             True)
-        self.assertEqual(hasattr(self.experiment.fit.fit_records,
+        self.assertEqual(hasattr(self.experiment.fitting.fit_records,
                                  "conf_interval"),
                          True)
-        self.assertEqual(hasattr(self.experiment.fit.fit_records,
+        self.assertEqual(hasattr(self.experiment.fitting.fit_records,
                                  "target_models"),
                          True)
-        self.assertEqual(hasattr(self.experiment.fit.fit_records,
+        self.assertEqual(hasattr(self.experiment.fitting.fit_records,
                                  "global_fits"),
                          True)
         self.assertEqual(hasattr(
-            self.experiment.fit.fit_records, "integral_band_fits"), True)
+            self.experiment.fitting.fit_records, "integral_band_fits"), True)
         self.assertEqual(hasattr(self.experiment, "_unit_formater"), True)
 
     def test_time(self):
@@ -122,11 +122,11 @@ class TestExperiment(unittest.TestCase):
             expected_output = "".join(lines).replace("NÂ", "N")
         experiment = Experiment.load_data(self.path, wave_is_row=True)
         experiment.select_traces()
-        experiment.fit.initialize_exp_params(0, None, 5, 20, 300)
-        experiment.fit.fit_global()
+        experiment.fitting.initialize_exp_params(0, None, 5, 20, 300)
+        experiment.fitting.fit_global()
         captured_output = io.StringIO()  # Create StringIO object
         sys.stdout = captured_output  # and redirect stdout.
-        experiment.fit.print_fit_results()  # Call function.
+        experiment.fitting.print_fit_results()  # Call function.
         output = captured_output.getvalue()
         self.assertEqual(expected_output, output)
 
@@ -138,8 +138,8 @@ class TestExperiment(unittest.TestCase):
             expected_output = "".join(lines).replace("NÂ", "N")
         experiment = Experiment.load_data(self.path, wave_is_row=True)
         experiment.select_traces()
-        experiment.fit.initialize_exp_params(0, None, 5, 20, 300)
-        experiment.fit.fit_global()
+        experiment.fitting.initialize_exp_params(0, None, 5, 20, 300)
+        experiment.fitting.fit_global()
         captured_output = io.StringIO()  # Create StringIO object
         sys.stdout = captured_output  # and redirect stdout.
         experiment.print_general_report()  # Call function.
@@ -216,10 +216,10 @@ class TestExperiment(unittest.TestCase):
                            [[5, 30], 'constant', 8],
                            [[5, 30], 'exponential', 5]])
     def test_define_weights(self, rango, typo, val):
-        self.experiment.fit.define_weights(rango, typo, val)
-        vec_res = self.experiment.fit._weights['vector']
-        self.assertEqual(self.experiment.fit._weights['apply'], True)
-        self.assertEqual(len(self.experiment.fit._weights), 5)
+        self.experiment.fitting.define_weights(rango, typo, val)
+        vec_res = self.experiment.fitting._weights['vector']
+        self.assertEqual(self.experiment.fitting._weights['apply'], True)
+        self.assertEqual(len(self.experiment.fitting._weights), 5)
         self.assertEqual(len(vec_res), len(self.experiment.x))
 
     #                     t0, fwhm, taus, tau_inf, opt_fwhm, vary_t0, global_t0, y0
@@ -239,44 +239,44 @@ class TestExperiment(unittest.TestCase):
             self.experiment.preprocessing.chirp_corrected = True
 
         if len(taus) == 3:
-            self.experiment.fit.initialize_exp_params(t0,
-                                                      fwhm,
-                                                      taus[0], taus[1], taus[2],
-                                                      tau_inf=tau_inf,
-                                                      vary_t0=vary_t0,
-                                                      opt_fwhm=opt_fwhm,
-                                                      global_t0=global_t0,
-                                                      y0=y0)
+            self.experiment.fitting.initialize_exp_params(t0,
+                                                          fwhm,
+                                                          taus[0], taus[1], taus[2],
+                                                          tau_inf=tau_inf,
+                                                          vary_t0=vary_t0,
+                                                          opt_fwhm=opt_fwhm,
+                                                          global_t0=global_t0,
+                                                          y0=y0)
         elif len(taus) == 2:
-            self.experiment.fit.initialize_exp_params(t0,
-                                                      fwhm,
-                                                      taus[0], taus[1],
-                                                      tau_inf=tau_inf,
-                                                      vary_t0=vary_t0,
-                                                      opt_fwhm=opt_fwhm,
-                                                      global_t0=global_t0,
-                                                      y0=y0)
+            self.experiment.fitting.initialize_exp_params(t0,
+                                                          fwhm,
+                                                          taus[0], taus[1],
+                                                          tau_inf=tau_inf,
+                                                          vary_t0=vary_t0,
+                                                          opt_fwhm=opt_fwhm,
+                                                          global_t0=global_t0,
+                                                          y0=y0)
 
-        self.assertTrue(self.experiment.fit._params_initialized, 'Exponential')
-        self.assertEqual(self.experiment.fit.params['t0_1'].value, t0)
-        self.assertEqual(self.experiment.fit._exp_no, len(taus))
+        self.assertTrue(self.experiment.fitting._params_initialized, 'Exponential')
+        self.assertEqual(self.experiment.fitting.params['t0_1'].value, t0)
+        self.assertEqual(self.experiment.fitting._exp_no, len(taus))
         if fwhm is not None:
-            self.assertTrue(self.experiment.fit._deconv)
-            self.assertEqual(self.experiment.fit.params['t0_1'].vary, vary_t0)
-            self.assertEqual(self.experiment.fit.params['fwhm_1'].vary, opt_fwhm)
-            self.assertEqual(self.experiment.fit.params['fwhm_1'].value, fwhm)
-            self.assertEqual(self.experiment.fit._tau_inf, tau_inf)
+            self.assertTrue(self.experiment.fitting._deconv)
+            self.assertEqual(self.experiment.fitting.params['t0_1'].vary, vary_t0)
+            self.assertEqual(self.experiment.fitting.params['fwhm_1'].vary, opt_fwhm)
+            self.assertEqual(self.experiment.fitting.params['fwhm_1'].value, fwhm)
+            self.assertEqual(self.experiment.fitting._tau_inf, tau_inf)
         else:
-            self.assertFalse(self.experiment.fit.params['t0_1'].vary)
+            self.assertFalse(self.experiment.fitting.params['t0_1'].vary)
         if y0 is not None:
-            self.assertEqual(self.experiment.fit.params["y0_1"].value, y0)
+            self.assertEqual(self.experiment.fitting.params["y0_1"].value, y0)
 
         if self.experiment.preprocessing.chirp_corrected:
             if global_t0:
-                self.assertEqual(self.experiment.fit.params['t0_2'].expr,
+                self.assertEqual(self.experiment.fitting.params['t0_2'].expr,
                                  't0_1')
             else:
-                self.assertEqual(self.experiment.fit.params['t0_2'].expr, None)
+                self.assertEqual(self.experiment.fitting.params['t0_2'].expr, None)
 
         self.experiment.chirp_corrected = False
 
@@ -296,21 +296,21 @@ class TestExperiment(unittest.TestCase):
 
     def test_global_fit(self):
         self.experiment.select_traces()
-        self.experiment.fit.initialize_exp_params(0, None, 5, 20, 300)
-        self.experiment.fit.fit_global()
-        recovered_times = [self.experiment.fit.params["tau1_1"].value,
-                           self.experiment.fit.params["tau2_1"].value,
-                           self.experiment.fit.params["tau3_1"].value]
+        self.experiment.fitting.initialize_exp_params(0, None, 5, 20, 300)
+        self.experiment.fitting.fit_global()
+        recovered_times = [self.experiment.fitting.params["tau1_1"].value,
+                           self.experiment.fitting.params["tau2_1"].value,
+                           self.experiment.fitting.params["tau3_1"].value]
         self.assertNearlyEqualArray(recovered_times, [8, 30, 200], decimal=8)
-        self.assertTrue(self.experiment.fit._fit_number == 1)
-        self.assertTrue(len(self.experiment.fit.fit_records.global_fits) == 1)
+        self.assertTrue(self.experiment.fitting._fit_number == 1)
+        self.assertTrue(len(self.experiment.fitting.fit_records.global_fits) == 1)
 
     def test_single_exp_fit(self):
-        self.experiment.fit.fit_single_exp(1480, 1, 0, None,
-                                           0.7, 40, plot=False)
-        self.assertTrue(len(self.experiment.fit.fit_records.single_fits) == 1)
-        tau1 = self.experiment.fit.fit_records.single_fits[1].params["tau1_1"]
-        tau2 = self.experiment.fit.fit_records.single_fits[1].params["tau2_1"]
+        self.experiment.fitting.fit_single_exp(1480, 1, 0, None,
+                                               0.7, 40, plot=False)
+        self.assertTrue(len(self.experiment.fitting.fit_records.single_fits) == 1)
+        tau1 = self.experiment.fitting.fit_records.single_fits[1].params["tau1_1"]
+        tau2 = self.experiment.fitting.fit_records.single_fits[1].params["tau2_1"]
         self.assertEqual(round(tau1.value), 1)
         self.assertEqual(round(tau2.value), 8)
 

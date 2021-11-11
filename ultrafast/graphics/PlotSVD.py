@@ -89,6 +89,9 @@ class PlotSVD:
         wavelength = self.wavelength
         if self._S is None or len(self._S) != calculate:
             self._U, self._S, self._V = self._calculateSVD(vectors=15)
+        if len(wavelength) != self._V.shape[1] or\
+                len(self.x) != self._U.shape[0]:
+            self._U, self._S, self._V = self._calculateSVD(vectors=15)
         msg = 'vector value should be between 1 and the number of ' \
               'calculated values'
         assert 0 < vectors < len(self._S), msg
@@ -106,7 +109,9 @@ class PlotSVD:
         self._vertical_line_SVD = self._ax[1].axvline(vectors, alpha=0.5,
                                                       color='red',
                                                       zorder=np.inf)
-        axspec = self._fig.add_axes([0.20, .02, 0.60, 0.01], facecolor='orange')
+        
+        axspec = self._fig.add_axes([0.20, .02, 0.60, 0.01], 
+                                    facecolor='orange')
         self._specSVD = Slider(axspec, 'curve number', 1, len(self._S),
                                valstep=1, valinit=vectors)
         self._specSVD.on_changed(self._updatePlotSVD)

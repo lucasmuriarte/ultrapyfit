@@ -147,24 +147,26 @@ class ExploreData(PlotSVD):
             2--> If select the selected traces will be plotted
             3--> If a list containing the traces wave values
 
+        style: style valid name (default 'lmu_res')
+            defines the style to format the output figure, it can be any defined
+            matplotlib style, any ultrafast style (utf) or any user defined
+            style that follows matplotlib or utf styles and is saved in the
+            correct folder. Check styles for more information.
+
         legend: "auto", True or False, (default "auto")
             If auto, a legend is display if there are less than 10 traces in the
             Figure plotted.
             If True or False, a legend will be displayed or not independently of
             the number of traces in the Figure.
 
-        size: int (default 14)
-            (deprecated)size of the figure text labels including tick labels
-            axis labels and legend
-
         Returns
         ----------
         Figure and axes matplotlib objects
         """
-        data, values = self._get_traces_values(traces)
+        data, values = self._get_traces_to_plot(traces)
         fig, ax = plt.subplots(1)
         alpha = 0.60
-        for i in values:
+        for i in range(len(values)):
             ax.plot(self.x, data[:, i], marker='o', alpha=alpha, ms=4, ls='')
         if legend == 'auto':
             if len(values) <= 10 or traces == 'auto':
@@ -226,36 +228,48 @@ class ExploreData(PlotSVD):
                                         amplitude (absolute value)
                  e.g.3: ["auto", 6, 480] >>> 6 spectra equally spaced at w
                                              avelength 480
+
         rango: List of length 2 or None (default None)
             Defines a time range where to auto select spectra
+
         average: int (default 0)
             Number of points to average the spectra. Is recommended to be zero
             except for special cases
+
         cover_range: List of length 2 or None (default None)
             Defines a range in wavelength that will be cover in white. This can
             be use to cut the excitation wavelength range
+
         from_max_to_min: bool (default True)
             In case the rango is None. Generally the data sets have a time point
             where the transient signal is maximum. If from_max_to_min is True
             the range will be given from the time point where the data amplitude
             is maximum to the end. If False from the initial time to the maximum
             in amplitude of the data.
+
         legend: True, False or bar
             If True a legend will be display.
             If False no legend will be display.
             If bar a color-bar with the times is add to the side.
+
         legend_decimal: int (default 2)
             Only applicable if legend=True
             number of decimal values in the legend names
+
         ncol: int (default 1)
             Number of legend columns
         cmap: str or None (default None)
+
             Name of matplotlib color map if None the attribute color_map will
             be use
-        size: int (default 14)
-            (deprecated) size of the figure text labels including tick labels
-            axis labels and legend, (the size should be defined in the style)
+
+        style: style valid name (default 'lmu_res')
+            defines the style to format the output figure, it can be any defined
+            matplotlib style, any ultrafast style (utf) or any user defined
+            style that follows matplotlib or utf styles and is saved in the
+            correct folder. Check styles for more information.
         include_rango_max: bool (default True)
+
             If True, spectra are auto-plotted in a given range the last spectrum
             plotted will be the closest to the range limit
 
@@ -372,19 +386,20 @@ class ExploreData(PlotSVD):
                         4--> list this form ["auto", Nº spectra, wavelength]'
             raise ExperimentException(statement)
 
-    def _get_traces_values(self, traces):
+    def _get_traces_to_plot(self, traces):
         if traces == 'auto':
             number_traces = len(self.wavelength) // 10
             values = [i for i in range(len(self.wavelength))[::number_traces]]
             data = self.data
         elif traces == 'select':
             data = self.selected_traces
-            if self.selected_wavelength is not None and self._SVD_fit is False:
-                values = np.where(np.in1d(self.wavelength,
-                                          self.selected_wavelength))[0]
+
+            # if self.selected_wavelength is not None and self._SVD_fit is False:
+            #    values = np.where(np.in1d(self.wavelength,
+            #                              self.selected_wavelength))[0]
                 # print(values[0])
-            else:
-                values = [i for i in range(data.shape[1])]
+            # else:
+            values = [i for i in range(data.shape[1])]
         elif type(traces) == list:
             values = [np.argmin(abs(self.wavelength - i)) for i in traces]
             data = self.data

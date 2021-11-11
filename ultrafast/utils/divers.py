@@ -21,13 +21,13 @@ import traceback
 class TimeMultiplicator(Enum):
     y = 1E-24
     z = 1E-21
-    a = 1E-18 # ato
-    f = 1E-15 # femto
-    p = 1E-12 # pico
-    n = 1E-9 # nano
-    µ = 1E-6 # micro
-    m = 1E-3 # mili
-    s = 1E0 # one
+    a = 1E-18  # ato
+    f = 1E-15  # femto
+    p = 1E-12  # pico
+    n = 1E-9  # nano
+    µ = 1E-6  # micro
+    m = 1E-3  # mili
+    s = 1E0  # one
     
     @staticmethod
     def chose(value: str):
