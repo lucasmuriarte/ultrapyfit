@@ -72,11 +72,11 @@ class SaveExperiment:
                    'GVD': self.experiment.preprocessing.GVD_corrected,
                    'excitation': self.experiment.excitation,
                    'path': self.experiment._data_path,
-                   'deconv': self.experiment.fit._deconv,
-                   'n_fits': self.experiment.fit._fit_number}
+                   'deconv': self.experiment.fitting._deconv,
+                   'n_fits': self.experiment.fitting._fit_number}
 
         self.save_object["report"] = self.experiment.preprocessing.report
-        self.save_object['fits'] = self.experiment.fit.fit_records
+        self.save_object['fits'] = self.experiment.fitting.fit_records
         self.save_object['actions'] = self.experiment._action_records
         self.save_object['datas'] = self.experiment.preprocessing.data_sets
         self.save_object['data'] = self.experiment.data
@@ -218,7 +218,7 @@ class Experiment(ExploreData):
         self._silent_selection_of_traces = False
         # _fit_number take record of global exponential and target fits ran.
         self.preprocessing = self._Preprocessing(self)
-        self.fit = self._Fit(self)
+        self.fitting = self._Fit(self)
         ExploreData.__init__(self, self.x, self.data, self.wavelength,
                              self.selected_traces, self.selected_wavelength,
                              'viridis', **self._units)
@@ -240,8 +240,8 @@ class Experiment(ExploreData):
     def time(self, time):
         self.x = time
 
-    @staticmethod
-    def load_data(path: str, wavelength=0, time=0, wave_is_row=False,
+    @classmethod
+    def load_data(cls, path: str, wavelength=0, time=0, wave_is_row=False,
                   separator=',', decimal='.'):
         """
         Load data from a file and return dn Experiment instance
@@ -284,12 +284,12 @@ class Experiment(ExploreData):
         except Exception as exception:
             raise ExperimentException(exception)
         else:
-            experiment = Experiment(x, data, wave, path)
+            experiment = cls(x, data, wave, path)
             experiment.preprocessing.report.loaded_file = path
         return experiment
 
-    @staticmethod
-    def load(path: str):
+    @classmethod
+    def load(cls, path: str):
         """
         Load a saved Experiment
         """
@@ -306,9 +306,9 @@ class Experiment(ExploreData):
                 data = object_load['data']
                 wavelength = object_load['wavelength']
                 instantiate = True
-                experiment = Experiment(x, data, wavelength)
+                experiment = cls(x, data, wavelength)
                 experiment.preprocessing.report = object_load["report"]
-                experiment.fit.fit_records = object_load['fits']
+                experiment.fitting.fit_records = object_load['fits']
                 experiment._action_records = object_load['actions']
                 experiment.preprocessing.data_sets = object_load['datas']
                 experiment._units = object_load['detail']['units']
@@ -316,8 +316,8 @@ class Experiment(ExploreData):
                 experiment.preprocessing.GVD_corrected = gvd
                 experiment.excitation = object_load['detail']['excitation']
                 experiment._data_path = object_load['detail']['path']
-                experiment.fit._deconv = object_load['detail']['deconv']
-                experiment.fit._fit_number = object_load['detail']['n_fits']
+                experiment.fitting._deconv = object_load['detail']['deconv']
+                experiment.fitting._fit_number = object_load['detail']['n_fits']
 
         except Exception:
             error = True
@@ -398,8 +398,8 @@ class Experiment(ExploreData):
             print('============================================\n')
             self.preprocessing.report.print()
             print('============================================\n')
-            for i in range(len(self.fit.fit_records.global_fits)):
-                self.fit.print_fit_results(i + 1)
+            for i in range(len(self.fitting.fit_records.global_fits)):
+                self.fitting.print_fit_results(i + 1)
             print('============================================\n')
             self._action_records.print(False, True, True)
 
@@ -1952,7 +1952,7 @@ class Experiment(ExploreData):
                     380-450 and 520-530 will not be selected
         """
         super().select_traces(points, average, avoid_regions)
-        self.fit._readapt_params()
+        self.fitting._readapt_params()
         self._average_selected_traces = average if points != 'all' else 0
         if self._silent_selection_of_traces:
             self._silent_selection_of_traces = False
@@ -1979,7 +1979,7 @@ class Experiment(ExploreData):
                                               self.wavelength,
                                               mini, maxi, True)
         self.selected_traces, self.selected_wavelength = new_data, new_wave
-        self.fit._readapt_params()
+        self.fitting._readapt_params()
         self._average_selected_traces = 0
         self._add_action("Selected region as traces")
 

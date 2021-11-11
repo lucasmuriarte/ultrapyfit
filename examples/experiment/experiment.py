@@ -104,18 +104,18 @@ experiment.wavelength_unit
 # The SVD reveled that 3 component where needed, and values are given after plotting 
 # several traces.
 #                               (t0, fwhm, t1, t2, t3)
-experiment.fit.initialize_exp_params(0, None, 4, 60, 500)
+experiment.fitting.initialize_exp_params(0, None, 4, 60, 500)
 
 # now we are ready to fit the data with "final_fit" method, this will previously
 # run a prefit 
-experiment.fit.fit_global()
+experiment.fitting.fit_global()
 
 # RESULTS EXPLORING
 # -----------------
 # For any fit the first thing is to print the results which can be done with the
 # "print_results" method (If none fit number is passed the last performed fit
 # will be consider)
-experiment.fit.print_fit_results()
+experiment.fitting.print_fit_results()
 
 # >>> Fit number 1: 	Global Exponential fit
 # >>> -------------------------------------------------
@@ -134,8 +134,8 @@ experiment.fit.print_fit_results()
 
 # The following step is plot the fit and residual plot which is done with the 
 # "plot_fit" method
-experiment.fit.plot_global_fit()
+experiment.fitting.plot_global_fit()
 
 # finally the Decay Associated Spectra (DAS) can be plotted with the plot_DAS method
-experiment.fit.plot_DAS()
+experiment.fitting.plot_DAS()
 
