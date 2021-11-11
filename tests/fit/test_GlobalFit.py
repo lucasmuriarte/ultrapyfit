@@ -6,22 +6,8 @@ import numpy as np
 from ultrafast.fit.ModelCreator import ModelCreator
 from ultrafast.fit.GlobalParams import GlobExpParameters
 from ultrafast.utils.divers import get_root_directory
-from copy import deepcopy
 import os
-
-def assertNearlyEqualArray(array1, array2, decimal):
-    """
-    returns "True" if all elements of two arrays
-    are identical until decimal
-    """
-    if type(array1) == list:
-        array1 = np.array(array1)
-    if type(array2) == list:
-        array2 = np.array(array2)
-    dif = np.array(array1) - np.array(array2)
-    value = (dif < 10**(-decimal)).all()
-    return value
-
+from unittest.util import safe_repr
 
 class TestGlobalFit(unittest.TestCase):
     @classmethod
@@ -32,7 +18,6 @@ class TestGlobalFit(unittest.TestCase):
 
         cls.time, data, wave = read_data(path, wave_is_row=True)
         cls.data_select, cls.wave_select = select_traces(data, wave, 10)
-
 
         param_generator = GlobExpParameters(10, [8, 30, 200])
         param_generator.adjustParams(0, fwhm=None)
@@ -59,6 +44,25 @@ class TestGlobalFit(unittest.TestCase):
         fitter = GlobalFit(self.time_simulated, self.data_simulated, 3, self.params)
         details = fitter._get_fit_details()
         self.assertTrue(type(details) == dict)
+
+    def assertNearlyEqualArray(self, array1, array2, decimal, msg=None):
+        """
+        returns "True" if all elements of two arrays
+        are identical until decimal
+        """
+        if type(array1) == list:
+            array1 = np.array(array1)
+        if type(array2) == list:
+            array2 = np.array(array2)
+        dif = np.array(array1) - np.array(array2)
+        expr = (dif < 10**(-decimal)).all()
+
+        if not expr:
+            msg = self._formatMessage(msg, 'arrays are not neary equal, '
+                ' try changing the number of decimals, '
+                f'here it is set to {decimal}')
+
+            raise self.failureException(msg)
 
 
 class TestContainer(unittest.TestCase):
@@ -94,7 +98,8 @@ class TestGlobalFitExponential(TestGlobalFit):
         final_taus = [params_result['tau1_1'].value,
                       params_result['tau2_1'].value,
                       params_result['tau3_1'].value]
-        self.assertTrue(assertNearlyEqualArray(self.original_taus, final_taus, 7))
+
+        self.assertNearlyEqualArray(self.original_taus, final_taus, 7)
         
     def test__apply_time_constraint(self):
         params = GlobExpParameters(self.data_select.shape[1], [4, 40, 400])

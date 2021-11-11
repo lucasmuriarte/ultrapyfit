@@ -5,7 +5,6 @@ from ultrafast.utils.divers import get_root_directory, read_data, select_traces
 import numpy as np
 import os
 
-
 class TestGlobalFitClass(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
