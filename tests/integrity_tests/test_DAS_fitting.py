@@ -24,7 +24,7 @@ class TestDatasetsDAS(unittest.TestCase):
     def setUp(self):
         self.datasets_dir = "../../examples/dynamically_created_data/"
     
-    def skip_test_genAndFit3expNoConvNoNoiseDAS(self):
+    def test_genAndFit3expNoConvNoNoiseDAS(self):
         #generate and save dataset, then fit it and verify results
         
         taus = [5,20,100]
@@ -57,44 +57,27 @@ class TestDatasetsDAS(unittest.TestCase):
         
         data_set_conv_proj.to_csv(datapath)
         
-        time, data, wavelength = read_data(datapath, wave_is_row = True)
+        experiment = Experiment.load_data(datapath, wave_is_row=True)
         
-        data_select, wave_select = select_traces(data, wavelength, 10)
-        params = GlobExpParameters(data_select.shape[1], taus)
-        params.adjustParams(0, vary_t0=False, vary_y0 = False, 
-                            fwhm=0.2, opt_fwhm=False, vary_yinf=False)
-        parameters = params.params
+        experiment.select_traces(points='all')
         
-        fitter = GlobalFitExponential(time, data_select, 3, 
-                                      parameters, True,
-                                      wavelength=wave_select)
+        experiment.fitting.initialize_exp_params(0, 0.20, 3, 30, 300)
         
-        fitter.allow_stop = False #in my case it just hangs.
-        result = fitter.global_fit(maxfev=10000,
-                                   use_jacobian = True,
-                                   method='leastsq')
-        
-        explorer = ExploreResults(result)
-        #explorer.print_results()
-        
-        (x, data, wavelength, 
-         params, exp_no, deconv, 
-         tau_inf, svd_fit, type_fit, 
-         derivative_space) = explorer._get_values()
-        
+        experiment.fitting.fit_global()
+
         taus_out = []
         for i in range(len(taus)):
-            taus_out.append(params["tau"+str(i+1)+"_1"].value)
+            taus_out.append(experiment.fitting.fit_records.global_fits[1].params["tau"+str(i+1)+"_1"].value)
         
         taus_err = []
         for i in range(len(taus)):
-            taus_err.append(params["tau"+str(i+1)+"_1"].stderr)        
+            taus_err.append(experiment.fitting.fit_records.global_fits[1].params["tau"+str(i+1)+"_1"].stderr)        
         
         for i in range(len(taus)):
             self.assertTrue(abs((taus[i]-taus_out[i])/taus_err[i]) < 5,
                             msg="""Tau generated is %.3f, tau after fit is 
-                            %.3f, and error is %.3f""" % (taus[i],taus_out[i],taus_err[i]))   
-        
+                            %.3f, and error is %.3f""" % (taus[i],taus_out[i],taus_err[i]))         
+
     def test_genAndFit1expNoConvNoNoiseDAS(self):
         #generate and save dataset, then fit it and verify results
         
