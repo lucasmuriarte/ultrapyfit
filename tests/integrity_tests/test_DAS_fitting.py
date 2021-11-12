@@ -8,14 +8,9 @@ Created on Sat Sep 25 15:37:51 2021
 
 import unittest
 from ultrafast.utils.divers import DataSetCreator
-from ultrafast.fit.GlobalFit import GlobalFitExponential
 from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.graphics.ExploreResults import ExploreResults
-from ultrafast.fit.GlobalParams import GlobExpParameters
-from scipy.optimize import check_grad, approx_fprime
-import numpy as np
+from ultrafast.experiment import Experiment
 
-#datasets_dir = "ultrafast/examples/dynamically_created_data/"
 
 class TestDatasetsDAS(unittest.TestCase):
     """
@@ -29,7 +24,7 @@ class TestDatasetsDAS(unittest.TestCase):
     def setUp(self):
         self.datasets_dir = "../../examples/dynamically_created_data/"
     
-    def test_genAndFit3expNoConvNoNoiseDAS(self):
+    def skip_test_genAndFit3expNoConvNoNoiseDAS(self):
         #generate and save dataset, then fit it and verify results
         
         taus = [5,20,100]
@@ -131,37 +126,17 @@ class TestDatasetsDAS(unittest.TestCase):
         
         data_set_conv_proj.to_csv(datapath)
         
-        time, data, wavelength = read_data(datapath, wave_is_row = True)
+        experiment = Experiment.load_data(datapath, wave_is_row=True)
         
-        data_select, wave_select = select_traces(data, wavelength, 300)
-        params = GlobExpParameters(data_select.shape[1], [35,])
-        params.adjustParams(0, vary_t0=False, vary_y0 = False, 
-                            fwhm=0.1, opt_fwhm=True, vary_yinf=False)
-        parameters = params.params
+        experiment.select_traces(points='all')
         
-        fitter = GlobalFitExponential(time, data_select, 1, 
-                                      parameters, True,
-                                      wavelength=wave_select)
+        experiment.fitting.initialize_exp_params(0, 0.10, 70.0)
         
-        fitter.allow_stop = False #in my case it just hangs.
+        experiment.fitting.fit_global()
 
-        result = fitter.global_fit(maxfev=10000,
-                                   use_jacobian = True,
-                                   method='leastsq')
+        tau_err = experiment.fitting.fit_records.global_fits[1].params["tau1_1"].value
+        tau_out = experiment.fitting.fit_records.global_fits[1].params["tau1_1"].stderr
         
-        explorer = ExploreResults(result)
-        #explorer.print_results()
-        #explorer.plot_fit()
-        #explorer.plot_DAS()  
-        
-        (x, data, wavelength, 
-         params, exp_no, deconv, 
-         tau_inf, svd_fit, type_fit, 
-         derivative_space) = explorer._get_values()
-    
-        tau_out = params["tau1_1"].value
-        tau_err = params["tau1_1"].stderr
-                  
         self.assertTrue(abs((tau-tau_out)/tau_err) < 5,
                         msg="""Tau generated is %.3f, tau after fit is 
                         %.3f, and error is %.3f""" % (tau,tau_out,tau_err))          
