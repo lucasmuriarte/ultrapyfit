@@ -6,6 +6,7 @@ Created on Thu Nov 12 20:55:03 2020
 """
 import numpy as np
 from lmfit import Parameters
+import datetime
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.graphics.ExploreData import ExploreData
 from ultrafast.fit.GlobalParams import GlobExpParameters, GlobalTargetParameters
@@ -209,7 +210,9 @@ class Experiment(ExploreData):
         self.excitation = None
         # self.GVD_corrected = False
         self._action_records = UnvariableContainer(name="Sequence of actions")
-
+        load = datetime.datetime.now().strftime(
+            "day: %d %b %Y | hour: %H:%M:%S")
+        self._add_action("Created experiment " + load)
         # self.preprocessing.report = LabBook(name="Pre-processing")
         self._data_path = path
         self._units = units
@@ -305,9 +308,11 @@ class Experiment(ExploreData):
                 x = object_load['x']
                 data = object_load['data']
                 wavelength = object_load['wavelength']
-                instantiate = True
                 experiment = cls(x, data, wavelength)
-                experiment.preprocessing.report = object_load["report"]
+                # updatae preprocesing so that annoatate in the loaded labBook
+                experiment.preprocessing = cls._Preprocessing(experiment,
+                                                              object_load["report"])
+                instantiate = True
                 experiment.fitting.fit_records = object_load['fits']
                 experiment.fitting._fits = object_load['fits'].global_fits
                 experiment._action_records = object_load['actions']
@@ -318,7 +323,11 @@ class Experiment(ExploreData):
                 experiment.excitation = object_load['detail']['excitation']
                 experiment._data_path = object_load['detail']['path']
                 experiment.fitting._deconv = object_load['detail']['deconv']
-                experiment.fitting._fit_number = object_load['detail']['n_fits']
+                fit_number = object_load['detail']['n_fits']
+                experiment.fitting._fit_number = fit_number
+                load = datetime.datetime.now().strftime(
+                    "day: %d %b %Y | hour: %H:%M:%S")
+                experiment._add_action("reload experiment "+load)
 
         except Exception:
             error = True
@@ -342,7 +351,6 @@ class Experiment(ExploreData):
                 print('Experiment load successfully')
 
     def load_fit(self, path):
-
         # TODO load a fit result
         pass
 
@@ -357,12 +365,12 @@ class Experiment(ExploreData):
         """
         SaveExperiment(path, self)
 
-    def createNewDir(self, path):
-        # Probably will be removed; for the moment is not working
-        if not os.path.exists(path):
-            os.makedirs(path)
-        self.working_directory = path
-        self.save['path'] = self.working_directory
+    # def createNewDir(self, path):
+    #    # Probably will be removed; for the moment is not working
+    #     if not os.path.exists(path):
+    #        os.makedirs(path)
+    #     self.working_directory = path
+    #     self.save['path'] = self.working_directory
 
     """
     Check status functions
@@ -437,12 +445,15 @@ class Experiment(ExploreData):
         experiment = Experiment(time, data, wavelength) #create an instance
         experiment.Preprocessing.function(*arg,*+kwargs) #preprocess function
         """
-        def __init__(self, experiment):
+        def __init__(self, experiment, report=None):
             self._experiment = experiment
             # self.x = x
             # self.data = data
             # self.wavelength = wavelength
-            self.report = LabBook(name="Pre-processing")
+            if report is None:
+                self.report = LabBook(name="Pre-processing")
+            else:
+                self.report = report
             self._chirp_corrector = None
             self._last_data_sets = None
             self.GVD_corrected = False
@@ -450,7 +461,9 @@ class Experiment(ExploreData):
             self.data_sets.original_data = UnvariableContainer(time=self._experiment.x,
                                                                data=self._experiment.data,
                                                                wavelength=self._experiment.wavelength)
+            self._final_initialization()
 
+        def _final_initialization(self):
             # modified functions to the decorator book anotate
             self.baseline_substraction = book_annotate(
                 self.report)(self.baseline_substraction)

@@ -9,7 +9,7 @@ class Jacobian(ModelCreator):
     Class that has functions to calculate the Jacobian matrix analitically.
     It can be used as an alternative in the global fit classes or method of
     experiment, which by default resolve the Jacobian matrix numerically.
-    If the Jabobian is used, it can speed the calculation.
+    If the Jabobian is used, it can speed-up the calculation.
 
     """
     def __init__(self, exp_no, time, tau_inf=1E+12):

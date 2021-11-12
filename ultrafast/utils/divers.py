@@ -129,16 +129,26 @@ class TimeUnitFormater:
             if 1 >= val >= 1E-24:
                 # print(multi, turns)
                 val = self._multiplicator.value * multi**turns
-                if val == 1.0000000000000002e-15:
-                    val = 1e-15
-                elif val == 1.0000000000000002e-12:
-                    val = 1e-12
-                elif val == 1.0000000000000002e-09:
-                    val = 1e-9
-                elif val == 1.0000000000000002e-06:
-                    val = 1e-6
-                elif val == 1.0000000000000002e-03:
-                    val = 1e-3
+                # the following two lines are to obtain the exponent, for some
+                # reasons depending on the system the output val instead of
+                # being for example 1e-15 will be 1.0000000000000002e-15. the
+                # line convert and the floating operation transform this to the
+                # correct value.
+                print(val)
+                if val < 0.001:
+                    convert = re.findall("[eE]?[+-]?\d+", str(val))[-1]
+                    val = float("1"+convert)
+                print(val)
+                # if val == 1.0000000000000002e-15:
+                #     val = 1e-15
+                # elif val == 1.0000000000000002e-12:
+                #     val = 1e-12
+                # elif val == 1.0000000000000002e-09:
+                #     val = 1e-9
+                # elif val == 1.0000000000000002e-06:
+                #     val = 1e-6
+                # elif val == 1.0000000000000002e-03:
+                #     val = 1e-3
                 name = TimeMultiplicator(TimeMultiplicator(val))
                 if name.name != "s":
                     name = f'{name.name}s'
@@ -150,7 +160,7 @@ class TimeUnitFormater:
                 else:
                     inter = value/60
                 if inter > 999.9:
-                    inter = value/3600
+                    inter = inter/60
                     name = "hours"
                 else:
                     name = "mins"  
@@ -349,22 +359,22 @@ def define_weights(time, rango, typo='constant', val=5):
             mini = int(np.argmin([abs(i - rango[0]) for i in time]))
             maxi = int(np.argmin([abs(i - rango[1]) for i in time]))
             if typo == 'exponential':
-                weight = [1 for i in time[:mini]] + [i ** val for i in range(
-                    1, maxi - mini + 2)] + [1 for i in time[maxi + 1:]]
+                weight = [1 for _ in time[:mini]] + [i ** val for i in range(
+                    1, maxi - mini + 2)] + [1 for _ in time[maxi + 1:]]
                 weight[mini] = val
             elif typo == 'r_exponential':
-                weight = [1 for i in time[:mini]] + [i ** val for i in range(
-                    maxi - mini + 1, 1, -1)] + [1 for i in time[maxi:]]
+                weight = [1 for _ in time[:mini]] + [i ** val for i in range(
+                    maxi - mini + 1, 1, -1)] + [1 for _ in time[maxi:]]
                 weight[maxi] = val
             else:
                 if (maxi - mini) % 2 == 0:
-                    weight = [1 for i in time[:mini]] + [i ** val for i in range(
+                    weight = [1 for _ in time[:mini]] + [i ** val for i in range(
                         1, (maxi - mini + 2) // 2)] + [i ** 2 for i in range(
-                                                       (maxi - mini + 2) // 2, 1, -1)] + [1 for i in time[maxi:]]
+                                                       (maxi - mini + 2) // 2, 1, -1)] + [1 for _ in time[maxi:]]
                 else:
-                    weight = [1 for i in time[:mini]] + [i ** val for i in range(
+                    weight = [1 for _ in time[:mini]] + [i ** val for i in range(
                         1, (maxi - mini + 3) // 2)] + [i ** 2 for i in range(
-                                                       (maxi - mini + 2) // 2, 1, -1)] + [1 for i in time[maxi:]]
+                                                       (maxi - mini + 2) // 2, 1, -1)] + [1 for _ in time[maxi:]]
                 weight[mini] = val
                 weight[maxi] = val
         return {'apply': True, 'vector': np.array(weight),
@@ -376,18 +386,18 @@ def define_weights(time, rango, typo='constant', val=5):
 
 def read_data(path, wavelength=0, time=0, wave_is_row=False, separator=',', decimal='.'):
     """
-    Read a data file from the indicated path and returns three arrays with shapes
-    uses in the ultrafast. The function is bases in pandas read_csv, and uses
-    the ReadData class.
+    Read a data file from the indicated path and returns three arrays with
+    shapes uses in the ultrafast. The function is bases in pandas read_csv,
+    and uses the ReadData class.
 
     For the rows or columns corresponding to the wavelength and time vectors
     the function deals with non numerical values such as units names (e.g.: 'nm'
-    'ps', 'ns'), words and number in scientific notation E or e in any of the forms
-    and combinations. For the rest of values (data values) the function assumes they
-    are homogeneous. The function eliminates from the data rows or columns with non
-    numerical numbers (Nan) in all the entries if not they are set to zero. It also sort
-    the time points if these where non sorted as can be the case with some multi-probe
-    experimental outputs data files.
+    'ps', 'ns'), words and number in scientific notation E or e in any of the
+    forms and combinations. For the rest of values (data values) the function
+    assumes they are homogeneous. The function eliminates from the data rows or
+    columns with non numerical numbers (Nan) in all the entries if not they are
+    set to zero. It also sort the time points if these where non sorted as can
+    be the case with some multi-probe experimental outputs data files.
 
     The arrays return are:
         time: 1darray of length equal to the number of rows in data
@@ -404,11 +414,11 @@ def read_data(path, wavelength=0, time=0, wave_is_row=False, separator=',', deci
         path to the data file
 
     wavelength: int (default 0)
-        defines the element where to find the wavelength vector in its direction
-        which is defined by wave_is_row parameter. i.e.: if wavelength correspond
-        to columns, wavelength=0 indicates is the first column of the data file
-        if wavelength correspond to rows, then wavelength=0 is first row
-
+        defines the element where to find the wavelength vector in its
+        direction which is defined by wave_is_row parameter.
+        i.e.: if wavelength correspond to columns, wavelength=0 indicates is
+        the first column of the data file if wavelength correspond to rows,
+        then wavelength=0 is first row
 
     time: int (default 0)
         defines the element where to find the time vector in its direction
@@ -613,8 +623,10 @@ def book_annotate(container, extend=True):
         calling it
         """
         argnames = func.__code__.co_varnames[:func.__code__.co_argcount]
-        if argnames[0] == 'self':
-            argnames = argnames[1:]
+        # print(argnames)
+        if len(argnames) > 0:   
+            if argnames[0] == 'self':
+                argnames = argnames[1:]
         fname = func.__name__
         
         # @wraps use to keep meta data of func
@@ -655,7 +667,8 @@ class LabBook(object):
     def __init__(self, **kws):
         for key, val in kws.items():
             setattr(self, key, val)
-        self.creation = datetime.datetime.now().strftime("day: %d %b %Y | hour: %H:%M:%S")
+        self.creation = datetime.datetime.now().strftime(
+            "day: %d %b %Y | hour: %H:%M:%S")
 
     def __setattr__(self, key, val, extend=False):
         """
@@ -757,7 +770,7 @@ class LabBook(object):
         if hasattr(self, 'name'):
             name = getattr(self, 'name')
             to_print.append(f'\t {name}')
-            to_print.append(''.join(['-' for i in range(len(name) + 10)]))
+            to_print.append(''.join(['-' for _ in range(len(name) + 10)]))
         for key, value in self.__dict__.items():
             if key != 'notes' and key != 'name' and key != 'creation' and \
                     key[0] != "_":
@@ -929,21 +942,26 @@ class DataSetCreator:
     Class that with static methods that can be use to generate examples
     of transient data, considering gaussian spectral shapes shapes. The
     output is a pandas dataFrame.
+
     example how to use (from DAS):
     -------------------
     wave = DataSetCreator.generate_wavelength(350,700,500)
     time = DataSetCreator.generate_time(-2,500,120)
-    shapes = DataSetCreator.generate_shape(5,wave, taus=[8, 30, 200], signe = 0, sigma = 50)
+    shapes = DataSetCreator.generate_shape(5,wave, taus=[8, 30, 200],
+                                           signe = 0, sigma = 50)
     data_set = DataSetCreator.generate_dataset(shapes, time, 0.12)
-    After fitting the decay associated spectra should be equal to shapes, and the
-    fitting times 8 30 and 200.
+    After fitting the decay associated spectra should be equal to shapes, and
+    the fitting times 8 30 and 200.
+
+
     example how to use (from SAS):
     -------------------
     wave = DataSetCreator.generate_wavelength(400,700,500)
     peaks=[[470,550,650],[480,700],[500,600]]
     amplitudes=[[-10,-6,12],[-9,11],[-8,6]]
     fwhms=[[50,100,80],[40,70],[30,65]]
-    shapes = DataSetCreator.generate_specific_shape(wave, taus=3, peaks=peaks, amplitudes=amplitudes, fwhms=fwhms)
+    shapes = DataSetCreator.generate_specific_shape(wave, taus=3, peaks=peaks,
+    amplitudes=amplitudes, fwhms=fwhms)
     k1=1/5.0
     k2=1/20.0
     k3=1/100.0
@@ -951,41 +969,61 @@ class DataSetCreator:
     initials = [1.0,0,0]
     profiles = DataSetCreator.generate_profiles(500.0,5000,initials,kmatrix)
     data_set_conv = DataSetCreator.generate_dataset(shapes, profiles, 1.2)
-    new_times = DataSetCreator.generate_time(data_set_conv.index[0],data_set_conv.index[-1],120)
-    data_set_conv_proj = DataSetCreator.timegrid_projection(data_set_conv, new_times)
-    Above kmatrix represent model where species 1 bifurcates to species 2 and 3 (with 1/3 and 2/3 probablity, respectively),
+    new_times = DataSetCreator.generate_time(data_set_conv.index[0],
+                                             data_set_conv.index[-1],
+                                             120)
+    data_set_conv_proj = DataSetCreator.timegrid_projection(data_set_conv,
+                                                            new_times)
+
+    Above kmatrix represent model where species 1 bifurcates to species 2 and 3
+    (with 1/3 and 2/3 probablity, respectively),
     and each of them decay independently with 1/k2 and 1/k3.
     initials = [1/3.0, 1/3.0, 1/3.0]
     kmatrix = [[-k1,0,0],[0,-k2,0],[0,0,-k3]]
-    Above kmatrix and initial conditions should generate just 3 exp decay (DAS equivalent)
+    Above kmatrix and initial conditions should generate just 3 exp decay
+    (DAS equivalent)
     initials = [1.0,0,0]
     kmatrix = [[-k1,0,0],[k1,-k2,0],[0,k2,-k3]]
-    Above kmatrix and initial conditions should generate sequential model (cascade, 1->2->3, EAS equivalent)
-    Some comments about how to build kmatrix. It is just a matrix of rates, which when multiplied by concentration
-    vector of given species results in derrivative of concentration vector of the same/other species by time.
-    In other words, dc_i/dt = sum of k_ij * c_j . In general derrivative of vector of c-s = kmatrix * vector of c-s.
-    So for example, first row of kmatrix are k-s of species which decay to first species (positive values),
-    except first one (k[0,0]) which must be negative because it describes decay of species one.
-    (1) diagonal k-s must be negative, because they describe decay of given species,
-    (2) If you sum all kij*cj parts in all rows, it should yield zero for the sum of populations to be preserved.
-    If this condition is not satisfied, then it is still okay, assuming that there is more negative values and you
-    are aware with the fact that your sum of c-s decays to zero (typical to TR spectroscopy).
-    (3) Firstly you can start with defining diagonal elements, which are negative reciprocals of lifetimes
-    of given species
-    (4) Then You decide to which species each species decay, and you balance this negative diagonal k in other
-    species which has lower energy in energy ladder of states.
-    (5) You can skip point 4 and just let given species decay to nothing (usually GS) or you can also divide
-    any diagonal k to some portions in more than one different species. Then you have splitting (bifurcation),
-    so one species decay to more than one species. In general it means, that in each column of kmatrix sum of
-    k-s must be zero (concentration preserved over time) or negative (concentration goes down, so species decay
-    to GS and TA signal goes to zero). After fitting the data parameters should reproduce model described by kmatrix.
-    This class does not use graphical model generator, because its intention is to test all fitting code, so everything
-    need to be implemented separately, and possibly in a different way to avoid mistake-compensation.
-    There are still some minor problems (odeint function gives sometimes NaNs at output, but works if you run it again,
-    so it seems that some SAS inputs are crashing it, needs to be checked),nevertheless usually works ok and gives
-    reasonable results.
+    Above kmatrix and initial conditions should generate sequential model
+    (cascade, 1->2->3, EAS equivalent)
+    Some comments about how to build kmatrix. It is just a matrix of rates,
+    which when multiplied by concentration vector of given species results in
+    derivative of concentration vector of the same/other species by time.
+    In other words, dc_i/dt = sum of k_ij * c_j . In general derrivative of
+    vector of c-s = kmatrix * vector of c-s.
+    So for example, first row of kmatrix are k-s of species which decay to
+    first species (positive values),  except first one (k[0,0]) which must be
+    negative because it describes decay of species one.
+    (1) diagonal k-s must be negative, because they describe decay of given
+    species,
+    (2) If you sum all kij*cj parts in all rows, it should yield zero for the
+    sum of populations to be preserved. If this condition is not satisfied,
+    then it is still okay, assuming that there is more negative values and you
+    are aware with the fact that your sum of c-s decays to zero
+    (typical to TR spectroscopy).
+    (3) Firstly you can start with defining diagonal elements, which are
+    negative reciprocals of lifetimes of given species
+    (4) Then You decide to which species each species decay, and you balance
+    this negative diagonal k in other species which has lower energy in energy
+    ladder of states.
+    (5) You can skip point 4 and just let given species decay to nothing
+    (usually GS) or you can also divide any diagonal k to some portions in
+    more than one different species. Then you have splitting (bifurcation),
+    so one species decay to more than one species. In general it means, that
+    in each column of kmatrix sum of k-s must be zero (concentration preserved
+    over time) or negative (concentration goes down, so species decay to GS
+    and TA signal goes to zero). After fitting the data parameters should
+    reproduce model described by kmatrix. This class does not use graphical
+    model generator, because its intention is to test all fitting code, so
+    everything need to be implemented separately, and possibly in a different
+    way to avoid mistake-compensation. There are still some minor problems
+    (odeint function gives sometimes NaNs at output, but works if you run
+    it again, so it seems that some SAS inputs are crashing it,
+    needs to be checked),nevertheless usually works ok and gives reasonable
+    results.
 
-    Comment: It seems that when using generate_specific_shape instead of generate_shape there is no errors!
+    Comment: It seems that when using generate_specific_shape instead of
+    generate_shape there is no errors!
     """
 
     @staticmethod
@@ -1007,31 +1045,42 @@ class DataSetCreator:
     @staticmethod
     def generate_shape(number, wave, taus, scale=100, signe=1, sigma=2.25):
         """
-        !WARNING: Sometimes this function generates NaNs instead values. Should be checked.
-        function to generate the initial shape (DAS) of the data set. The number of taus
-        defines the shape of the output. returns a pandasDataFrame where the index are
-        taus and the columns the wavelength. The parameters of the curves are ramdomly
-        generated.
+        !WARNING: Sometimes this function generates NaNs instead values.
+        Should be checked. function to generate the initial shape (DAS)
+        of the data set. The number of taus defines the shape of the output.
+        returns a pandasDataFrame where the index are taus and the columns the
+        wavelength. The parameters of the curves are ramdomly generated.
+
         Parameters
         ----------
         number: int
-            defines number of maxima/minima int the output shape. Should be greater than len(taus).
-            e.g.: if number is 5 and taus=[8, 30, 200]. The output is a three row dataFrame, where
-            two rows have two maxima/minima and the third only one (2+2+1 = 5)
+            defines number of maxima/minima int the output shape. Should be
+            greater than len(taus).
+            e.g.: if number is 5 and taus=[8, 30, 200]. The output is a three
+            row dataFrame, where two rows have two maxima/minima and the third
+            only one (2+2+1 = 5)
+
         wave: np array
             array containing the wavelength vector
+
         taus: list (for example [8, 30, 200]) or int
             list containing the associated decay times of the data
-            or number of DAS, but then DAS won't be labelled by taus, still can be used as SAS
+            or number of DAS, but then DAS won't be labelled by taus, still
+            can be used as SAS
+
         scale: int (default 100)
             controls the intensity of the output data
+
         signe: -1, 0 1
             Defines the if the curve is positive or negative
             1: all positive
             0: can be positive or negative
             -1: all negative
+
         sigma:
-            default base sigma value of the Gaussian curves (The final is randomly attribute)
+            default base sigma value of the Gaussian curves
+            (The final is randomly attribute)
+
         Returns
         ----------
         pandas data frame.  data.shape() >>> (len(taus), len(wave))
@@ -1056,23 +1105,23 @@ class DataSetCreator:
                 0.50 *
                 np.random.randint(
                     a,
-                    b) for i in range(gausianas)]
+                    b) for _ in range(gausianas)]
             cen = [wave[0] + 50 + i * rango /
                    (number * 0.5) for i in range(gausianas)]
-            sig = [sigma + 6 * np.random.rand() for i in range(gausianas)]
+            sig = [sigma + 6 * np.random.rand() for _ in range(gausianas)]
             # create gaussians with params
             datag = [(DataSetCreator.gauss(wave, amp, cen, sig))
                      for amp, cen, sig in zip(amp, cen, sig)]
             # divide by a number to adjust to scale
             gaus = [i / scale for i in datag]
             if number > len(taus):
-                tauss = [np.random.choice(taus, replace=False) for i in range(len(taus))] + \
-                        [np.random.choice(taus) for i in range(gausianas - len(taus))]
+                tauss = [np.random.choice(taus, replace=False) for _ in range(len(taus))] + \
+                        [np.random.choice(taus) for _ in range(gausianas - len(taus))]
             else:
                 tauss = [
                     np.random.choice(
                         taus,
-                        replace=False) for i in range(
+                        replace=False) for _ in range(
                         len(taus))]
             das = np.ones((len(taus), len(wave)))
             for i, tau in enumerate(taus):
@@ -1089,25 +1138,36 @@ class DataSetCreator:
     @staticmethod
     def generate_specific_shape(wave, taus, peaks, amplitudes, fwhms):
         """
-        Alternative function to generate the initial shape (DAS or SAS) of the data set.
-        This is not-random replacement for generate_shape, where you specify every propery of spectra.
-        Returns a pandasDataFrame where the index are taus or species number and the columns are the wavelength.
+        Alternative function to generate the initial shape (DAS or SAS) of the
+        data set. This is not-random replacement for generate_shape, where you
+        specify every propery of spectra. Returns a pandasDataFrame where the
+        index are taus or species number and the columns are the wavelength.
+
         Parameters
         ----------
         wave: np array
             array containing the wavelength vector
         taus: list (for example [8, 30, 200]) or int
             list containing the associated decay times of the data
-            or number of DAS, but then DAS won't be labelled by taus, still can be used as SAS
+            or number of DAS, but then DAS won't be labelled by taus,
+            still can be used as SAS
+
         peaks: 2D array / list of lists of floats
-            Defines positions of the peaks in generated spectra. First dimension enumerates number of spectrum and
-            must be aligned with taus number/size. Second dimension dspecifies number of peak in given spectrum.
-            Different spectra can have different number of peaks inside.
-        ampitudes: 2D array / list of lists of floats
-            The same as above, but specifies amplitudes of peaks (nonzero, positive or negative).
-            Note that peaks are normal gauss, so area under will be abs(peaks[i][i])*1.0
+            Defines positions of the peaks in generated spectra. First
+            dimension enumerates number of spectrum and must be aligned with
+            taus number/size. Second dimension dspecifies number of peak in
+            given spectrum. Different spectra can have different number
+            of peaks inside.
+
+        amplitudes: 2D array / list of lists of floats
+            The same as above, but specifies amplitudes of peaks (nonzero,
+            positive or negative). Note that peaks are normal gauss, so area
+            under will be abs(peaks[i][i])*1.0
+
         fwhms: 2D array / list of lists of floats
-            The same as above, but specifies FWHMs (widths) of peaks (values must be positive).
+            The same as above, but specifies FWHMs (widths) of peaks
+            (values must be positive).
+
         Returns
         ----------
         pandas data frame.  data.shape() >>> (len(taus), len(wave))
@@ -1173,7 +1233,8 @@ class DataSetCreator:
         space: str; lin-log, linear or log (default lin-log)
             linear: points are linearly spaced
             log: points are spaced log10 scale
-            lin-log: linearly spaced for values < 1 and log10 spaced for values > 1
+            lin-log: linearly spaced for values < 1 and log10 spaced
+            for values > 1
         returns
         -------
         1d array
@@ -1202,18 +1263,24 @@ class DataSetCreator:
     @staticmethod
     def generate_dataset(shape, time, fwhm=None):
         """
-        generate the data set from the initial spectral shape form. The data has no noise. This
-        can be added using the add_noise function.
+        generate the data set from the initial spectral shape form. The data
+        has no noise. This can be added using the add_noise function.
         Parameters
         ----------
         shape: pandas DataFrame
             initial value of the output vector
+
         time: 1darray or pd.DataFrame
-           time vector with delays will trigger generation from DAS (sums of exps)
-           or pd.DataFrame generated by DataSetCreator.generate_profiles function will trigger generation from SAS
+           time vector with delays will trigger generation from DAS
+           (sums of exps) or pd.DataFrame generated by
+           DataSetCreator.generate_profiles function will trigger
+           generation from SAS
+
         fwhm: None or float
             if None the time evolution will start instantly at time zero
-            if positive float value, evolution will be convolved with gaussian of given FWHM
+            if positive float value, evolution will be convolved with gaussian
+            of given FWHM
+
         returns
         -------
         pandas data frame.  data.shape() >>> (len(time), shape.shape[1])
@@ -1240,8 +1307,10 @@ class DataSetCreator:
                 gauss_y = DataSetCreator.norm_gauss(
                     gauss_x, fwhm)  # build gauss function for convolution
 
-                newdf = pd.DataFrame(data=np.zeros(
-                    [addtimes_sorted.shape[0], time.shape[1]]), index=addtimes_sorted, columns=time.columns)
+                newdf = pd.DataFrame(data=np.zeros([addtimes_sorted.shape[0],
+                                                    time.shape[1]]),
+                                     index=addtimes_sorted,
+                                     columns=time.columns)
                 # now we have also negative time values with zero signal
                 time = newdf.append(time)
 
@@ -1284,15 +1353,18 @@ class DataSetCreator:
     def timegrid_projection(input_data, time):
         """
         generate the data set from another dataset, with changed grid of delays
-        designed to reduce the number and distribution of timepoints after generation from target model
-        this is interpolation-only algorithm, no bucket-averaging!
+        designed to reduce the number and distribution of timepoints after
+        generation from target model this is interpolation-only algorithm,
+        no bucket-averaging!
+
         Parameters
         ----------
         input_data: pandas DataFrame
             generated dataset from DataSetCreator.generate_dataset
         time: 1darray or pd.DataFrame
-           time vector with delays, which will be used to reproject the data, generated by DataSetCreator.generate_time
-           must be within existing time grid of input_data (otherwise error will be thrown!)
+           time vector with delays, which will be used to reproject the data,
+           generated by DataSetCreator.generate_time must be within existing
+           time grid of input_data (otherwise error will be thrown!)
         returns
         -------
         pandas DataFrame, just input with exchanged tme grid
@@ -1350,18 +1422,24 @@ class DataSetCreator:
     @staticmethod
     def derrivatives(cs, t, kmatrix):
         """
-        computes derrivatives of concentrations over time, this is callback function for odeint
+        computes derivatives of concentrations over time, this is callback
+        function for odeint.
+
         Parameters
         ----------
         cs: numpy array 1D
             concentration of each population
         t: float
            given time point, does not contribute anyway
-        kamtrix: numpy array 2D
-           matrix of k-s, shape[1] must match shape[0] of cs (to properly perform product of matrixes)
+
+        kmatrix: numpy array 2D
+           matrix of k-s, shape[1] must match shape[0] of cs
+           (to properly perform product of matrixes)
+
         returns
         -------
-        1D numpy array with shape[0] equal to cs.shape[0]. represents derrivatives of concentrations over time
+        1D numpy array with shape[0] equal to cs.shape[0]. represents
+        derrivatives of concentrations over time
         here is simple example:
         [[k_11, k_12] [[c_1]
         [k_21, k_22]] [c_2]]
@@ -1372,23 +1450,31 @@ class DataSetCreator:
     def generate_profiles(final, points, initials, kmatrix):
         """
         SAS equivalent of DataSetCreator.generate_time function.
-        It always starts from time zero and timegrid is linear (it has to be for odeint)
-        Later one can project the data into another nonlinear grid, to reduce size of the data.
+        It always starts from time zero and timegrid is linear
+        (it has to be for odeint) Later one can project the data into another
+        nonlinear grid, to reduce size of the data.
+
         Parameters
         ----------
         final: np array
             final value of the output vector
+
         points: int
             length of output the array
-            important note: array must dense enough to cover well even short delays (where rapid changes take place),
-            otherwise differential equations may be solved unaccurately. later one can see reproject time grid and reduce it to reasonable size
+            important note: array must dense enough to cover well even short
+            delays (where rapid changes take place), otherwise differential
+            equations may be solved unaccurately. later one can see reproject
+            time grid and reduce it to reasonable size.
+
         initials: numpy array 1D
             initial (at time zero) concentration of each population
+
         kmatrix: numpy array 2D, dimensions equal to initials
            matrix of k-s describes evolution of the system
         returns
         -------
-        1D numpy array with shape[0] equal to cs.shape[0]. represents derrivatives of concentrations over time
+        1D numpy array with shape[0] equal to cs.shape[0]. represents
+        derrivatives of concentrations over time
         here is simple example:
         [[k_11, k_12] [[c_1]
         [k_21, k_22]] [c_2]]

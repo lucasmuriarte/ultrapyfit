@@ -80,7 +80,7 @@ class ExploreResults:
             values return are the fit to the svd left vectors.
             If is not an SVD fit this parameter is not applicable
         """
-        x, data, wavelength, result_params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space,  = \
+        x, data, wavelength, result_params, exp_no, deconv, tau_inf, svd_fit, type_fit, derivative_space = \
             self._get_values(fit_number=fit_number,
                              verify_svd_fit=verify_svd_fit)
         model = ModelCreator(exp_no, x, tau_inf)
@@ -132,8 +132,8 @@ class ExploreResults:
             the last fit in  will be considered
         
         selection: list or None (default None)    
-            If None all the traces fitted will be plotted, if not only those
-            selected in the lis
+            If None all the traces fitted will be plotted, if a list only those
+            selected in the list
         
         plot_residues: Bool (default True)
             If True the Figure returned will contain two axes a top one with

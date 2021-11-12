@@ -53,16 +53,6 @@ class InputThread(threading.Thread):
             print('Exception raise failure')
 
 
-class Container:
-    """
-    Object where once an attribute has been set cannot be modified if
-    self.__frozen = True
-    """
-    def __init__(self, **kws):
-        for key, val in kws.items():
-            setattr(self, key, val)
-
-
 class GlobalFitResult:
     """
     Contain all attributes that an lmfit minimizer result has, and add some
@@ -901,22 +891,27 @@ class GlobalFitTarget(GlobalFit):
     ----------
     x: 1darray
        x-vector, normally time vector
+
     data: 2darray
        array containing the data, the number of rows should be equal to the
        len(x)
+
     exp_no: int
        number of exponential that will be used to fit the data.
+
     params: lmfit parameters object
        object containing the initial parameters values used to build an
        exponential model. These parameters are iteratively optimize to
        reduce the residual matrix formed by data-model (error matrix)
        using Levenberg-Marquardt algorithm.
+
     deconv: bool
        If True the fitting functions will search for the deconvolution
        parameter ("fwhm") in the params attribute, and the the model is a
        weighted sum of Gauss modified exponential functions. If False the
        the model is a weighted sum of exponential functions, and params
        should not contain the fwhm entrance.
+
     GVD_corrected: bool
        Defines if the chrip or group velocity dispersion (GVD) has been
        corrected. If True t0 is globally optimized (faster). If False t0 is
@@ -926,6 +921,7 @@ class GlobalFitTarget(GlobalFit):
        the fit, setting this parameter to False can help to acquire
        overcome this problem although the fit will take longer.
        (only affects if deconv is True)
+
     weights: dictionary
        This dictionary controls if the fitting weights are applied,
        the keys are:
@@ -953,22 +949,27 @@ class GlobalFitTarget(GlobalFit):
         ----------
         x: 1darray
             x-vector, normally time vector
+
         data: 2darray
             Array containing the data, the number of rows should be equal to
             the len(x)
+
         exp_no: int
             Number of exponential that will be used to fit the data
+
         params: lmfit parameter object
             parameters object containing the initial estimations values for all
             the parameters together with the minimum maximum and constraints.
             This object can easily be generated with GlobalTargetParams class,
             and the target Model class.
+
         deconv: bool (default True)
             If True the fitting functions will search for the deconvolution
             parameter ("fwhm") in the params attribute, and the the model is a
             weighted sum of Gauss modified exponential functions. If False the
             the model is a weighted sum of exponential functions, and params
             should not contain the fwhm entrance.
+
         GVD_corrected: bool (defautl True)
             Defines if the chrip or group velocity dispersion (GVD) has been
             corrected. If True t0 is globally optimized (faster). If False t0 is
@@ -978,6 +979,7 @@ class GlobalFitTarget(GlobalFit):
             the fit, setting this parameter to False can help to overcome this
             problem although the fit will take longer.
             (only affects if deconv is True)
+
         kwargs:
             Related for applying weight to the fit. The dictionary obtained from
             the function define_weights can be directly pass as *+weights
@@ -1097,10 +1099,7 @@ class GlobalFitWithIRF(GlobalFit):
             exponential model. These parameters are iteratively optimize to
             reduce the residual matrix formed by data-model (error matrix)
             using Levenberg-Marquardt algorithm.
-
-
         """
-
     def __init__(self,
                  x,
                  data,
