@@ -162,11 +162,12 @@ def use_style(func):
                     res = func(*args, **kwargs)
                     print('style applied')
             except Exception as m:
+                if style is not None:
+                    print("WARNING EXCEPTION ERROR:")
                 print(m)
-                print(1)
                 print('style not applied')
                 res = func(*args, **kwargs)
-            finally:
+            else:
                 if func_plot is not None:
                     try:
                         real_func_plot = globals().get(func_plot)
@@ -176,6 +177,7 @@ def use_style(func):
                             real_func_plot()
                     except:
                         print('style function not applied')
+            finally:
                 return res
         else:
             return func(*args, **kwargs)
