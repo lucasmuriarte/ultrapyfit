@@ -1177,7 +1177,7 @@ class Model:
         #in general, by opening window in console we are bending slightly the
         #frame of implementation, and maybe nobody prepared it to work this way...
         app = QApplication(sys.argv)
-        ex = ModelWindow(self)
+        ex = ModelWindow(self, app=app)
         app.exec_()
 
     def save(self, filename):
