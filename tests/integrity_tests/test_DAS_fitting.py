@@ -11,6 +11,7 @@ from ultrafast.utils.divers import DataSetCreator
 from ultrafast.utils.divers import read_data, select_traces
 from ultrafast.experiment import Experiment
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class TestDatasetsDAS(unittest.TestCase):
@@ -42,7 +43,7 @@ class TestDatasetsDAS(unittest.TestCase):
         k2=1/taus[1]
         k3=1/taus[2]
         kmatrix = [[-k1,0,0],[0,-k2,0],[0,0,-k3]]
-        initials = [0.33,0.34,0.33]
+        initials = [1.0/3,1.0/3,1.0/3]
         profiles = DataSetCreator.generate_profiles(500.0,5000,
                                                     initials,kmatrix)
         data_set_conv = DataSetCreator.generate_dataset(shapes, 
@@ -74,6 +75,12 @@ class TestDatasetsDAS(unittest.TestCase):
         for i in range(len(taus)):
             taus_err.append(experiment.fitting.fit_records.global_fits[1].params["tau"+str(i+1)+"_1"].stderr)        
         
+        #i = 0
+        #plt.plot()
+        #plt.plot(wave, 0.33*shapes.to_numpy()[i,:], "b-")
+        #plt.plot(wave, [experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].value for i_wave in range(len(wave))], "r-")
+        #plt.show()
+        
         #test equality of taus and preexps within error range
         for i in range(len(taus)):
             self.assertTrue(abs((taus[i]-taus_out[i])/taus_err[i]) < 5,
@@ -81,13 +88,9 @@ class TestDatasetsDAS(unittest.TestCase):
                             %.3f, and error is %.3f""" % (taus[i],taus_out[i],taus_err[i]))       
             
             for i_wave in range(len(wave)):
-                preexp = shapes.iloc[i,i_wave]
-                preexp_err = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].value
-                preexp_out = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].stderr            
-                
-                gen_preexps_list = [shapes.iloc[i_t,i_wave] for i_t in range(len(taus))]
-                if(np.abs(preexp) < sum(np.abs(gen_preexps_list))/20):
-                    continue #just skip places where given component had no bands
+                preexp = shapes.iloc[i,i_wave]/3 #div by 3 due to initial populations
+                preexp_err = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].stderr
+                preexp_out = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].value
                 
                 self.assertTrue(abs((preexp-preexp_out)/preexp_err) < 5,
                                 msg="""Preexp[%i,%i] generated is %.6f, preexp after fit is 
@@ -132,8 +135,8 @@ class TestDatasetsDAS(unittest.TestCase):
         
         experiment.fitting.fit_global()
 
-        tau_err = experiment.fitting.fit_records.global_fits[1].params["tau1_1"].value
-        tau_out = experiment.fitting.fit_records.global_fits[1].params["tau1_1"].stderr
+        tau_err = experiment.fitting.fit_records.global_fits[1].params["tau1_1"].stderr
+        tau_out = experiment.fitting.fit_records.global_fits[1].params["tau1_1"].value
         
          #test equality of taus and preexps within error range
         self.assertTrue(abs((tau-tau_out)/tau_err) < 5,
@@ -142,8 +145,8 @@ class TestDatasetsDAS(unittest.TestCase):
         
         for i_wave in range(len(wave)):
             preexp = shapes.iloc[0,i_wave]
-            preexp_err = experiment.fitting.fit_records.global_fits[1].params["pre_exp1_"+str(i_wave+1)].value
-            preexp_out = experiment.fitting.fit_records.global_fits[1].params["pre_exp1_"+str(i_wave+1)].stderr            
+            preexp_err = experiment.fitting.fit_records.global_fits[1].params["pre_exp1_"+str(i_wave+1)].stderr
+            preexp_out = experiment.fitting.fit_records.global_fits[1].params["pre_exp1_"+str(i_wave+1)].value            
             
             self.assertTrue(abs((preexp-preexp_out)/preexp_err) < 5,
                             msg="""Preexp generated is %.6f, preexp after fit is 
