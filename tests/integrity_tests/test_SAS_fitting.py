@@ -32,7 +32,8 @@ class TestDatasetsDAS(unittest.TestCase):
     def test_genAndFit3expNoNoiseSequential(self):
         #generate and save dataset, then fit it and verify results
         
-        taus = [5,20,100]
+        taus = np.array([5,20,100])
+        ks = 1/taus
         
         wave = DataSetCreator.generate_wavelength(400,700,31)
         peaks=[[470,550,650],[480,700],[500,600]]
@@ -42,10 +43,8 @@ class TestDatasetsDAS(unittest.TestCase):
                                                         peaks=peaks, 
                                                         amplitudes=amplitudes, 
                                                         fwhms=fwhms)
-        k1=1/taus[0]
-        k2=1/taus[1]
-        k3=1/taus[2]
-        kmatrix = [[-k1,0,0],[k1,-k2,0],[0,k2,-k3]]
+
+        kmatrix = [[-ks[0],0,0],[ks[0],-ks[1],0],[0,ks[1],-ks[2]]]
         initials = [1,0.0,0.0]
         profiles = DataSetCreator.generate_profiles(500.0,5000,
                                                     initials,kmatrix)
@@ -79,6 +78,9 @@ class TestDatasetsDAS(unittest.TestCase):
         experiment.fitting._model_params = testmodel.params
         model_names = experiment.fitting._model_params.model_names
         experiment.fitting._experiment._add_action(f'Target model loaded')
+        #it would be nice to have method like "take out Model object" and
+        #"put in Model object", so one could independently manage some zoo
+        #of models and automatize loading into fitting procedure
         
         experiment.fitting.initialize_target_params(0, 0.20, model=1)
         
@@ -87,26 +89,31 @@ class TestDatasetsDAS(unittest.TestCase):
         
         experiment.fitting.fit_global()
 
-        taus_out = []
-        for i in range(len(taus)):
-            taus_out.append(experiment.fitting.fit_records.global_fits[1].params["tau"+str(i+1)+"_1"].value)
+        #print(experiment.fitting.fit_records.global_fits[1].params)
+
+        ks_out = []
+        for i in range(len(ks)):
+            ks_out.append(experiment.fitting.fit_records.global_fits[1].params["k_"+str(i+1)+str(i+1)].value)
         
-        taus_err = []
-        for i in range(len(taus)):
-            taus_err.append(experiment.fitting.fit_records.global_fits[1].params["tau"+str(i+1)+"_1"].stderr)        
+        ks_err = []
+        for i in range(len(ks)):
+            #ks_err.append(experiment.fitting.fit_records.global_fits[1].params["k_"+str(i+1)+str(i+1)].stderr)  
+            ks_err.append(np.abs(experiment.fitting.fit_records.global_fits[1].params["k_"+str(i+1)+str(i+1)].value/20)) 
+            #assumed 5% error
+        #why there are no errors! in DAS they were there!
         
-        print(taus_out)
+        print(ks_err)
         
-        #test equality of taus and preexps within error range
+        #test equality of taus and preexps within predefined range (because no errors available)
         for i in range(len(taus)):
-            self.assertTrue(abs((taus[i]-taus_out[i])/taus_err[i]) < 5,
+            self.assertTrue(abs((ks[i]-ks_out[i])/ks_err[i]) < 5,
                             msg="""Tau generated is %.3f, tau after fit is 
-                            %.3f, and error is %.3f""" % (taus[i],taus_out[i],taus_err[i]))       
+                            %.3f, and error is %.3f""" % (ks[i],ks_out[i],ks_err[i]))       
             
             for i_wave in range(len(wave)):
                 preexp = shapes.iloc[i,i_wave]
-                preexp_err = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].value
-                preexp_out = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].stderr            
+                preexp_err = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].stderr
+                preexp_out = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].value            
                 
                 gen_preexps_list = [shapes.iloc[i_t,i_wave] for i_t in range(len(taus))]
                 if(np.abs(preexp) < sum(np.abs(gen_preexps_list))/10):
