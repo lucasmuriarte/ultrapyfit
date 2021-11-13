@@ -26,6 +26,7 @@ class TestDatasetsDAS(unittest.TestCase):
     
     def setUp(self):
         self.datasets_dir = "../../examples/dynamically_created_data/"
+        self.models_dir = "../../examples/target_models/"
     
     def test_genAndFit3expNoNoiseSequential(self):
         #generate and save dataset, then fit it and verify results
@@ -64,7 +65,16 @@ class TestDatasetsDAS(unittest.TestCase):
         
         experiment.select_traces(points='all')
         
+        #experiment.fitting.initialize_target_model_window()
         
+        testmodel = Model()
+        testmodel = Model.load(self.models_dir+"3exp_sequential.model")
+        testmodel.genParameters()
+        #testmodel.manualModelBuild_V2()
+        #testmodel.save(self.models_dir+"3exp_sequential.model")
+        #testmodel.manualModelBuild_V2()
+        
+        experiment.fitting.fit_records.target_models[1] = testmodel
         
         experiment.fitting.initialize_target_params(0, 0.20, model=1)
         

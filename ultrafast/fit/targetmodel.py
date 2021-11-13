@@ -1168,6 +1168,18 @@ class Model:
     def manualModelBuild(self, call_back=None, app=None):
         return ModelWindow(self, app=app)
 
+    def manualModelBuild_V2(self): #above function returns QT error 
+        #"QWidget: Must construct a QApplication before a QWidget"
+        #this function works properly on my system.
+        #i think building instance of QApplication is required when working in
+        #console mode. probably in window mode it will suffice to cal only ModelWindow,
+        #because QApplication is created during start of the window program
+        #in general, by opening window in console we are bending slightly the
+        #frame of implementation, and maybe nobody prepared it to work this way...
+        app = QApplication(sys.argv)
+        ex = ModelWindow(self)
+        app.exec_()
+
     def save(self, filename):
         with open(filename, "wb") as f:
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
