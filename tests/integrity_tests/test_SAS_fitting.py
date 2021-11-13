@@ -14,7 +14,7 @@ from ultrafast.experiment import Experiment
 from ultrafast.fit.targetmodel import ModelWindow, Model
 import numpy as np
 import copy
-
+import matplotlib.pyplot as plt
 
 class TestDatasetsDAS(unittest.TestCase):
     """
@@ -95,33 +95,32 @@ class TestDatasetsDAS(unittest.TestCase):
         for i in range(len(ks)):
             ks_out.append(experiment.fitting.fit_records.global_fits[1].params["k_"+str(i+1)+str(i+1)].value)
         
-        ks_err = []
-        for i in range(len(ks)):
+        #ks_err = []
+        #for i in range(len(ks)):
             #ks_err.append(experiment.fitting.fit_records.global_fits[1].params["k_"+str(i+1)+str(i+1)].stderr)  
-            ks_err.append(np.abs(experiment.fitting.fit_records.global_fits[1].params["k_"+str(i+1)+str(i+1)].value/20)) 
             #assumed 5% error
         #why there are no errors! in DAS they were there!
-        
-        print(ks_err)
+
+        #i = 0
+        #plt.plot()
+        #plt.plot(wave, shapes.to_numpy()[i,:], "b-")
+        #plt.plot(wave, [experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].value for i_wave in range(len(wave))], "r-")
+        #plt.show()        
         
         #test equality of taus and preexps within predefined range (because no errors available)
-        for i in range(len(taus)):
-            self.assertTrue(abs((ks[i]-ks_out[i])/ks_err[i]) < 5,
+        for i in range(len(taus)): #assumed errors 0.01 and 0.001 for now
+            self.assertTrue(abs((-ks[i]-ks_out[i])/0.01) < 5,
                             msg="""Tau generated is %.3f, tau after fit is 
-                            %.3f, and error is %.3f""" % (ks[i],ks_out[i],ks_err[i]))       
+                            %.3f, and error is unknown""" % (ks[i],ks_out[i]))       
             
             for i_wave in range(len(wave)):
                 preexp = shapes.iloc[i,i_wave]
-                preexp_err = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].stderr
+                #preexp_err = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].stderr
                 preexp_out = experiment.fitting.fit_records.global_fits[1].params["pre_exp"+str(i+1)+"_"+str(i_wave+1)].value            
                 
-                gen_preexps_list = [shapes.iloc[i_t,i_wave] for i_t in range(len(taus))]
-                if(np.abs(preexp) < sum(np.abs(gen_preexps_list))/10):
-                    continue #just skip places where given component had no bands
-                
-                self.assertTrue(abs((preexp-preexp_out)/preexp_err) < 5,
+                self.assertTrue(abs((preexp-preexp_out)/0.001) < 5,
                                 msg="""Preexp[%i,%i] generated is %.6f, preexp after fit is 
-                                %.6f, and error is %.6f""" % (i,i_wave,preexp,preexp_out,preexp_err))  
+                                %.6f, and error is unknown""" % (i,i_wave,preexp,preexp_out))  
 
 
 
