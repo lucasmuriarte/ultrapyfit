@@ -13,6 +13,7 @@ from ultrafast.utils.divers import read_data, select_traces
 from ultrafast.experiment import Experiment
 from ultrafast.fit.targetmodel import ModelWindow, Model
 import numpy as np
+import copy
 
 
 class TestDatasetsDAS(unittest.TestCase):
@@ -69,14 +70,20 @@ class TestDatasetsDAS(unittest.TestCase):
         
         testmodel = Model()
         testmodel = Model.load(self.models_dir+"3exp_sequential.model")
-        testmodel.genParameters()
         #testmodel.manualModelBuild_V2()
         #testmodel.save(self.models_dir+"3exp_sequential.model")
         #testmodel.manualModelBuild_V2()
         
+        testmodel.genParameters()
         experiment.fitting.fit_records.target_models[1] = testmodel
+        experiment.fitting._model_params = testmodel.params
+        model_names = experiment.fitting._model_params.model_names
+        experiment.fitting._experiment._add_action(f'Target model loaded')
         
         experiment.fitting.initialize_target_params(0, 0.20, model=1)
+        
+        #i had to add this, completely don't undrestand why...
+        experiment.fitting._model_params.model_names = model_names
         
         experiment.fitting.fit_global()
 
@@ -87,6 +94,8 @@ class TestDatasetsDAS(unittest.TestCase):
         taus_err = []
         for i in range(len(taus)):
             taus_err.append(experiment.fitting.fit_records.global_fits[1].params["tau"+str(i+1)+"_1"].stderr)        
+        
+        print(taus_out)
         
         #test equality of taus and preexps within error range
         for i in range(len(taus)):
