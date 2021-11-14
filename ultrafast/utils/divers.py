@@ -519,9 +519,8 @@ def solve_kmatrix(exp_no, params):
     # do the eigens value decomposition
     eigs, vects = np.linalg.eig(kmatrix)
     # eigenmatrix = np.array([[vects[j][i] for j in range(len(eigs))] for i in range(len(eigs))])
-    eigenmatrix = np.array(vects)
-    coeffs = np.linalg.solve(eigenmatrix, cinitials)
-    return coeffs, eigs, eigenmatrix
+    coeffs = np.linalg.solve(vects, cinitials)
+    return coeffs, eigs, vects
 
 
 def book_annotate_all_methods(book=None, cls=None):
