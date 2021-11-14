@@ -1047,8 +1047,7 @@ class GlobalFitTarget(GlobalFit):
                 t0 = params['t0_1'].value
                 fwhm = params['fwhm_1'].value / 2.35482
                 expvects = [
-                    coeffs[i] * self.expGauss(self.x - t0, -1 / eigs[i],
-                                              fwhm)
+                    coeffs[i] * self.expGauss(self.x - t0, -1 / eigs[i], fwhm)
                     for i in range(len(eigs))]
                 concentrations = [sum([eigenmatrix[i, j] * expvects[j]
                                        for j in range(len(eigs))])
