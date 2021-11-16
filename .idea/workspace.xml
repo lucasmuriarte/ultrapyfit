@@ -6,15 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/data/experiment.exp" beforeDir="false" afterPath="$PROJECT_DIR$/examples/data/experiment.exp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_fitting.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_fitting.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_jacobian.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_jacobian.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/targetmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/targetmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +43,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ultrafast_gui" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/tests/integrity_tests/test_DAS_jacobian.py" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
@@ -68,7 +60,7 @@
       <recent name="C:\Users\lucas\git project\ultrafast\tests\ultrafast\utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test_experiment">
+  <component name="RunManager" selected="Python.test_DAS_jacobian">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="chempyspec" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -91,20 +83,17 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test_experiment" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="test_DAS_jacobian" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="chempyspec" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="C:\Users\lucas\Anaconda3\envs\chempyspec_env\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/ultrafast" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/integrity_tests" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/ultrafast/test_experiment.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/integrity_tests/test_DAS_jacobian.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -129,13 +118,13 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.test_experiment" />
+      <item itemvalue="Python.test_DAS_jacobian" />
       <item itemvalue="Python tests.Unittests in C:/Users/lucas/git project/ultrafast/test/ultrafast/tes_outils.py" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test_experiment" />
-        <item itemvalue="Python.test_experiment" />
+        <item itemvalue="Python.test_DAS_jacobian" />
+        <item itemvalue="Python.test_DAS_jacobian" />
         <item itemvalue="Python tests.Unittests in C:/Users/lucas/git project/ultrafast/test/ultrafast/tes_outils.py" />
       </list>
     </recent_temporary>
@@ -207,7 +196,8 @@
       <workItem from="1636214140054" duration="30133000" />
       <workItem from="1636453904233" duration="18697000" />
       <workItem from="1636534391287" duration="37339000" />
-      <workItem from="1636707701322" duration="14528000" />
+      <workItem from="1636707701322" duration="15391000" />
+      <workItem from="1637062220038" duration="3848000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>

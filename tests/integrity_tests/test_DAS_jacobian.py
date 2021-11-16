@@ -64,8 +64,7 @@ class TestDatasetsDAS(unittest.TestCase):
         
         data_select, wave_select = select_traces(data, wavelength, 50)
         params = GlobExpParameters(data_select.shape[1], taus)
-        params.adjustParams(0.0, vary_t0=True, vary_y0=True,
-                            fwhm=0.2, opt_fwhm=True, vary_yinf=True)
+        params.adjustParams(0.0, vary_t0=True, fwhm=0.2, opt_fwhm=True)
         parameters = params.params
         
         self.tmp_fitter = GlobalFitExponential(time, data_select, 3, 
@@ -104,12 +103,12 @@ class TestDatasetsDAS(unittest.TestCase):
                 #     print(("Num gives %.9f anal gives %.9f " % (num_grad,anal_grad)) +\
                 #           str(self.checkkey)+
                 #           " and res number "+str(res_index))
-                
-                self.assertTrue(abs(diff) < 10**(-8),
-                    msg=("Num gives %.9f anal gives %.9f key " % (num_grad,
-                                                                  anal_grad)) +
-                          str(self.checkkey)+" and res number "+str(res_index)) 
-                
+                msg = "Num gives %.9f anal gives %.9f key " % (num_grad,
+                                                               anal_grad)
+                msg = msg + str(self.checkkey) + " and res number " + \
+                      str(res_index)
+
+                self.assertTrue(abs(diff) < 10**(-8), msg=msg)
             self.real_param_num += 1
 
     def numericGradient(self, value, epsilon=1.49e-08):
