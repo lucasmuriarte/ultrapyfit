@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_jacobian.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_jacobian.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -197,7 +197,7 @@
       <workItem from="1636453904233" duration="18697000" />
       <workItem from="1636534391287" duration="37339000" />
       <workItem from="1636707701322" duration="15391000" />
-      <workItem from="1637062220038" duration="3848000" />
+      <workItem from="1637062220038" duration="5091000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>

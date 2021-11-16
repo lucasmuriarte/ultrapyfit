@@ -1192,9 +1192,12 @@ class Experiment(ExploreData):
             Open a PyQT window where a Target model can be created.
             """
             if self._model_window is None:
-                self._model_window = ModelWindow(
-                    call_back=self._get_params_from_target_model_window)
+                self._create_model_window()
             self._model_window.show()
+
+        def _create_model_window(self):
+            self._model_window = ModelWindow(
+                call_back=self._get_params_from_target_model_window)
 
         def _get_params_from_target_model_window(self):
             """callback function for self.model_window"""
@@ -1322,6 +1325,32 @@ class Experiment(ExploreData):
             if not self._readapting_params:
                 self._experiment._add_action(f'new {self._params_initialized} '
                                              f'parameters initialized')
+
+        def get_target_model(self, number=None):
+            """
+            return a target model object
+            """
+            if self._model_window is None and number is None:
+                return self._model_window.model
+            elif self._model_window is not None:
+                if number in self.fit_records.target_models.keys():
+                    number_model = self.fit_records.target_models[number]
+                    return number_model
+                else:
+                    print("the number pass does not correspond to any of the"
+                          "models safe")
+            else:
+                print("There are no models created")
+
+        def load_target_model(self, filename):
+            """
+            load a target model object
+            """
+            if self._model_window is None:
+                self._create_model_window()
+            with open(filename, "rb") as f:
+                loaded_model = pickle.load(f)
+            self._model_window.model = loaded_model
 
         """
         Fitting functions
