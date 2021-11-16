@@ -49,7 +49,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="ultrafast.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ultrafast.html#module-ultrafast.experiment">ultrafast.experiment module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ultrafast.html#ultrafast-experiment-module">ultrafast.experiment module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ultrafast.html#module-ultrafast">Module contents</a></li>
 </ul>
 </li>
@@ -94,7 +94,7 @@
 &#64;author: lucas</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="ultrafast.graphics.ExploreData.ExploreData">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.ExploreData.</span></span><span class="sig-name descname"><span class="pre">ExploreData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_traces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.ExploreData.</span></span><span class="sig-name descname"><span class="pre">ExploreData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_traces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ultrafast.graphics.PlotSVD.PlotSVD" title="ultrafast.graphics.PlotSVD.PlotSVD"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrafast.graphics.PlotSVD.PlotSVD</span></code></a></p>
 <p>Class to explore a time resolved data set and easily create figures already
 formatted. The class inherits PlotSVD therefore all methods for plotting and
@@ -192,14 +192,14 @@ Can be passes as kwargs when instantiating the object</p>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cmap</span></span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrafast.graphics.ExploreData.ExploreData.get_color_map">
+<span class="sig-name descname"><span class="pre">get_color_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.get_color_map" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.ExploreData.ExploreData.plot3D">
-<span class="sig-name descname"><span class="pre">plot3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.plot3D" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="ultrafast.graphics.ExploreData.ExploreData.plot_3D">
+<span class="sig-name descname"><span class="pre">plot_3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.plot_3D" title="Permalink to this definition"></a></dt>
 <dd><p>Plot the data in 3D</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -285,8 +285,10 @@ number of decimal values in the legend names</p></li>
 <li><p><strong>ncol</strong> (<em>int (default 1)</em>) – Number of legend columns</p></li>
 <li><p><strong>cmap</strong> (<em>str or None (default None)</em>) – Name of matplotlib color map if None the attribute color_map will
 be use</p></li>
-<li><p><strong>size</strong> (<em>int (default 14)</em>) – (deprecated) size of the figure text labels including tick labels
-axis labels and legend, (the size should be defined in the style)</p></li>
+<li><p><strong>style</strong> (<em>style valid name (default ‘lmu_res’)</em>) – defines the style to format the output figure, it can be any defined
+matplotlib style, any ultrafast style (utf) or any user defined
+style that follows matplotlib or utf styles and is saved in the
+correct folder. Check styles for more information.</p></li>
 <li><p><strong>include_rango_max</strong> (<em>bool (default True)</em>) – If True, spectra are auto-plotted in a given range the last spectrum
 plotted will be the closest to the range limit</p></li>
 </ul>
@@ -302,7 +304,7 @@ plotted will be the closest to the range limit</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ultrafast.graphics.ExploreData.ExploreData.plot_traces">
-<span class="sig-name descname"><span class="pre">plot_traces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">traces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'select'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lmu_trac'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.plot_traces" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot_traces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">traces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'select'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lmu_trac'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.plot_traces" title="Permalink to this definition"></a></dt>
 <dd><p>Plots either the selected traces or 9-10 trace equally space in the
 wavelength range. If less than 10 (included) traces are plotted a
 legend will be display.</p>
@@ -315,10 +317,16 @@ legend will be display.</p>
 </dd>
 </dl>
 <p>2–&gt; If select the selected traces will be plotted
-3–&gt; If a list conatining the traces wave values</p>
+3–&gt; If a list containing the traces wave values</p>
 </li>
-<li><p><strong>size</strong> (<em>int (default 14)</em>) – size of the figure text labels including tick labels axis labels
-and legend</p></li>
+<li><p><strong>style</strong> (<em>style valid name (default ‘lmu_res’)</em>) – defines the style to format the output figure, it can be any defined
+matplotlib style, any ultrafast style (utf) or any user defined
+style that follows matplotlib or utf styles and is saved in the
+correct folder. Check styles for more information.</p></li>
+<li><p><strong>legend</strong> (<em>“auto”, True or False, (default “auto”)</em>) – If auto, a legend is display if there are less than 10 traces in the
+Figure plotted.
+If True or False, a legend will be displayed or not independently of
+the number of traces in the Figure.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -376,14 +384,19 @@ infinitive number of traces can be selected</p>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="id1">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">time_unit</span></span><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrafast.graphics.ExploreData.ExploreData.set_color_map">
+<span class="sig-name descname"><span class="pre">set_color_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreData.ExploreData.set_color_map" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id2">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">wavelength_unit</span></span><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_unit</span></span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wavelength_unit</span></span><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -395,11 +408,20 @@ infinitive number of traces can be selected</p>
 <p>&#64;author: lucas</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.ExploreResults.</span></span><span class="sig-name descname"><span class="pre">ExploreResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fits</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.ExploreResults.</span></span><span class="sig-name descname"><span class="pre">ExploreResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fits</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.DAS">
-<span class="sig-name descname"><span class="pre">DAS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_to_EAS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.DAS" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.das_to_eas">
+<span class="sig-name descname"><span class="pre">das_to_eas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">das</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deconv</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.das_to_eas" title="Permalink to this definition"></a></dt>
+<dd><p>Recalculates DAS spectra into EAS, treating y_inf as final product.
+Replaces DAS with EAS, so one should treat this data as EAS after
+calling this method.
+It works with matrices and should be correct for any number of exp’s.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.get_DAS">
+<span class="sig-name descname"><span class="pre">get_DAS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_to_EAS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.get_DAS" title="Permalink to this definition"></a></dt>
 <dd><p>returns an array of the Decay associated spectra. The number of rows is
 the number of species and the number of columns correspond to the
 wavelength vector.</p>
@@ -430,12 +452,21 @@ combination of the DAS and considering a sequential model.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.das_to_eas">
-<span class="sig-name descname"><span class="pre">das_to_eas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">das</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deconv</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.das_to_eas" title="Permalink to this definition"></a></dt>
-<dd><p>Recalculates DAS spectra into EAS, treating y_inf as final product.
-Replaces DAS with EAS, so one should treat this data as EAS after
-calling this method.
-It works with matrices and should be correct for any number of exp’s.</p>
+<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.get_gloabl_fit_curve_results">
+<span class="sig-name descname"><span class="pre">get_gloabl_fit_curve_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify_svd_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.get_gloabl_fit_curve_results" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a data set created from the best parameters values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results all_fit dictionary. If None
+the last fit in  will be considered</p></li>
+<li><p><strong>verify_svd_fit</strong> (<em>bool (default  False)</em>) – If True it will return the single fit perform to every trace of the
+spectra after an svd fit. If false and the fit is an SVD, the
+values return are the fit to the svd left vectors.
+If is not an SVD fit this parameter is not applicable</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -450,7 +481,7 @@ It works with matrices and should be correct for any number of exp’s.</p>
 <dd class="field-odd"><ul>
 <li><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results all_fit dictionary. If None
 the last fit in  will be considered.</p></li>
-<li><p><strong>number</strong> (<em>list of inst or ‘all’</em>) – Defines the DAS spectra wanted, if there is tau_inf include -1 in
+<li><p><strong>number</strong> (<em>list of inst or ‘all’ (default ‘all’)</em>) – Defines the DAS spectra wanted, if there is tau_inf include -1 in
 the list (Note we start counting by ‘0’, thus for tau1 ‘0’ should be
 pass):
 e.g.: for a fit with three exponential, if the last two are wanted;</p>
@@ -459,6 +490,9 @@ e.g.: for a fit with three exponential, if the last two are wanted;</p>
 </div></blockquote>
 <p>e.g.2: the last two exponential plus tau_inf; number = [1, 2, -1]</p>
 </li>
+<li><p><strong>plot_offset</strong> (<em>bool (default True)</em>) – If True the offset of a global fit without deconvolution will be
+plot. (Only applicable for exponential or target fit without
+deconvolution)</p></li>
 <li><p><strong>precision</strong> (<em>int (default 2)</em>) – Defines the number of decimal places of the legend legend</p></li>
 <li><p><strong>style</strong> (<em>style valid name (default ‘lmu_spec’)</em>) – defines the style to format the output figure, it can be any defined
 matplotlib style, any ultrafast style (utf) or any user defined
@@ -483,19 +517,23 @@ combination of the DAS and considering a sequential model.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.plot_concentrations">
-<span class="sig-name descname"><span class="pre">plot_concentrations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_total_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.plot_concentrations" title="Permalink to this definition"></a></dt>
-<dd><p>Function that generates a figure with the concentration evolution of a Target fit</p>
+<span class="sig-name descname"><span class="pre">plot_concentrations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_total_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lmu_res'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.plot_concentrations" title="Permalink to this definition"></a></dt>
+<dd><p>Function that generates a figure with the concentration evolution of a
+Target fit</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results all_fit dictionary. If None the last fit in  will
-be considered.</p></li>
+<li><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results all_fit dictionary.
+If None the last fit in  will be considered.</p></li>
 <li><p><strong>names</strong> (<em>list (default None)</em>) – List that allows to redefine the names of the components.
 Is none the default names “specie” is use.
 The names are display in the legend if legend is True</p></li>
 <li><p><strong>plot_total_c</strong> (<em>bool (default True)</em>) – Defines if the Total concentration is</p></li>
 <li><p><strong>legend</strong> (<em>bool (default True)</em>) – Defines if the legend is display</p></li>
-<li><p><strong>size</strong> (<em>int (default 14)</em>) – size of the figure text labels including tick labels axis labels and legend</p></li>
+<li><p><strong>style</strong> (<em>style valid name (default ‘lmu_res’)</em>) – defines the style to format the output figure, it can be any defined
+matplotlib style, any ultrafast style (utf) or any user defined
+style that follows matplotlib or utf styles and is saved in the
+correct folder. Check styles for more information.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -508,8 +546,8 @@ The names are display in the legend if legend is True</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.plot_fit">
-<span class="sig-name descname"><span class="pre">plot_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_residues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lmu_res'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.plot_fit" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.plot_global_fit">
+<span class="sig-name descname"><span class="pre">plot_global_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_residues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lmu_res'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.plot_global_fit" title="Permalink to this definition"></a></dt>
 <dd><p>Function that generates a figure with the results of the fit stored in
 the all_fit attributes.  If less than 10 traces are fitted or selected
 a legend will be displayed</p>
@@ -518,8 +556,8 @@ a legend will be displayed</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results all_fit dictionary. If None
 the last fit in  will be considered</p></li>
-<li><p><strong>selection</strong> (<em>list or None (default None)</em>) – If None all the traces fitted will be plotted, if not only those
-selected in the lis</p></li>
+<li><p><strong>selection</strong> (<em>list or None (default None)</em>) – If None all the traces fitted will be plotted, if a list only those
+selected in the list</p></li>
 <li><p><strong>plot_residues</strong> (<em>Bool (default True)</em>) – If True the Figure returned will contain two axes a top one with
 the residues, and the bottom one with the fit and data</p></li>
 <li><p><strong>style</strong> (<em>style valid name (default ‘lmu_res’)</em>) – defines the style to format the output figure, it can be any defined
@@ -538,43 +576,8 @@ correct folder. Check styles for more information.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.print_results">
-<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.print_results" title="Permalink to this definition"></a></dt>
-<dd><p>Print out a summarize result of the fit.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results all_fit dictionary. If None the last fit in  will
-be considered.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.results">
-<span class="sig-name descname"><span class="pre">results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify_svd_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.results" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a data set created from the best parameters values.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results all_fit dictionary. If None
-the last fit in  will be considered</p></li>
-<li><p><strong>verify_svd_fit</strong> (<em>bool (default  False)</em>) – If True it will return the single fit perform to every trace of the
-spectra after an svd fit. If false and the fit is an SVD, the
-values return are the fit to the svd left vectors.
-If is not an SVD fit this parameter is not applicable</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.time_unit">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">time_unit</span></span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.time_unit" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.verify_fit">
-<span class="sig-name descname"><span class="pre">verify_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.verify_fit" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.plot_verify_fit">
+<span class="sig-name descname"><span class="pre">plot_verify_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.plot_verify_fit" title="Permalink to this definition"></a></dt>
 <dd><p>Function that generates a figure with a slider to evaluate every single
 trace fitted independently.</p>
 <dl class="field-list simple">
@@ -591,9 +594,26 @@ the last fit in  will be considered.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.print_fit_results">
+<span class="sig-name descname"><span class="pre">print_fit_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.print_fit_results" title="Permalink to this definition"></a></dt>
+<dd><p>Print out a summarize result of the fit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fit_number</strong> (<em>int or None (default None)</em>) – defines the fit number of the results all_fit dictionary. If None the last fit in  will
+be considered.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.time_unit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_unit</span></span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.time_unit" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="ultrafast.graphics.ExploreResults.ExploreResults.wavelength_unit">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">wavelength_unit</span></span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.wavelength_unit" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wavelength_unit</span></span><a class="headerlink" href="#ultrafast.graphics.ExploreResults.ExploreResults.wavelength_unit" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -605,7 +625,7 @@ the last fit in  will be considered.</p>
 <p>&#64;author: 79344</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="ultrafast.graphics.MaptplotLibCursor.SnaptoCursor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.MaptplotLibCursor.</span></span><span class="sig-name descname"><span class="pre">SnaptoCursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_click</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertical_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'snap'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_line</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.MaptplotLibCursor.SnaptoCursor" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.MaptplotLibCursor.</span></span><span class="sig-name descname"><span class="pre">SnaptoCursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_click</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertical_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'snap'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_line</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.MaptplotLibCursor.SnaptoCursor" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ultrafast.graphics.MaptplotLibCursor.SnaptoCursor.clear">
@@ -641,9 +661,10 @@ the last fit in  will be considered.</p>
 <p>&#64;author: lucas</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.PlotSVD.</span></span><span class="sig-name descname"><span class="pre">PlotSVD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_traces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.PlotSVD.</span></span><span class="sig-name descname"><span class="pre">PlotSVD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_traces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class to do a singular value decomposition (SVD) of the data and explore the results.</p>
+<p>Class to do a singular value decomposition (SVD) of the data and explore
+the results.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.x">
 <span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.x" title="Permalink to this definition"></a></dt>
@@ -658,7 +679,8 @@ the last fit in  will be considered.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.data">
 <span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.data" title="Permalink to this definition"></a></dt>
-<dd><p>array containing the data, the number of rows should be equal to the len(x)</p>
+<dd><p>array containing the data, the number of rows should be equal to
+the len(x)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>2darray</p>
@@ -700,39 +722,54 @@ the last fit in  will be considered.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.S">
-<span class="sig-name descname"><span class="pre">S</span></span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.S" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD._S">
+<span class="sig-name descname"><span class="pre">_S</span></span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD._S" title="Permalink to this definition"></a></dt>
 <dd><p>Number of singular values calculated.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.U">
-<span class="sig-name descname"><span class="pre">U</span></span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.U" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD._U">
+<span class="sig-name descname"><span class="pre">_U</span></span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD._U" title="Permalink to this definition"></a></dt>
 <dd><p>Number of left singular vectors calculated  .</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.V">
-<span class="sig-name descname"><span class="pre">V</span></span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.V" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD._V">
+<span class="sig-name descname"><span class="pre">_V</span></span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD._V" title="Permalink to this definition"></a></dt>
 <dd><p>Number of right singular vectors calculated.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.plotSVD">
-<span class="sig-name descname"><span class="pre">plotSVD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.plotSVD" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.get_svd_decomposition">
+<span class="sig-name descname"><span class="pre">get_svd_decomposition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.get_svd_decomposition" title="Permalink to this definition"></a></dt>
+<dd><p>Return the left singular vectors(U) the eingen values(S) and right
+singular vectors(V).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.plot_full_SVD">
+<span class="sig-name descname"><span class="pre">plot_full_SVD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.plot_full_SVD" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.plot_singular_values">
 <span class="sig-name descname"><span class="pre">plot_singular_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.plot_singular_values" title="Permalink to this definition"></a></dt>
-<dd><p>Plot the singular values of either the whole data set or the selected data set.</p>
-<dl class="field-list simple">
+<dd><p>Plot the singular values of either the whole data set or the selected
+data set.</p>
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>str “all” or “select”</em>) – If “all” the singular values plotted correspond to the whole data set
-if select correspond to the singular values of the selected traces</p></li>
-<li><p><strong>size</strong> (<em>int (default 14)</em>) – size of the figure text labels including tick labels axis labels and legend</p></li>
-<li><p><strong>log_scale</strong> (<em>bool (default True)</em>) – defines the scale of the y axis, if true a logarithmic scale will be set</p></li>
+<dd class="field-odd"><ul>
+<li><p><strong>data</strong> (<em>str “all” or “select”</em>) – If “all” the singular values plotted correspond to the whole data
+set if “select” correspond to the singular values of the selected
+traces.</p></li>
+<li><p><strong>size</strong> (<em>int (default 14)</em>) –</p>
+<dl class="simple">
+<dt>size of the figure text labels including tick labels axis labels and</dt><dd><p>legend.</p>
+</dd>
+</dl>
+</li>
+<li><p><strong>log_scale</strong> (<em>bool (default True)</em>) – defines the scale of the y axis, if true a logarithmic scale will
+be set.</p></li>
 </ul>
 </dd>
 </dl>
@@ -741,33 +778,39 @@ if select correspond to the singular values of the selected traces</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.select_SVD_vectors">
 <span class="sig-name descname"><span class="pre">select_SVD_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.select_SVD_vectors" title="Permalink to this definition"></a></dt>
-<dd><p>function to select the left singular vectors as selected traces. This allows to
-perform a fit to the singular vector which is much faster than a global fit, since
-the number of singular vector is lower.
-:Parameters: <strong>val</strong> (<em>int</em>) – indicate the number of singular vectors to select</p>
+<dd><p>function to select the left singular vectors as selected traces.
+This allows to perform a fit to the singular vector which is much faster</p>
+<blockquote>
+<div><p>than a global fit, since the number of singular vector is lower.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>val</strong> (<em>int</em>) – indicate the number of singular vectors to select</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ultrafast.graphics.PlotSVD.PlotSVD.select_traces">
 <span class="sig-name descname"><span class="pre">select_traces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avoid_regions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.PlotSVD.PlotSVD.select_traces" title="Permalink to this definition"></a></dt>
-<dd><p>Method to select traces from the data attribute ande defines a subset of traces
-in the selected_traces attribute</p>
+<dd><p>Method to select traces from the data attribute ande defines a subset
+of traces in the selected_traces attribute</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul>
-<li><p><strong>points</strong> (<em>int or list or “auto” (default 10)</em>) – If type(space) =int: a series of traces separated by the value indicated
-will be selected.
+<li><p><strong>points</strong> (<em>int or list or “auto” (default 10)</em>) – If type(space) =int: a series of traces separated by the value
+indicated will be selected.
 If type(space) = list: the traces in the list will be selected.
-If space = auto, the number of returned traces is 10 and equally spaced
-along the wavelength vector and points is set to 0</p></li>
+If space = auto, the number of returned traces is 10 and equally
+spaced along the wavelength vector and points is set to 0</p></li>
 <li><p><strong>average</strong> (<em>int (default 1)</em>) – Binning points surrounding the selected wavelengths.
 e. g.: if point is 1 trace = mean(index-1, index, index+1)</p></li>
-<li><p><strong>avoid_regions</strong> (<em>list of list (default None)</em>) – Defines wavelength regions that are avoided in the selection when space
-is an integer. The sub_list should have two elements defining the region
-to avoid in wavelength values
-i. e.: [[380,450],[520,530] traces with wavelength values between 380-450</p>
+<li><p><strong>avoid_regions</strong> (<em>list of list (default None)</em>) – Defines wavelength regions that are avoided in the selection when
+space is an integer. The sub_list should have two elements defining
+the region to avoid in wavelength values
+i. e.: [[380,450],[520,530] traces with wavelength values between</p>
 <blockquote>
-<div><p>and 520-530 will not be selected</p>
+<div><p>380-450 and 520-530 will not be selected</p>
 </div></blockquote>
 </li>
 </ul>
@@ -776,235 +819,6 @@ i. e.: [[380,450],[520,530] traces with wavelength values between 380-450</p>
 </dd></dl>
 
 </dd></dl>
-
-</section>
-<section id="module-ultrafast.graphics.targetmodel">
-<span id="ultrafast-graphics-targetmodel-module"></span><h2>ultrafast.graphics.targetmodel module<a class="headerlink" href="#module-ultrafast.graphics.targetmodel" title="Permalink to this headline"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModPopulation">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.targetmodel.</span></span><span class="sig-name descname"><span class="pre">ModPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModPopulation" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModPopulation.countActive">
-<span class="sig-name descname"><span class="pre">countActive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModPopulation.countActive" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModPopulation.countActiveSFs">
-<span class="sig-name descname"><span class="pre">countActiveSFs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModPopulation.countActiveSFs" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModPopulation.countActiveSFsValues">
-<span class="sig-name descname"><span class="pre">countActiveSFsValues</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModPopulation.countActiveSFsValues" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModPopulation.countFixed">
-<span class="sig-name descname"><span class="pre">countFixed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModPopulation.countFixed" title="Permalink to this definition"></a></dt>
-<dd><p>Count fixed parameters</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModPopulation.countOutgoingArrows">
-<span class="sig-name descname"><span class="pre">countOutgoingArrows</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModPopulation.countOutgoingArrows" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModPopulation.enableDisableKs">
-<span class="sig-name descname"><span class="pre">enableDisableKs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModPopulation.enableDisableKs" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModPopulation.remove">
-<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModPopulation.remove" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModPopulation.updateBranchKs">
-<span class="sig-name descname"><span class="pre">updateBranchKs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModPopulation.updateBranchKs" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModPopulation.updateState">
-<span class="sig-name descname"><span class="pre">updateState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_edit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_edit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_all_edit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModPopulation.updateState" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModProcess">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.targetmodel.</span></span><span class="sig-name descname"><span class="pre">ModProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModProcess" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModProcess.contains">
-<span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModProcess.contains" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModProcess.getsetLocation">
-<span class="sig-name descname"><span class="pre">getsetLocation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModProcess.getsetLocation" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModProcess.paintYourself">
-<span class="sig-name descname"><span class="pre">paintYourself</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModProcess.paintYourself" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModProcess.remove">
-<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModProcess.remove" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModProcess.updateState">
-<span class="sig-name descname"><span class="pre">updateState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k_edit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_edit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModProcess.updateState" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.Model">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.targetmodel.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><a class="headerlink" href="#ultrafast.graphics.targetmodel.Model" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.Model.addPopulation">
-<span class="sig-name descname"><span class="pre">addPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_population</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.Model.addPopulation" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.Model.addProcess">
-<span class="sig-name descname"><span class="pre">addProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_process</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.Model.addProcess" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.Model.checkParams">
-<span class="sig-name descname"><span class="pre">checkParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.Model.checkParams" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.Model.genParameters">
-<span class="sig-name descname"><span class="pre">genParameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.Model.genParameters" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.Model.load">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.Model.load" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.Model.manualModelBuild">
-<span class="sig-name descname"><span class="pre">manualModelBuild</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.Model.manualModelBuild" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.Model.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.Model.save" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.targetmodel.</span></span><span class="sig-name descname"><span class="pre">ModelWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_ref</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.button1Func">
-<span class="sig-name descname"><span class="pre">button1Func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.button1Func" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.button31Func">
-<span class="sig-name descname"><span class="pre">button31Func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.button31Func" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.button3Func">
-<span class="sig-name descname"><span class="pre">button3Func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.button3Func" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.button41Func">
-<span class="sig-name descname"><span class="pre">button41Func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.button41Func" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.button4Func">
-<span class="sig-name descname"><span class="pre">button4Func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.button4Func" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.button5Func">
-<span class="sig-name descname"><span class="pre">button5Func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.button5Func" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.countArrows">
-<span class="sig-name descname"><span class="pre">countArrows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.countArrows" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.eventFilter">
-<span class="sig-name descname"><span class="pre">eventFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QObject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.eventFilter" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.isStrNumber">
-<span class="sig-name descname"><span class="pre">isStrNumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.isStrNumber" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.paintEvent">
-<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QPaintEvent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.paintEvent" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.populationEditFunc">
-<span class="sig-name descname"><span class="pre">populationEditFunc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.populationEditFunc" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ModelWindow.processEditFunc">
-<span class="sig-name descname"><span class="pre">processEditFunc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ModelWindow.processEditFunc" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ParamControl">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.targetmodel.</span></span><span class="sig-name descname"><span class="pre">ParamControl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ParamControl" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ParamControl.isActive">
-<span class="sig-name descname"><span class="pre">isActive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ParamControl.isActive" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ParamControl.loadState">
-<span class="sig-name descname"><span class="pre">loadState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enabled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ParamControl.loadState" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ParamControl.paintEvent">
-<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QPaintEvent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ParamControl.paintEvent" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ParamControl.setActive">
-<span class="sig-name descname"><span class="pre">setActive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">setactive</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ParamControl.setActive" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.ParamControl.setEnabled">
-<span class="sig-name descname"><span class="pre">setEnabled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.ParamControl.setEnabled" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ultrafast.graphics.targetmodel.isIdentifier">
-<span class="sig-prename descclassname"><span class="pre">ultrafast.graphics.targetmodel.</span></span><span class="sig-name descname"><span class="pre">isIdentifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrafast.graphics.targetmodel.isIdentifier" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 </section>
 <section id="module-ultrafast.graphics">

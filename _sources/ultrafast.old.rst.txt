@@ -60,6 +60,14 @@ ultrafast.old.data\_containers module
    :undoc-members:
    :show-inheritance:
 
+ultrafast.old.targetmodel module
+--------------------------------
+
+.. automodule:: ultrafast.old.targetmodel
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

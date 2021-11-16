@@ -36,6 +36,22 @@ ultrafast.fit.ModelCreator module
    :undoc-members:
    :show-inheritance:
 
+ultrafast.fit.jacobian module
+-----------------------------
+
+.. automodule:: ultrafast.fit.jacobian
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrafast.fit.targetmodel module
+--------------------------------
+
+.. automodule:: ultrafast.fit.targetmodel
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
