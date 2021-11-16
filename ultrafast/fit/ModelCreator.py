@@ -74,7 +74,6 @@ class ModelCreator:
         """
         weighted sum of exponential decay functions with an off-set
         
-        
         Parameters
         ----------
         time: array type
@@ -163,7 +162,6 @@ class ModelCreator:
         hardwired naming convention. This function can be used for datasets
         having different t0
         
-        
         Parameters
         ----------
         params: GlobExpParameters  object
@@ -195,7 +193,6 @@ class ModelCreator:
         off-set from params for data set i using simple hardwired naming 
         convention. This function can be used for datasets having different t0.
         
-        
         Parameters
         ----------
         params: GlobExpParameters  object
@@ -223,7 +220,6 @@ class ModelCreator:
         calculate a weighted sum of exponential decay functions with an
         off-set from params for data set i using simple hardwired naming
         convention. This function can be used for datasets having different t0.
-
 
         Parameters
         ----------
@@ -276,7 +272,6 @@ class ModelCreator:
         function can only be used for datasets having identical t0.
         (is computationally faster than expNDataset)
         
-        
         Parameters
         ----------
         params: GlobExpParameters  object
@@ -303,9 +298,8 @@ class ModelCreator:
         calculate a weighted sum of exponential decay functions with an
         off-set from params for data set i using simple hardwired naming 
         convention and GlobExpParameters object. This function can only be
-        used for datasets having identical t0.
+        used for datasets having identical t0 (If chrip has been correct).
         (is computationally faster than expNGaussDataset)
-        
         
         Parameters
         ----------
@@ -339,7 +333,6 @@ class ModelCreator:
         calculate kinetic reaction model from params for data set i using 
         simple hardwired naming convention and GlobTargetParameters object. 
         (Automatically detects id all traces have identical t0)
-        
         
         Parameters
         ----------

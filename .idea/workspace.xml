@@ -6,12 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/data/experiment.exp" beforeDir="false" afterPath="$PROJECT_DIR$/examples/data/experiment.exp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_fitting.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_fitting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_jacobian.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integrity_tests/test_DAS_jacobian.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/fit/jacobian.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/jacobian.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreResults.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/styles/basic_styles/dark.mplstyle" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/styles/basic_styles/dark.mplstyle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/styles/set_styles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/GlobalFitBootstrap.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/ModelCreator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultrafast/fit/targetmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/fit/targetmodel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/Preprocessing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
     </list>
@@ -50,7 +51,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ultrafast_gui" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
@@ -206,7 +207,7 @@
       <workItem from="1636214140054" duration="30133000" />
       <workItem from="1636453904233" duration="18697000" />
       <workItem from="1636534391287" duration="37339000" />
-      <workItem from="1636707701322" duration="2718000" />
+      <workItem from="1636707701322" duration="14528000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>

@@ -6,7 +6,7 @@ Created on Sun Nov 22 12:52:02 2020
 """
 import pandas as pd
 import numpy as np
-from scipy.signal import savgol_filter as SF
+from scipy.signal import savgol_filter as s_filter
 from ultrafast.old.ChirpCorrection import ChripCorrection
 
 
@@ -134,10 +134,10 @@ class Preprocessing:
         dimension_vector should be equivalent to one of the data dimensions. 
         
         Notice that the function will automatically detect the dimension of the
-        delete rows or columns in data if any of their dimensions is equal to the
-        length of the dimension_vector. In case that both dimensions are the same
-        the axis should be given, by default is 0, which is equivalent to the
-        time dimension.
+        delete rows or columns in data if any of their dimensions is equal to
+        the length of the dimension_vector. In case that both dimensions are
+        the same the axis should be given, by default is 0, which is equivalent
+        to the time dimension.
         
         i.e.: 
         points = [3,5] 
@@ -238,8 +238,8 @@ class Preprocessing:
         if columns is None:
             columns_res = np.array([i for i in range(len(data[1]))])
         if len(columns) != data.shape[1]:
-            statement_1 = 'The size of the columns vector is not equivalent with ' \
-                          'the number of columns of data'
+            statement_1 = 'The size of the columns vector is not equivalent' \
+                          ' with the number of columns of data'
             raise ExperimentException(statement_1)
         if innerdata is not None:
             statement_3 = 'to select or cut data mini and maxi need to be given'
@@ -248,9 +248,9 @@ class Preprocessing:
             if maxi is None:
                 raise ExperimentException(statement_3)
         if mini is None and maxi is None:
-            statement_2 = 'please indicate only mini or maxi margins, or booth ' \
-                          'if data inside margins want to be cut or selected '\
-                          'with innerdata'
+            statement_2 = 'please indicate only mini or maxi margins, or ' \
+                          'booth if data inside margins want to be cut or ' \
+                          'selected with innerdata'
             raise ExperimentException(statement_2)
         elif maxi is not None and mini is None:
             cut_index = (pd.Series(columns)-maxi).abs().sort_values().index[0]
@@ -280,7 +280,7 @@ class Preprocessing:
                                            data[:, cut_maxi:]), axis=1)
         else:
             statement_4 = 'if mini and maxi margins are be given indicate '\
-            'the innerdata action; either cut or select'
+                          'the innerdata action; either cut or select'
             raise ExperimentException(statement_4)
         return data_res, columns_res
     
@@ -339,10 +339,10 @@ class Preprocessing:
     def average_time_points(data, time, starting_point, step,
                             method='log', grid_dense=5):
         """
-        Average time points collected (rows). This function can be use to average 
-        time points. Useful in multiprobe time-resolved experiments or flash-
-        photolysis experiments recorded with a Photo multiplier tube where 
-        the number of time points is very long and are equally spaced.
+        Average time points collected (rows). This function can be use to
+        average time points. Useful in multiprobe time-resolved experiments or
+        flash-photolysis experiments recorded with a Photo multiplier tube
+        where the number of time points is very long and are equally spaced.
         (The function assumes time vector is sorted from low to high values)
         
         
@@ -407,8 +407,9 @@ class Preprocessing:
                 raise ExperimentException(statement)
             value /= grid_dense
         number = time_points[point] + value
-        while number < time_points[-1]:  
-            time_average = [i for i in range(it+1, len(time_points)) if time_points[i] <= number]
+        while number < time_points[-1]:
+            time_average = [i for i in range(it+1, len(time_points))
+                            if time_points[i] <= number]
             if method == 'log':
                 log += 1
             number += value*log
@@ -472,8 +473,8 @@ class Preprocessing:
         """
         data2 = 0.0*data
         for i in range(len(data)):
-            data2[i, :] = SF(data[i, :], window_length=window_length,
-                             polyorder=polyorder, deriv=deriv, mode=mode)
+            data2[i, :] = s_filter(data[i, :], window_length=window_length,
+                                   polyorder=polyorder, deriv=deriv, mode=mode)
         return data2
     
     @staticmethod
@@ -536,7 +537,8 @@ class Preprocessing:
             index = [np.argmin(abs(wavelength-i)) for i in points]
             data_corr = data*1.0
             for i in range(n_r):
-                polynom = np.poly1d(np.polyfit(wavelength[index], data[i, index], order))
+                polynom = np.poly1d(np.polyfit(wavelength[index],
+                                               data[i, index], order))
                 data_corr[i, :] = data[i, :] - polynom(wavelength)
             return data_corr
 
@@ -544,11 +546,12 @@ class Preprocessing:
     def correct_chrip(data, wavelength, time, method='selmeiller',
                       return_details=False):
         if method == 'selmeiller':
-            GVD = ChripCorrection(data, wavelength, time)
-            correct_data = GVD.GVDFromGrapth()
-            details = f'\t\tCorrected with selmeiller equation: {round(GVD.GVD_offset,2)} offset,\
-            \n\t\tSiO2:{round(GVD.SiO2,2)} mm, \
-            CaF2:{round(GVD.CaF2,2)} mm BK7:{round(GVD.BK7,2)} mm'
+            gvd = ChripCorrection(data, wavelength, time)
+            correct_data = gvd.GVDFromGrapth()
+            details = f'\t\tCorrected with selmeiller equation: ' \
+                      f'{round(gvd.GVD_offset,2)} offset,\
+            \n\t\tSiO2:{round(gvd.SiO2,2)} mm, \
+            CaF2:{round(gvd.CaF2,2)} mm BK7:{round(gvd.BK7,2)} mm'
         elif method == 'polynomial':
             # to be coded
             pass

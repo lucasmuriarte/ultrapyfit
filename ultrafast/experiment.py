@@ -11,9 +11,10 @@ from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.graphics.ExploreData import ExploreData
 from ultrafast.fit.GlobalParams import GlobExpParameters, GlobalTargetParameters
 from ultrafast.fit.GlobalFitBootstrap import BootStrap
-from ultrafast.utils.ChirpCorrection import EstimationGVDPolynom, EstimationGVDSellmeier
-from ultrafast.utils.divers import define_weights, UnvariableContainer, LabBook,\
-    book_annotate, read_data, TimeUnitFormater, select_traces
+from ultrafast.utils.ChirpCorrection import EstimationGVDPolynom,\
+    EstimationGVDSellmeier
+from ultrafast.utils.divers import define_weights, UnvariableContainer, \
+    LabBook, book_annotate, read_data, TimeUnitFormater, select_traces
 from ultrafast.fit.targetmodel import ModelWindow
 from ultrafast.utils.Preprocessing import ExperimentException
 from ultrafast.utils.Preprocessing import Preprocessing as Prep
@@ -210,9 +211,9 @@ class Experiment(ExploreData):
         self.excitation = None
         # self.GVD_corrected = False
         self._action_records = UnvariableContainer(name="Sequence of actions")
-        load = datetime.datetime.now().strftime(
+        creation = datetime.datetime.now().strftime(
             "day: %d %b %Y | hour: %H:%M:%S")
-        self._add_action("Created experiment " + load)
+        self._add_action("Created experiment " + creation)
         # self.preprocessing.report = LabBook(name="Pre-processing")
         self._data_path = path
         self._units = units
@@ -230,7 +231,8 @@ class Experiment(ExploreData):
     Properties and structural functions
     """
     def get_action_records(self):
-        return self._action_records.get_protected_attributes()
+        actions = self._action_records.get_protected_attributes()
+        return[getattr(self._action_records, name) for name in actions[1:]]
 
     def print_action_records(self):
         self._action_records.print(False, True, True)
@@ -363,6 +365,9 @@ class Experiment(ExploreData):
         path: string
             path where to save the Experiment
         """
+        save = datetime.datetime.now().strftime(
+            "day: %d %b %Y | hour: %H:%M:%S")
+        self._add_action("Saved experiment " + save)
         SaveExperiment(path, self)
 
     # def createNewDir(self, path):

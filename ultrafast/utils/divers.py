@@ -47,7 +47,6 @@ class TimeUnitFormater:
     Class to format a time number in a string with the corresponding unit, after
     indicating the unit measure.
     
-    
     i.e.:
         formater = TimeUnitFormater("m") # formater for milisecond measurement
         
@@ -134,11 +133,9 @@ class TimeUnitFormater:
                 # being for example 1e-15 will be 1.0000000000000002e-15. the
                 # line convert and the floating operation transform this to the
                 # correct value.
-                print(val)
                 if val < 0.001:
                     convert = re.findall("[eE]?[+-]?\d+", str(val))[-1]
                     val = float("1"+convert)
-                print(val)
                 # if val == 1.0000000000000002e-15:
                 #     val = 1e-15
                 # elif val == 1.0000000000000002e-12:
@@ -294,7 +291,8 @@ def select_traces(data, wavelength=None, space=10, points=1, avoid_regions=None)
                              trace + points for sub_region in avoid_regions_index]
                 max_indexes.append(min(max_index))
             dat_res = pd.DataFrame(data=[dat.iloc[:, min_index:max_index + 1].mean(axis=1) for min_index, max_index in
-                                         zip(min_indexes, max_indexes)], columns=dat.index,
+                                         zip(min_indexes, max_indexes)],
+                                   columns=dat.index,
                                    index=[str(i + wavelengths[0]) for i in selected_traces]).transpose()
             wavelength_res = np.array([wavelengths.iloc[min_index:max_index + 1].mean() for min_index, max_index in
                                        zip(min_indexes, max_indexes)])
@@ -596,17 +594,6 @@ def froze_it(cls):
     return cls
 
 
-# @froze_it
-# class UnvariableContainer:
-#     """
-#     Object where once an attribute has been set cannot be modified if
-#     self.__frozen = False
-#     """
-#     def __init__(self, **kws):
-#         for key, val in kws.items():
-#             setattr(self, key, val)
-
-
 def book_annotate(container, extend=True):
     """
     Decorator with arguments. This decorator is working only with LabBook class,
@@ -691,8 +678,7 @@ class LabBook(object):
             super().__setattr__(key, prev_val)
         else:
             super().__setattr__(key, val)
-    
-    @property
+
     def get_attributes(self):
         """
         return a list of attributes in the labBokk
@@ -701,7 +687,6 @@ class LabBook(object):
                    i not in ["name", "creation"] and i[0] != '_']
         return actions
 
-    @property
     def get_protected_attributes(self):
         actions = [i for i in self.__dict__.keys() if
                    i not in ["name", "creation"] and i[0] == '_']
@@ -913,6 +898,10 @@ class FiguresFormating:
         size: int
             size of the the tick labels
 
+        set_ylim: bool (default True)
+            set the y axis limits to +10% and -10% of the maximum and minimum
+            values of the data
+
         x_tight: bool (default False)
             If True, set tight the x axis
             If False set limits according to max(x_vector)/val
@@ -923,15 +912,18 @@ class FiguresFormating:
         if val < 1:
             val = 1
         if set_ylim:
-            ax.set_ylim(np.min(data) - abs(np.min(data) * 0.1), np.max(data) + np.max(data) * 0.1)
+            ax.set_ylim(np.min(data) - abs(np.min(data) * 0.1),
+                        np.max(data) + np.max(data) * 0.1)
         if x_tight:
             ax.set_xlim(x_vector[0], x_vector[-1])
         else:
-            ax.set_xlim(x_vector[0] - x_vector[-1] / val, x_vector[-1] + x_vector[-1] / val)
+            ax.set_xlim(x_vector[0] - x_vector[-1] / val,
+                        x_vector[-1] + x_vector[-1] / val)
         ax.axhline(linewidth=1, linestyle='--', color='k')
         ax.ticklabel_format(style='sci', axis='y')
         ax.minorticks_on()
-        ax.axes.tick_params(which='both', direction='in', top=True, right=True, labelsize=size)
+        ax.axes.tick_params(which='both', direction='in', top=True,
+                            right=True, labelsize=size)
         msg = 'Deprecated function, style in combination with use_style ' \
               'decorator should be use to format figures.'
         print(msg)
@@ -940,8 +932,8 @@ class FiguresFormating:
 class DataSetCreator:
     """
     Class that with static methods that can be use to generate examples
-    of transient data, considering gaussian spectral shapes shapes. The
-    output is a pandas dataFrame.
+    of transient data, considering gaussian spectral shapes. The output is
+    a pandas dataFrame.
 
     example how to use (from DAS):
     -------------------

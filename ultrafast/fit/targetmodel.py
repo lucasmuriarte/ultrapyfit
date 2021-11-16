@@ -1198,14 +1198,14 @@ class Model:
 
     def genParameters(self):  # parameters are fixed by default, unfix some of them before fitting procedure
         self.params = lmfit.Parameters()
-        # ASSUMES THAT SFs are not zero or 1!!!
+        # ASSUMES THAT Splitting Factors are not zero or 1!!!
         self.params.add('exp_no', value=len(self.populations), vary=False)
         if len(self.populations) < 1:
             raise Exception("Algorithm failure, because model is empty!")
 
         for i in range(len(self.populations)):
             self.params.add('c_%i' % (i+1), self.populations[i].c, False,
-                            None, None, None, None)
+                            0, None, None, None)  # concentrations cannot be < 0
             for j in range(len(self.populations)):
                 self.params.add('k_%i%i' % (i+1, j+1), 0, False,
                                 None, None, None, None)

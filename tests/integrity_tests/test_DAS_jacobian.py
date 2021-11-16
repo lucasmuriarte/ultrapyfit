@@ -15,7 +15,8 @@ from ultrafast.fit.GlobalParams import GlobExpParameters
 from scipy.optimize import check_grad, approx_fprime
 import numpy as np
 
-#datasets_dir = "ultrafast/examples/dynamically_created_data/"
+# datasets_dir = "ultrafast/examples/dynamically_created_data/"
+
 
 class TestDatasetsDAS(unittest.TestCase):
     """
@@ -26,26 +27,26 @@ class TestDatasetsDAS(unittest.TestCase):
         self.datasets_dir = "../../examples/dynamically_created_data/"         
         
     def test_genAndTestJacobianAgainstNumerics(self):
-        #technical test to check if written jacobian is correct agains numerics
-        #warning! this test is very slow (not optimized), and worth running only
-        #if some fundamental changes in core of the code happened...
-        taus = [3,7,90]
+        # technical test to check if written jacobian is correct agains numerics
+        # warning! this test is very slow (not optimized), and worth running
+        # only if some fundamental changes in core of the code happened...
+        taus = [3, 7, 90]
         
-        wave = DataSetCreator.generate_wavelength(400,700,31)
-        peaks=[[470,550,650],[480,700],[500,600]]
-        amplitudes=[[-10,-6,12],[-9,11],[-8,6]]
-        fwhms=[[50,100,80],[40,70],[30,65]]
+        wave = DataSetCreator.generate_wavelength(400, 700, 31)
+        peaks = [[470, 550, 650], [480, 700], [500, 600]]
+        amplitudes = [[-10, -6, 12], [-9, 11], [-8, 6]]
+        fwhms = [[50, 100, 80], [40, 70], [30, 65]]
         shapes = DataSetCreator.generate_specific_shape(wave, taus=3, 
                                                         peaks=peaks, 
                                                         amplitudes=amplitudes, 
                                                         fwhms=fwhms)
-        k1=1/taus[0]
-        k2=1/taus[1]
-        k3=1/taus[2]
-        kmatrix = [[-k1,0,0],[0,-k2,0],[0,0,-k3]]
-        initials = [0.33,0.34,0.33]
-        profiles = DataSetCreator.generate_profiles(500.0,5000,
-                                                    initials,kmatrix)
+        k1 = 1/taus[0]
+        k2 = 1/taus[1]
+        k3 = 1/taus[2]
+        kmatrix = [[-k1, 0, 0], [0, -k2, 0], [0, 0, -k3]]
+        initials = [0.33, 0.34, 0.33]
+        profiles = DataSetCreator.generate_profiles(500.0, 5000,
+                                                    initials, kmatrix)
         data_set_conv = DataSetCreator.generate_dataset(shapes, 
                                                         profiles, 
                                                         0.2)
@@ -59,32 +60,32 @@ class TestDatasetsDAS(unittest.TestCase):
         
         data_set_conv_proj.to_csv(datapath)
         
-        time, data, wavelength = read_data(datapath, wave_is_row = True)
+        time, data, wavelength = read_data(datapath, wave_is_row=True)
         
         data_select, wave_select = select_traces(data, wavelength, 50)
         params = GlobExpParameters(data_select.shape[1], taus)
-        params.adjustParams(0.0, vary_t0=True, vary_y0 = True, 
+        params.adjustParams(0.0, vary_t0=True, vary_y0=True,
                             fwhm=0.2, opt_fwhm=True, vary_yinf=True)
         parameters = params.params
         
         self.tmp_fitter = GlobalFitExponential(time, data_select, 3, 
-                                      parameters, True,
-                                      wavelength=wave_select)
+                                               parameters, True,
+                                               wavelength=wave_select)
         
         params = self.tmp_fitter.params
         
-        #print(params) #diagnostics
+        # print(params) #diagnostics
         
         self.tmp_fitter._prepare_jacobian(params)
         params_no = len(self.tmp_fitter.recent_key_array)
  
-        ndata, nx = self.tmp_fitter.data.shape #(no of taus,no of lambdas)
-        out_funcs_no = nx*self.tmp_fitter.x.shape[0] #no of residuals
+        ndata, nx = self.tmp_fitter.data.shape  # (no of taus,no of lambdas)
+        out_funcs_no = nx*self.tmp_fitter.x.shape[0]  # no of residuals
        
         self.real_param_num = 0
         for par_i in range(params_no):
-            if(self.tmp_fitter.recent_constrainted_array[par_i] is True):
-                continue #skip constrained or fixed params
+            if self.tmp_fitter.recent_constrainted_array[par_i] is True:
+                continue  # skip constrained or fixed params
             
             self.checkkey = self.tmp_fitter.recent_key_array[par_i]
             
@@ -98,20 +99,21 @@ class TestDatasetsDAS(unittest.TestCase):
                 anal_grad = self.gradientFunc(par_val)
                 diff = num_grad - anal_grad
                 
-                #diagnostics
-                #if(abs(diff) > 10**(-8)):
-                #    print(("Num gives %.9f anal gives %.9f " % (num_grad,anal_grad)) +\
-                #          str(self.checkkey)+" and res number "+str(res_index))
+                # diagnostics
+                # if(abs(diff) > 10**(-8)):
+                #     print(("Num gives %.9f anal gives %.9f " % (num_grad,anal_grad)) +\
+                #           str(self.checkkey)+
+                #           " and res number "+str(res_index))
                 
                 self.assertTrue(abs(diff) < 10**(-8),
-                    msg=("Num gives %.9f anal gives %.9f key " % (num_grad,anal_grad)) +\
+                    msg=("Num gives %.9f anal gives %.9f key " % (num_grad,
+                                                                  anal_grad)) +
                           str(self.checkkey)+" and res number "+str(res_index)) 
                 
             self.real_param_num += 1
-            
 
-    def numericGradient(self, value, epsilon = 1.49e-08):
-        return (self.objectiveFunc(value+epsilon/2) - \
+    def numericGradient(self, value, epsilon=1.49e-08):
+        return (self.objectiveFunc(value+epsilon/2) -
                 self.objectiveFunc(value-epsilon/2))/epsilon
         
     def objectiveFunc(self, x):
@@ -122,9 +124,8 @@ class TestDatasetsDAS(unittest.TestCase):
     def gradientFunc(self, x):
         self.params_tmp2[self.checkkey].value = x
         jactmp = self.tmp_fitter._jacobian(self.params_tmp2)
-        return jactmp[self.real_param_num,self.checkres]
-     
-        
+        return jactmp[self.real_param_num, self.checkres]
+
           
 if __name__ == '__main__':
     unittest.main()

@@ -447,7 +447,6 @@ class BootStrap:
             to start with a low number, for example 5, fit this data and if
             everything is working simulate the rest and fit them.
         """
-        # TODO full matrix
         number_traces = self.fit_results.data.shape[1]
         if full_matrix:
             if self.fit_results.full_matrix is not None:
