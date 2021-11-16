@@ -55,7 +55,7 @@ class TestDatasetsDAS(unittest.TestCase):
         data_set_conv_proj = DataSetCreator.timegrid_projection(data_set_conv, 
                                                                 new_times)        
         
-        datapath = self.datasets_dir+"DAS_3exp_noconv_nonoise_test_j.csv"
+        datapath = self.datasets_dir+"DAS_3exp_nonoise_test_j.csv"
         
         data_set_conv_proj.to_csv(datapath)
         
@@ -75,7 +75,7 @@ class TestDatasetsDAS(unittest.TestCase):
         
         #print(params) #diagnostics
         
-        self.tmp_fitter._prepareJacobian(params)
+        self.tmp_fitter._prepare_jacobian(params)
         params_no = len(self.tmp_fitter.recent_key_array)
  
         ndata, nx = self.tmp_fitter.data.shape #(no of taus,no of lambdas)

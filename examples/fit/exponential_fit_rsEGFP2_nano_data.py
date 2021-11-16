@@ -51,6 +51,6 @@ fitter.allow_stop = True
 result = fitter.global_fit(maxfev=300)
 
 explorer = ExploreResults(result)
-explorer.print_results()
-explorer.plot_fit()
+explorer.print_fit_results()
+explorer.plot_global_fit()
 explorer.plot_DAS()

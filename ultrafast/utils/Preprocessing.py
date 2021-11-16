@@ -541,7 +541,8 @@ class Preprocessing:
             return data_corr
 
     @staticmethod
-    def correct_chrip(data, wavelength, time, method='selmeiller', return_details=False):
+    def correct_chrip(data, wavelength, time, method='selmeiller',
+                      return_details=False):
         if method == 'selmeiller':
             GVD = ChripCorrection(data, wavelength, time)
             correct_data = GVD.GVDFromGrapth()

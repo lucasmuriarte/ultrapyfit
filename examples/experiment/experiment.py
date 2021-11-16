@@ -16,7 +16,8 @@ path = os.path.abspath(path)
 
 # time, data, wave = read_data(path, wave_is_row= True)
 
-# original_taus = [8, 30, 200]
+# either original_taus = [8, 30, 200]
+# or original_taus = [1, 8, 30]
 
 experiment = Experiment.load_data(path, wave_is_row=True)
 
@@ -52,7 +53,7 @@ experiment.plot_traces([1408,1520,1578])
 
 # To explore the number of components is possible to use the singular value decomposition (SVD)
 # The SVD reveal that the data set is compose by three components
-experiment.plotSVD(1, True)
+experiment.plot_full_SVD(1, True)
 
 # After selecting the SV this can be plot again with "plot_traces" function
 experiment.plot_traces()
@@ -103,18 +104,18 @@ experiment.wavelength_unit
 # The SVD reveled that 3 component where needed, and values are given after plotting 
 # several traces.
 #                               (t0, fwhm, t1, t2, t3)
-experiment.initialize_exp_params(0, None, 4, 60, 500)
+experiment.fitting.initialize_exp_params(0, None, 4, 60, 500)
 
 # now we are ready to fit the data with "final_fit" method, this will previously
 # run a prefit 
-experiment.global_fit()
+experiment.fitting.fit_global()
 
 # RESULTS EXPLORING
 # -----------------
 # For any fit the first thing is to print the results which can be done with the
 # "print_results" method (If none fit number is passed the last performed fit
 # will be consider)
-experiment.print_results()
+experiment.fitting.print_fit_results()
 
 # >>> Fit number 1: 	Global Exponential fit
 # >>> -------------------------------------------------
@@ -133,8 +134,8 @@ experiment.print_results()
 
 # The following step is plot the fit and residual plot which is done with the 
 # "plot_fit" method
-experiment.plot_fit()
+experiment.fitting.plot_global_fit()
 
 # finally the Decay Associated Spectra (DAS) can be plotted with the plot_DAS method
-experiment.plot_DAS()
+experiment.fitting.plot_DAS()
 

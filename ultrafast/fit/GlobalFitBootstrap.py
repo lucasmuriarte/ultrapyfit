@@ -6,8 +6,9 @@ from ultrafast.utils.Preprocessing import ExperimentException
 from ultrafast.graphics.ExploreResults import ExploreResults
 from ultrafast.fit.GlobalFit import GlobalFitExponential
 from ultrafast.fit.GlobalFit import GlobalFitTarget
-from seaborn import distplot
+from seaborn import histplot, kdeplot
 from matplotlib.offsetbox import AnchoredText
+import concurrent
 
 
 class BootStrap:
@@ -23,28 +24,35 @@ class BootStrap:
     fit_results: lmfit results Object
         Should be an lmfit result object obtained either from
         GlobalFitTarget, GlobalFitExponential or Experiment classes
+
     bootstrap_result: pandas dataFrame (default None)
         Pandas data frame containing where the bootstrap results are appended
         initially can be None, which will imply creating a new one from zero.
         Alternatively the results of a previous bootstrap may be passed to
         increase the number of analysis.
+
     data_simulated: string
         contain the type of data sets simulated: "data" if they are simulated by
         random shuffling the data, or residues if they are obtained by random
-        shuffling a part of the residuals .
+        shuffling a part of the residuals.
+
     confidence_interval: lmfit parameters object
         contains the confidence interval for the decay times calculated from the
         bootstrap_result dataFrame
-    datas: numpy array
+
+    datasets: numpy array
         contain the simulated data sets for fitting produced either directly
         from the sample or from the residues.
+
     fitter: GlobalFitTarget / GlobalFitExponential
         Contains the fitter used to obtained the fit_results passed
+
     params: lmfit Parameter object
         Contains the parameters used to obtained the fit_results passed
     """
 
-    def __init__(self, fit_results, bootstrap_result=None, time_unit='ps'):
+    def __init__(self, fit_results, bootstrap_result=None,
+                 workers=2, time_unit='ps'):
         """
         constructor function:
         Parameters
@@ -52,11 +60,20 @@ class BootStrap:
         fit_results: lmfit results Object
             Should be an lmfit result object obtained either from
             GlobalFitTarget, GlobalFitExponential or Experiment classes
+
         bootstrap_result: pandas dataFrame (default None)
             Pandas data frame containing where the bootstrap results are
             appended initially can be None, which will imply creating a new one
             from zero. Alternatively the results of a previous bootstrap may be
             passed to increase the number of analysis.
+
+        workers: int (default 2)
+            number of workers (CPU cores) that will be used if the fit fit is
+            run in parallel. Recommend to used as maximum half of the CPU cores,
+            and up to 4 if the analysis is run in a regular computer.
+
+        time_unit: string (default 'ps')
+            String value use in the plotting axis when the results are display
         """
         self.fit_results = fit_results
         if bootstrap_result is None:
@@ -67,14 +84,24 @@ class BootStrap:
             self.data_simulated = bootstrap_result._type
         self.time_unit = time_unit
         self.confidence_interval = None
-        self.datas = None
+        self.datasets = None
+        self.workers = workers
         self.fitter, self.params = self._get_original_fitter()
 
-    def generate_data_sets(self,
-                           n_boots: int,
-                           size=25,
-                           data_from='residues',
-                           return_data=False):
+        # THE FOLLOWING ATTRIBUTES ARE FOR THE END OF THE PARALLEL COMPUTATION
+        # self._cal_conf defines if to calculate the confidence interval at the
+        # end of bootstrap for parallel computing. In that case
+        # self._future_calculations is use to verify calculations are finished
+        # self._names_futures store the conf-interval pandas DF columns names
+        self._cal_conf = False
+        self._future_calculations = 0
+        self._names_futures = None
+
+    def generate_datasets(self,
+                          n_boots: int,
+                          data_from='residues',
+                          size=25,
+                          return_data=False):
         """
         Method for generating simulated data sets from the data (shuffling), or
         from the residues. The las t approach shuffles the residues with the
@@ -85,14 +112,27 @@ class BootStrap:
             Defines the number of samples that will be generated, we recommend
             to start with a low number, for example 5, fit this data and if
             everything is working simulate the rest and fit them.
+
+        data_from: str (default residues)
+            If "residues" data are simulated shuffling residues with the model.
+
+            If "fitted_data" data are simulated from a random selection of the
+            original fitted traces with replacement.
+
+            If "full_data_matrix" data are simulated from a random selection of
+            the original entire full data matrix with replacement.
+
+            We recommend to either use 'residues' or 'full_data_matrix'.
+
+            (Note that the globalfit, if run out of the experiment class, does
+            not have access to the entire data matrix this data can be added
+            with the fitResult.add_full_data_matrix(data, wavelength)
+
         size: int (default 25)
             Only important if the data_from is residues, defines the percentage
             of residues that will be shuffle. can be 10, 15, 20, 25, 33 or 50.
             We recommend to uses 25 or 33.
-        data_from: str (default residues)
-            If "residues" data are simulated shuffling residues with the model
-            If "data" data are simulated random selection of original data
-            traces with replacement.
+
         return_data: bool (default False)
             If True the data set will be return
         """
@@ -108,18 +148,22 @@ class BootStrap:
             self.bootstrap_result._type = 'residues'
             self.bootstrap_result._size = size
             self.data_simulated = 'residues'
-        elif data_from == 'data':
-            data = self._data_sets_from_residues(n_boots)
-            self.data_simulated = 'data'
-            self.bootstrap_result._type = 'data'
+        elif data_from == 'fitted_data':
+            data = self._data_sets_from_data(n_boots, full_matrix=False)
+            self.data_simulated = 'fitted_data'
+            self.bootstrap_result._type = 'fitted_data'
+        elif data_from == 'full_data_matrix':
+            data = self._data_sets_from_data(n_boots, full_matrix=True)
+            self.data_simulated = 'full_data_matrix'
+            self.bootstrap_result._type = 'full_data_matrix'
         else:
             msg = 'data_from should be "residues" or "data"'
             raise ExperimentException(msg)
-        self.datas = data
+        self.datasets = data
         if return_data:
             return data
 
-    def fit_bootstrap(self, cal_conf=True, parallel_computing=False):
+    def fit_bootstrap(self, cal_conf=True, parallel_computing=True):
         """
         Fit the simulated data sets with the same model used to obtain the
         fit_results passed to instatiate the obaject.
@@ -132,50 +176,76 @@ class BootStrap:
             If True the calculations will be run parallel using dask library
 
         """
-        data_sets = self.datas
+        data_sets = self.datasets
         if data_sets is None:
             msg = 'Generate the data sets before'
             raise ExperimentException(msg)
         # extract parameters from the fit
-        exp_no, type_fit, deconv, maxfev, tau_inf = self._details()
+        exp_no, type_fit, deconv, maxfev, tau_inf, use_jacobian = self._details()
         time_constraint = self.fit_results.details['time_constraint']
-        weight = self.fit_results.weights
+        weight = self.fit_results._weights
+        method = self.fit_results.method
+        if type(weight) == dict:
+            apply_weight = weight['apply']
+        else:
+            apply_weight = False
         names = self._get_fit_params_names(type_fit, exp_no, deconv)
         variations = self._get_variations(names, exp_no)
         x = self.fit_results.x
         self._append_results_pandas_dataframe(self.bootstrap_result,
                                               self.fit_results, names)
         # fit all the generated data_sets
-        for boot in range(data_sets.shape[2]):
-            if type(weight) == dict:
-                apply_weight = weight['apply']
-            else:
-                apply_weight = False
-            data = data_sets[:, :, boot]
-            fitter = self.fitter(x, data, exp_no, self.params,
-                                 deconv, tau_inf)
-            if apply_weight:
-                fitter.weights = weight
+        if parallel_computing and self.workers != 1:
+            self._cal_conf = cal_conf  # value recover by the add_done_callback
+            self._names_futures = names
+            self._future_calculations = 0
+            calculations = []
+            print("parallel computing")
 
-            results = fitter.global_fit(variations, maxfev=maxfev,
-                                        time_constraint=time_constraint,
-                                        apply_weights=apply_weight)
+            with concurrent.futures.ProcessPoolExecutor(
+                    max_workers=self.workers) as executor:
 
-            self._append_results_pandas_dataframe(self.bootstrap_result,
-                                                  results, names)
-            print(f'the number of boots is: {boot}')
+                for boot in range(data_sets.shape[2]):
+                    data = data_sets[:, :, boot]
+                    fitter = self.fitter(x, data, exp_no, self.params,
+                                         deconv, tau_inf)
+                    if apply_weight:
+                        fitter.weights = weight
 
-        if cal_conf:
-            self.bootConfInterval(data=self.bootstrap_result)
-
-    def _fit_iteration(self, number):
-        pass
+                    future_obj = executor.submit(fitter.global_fit, variations,
+                                                 maxfev,
+                                                 time_constraint,
+                                                 apply_weight,
+                                                 use_jacobian,
+                                                 method)
+                    fnc = self._append_results_pandas_dataframe_future
+                    future_obj.add_done_callback(fnc)
+                    calculations.append(future_obj)
+                    print(f"parallel calculation {boot + 1} submitted")
+        else:
+            for boot in range(data_sets.shape[2]):
+                data = data_sets[:, :, boot]
+                fitter = self.fitter(x, data, exp_no, self.params,
+                                     deconv, tau_inf)
+                if apply_weight:
+                    fitter.weights = weight
+                results = fitter.global_fit(variations, maxfev=maxfev,
+                                            time_constraint=time_constraint,
+                                            apply_weights=apply_weight,
+                                            use_jacobian=use_jacobian,
+                                            method=method)
+                self._append_results_pandas_dataframe(self.bootstrap_result,
+                                                      results, names)
+                print(f'Finished fit number: {boot + 1}')
+            if cal_conf:
+                conf = self.boot_conf_interval(data=self.bootstrap_result)
+                self.confidence_interval = conf
 
     @staticmethod
-    def bootConfInterval(data):
+    def boot_conf_interval(data):
         """
         Static method to calculate the confidence intervals from a dataFrame
-        object obatined with the BootStrap class
+        object obtained with the BootStrap class
         Parameters
         ----------
         data: dataFrame
@@ -198,18 +268,40 @@ class BootStrap:
             table.loc[i.split(' ')[0]] = line
         return table
 
-    def plotBootStrapResults(self, param, kde=True):
+    def plotBootStrapResults(self, param_1, param_2=None, kde=True):
         """
-        Plot the bootstarp histogram of the paramter calculated
-        (WARNING: In future will be taken out of the class)
+        Plot the bootstrap histogram of the decay times calculated
+        If param_1 and param_2 are given a correlation plot with the
+        histogram distributions is plot. If a single param is given only the
+        histogram distribution is plot.
+
         Parameters
         ----------
-        param: str
-            name of the parameter to be plotted
+        param_1: str or int
+           name of the tau to be plotted;
+            i.e.: for first decay time --> if string: tau1, if integer: 1
+
+        param_2: str or int or None
+            name of the tau to be plotted;
+            i.e.: for third decay time --> if string: tau3, if integer: 3
+
         kde: bool (default True)
             Defines if the kernel density estimation is plotted
         """
-        fig, axes = plt.subplots(1, 1)
+        if type(param_1) == int:
+            param_1 = f"tau{param_1}"
+        if type(param_2) == int:
+            param_2 = f"tau{param_2}"
+        if param_2 is None:
+            return self._plot_single_param(param_1, kde)
+        else:
+            return self._plot_double_param(param_1, param_2, kde)
+
+    def _plot_single_param(self, param, kde=True):
+        """
+        Plot the histogram of a single param
+        """
+        fig, ax = plt.subplots(1, 1)
         bootstrap = self.bootstrap_result
         names = [i.split(' ')[0] for i in bootstrap.keys() if 'final' in i]
         stats = bootstrap.describe()
@@ -219,22 +311,21 @@ class BootStrap:
                 round(stats[name + ' final']['mean'], 4)
             stats_values[name + ' std'] = \
                 round(stats[name + ' final']['std'], 4)
-        axes = distplot(bootstrap[param + ' final'].values,
-                        rug=False,
-                        norm_hist=False, kde=kde,
-                        hist_kws=dict(edgecolor="k",
-                                      linewidth=2))
+        if not kde:
+            plt.ylabel('Counts')
+            # plt.xlim(mini - maxi * 0.1, maxi + maxi * 0.1)
+            stat = 'count'
+        else:
+            plt.ylabel('Density function')
+            stat = 'density'
+        ax = histplot(bootstrap[param + ' final'].values, kde=kde, stat=stat)
+        
         plt.xlabel(f'Time ({self.time_unit})')
         maxi = bootstrap[param + ' final'].max()
         mini = bootstrap[param + ' final'].min()
         mean = bootstrap[param + ' final'].mean()
         dif_max = abs(maxi - mean)
         dif_min = abs(mini - mean)
-        if not kde:
-            plt.ylabel('Counts')
-            plt.xlim(mini - maxi * 0.1, maxi + maxi * 0.1)
-        else:
-            plt.ylabel('Density function')
         if dif_max > dif_min:
             pos = 1
         else:
@@ -243,8 +334,58 @@ class BootStrap:
         std = stats_values[param + ' std']
         tex = f'$\mu={mean}$ {self.time_unit}\n $\sigma={std}$ {self.time_unit}'
         texto = AnchoredText(s=tex, loc=pos)
-        axes.add_artist(texto)
-        return fig, axes
+        ax.add_artist(texto)
+        return fig, ax
+
+    def _plot_double_param(self, param_1, param_2, kde=True):
+        """
+        Plot a correlation plot between 2 decay times
+        """
+        if kde:
+            label = 'Density'
+            stat = 'density'
+        else:
+            label = 'Counts'
+            stat = 'count'
+        if 'k' not in param_1:  # in case exponential fit
+            first_label = f'{self.time_unit}'
+            second_label = f'{self.time_unit}'
+        else:  # in case target fit
+            first_label = f'1/{self.time_unit}'
+            second_label = f'1/{self.time_unit}'
+
+        grid_kw = {'height_ratios': [2, 5], 'width_ratios': [5, 2]}
+        fig, ax = plt.subplots(2, 2, figsize=(8, 8), gridspec_kw=grid_kw)
+        bootstrap = self.bootstrap_result
+        alpha = self._get_alpha_for_plot_double_param(len(bootstrap))
+        ax[0, 1].axis('off')
+        ax[0, 0].set_xticklabels([])
+        ax[1, 1].set_yticklabels([])
+        fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+        # plot lateral histograms
+        histplot(bootstrap[param_1 + ' final'].values, kde=kde, stat=stat,
+                 ax=ax[0, 0])
+        histplot(bootstrap, y=param_2 + ' final', kde=kde, stat=stat,
+                 ax=ax[1, 1])
+
+        # plot central area
+        kdeplot(x=bootstrap[param_1 + ' final'].values, 
+                y=bootstrap[param_2 + ' final'].values,
+                ax=ax[1, 0], cmap='Spectral_r', shade=True)
+        ax[1, 0].scatter(bootstrap[param_1 + ' final'],
+                         bootstrap[param_2 + ' final'],
+                         color='r', marker='+', alpha=alpha)
+
+        # format axes
+        ax[0, 0].set_ylabel(label)
+        ax[1, 1].set_xlabel(label)
+        ax[0, 0].set_xlabel('')
+        ax[1, 1].set_ylabel('')
+        ax[1, 0].set_xlabel(param_1.split(' ')[0] + f' ({first_label})')
+        ax[1, 0].set_ylabel(param_2.split(' ')[0] + f' ({second_label})')
+
+        return fig, ax
 
     def _data_sets_from_residues(self, n_boots, size=25):
         """
@@ -269,7 +410,7 @@ class BootStrap:
         x = resultados.x
         deconv = resultados.details['deconv']
         result_explorer = ExploreResults(resultados)
-        fittes = result_explorer.results()
+        fittes = result_explorer.get_gloabl_fit_curve_results()
         residue_set_boot = resultados.data.copy()
         for boot in range(n_boots):
             residues = 0.0 * data
@@ -294,10 +435,11 @@ class BootStrap:
         residue_set_boot = residue_set_boot[:, :, 1:]
         return residue_set_boot
 
-    def _data_sets_from_data(self, n_boots):
+    def _data_sets_from_data(self, n_boots, full_matrix=True):
         """
         Method for generating simulated data sets from the data (shuffling).
-        The method used numpy.ramdom.choice  with replcement
+        The method used numpy.random.choice  with replacement
+
         Parameters
         ----------
         n_boots: int
@@ -305,12 +447,23 @@ class BootStrap:
             to start with a low number, for example 5, fit this data and if
             everything is working simulate the rest and fit them.
         """
-        data = self.fit_results.data
+        # TODO full matrix
+        number_traces = self.fit_results.data.shape[1]
+        if full_matrix:
+            if self.fit_results.full_matrix is not None:
+                data = self.fit_results.full_matrix
+            else:
+                print("WARNING: the fit result does not contain the full data "
+                      "matrix, the data sets have been generated from the "
+                      "fitted traces. This is identical to the argument "
+                      "'fitted_data'.")
+        else:
+            data = self.fit_results.data
         data_set_boot = data * 1.0
         for boot in range(n_boots):
             new_data = data * 0.0
             index = np.random.choice(np.linspace(0, len(data[1]) - 1,
-                                                 len(data[1])), len(data[1]))
+                                                 len(data[1])), number_traces)
             for i, ii in enumerate(index):
                 new_data[:, i] = data[:, int(ii)]
             data_set_boot = np.dstack((data_set_boot, new_data))
@@ -328,7 +481,7 @@ class BootStrap:
         returns which fitter was used in the original fit.
         Either GlobalFitTarget or GlobalFitExponential
         """
-        exp_no, type_fit, deconv, maxfev, tau_inf = self._details()
+        exp_no, type_fit, deconv, maxfev, tau_inf, _ = self._details()
         initial_prams = deepcopy(self.fit_results.params)
         for i in initial_prams:
             initial_prams[i].value = initial_prams[i].init_value
@@ -345,12 +498,13 @@ class BootStrap:
         """
         returns the detail of the original fit.
         """
+        use_jacobian = self.fit_results.details['use_jacobian']
         exp_no = self.fit_results.details['exp_no']
         type_fit = self.fit_results.details['type']
         deconv = self.fit_results.details['deconv']
         maxfev = self.fit_results.details['maxfev']
         tau_inf = self.fit_results.details['tau_inf']
-        return exp_no, type_fit, deconv, maxfev, tau_inf
+        return exp_no, type_fit, deconv, maxfev, tau_inf, use_jacobian
 
     def _get_division_number(self, size):
         """
@@ -437,6 +591,23 @@ class BootStrap:
             final_values = [params[name].value for name in names]
         return initial_values, final_values
 
+    def _append_results_pandas_dataframe_future(self, future):
+        """
+        Function for parallel computing
+        """
+        names = self._names_futures
+        data_frame = self.bootstrap_result
+        results = future.result()
+        self._future_calculations += 1
+        print(f"Finished calculation {self._future_calculations}")
+        self._append_results_pandas_dataframe(data_frame, results, names)
+        if self._future_calculations == self.datasets.shape[2]:
+            print("All calculation  finished")
+            if self._cal_conf:
+                conf = self.boot_conf_interval(data=self.bootstrap_result)
+                self._cal_conf = False
+                self.confidence_interval = conf
+
     def _append_results_pandas_dataframe(self, data_frame, results, names):
         """
         Appends the results of the fit done to the simulated data sets
@@ -461,3 +632,12 @@ class BootStrap:
         fit_details = [float(results.nfev), float(results.redchi),
                        results.success]
         data_frame.loc[key] = fit_time_values + fit_details
+
+    def _get_alpha_for_plot_double_param(self, number):
+        if number > 250:
+            alpha = 0.5
+        elif number > 500:
+            alpha = 0.25
+        else:
+            alpha = 1
+        return alpha
