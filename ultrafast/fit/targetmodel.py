@@ -19,6 +19,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 # arrow should remove itself from both end-populations
 # if you kill population, firstly remove all arrows inside
 
+
 def isIdentifier(identifier):  # check if string is valid python identifier
     if not(isinstance(identifier, str)):
         return False
