@@ -12,17 +12,6 @@ Subpackages
    ultrafast.old
    ultrafast.utils
 
-Submodules
-----------
-
-ultrafast.experiment module
----------------------------
-
-.. automodule:: ultrafast.experiment
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
