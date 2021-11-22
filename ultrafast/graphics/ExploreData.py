@@ -117,8 +117,8 @@ class ExploreData(PlotSVD):
     def time_unit(self, val: str):
         try:
             val = val.lower()
-            self._units['time_unit'] = val
             self._unit_formater.multiplicator = val
+            self._units['time_unit'] = self.time_unit
         except Exception:
             msg = 'An unknown time unit cannot be set'
             raise ExperimentException(msg)
@@ -300,7 +300,8 @@ class ExploreData(PlotSVD):
         self._legend_spectra_figure(legend, ncol, cmap, times)
         return fig, ax
 
-    def plot_3D(self, cmap=None):
+    @use_style
+    def plot_3D(self, cmap=None, figsize=(12, 8)):
         """
         Plot the data in 3D
 
@@ -309,6 +310,9 @@ class ExploreData(PlotSVD):
         cmap: str or None
             name of matplotlib color map if None the attribute color_map will
              be use
+
+        figsize: tuple
+            Size of the figure similar to matplotlib figsize
 
         Returns
         ----------
@@ -323,7 +327,7 @@ class ExploreData(PlotSVD):
         else:
             xlabel = f'Wavelength ({self._units["wavelength_unit"]})'
         x, y = np.meshgrid(x, y)
-        fig = plt.figure(figsize=(8, 4))
+        fig = plt.figure(figsize=figsize)
         ax = fig.gca(projection='3d')
         surf = ax.plot_surface(x, y, z, cmap=cmap,
                                linewidth=0, antialiased=False)

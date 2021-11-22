@@ -982,20 +982,24 @@ class Experiment(ExploreData):
         def time_unit(self):
             return f'{self._experiment._unit_formater._multiplicator.name}s'
 
-        @property
-        def wavelength_unit(self):
-            return self._experiment._units['wavelength_unit']
-
         @time_unit.setter
         def time_unit(self, val: str):
+            print("hola")
             try:
+                print("hola")
                 val = val.lower()
-                self._experiment._units['time_unit'] = val
                 self._experiment._unit_formater.multiplicator = val
+                self._experiment._units['time_unit'] = self.time_unit
             except Exception:
                 msg = 'An unknown time unit cannot be set'
                 raise ExperimentException(msg)
 
+        
+        @property
+        def wavelength_unit(self):
+            return self._experiment._units['wavelength_unit']
+
+        
         @wavelength_unit.setter
         def wavelength_unit(self, val: str):
             val = val.lower()

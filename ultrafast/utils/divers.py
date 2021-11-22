@@ -134,11 +134,9 @@ class TimeUnitFormater:
                 # being for example 1e-15 will be 1.0000000000000002e-15. the
                 # line convert and the floating operation transform this to the
                 # correct value.
-                print(val)
                 if val < 0.001:
                     convert = re.findall("[eE]?[+-]?\d+", str(val))[-1]
                     val = float("1"+convert)
-                print(val)
                 # if val == 1.0000000000000002e-15:
                 #     val = 1e-15
                 # elif val == 1.0000000000000002e-12:
