@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ee66d5b6-45c5-44a6-883f-396285dc0178" name="Default Changelist" comment="global_fit with IRF convolution">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/graphics/ExploreData.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ultrafast/utils/divers.py" beforeDir="false" afterPath="$PROJECT_DIR$/ultrafast/utils/divers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Untitled.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Untitled.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,7 +203,7 @@
       <workItem from="1637241275764" duration="80000" />
       <workItem from="1637241446274" duration="1897000" />
       <workItem from="1637267152308" duration="1307000" />
-      <workItem from="1637578632226" duration="2524000" />
+      <workItem from="1637578632226" duration="3600000" />
     </task>
     <task id="LOCAL-00001" summary="global_fit with IRF convolution">
       <created>1621369582820</created>
