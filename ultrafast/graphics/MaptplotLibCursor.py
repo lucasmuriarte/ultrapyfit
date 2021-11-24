@@ -45,14 +45,16 @@ class SnaptoCursor(object):
             texto_x = 1
         else:
             try:
-                texto_x = [True if i == '0' else False for i in str(x).split('.')[1]].index(False)+1
+                texto_x = [True if i == '0' else False
+                           for i in str(x).split('.')[1]].index(False)+1
             except:
                 texto_x = 3
         if abs(y) >= 0.1:
             texto_y = 1
         else:
             try:
-                texto_y = [True if i == '0' else False for i in str(y).split('.')[1]].index(False)+1
+                texto_y = [True if i == '0' else False
+                           for i in str(y).split('.')[1]].index(False)+1
             except:
                 texto_y = 3
         if self.similar.all() == False:
@@ -112,6 +114,7 @@ class SnaptoCursor(object):
             self.onLeaveAxes(event)
         except:
             pass
+        self.ax.set_xlim(self.x[0], self.x[-1])
         if self.similar.all() == False:
             self.lx = self.ax.axhline(color='k', alpha=0.2)  # the horiz line
         if self.single_line:
