@@ -5,6 +5,81 @@ Created on Fri Nov 13 17:59:23 2020
 @author: 79344
 """
 import numpy as np
+from PyQt5 import QtCore, QtWidgets
+
+class Cursor:
+    def __init__(self, ax, number_clicks=np.inf):
+        super().__init__()
+        self.ax = ax
+        self.number_clicks = number_clicks
+        self.fig = self.ax.figure
+
+        self.canvas = self.fig.canvas
+        self.canvas.draw()
+        self.bbox = self.canvas.copy_from_bbox(self.fig.bbox)
+
+        self.vline = self.ax.axvline(np.inf, color='black', alpha=0.4)
+        self.hline = self.ax.axhline(np.inf, color='black', alpha=0.4)
+
+        self.canvas.mpl_connect('motion_notify_event', self.mouse_move)
+        self.canvas.mpl_connect('resize_event', self.on_resize)
+
+    def mouse_move(self, event):
+        self.canvas.restore_region(self.bbox)
+
+        self.vline.set_xdata(event.xdata)
+        self.ax.draw_artist(self.vline)
+
+        self.hline.set_ydata(event.ydata)
+        self.ax.draw_artist(self.hline)
+        
+        self.canvas.blit(self.ax.bbox)
+        self.canvas.flush_events()
+
+    def on_resize(self, event):
+        self.canvas.draw()
+        self.bbox = self.canvas.copy_from_bbox(self.fig.bbox)
+
+class VerticalCursor(Cursor):
+    def __init__(self, ax, number_clicks=np.inf):
+        super().__init__(ax, number_clicks)
+
+        self.hline.set_alpha(0.0)
+
+class HorizontalCursor(Cursor):
+    def __init__(self, ax, number_clicks=np.inf):
+        super().__init__(ax, number_clicks)
+        
+        self.vline.set_alpha(0.0)
+
+class SnappedCursor(Cursor):
+    def __init__(self, ax, x, y, number_clicks=np.inf):
+        super().__init__(ax, number_clicks)
+        self.x = x
+        self.y = y
+        self.scatter = self.ax.scatter(
+            [np.inf], [np.inf], color='red', marker='+', alpha=0.7
+        )
+
+    def mouse_move(self, event):
+        self.canvas.restore_region(self.bbox)
+
+        if event.inaxes:
+            index = (np.abs(self.x - event.xdata)).argmin()
+            x_point, y_point = self.x[index], self.y[index]
+
+            self.vline.set_xdata(x_point)
+            self.ax.draw_artist(self.vline)
+
+            self.hline.set_ydata(y_point)
+            self.ax.draw_artist(self.hline)
+
+            self.scatter.set_offsets([x_point, y_point])
+            self.ax.draw_artist(self.scatter)
+            
+            self.canvas.blit(self.ax.bbox)
+            self.canvas.flush_events()
+
 
 
 class SnaptoCursor(object):
@@ -27,6 +102,7 @@ class SnaptoCursor(object):
         self.single_line = single_line
         self.x_pos = None
         self.y_pos = None
+        self.fig = self.ax.figure
 
     def mouseMove(self, event):
         if not event.inaxes:
@@ -152,3 +228,21 @@ class SnaptoCursor(object):
         self.datax = []
         self.datay = []
         self.ax.figure.canvas.draw_idle()
+
+
+def main():
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    x = np.linspace(1, 10, 101)
+    y = np.sin(x)
+
+    fig, ax = plt.subplots(1, figsize=(18, 6))
+    ax.plot(x, y)
+
+    cursor = SnappedCursor(ax, x, y, y)
+    plt.show()
+
+
+if __name__ == '__main__':
+    main()
