@@ -9,6 +9,7 @@ time, data, wave = read_data(path, wave_is_row=True)
 
 exp = Experiment(time, data, wave)
 
-exp.select_traces_graph()
+print(exp.select_traces_graph())
 
 plt.show()
+print(exp.selected_traces)

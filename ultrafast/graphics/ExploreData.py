@@ -9,7 +9,7 @@ from matplotlib.colors import Normalize
 from ultrafast.utils.divers import select_traces, FiguresFormating, \
     TimeUnitFormater
 from ultrafast.utils.Preprocessing import ExperimentException
-from ultrafast.graphics.MaptplotLibCursor import SnaptoCursor
+from ultrafast.graphics.cursors import VerticalCursor
 import pandas as pd
 from ultrafast.graphics.PlotSVD import PlotSVD
 from copy import copy
@@ -426,26 +426,25 @@ class ExploreData(PlotSVD):
             legenda = [f'curve {i}' for i in range(self.data.shape[1])]
         return legenda
 
-    def select_traces_graph(self, points=-1, average=0):
+    def select_traces_graph(self, points=np.inf, average=0):
         """
         Function to select traces graphically
 
         Parameters
         ----------
-        points: int (default -1)
-            Defines the number of traces that can be selected. If -1 an
-            infinitive number of traces can be selected
+        points: int (default np.inf)
+            Defines the number of traces that can be selected.
         """
         fig, ax = self.plot_spectra()
-        cursor = SnaptoCursor(ax, self.wavelength, self.wavelength * 0.0,
-                              points)
-        plt.connect('axes_enter_event', cursor.onEnterAxes)
-        plt.connect('axes_leave_event', cursor.onLeaveAxes)
-        plt.connect('motion_notify_event', cursor.mouseMove)
-        plt.connect('button_press_event', cursor.onClick)
-        fig.canvas.mpl_connect('close_event',
-                               lambda event: self.select_traces(cursor.datax,
-                                                                average))
+
+        cursor = VerticalCursor(
+            ax, n_clicks=points)
+            
+        fig.canvas.mpl_connect(
+            'close_event',
+            lambda event: self.select_traces(cursor.data, average)
+        )
+
         return fig, cursor
 
     def _legend_spectra_figure(self, legend, ncol, cmap, times):

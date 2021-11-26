@@ -11,7 +11,7 @@ from matplotlib.widgets import Slider, Button, RadioButtons
 from pylab import pcolormesh
 from ultrafast.utils.Preprocessing import ExperimentException
 from ultrafast.utils.divers import book_annotate, LabBook
-from ultrafast.graphics.MaptplotLibCursor import SnaptoCursor
+from ultrafast.graphics.cursors import VerticalCursor
 import lmfit
 
 
