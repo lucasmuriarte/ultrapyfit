@@ -12,6 +12,7 @@ from pylab import pcolormesh
 from ultrafast.utils.Preprocessing import ExperimentException
 from ultrafast.utils.divers import book_annotate, LabBook
 from ultrafast.graphics.cursors import VerticalCursor
+from ultrafast.graphics.cursors import SnaptoCursor
 import lmfit
 
 
