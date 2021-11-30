@@ -14,7 +14,7 @@ path = 'examples/data/data.asc'
 time, data, wave = read_data(path)
 
 
-corrector = EstimationGVDSellmeier(time, data, wave, 400)
+corrector = EstimationGVDPolynom(time, data, wave, 400)
 corrector.estimate_GVD_from_grath()
 
 plt.show()

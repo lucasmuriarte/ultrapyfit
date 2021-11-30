@@ -45,9 +45,6 @@ class Cursor:
                 del self.data[-1]
                 self.draw_artists()
 
-        print(event.xdata)
-
-
     def mouse_move(self, event=None):
         if event.inaxes:
             self.vline.set_xdata(event.xdata)
