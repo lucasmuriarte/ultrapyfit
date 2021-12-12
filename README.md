@@ -129,7 +129,7 @@ fig, ax = experiment.plot_3D()
 
 
     
-![png](output_13_0.png)
+<img src="./resources/output_13_0.png">  
     
 
 
@@ -140,18 +140,7 @@ experiment.plot_spectra()
 
     style applied
     
-
-
-
-
-    (<Figure size 1350x750 with 1 Axes>,
-     <AxesSubplot:xlabel='Wavelength (nm)', ylabel='$\\Delta$A'>)
-
-
-
-
-    
-![png](output_14_2.png)
+<img src="./resources/output_14_2.png">  
     
 
 
@@ -161,17 +150,6 @@ experiment.plot_traces()
 ```
 
     style applied
-    
-
-
-
-
-    (<Figure size 1350x750 with 1 Axes>,
-     <AxesSubplot:xlabel='Time (ps)', ylabel='$\\Delta$A'>)
-
-
-
-
 
 <img src="./resources/output_15_2.png">    
     
@@ -193,18 +171,7 @@ experiment.plot_spectra("auto")
     1520.0
     style applied
     
-
-
-
-
-    (<Figure size 1350x750 with 1 Axes>,
-     <AxesSubplot:xlabel='Wavelength (nm)', ylabel='$\\Delta$A'>)
-
-
-
-
-    
-![png](output_17_2.png)
+<img src="./resources/output_17_2.png">  
     
 
 
@@ -226,18 +193,7 @@ experiment.plot_spectra(["auto", 6, 1440])
     1440.0
     style applied
     
-
-
-
-
-    (<Figure size 1350x750 with 1 Axes>,
-     <AxesSubplot:xlabel='Wavelength (nm)', ylabel='$\\Delta$A'>)
-
-
-
-
-    
-![png](output_19_2.png)
+<img src="./resources/output_19_2.png">  
     
 
 
@@ -255,18 +211,7 @@ experiment.plot_spectra("auto", style="seaborn")
     1520.0
     style applied
     
-
-
-
-
-    (<Figure size 576x396 with 1 Axes>,
-     <AxesSubplot:xlabel='Wavelength (nm)', ylabel='$\\Delta$A'>)
-
-
-
-
-    
-![png](output_21_2.png)
+<img src="./resources/output_21_2.png">  
     
 
 
@@ -293,18 +238,7 @@ experiment.plot_spectra("auto", style="lmu_specd")
     1520.0
     style applied
     
-
-
-
-
-    (<Figure size 1350x750 with 1 Axes>,
-     <AxesSubplot:xlabel='Wavelength (nm)', ylabel='$\\Delta$A'>)
-
-
-
-
-    
-![png](output_25_2.png)
+<img src="./resources/output_25_2.png">  
     
 
 
@@ -333,7 +267,7 @@ experiment.plot_full_SVD(3)
 
 
     
-![png](output_28_0.png)
+<img src="./resources/output_28_0.png">  
     
 
 
@@ -360,20 +294,7 @@ experiment.fitting.fit_single_exp(1520, 2, 0, None, 0.8, 5, 50)
     style applied
     False
     
-
-
-
-
-    (<Figure size 1200x900 with 2 Axes>,
-     array([<AxesSubplot:ylabel='Residues'>,
-            <AxesSubplot:xlabel='Time (ps)', ylabel='$\\Delta$A'>],
-           dtype=object))
-
-
-
-
-    
-![png](output_32_2.png)
+<img src="./resources/output_32_2.png">  
     
 
 
@@ -387,20 +308,7 @@ experiment.fitting.fit_single_exp(1480, 2, 0, None, 0.8, 5, 50)
     style applied
     False
     
-
-
-
-
-    (<Figure size 1200x900 with 2 Axes>,
-     array([<AxesSubplot:ylabel='Residues'>,
-            <AxesSubplot:xlabel='Time (ps)', ylabel='$\\Delta$A'>],
-           dtype=object))
-
-
-
-
-    
-![png](output_33_2.png)
+<img src="./resources/output_33_2.png">  
     
 
 
@@ -515,20 +423,7 @@ experiment.fitting.plot_global_fit()
 
     style applied
     
-
-
-
-
-    (<Figure size 1200x900 with 2 Axes>,
-     array([<AxesSubplot:ylabel='Residues'>,
-            <AxesSubplot:xlabel='Time (ps)', ylabel='$\\Delta$A'>],
-           dtype=object))
-
-
-
-
-    
-![png](output_43_2.png)
+<img src="./resources/output_43_2.png">  
     
 
 
@@ -541,20 +436,7 @@ experiment.fitting.plot_global_fit(selection=[1390, 1480, 1520, 1580])
 
     style applied
     
-
-
-
-
-    (<Figure size 1200x900 with 2 Axes>,
-     array([<AxesSubplot:ylabel='Residues'>,
-            <AxesSubplot:xlabel='Time (ps)', ylabel='$\\Delta$A'>],
-           dtype=object))
-
-
-
-
-    
-![png](output_45_2.png)
+<img src="./resources/output_45_2.png">  
     
 
 
@@ -566,18 +448,7 @@ experiment.fitting.plot_DAS()
     False
     style applied
     
-
-
-
-
-    (<Figure size 1350x750 with 1 Axes>,
-     <AxesSubplot:xlabel='Wavelength (nm)', ylabel='$\\Delta$A'>)
-
-
-
-
-    
-![png](output_46_2.png)
+<img src="./resources/output_46_2.png">  
     
 
 
