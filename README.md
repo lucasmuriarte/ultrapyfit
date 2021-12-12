@@ -172,8 +172,8 @@ experiment.plot_traces()
 
 
 
-    
-![png](output_15_2.png)
+
+<img src="./resources/output_15_2.png">    
     
 
 
