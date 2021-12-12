@@ -315,7 +315,9 @@ class ExploreResults:
                            convert_to_EAS=convert_to_EAS)
 
         xlabel = self._get_wave_label_res(wavelength)
-        legenda = self._legend_plot_DAS(params, exp_no, deconv, tau_inf, type_fit, precision)
+
+        legenda = self._legend_plot_DAS(params, exp_no, deconv, tau_inf,
+                                        type_fit, precision)
 
         # check DAS that are selected and adapt the legend
         if number != 'all':
@@ -338,10 +340,13 @@ class ExploreResults:
 
         for i in range(n_das):
             # if to decide if to plot the offset or not
+
             if i == n_das-1 and not deconv and not plot_offset:
                 pass
             else:
                 ax.plot(wavelength, das[i, :], label=legenda[i])
+
+
         plt.xlim(wavelength[0], wavelength[-1])
         leg = ax.legend()
         leg.set_zorder(np.inf)
@@ -660,9 +665,18 @@ class ExploreResults:
         """
         returns legend for plot_DAS function
         """
-        legenda = [self._unit_formater.value_formated(
-            abs(params['tau%i_1' % (i + 1)].value), precision)
-            for i in range(exp_no)]
+        times_val = [abs(params['tau%i_1' % (i + 1)].value)
+                     for i in range(exp_no)]
+        add_tau_inf = False
+        for i in times_val:
+            if i < np.inf:
+                pass
+            else:
+                times_val.remove(i)
+                add_tau_inf = True
+        legenda = [self._unit_formater.value_formated(i, precision)
+                   for i in times_val]
+
         if deconv and type_fit == 'Exponential':
             if tau_inf is None:
                 pass
@@ -671,8 +685,11 @@ class ExploreResults:
                                                                   precision))
             else:
                 legenda.append(r'$\tau$ = inf')
-        elif not deconv:
+        elif add_tau_inf and type_fit == 'Target':
+            legenda.append(r'$\tau$ = inf')
+        if not deconv:
             legenda.append(r'Offset')
+        print(deconv)
         return legenda
 
     def _legend_plot_fit(self, data, wavelength, svd_fit, puntos):

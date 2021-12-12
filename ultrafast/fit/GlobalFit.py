@@ -112,6 +112,12 @@ class GlobalFitResult:
         self.details = details
         self.details['time_constraint'] = False
 
+    def get_fitted_data(self):
+        """
+        Return the fitted data of the object
+        """
+        return self.x, self.data, self.wavelength
+
     def get_values(self):
         """
         return important values from the results object
