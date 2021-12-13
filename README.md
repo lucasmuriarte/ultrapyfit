@@ -1,3 +1,7 @@
+# Disclaimer of Warranty
+
+  THERE IS NO WARRANTY FOR THE PROGRAM.
+
 # ultrapyfit
 ----------------
 
@@ -450,7 +454,3 @@ experiment.fitting.plot_DAS()
 
 ```
 
-    
-#Disclaimer of Warranty
-
-  THERE IS NO WARRANTY FOR THE PROGRAM.
