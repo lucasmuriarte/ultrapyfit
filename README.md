@@ -1,4 +1,4 @@
-# Disclaimer of Warranty
+### Disclaimer of Warranty
 
   THERE IS NO WARRANTY FOR THE PROGRAM.
 
