@@ -16,7 +16,7 @@ TR spectroscopies often consist on detecting with a probe changes in absorption 
 To unravel the chemical reactions and processes behind the multivariate data, model-based analysis of the data is mandatory. The most straightforward approach to model a photochemical reaction is to assume that the concentration of transient species or reaction rate is the sum of independent species (Beer-Lambert law) and only depends on the concentration of these species (first-order reaction). The integration of a first order reaction can be described by exponential decay. According to this hypothesis, the data should be explained by a weighted sum of exponential functions, where every exponential time constant represents the decay of a transient species that follow a first-order reaction, and the pre-exponential value or weight, represents the concentration of this species (Equation 1). 
 <br />
 
-$$\mathbf\Gamma(t,\lambda) = \sum\limits_{0}^{n} A_{i}*e^{(t-t_{0}/\tau)}$$
+$\mathbf\Gamma(t,\lambda) = \sum\limits_{0}^{n} A_{i}*e^{(t-t_{0}/\tau)}$
     <div style="text-align: right"> Equation 1. </div>
     
 <br />
@@ -451,8 +451,11 @@ experiment.fitting.plot_DAS()
 <img src="./resources/output_46_2.png">  
     
 
-
-
 ```python
 
 ```
+
+    
+#Disclaimer of Warranty
+
+  THERE IS NO WARRANTY FOR THE PROGRAM.
