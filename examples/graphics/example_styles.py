@@ -6,8 +6,8 @@ Created on Thu Feb 25 14:31:39 2021
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from  ultrafast.graphics.styles.set_styles import *
-from  ultrafast.graphics.styles.plot_base_functions import *
+from  ultrapyfit.graphics.styles.set_styles import *
+from  ultrapyfit.graphics.styles.plot_base_functions import *
 
 # how to use styles:
 # first define the function, with the decorator use_style

@@ -9,10 +9,10 @@ irf_path = "C:/Users/lucas/Downloads/IRF_330nm_36ps_20000.dat"
 
 import pandas as pd
 import numpy as np
-from ultrafast.fit.GlobalFit import GlobalFitWithIRF, GlobalFitExponential
-from ultrafast.graphics.ExploreResults import ExploreResults
-from ultrafast.fit.GlobalParams import GlobExpParameters
-from ultrafast.fit.ModelCreator import ModelCreator
+from ultrapyfit.fit.GlobalFit import GlobalFitWithIRF, GlobalFitExponential
+from ultrapyfit.graphics.ExploreResults import ExploreResults
+from ultrapyfit.fit.GlobalParams import GlobExpParameters
+from ultrapyfit.fit.ModelCreator import ModelCreator
 import matplotlib.pyplot as plt
 
 data = pd.read_csv(path_2, header=None).values

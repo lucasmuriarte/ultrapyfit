@@ -6,8 +6,8 @@ Created on Fri Nov 13 18:48:51 2020
 """
 from lmfit import Parameters
 import numpy as np
-from ultrafast.old.targetmodel import Model
-from ultrafast.utils.Preprocessing import ExperimentException
+from ultrapyfit.old.targetmodel import Model
+from ultrapyfit.utils.Preprocessing import ExperimentException
 
 
 class GlobExpParameters:

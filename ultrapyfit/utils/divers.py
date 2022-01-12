@@ -12,8 +12,8 @@ import numpy as np
 from scipy.integrate import odeint
 import re
 import datetime
-from ultrafast.utils.Preprocessing import ExperimentException
-from ultrafast.fit.ModelCreator import ModelCreator
+from ultrapyfit.utils.Preprocessing import ExperimentException
+from ultrapyfit.fit.ModelCreator import ModelCreator
 from enum import Enum
 from decimal import Decimal
 import traceback
@@ -385,7 +385,7 @@ def define_weights(time, rango, typo='constant', val=5):
 def read_data(path, wavelength=0, time=0, wave_is_row=False, separator=',', decimal='.'):
     """
     Read a data file from the indicated path and returns three arrays with
-    shapes uses in the ultrafast. The function is bases in pandas read_csv,
+    shapes uses in the ultrapyfit. The function is bases in pandas read_csv,
     and uses the ReadData class.
 
     For the rows or columns corresponding to the wavelength and time vectors

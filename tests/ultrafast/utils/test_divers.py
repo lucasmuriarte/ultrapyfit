@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.axis import Tick 
 from parameterized import parameterized
-from ultrafast.utils.divers import *
+from ultrapyfit.utils.divers import *
 
 
 data_wave = np.ones((75, 150))

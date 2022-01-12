@@ -8,10 +8,10 @@ from scipy.sparse.linalg import svds as svd
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.widgets import Slider, Button
-from ultrafast.utils.divers import select_traces
+from ultrapyfit.utils.divers import select_traces
 from copy import copy
-from ultrafast.graphics.styles.set_styles import *
-from ultrafast.graphics.styles.plot_base_functions import *
+from ultrapyfit.graphics.styles.set_styles import *
+from ultrapyfit.graphics.styles.plot_base_functions import *
 
 
 class PlotSVD:

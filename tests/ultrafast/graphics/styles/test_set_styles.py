@@ -1,5 +1,5 @@
 import unittest
-from ultrafast.graphics.styles import *
+from ultrapyfit.graphics.styles import *
 from parameterized import parameterized
 
 

@@ -7,9 +7,9 @@ Created on Sat Sep 25 15:37:51 2021
 """
 
 import unittest
-from ultrafast.utils.divers import DataSetCreator
-from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.experiment import Experiment
+from ultrapyfit.utils.divers import DataSetCreator
+from ultrapyfit.utils.divers import read_data, select_traces
+from ultrapyfit.experiment import Experiment
 import numpy as np
 import matplotlib.pyplot as plt
 

@@ -8,10 +8,10 @@ Created on Fri Nov 12 17:44:42 2021
 
 
 import unittest
-from ultrafast.utils.divers import DataSetCreator
-from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.experiment import Experiment
-from ultrafast.fit.targetmodel import ModelWindow, Model
+from ultrapyfit.utils.divers import DataSetCreator
+from ultrapyfit.utils.divers import read_data, select_traces
+from ultrapyfit.experiment import Experiment
+from ultrapyfit.fit.targetmodel import ModelWindow, Model
 import numpy as np
 import copy
 import matplotlib.pyplot as plt

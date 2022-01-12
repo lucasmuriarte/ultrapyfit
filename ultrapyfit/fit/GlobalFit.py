@@ -6,13 +6,13 @@ Created on Sat Mars 13 14:35:39 2021
 import numpy as np
 import re
 import lmfit
-from ultrafast.fit.jacobian import Jacobian
-from ultrafast.utils.Preprocessing import ExperimentException
-# from ultrafast.fit.GlobalParams import GlobExpParameters
-from ultrafast.utils.divers import UnvariableContainer, solve_kmatrix
+from ultrapyfit.fit.jacobian import Jacobian
+from ultrapyfit.utils.Preprocessing import ExperimentException
+# from ultrapyfit.fit.GlobalParams import GlobExpParameters
+from ultrapyfit.utils.divers import UnvariableContainer, solve_kmatrix
 import copy
 import pickle
-# from ultrafast.graphics.ExploreResults import ExploreResults
+# from ultrapyfit.graphics.ExploreResults import ExploreResults
 # import matplotlib.pyplot as plt
 import ctypes
 import threading

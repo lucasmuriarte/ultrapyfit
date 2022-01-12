@@ -7,17 +7,17 @@ Created on Thu Nov 12 20:55:03 2020
 import numpy as np
 from lmfit import Parameters
 import datetime
-from ultrafast.graphics.ExploreResults import ExploreResults
-from ultrafast.graphics.ExploreData import ExploreData
-from ultrafast.fit.GlobalParams import GlobExpParameters, GlobalTargetParameters
-from ultrafast.fit.GlobalFitBootstrap import BootStrap
-from ultrafast.utils.ChirpCorrection import EstimationGVDPolynom, EstimationGVDSellmeier
-from ultrafast.utils.divers import define_weights, UnvariableContainer, LabBook,\
+from ultrapyfit.graphics.ExploreResults import ExploreResults
+from ultrapyfit.graphics.ExploreData import ExploreData
+from ultrapyfit.fit.GlobalParams import GlobExpParameters, GlobalTargetParameters
+from ultrapyfit.fit.GlobalFitBootstrap import BootStrap
+from ultrapyfit.utils.ChirpCorrection import EstimationGVDPolynom, EstimationGVDSellmeier
+from ultrapyfit.utils.divers import define_weights, UnvariableContainer, LabBook,\
     book_annotate, read_data, TimeUnitFormater, select_traces
-from ultrafast.fit.targetmodel import ModelWindow
-from ultrafast.utils.Preprocessing import ExperimentException
-from ultrafast.utils.Preprocessing import Preprocessing as Prep
-from ultrafast.fit.GlobalFit import GlobalFitExponential, GlobalFitTarget
+from ultrapyfit.fit.targetmodel import ModelWindow
+from ultrapyfit.utils.Preprocessing import ExperimentException
+from ultrapyfit.utils.Preprocessing import Preprocessing as Prep
+from ultrapyfit.fit.GlobalFit import GlobalFitExponential, GlobalFitTarget
 import os
 from matplotlib.offsetbox import AnchoredText
 import copy
@@ -341,7 +341,7 @@ class Experiment(ExploreData):
                 elif not file_found:
                     msg = 'Unable to open the specify file'
                 elif not instantiate:
-                    msg = 'File do not correspond to a ultrafast Experiment class'
+                    msg = 'File do not correspond to a ultrapyfit Experiment class'
                 elif not unpickle:
                     msg = 'Unable to unpickle the specified file'
                 else:

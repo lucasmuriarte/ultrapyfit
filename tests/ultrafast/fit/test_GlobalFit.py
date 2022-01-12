@@ -1,10 +1,10 @@
 import unittest
-from ultrafast.fit.GlobalFit import *
+from ultrapyfit.fit.GlobalFit import *
 from parameterized import parameterized
-from ultrafast.utils.divers import read_data, select_traces
+from ultrapyfit.utils.divers import read_data, select_traces
 import numpy as np
-from ultrafast.fit.ModelCreator import ModelCreator
-from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrapyfit.fit.ModelCreator import ModelCreator
+from ultrapyfit.fit.GlobalParams import GlobExpParameters
 from copy import deepcopy
 
 

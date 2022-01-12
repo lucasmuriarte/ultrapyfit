@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.experiment import Experiment
+from ultrapyfit.utils.divers import read_data, select_traces
+from ultrapyfit.experiment import Experiment
 import matplotlib.pyplot as plt
 
 path = 'examples/data/denoised_2.csv'

@@ -4,10 +4,10 @@ Created on Sun Jan 10 23:02:19 2021
 
 @author: lucas
 """
-from ultrafast.fit.GlobalFit import GlobalFitExponential
-from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.graphics.ExploreResults import ExploreResults
-from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrapyfit.fit.GlobalFit import GlobalFitExponential
+from ultrapyfit.utils.divers import read_data, select_traces
+from ultrapyfit.graphics.ExploreResults import ExploreResults
+from ultrapyfit.fit.GlobalParams import GlobExpParameters
 
 path = 'C:/Users/lucas/git project/ultrafast/examples/data/denoised_2.csv'
 time, data, wave = read_data(path, wave_is_row= True)

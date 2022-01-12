@@ -1,5 +1,5 @@
 import numpy as np
-from ultrafast.fit.ModelCreator import ModelCreator
+from ultrapyfit.fit.ModelCreator import ModelCreator
 from scipy.special import erf
 
 

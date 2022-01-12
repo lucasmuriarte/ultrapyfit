@@ -9,9 +9,9 @@ import pandas as pd
 from PyQt5.QtGui import QIcon
 from matplotlib.widgets import Slider, Button, RadioButtons
 from pylab import pcolormesh
-from ultrafast.utils.Preprocessing import ExperimentException
-from ultrafast.utils.divers import book_annotate, LabBook
-from ultrafast.graphics.MaptplotLibCursor import SnaptoCursor
+from ultrapyfit.utils.Preprocessing import ExperimentException
+from ultrapyfit.utils.divers import book_annotate, LabBook
+from ultrapyfit.graphics.MaptplotLibCursor import SnaptoCursor
 import lmfit
 
 

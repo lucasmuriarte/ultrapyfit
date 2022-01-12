@@ -4,7 +4,7 @@ Created on Sat Jan  9 18:06:54 2021
 
 @author: lucas
 """
-from ultrafast.utils.divers import LabBook, book_annotate
+from ultrapyfit.utils.divers import LabBook, book_annotate
 
 # The lab book need to be created first
 book = LabBook(notes=None, name='Lab Book 1')

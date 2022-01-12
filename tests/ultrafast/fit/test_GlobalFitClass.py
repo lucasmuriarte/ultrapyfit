@@ -1,12 +1,12 @@
 import unittest
-from ultrafast.old.ExponentialFit import globalfit_exponential, \
+from ultrapyfit.old.ExponentialFit import globalfit_exponential, \
     globalfit_gauss_exponential
-from ultrafast.utils.divers import read_data, select_traces
+from ultrapyfit.utils.divers import read_data, select_traces
 import numpy as np
 
 
 path = 'C:/Users/lucas/git project/chempyspec/examples/3_exp_data_denoised_2.csv'
-path2 = 'C:/Users/lucas/git project/ultrafast/examples/3_exp_data_gauss_denoised.csv'
+path2 = 'C:/Users/lucas/git project/ultrapyfit/examples/3_exp_data_gauss_denoised.csv'
 
 original_taus = [8, 30, 200]
 

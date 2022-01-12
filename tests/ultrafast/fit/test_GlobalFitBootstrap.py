@@ -1,9 +1,9 @@
 import unittest
 import pickle
-from ultrafast.fit.GlobalFitBootstrap import BootStrap
+from ultrapyfit.fit.GlobalFitBootstrap import BootStrap
 from parameterized import parameterized
-from ultrafast.old.ExponentialFit import GlobalFitExponential
-from ultrafast.utils.Preprocessing import ExperimentException
+from ultrapyfit.old.ExponentialFit import GlobalFitExponential
+from ultrapyfit.utils.Preprocessing import ExperimentException
 from copy import deepcopy
 
 path = 'test_result.obj'

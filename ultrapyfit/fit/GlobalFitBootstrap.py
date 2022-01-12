@@ -2,10 +2,10 @@ import numpy as np
 import pandas as pd
 from copy import deepcopy
 import matplotlib.pyplot as plt
-from ultrafast.utils.Preprocessing import ExperimentException
-from ultrafast.graphics.ExploreResults import ExploreResults
-from ultrafast.fit.GlobalFit import GlobalFitExponential
-from ultrafast.fit.GlobalFit import GlobalFitTarget
+from ultrapyfit.utils.Preprocessing import ExperimentException
+from ultrapyfit.graphics.ExploreResults import ExploreResults
+from ultrapyfit.fit.GlobalFit import GlobalFitExponential
+from ultrapyfit.fit.GlobalFit import GlobalFitTarget
 from seaborn import histplot, kdeplot
 from matplotlib.offsetbox import AnchoredText
 import concurrent

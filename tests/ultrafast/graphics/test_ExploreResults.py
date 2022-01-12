@@ -1,9 +1,9 @@
 import unittest
 from unittest import mock
-from ultrafast.graphics.ExploreResults import ExploreResults
+from ultrapyfit.graphics.ExploreResults import ExploreResults
 import pickle
 from parameterized import parameterized
-from ultrafast.utils.divers import read_data, select_traces
+from ultrapyfit.utils.divers import read_data, select_traces
 import numpy as np
 
 
