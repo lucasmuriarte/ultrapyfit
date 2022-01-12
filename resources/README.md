@@ -43,10 +43,8 @@ in cases where the wavelenght vector correspond to the rows
 experiment = Experiment.load_data(path, wave_is_row=True)
 ``
 
-
-
 ```python
-from ultrafast.experiment import Experiment
+from ultrapyfit.experiment import Experiment
 import warnings
 warnings.filterwarnings('ignore')
 ```

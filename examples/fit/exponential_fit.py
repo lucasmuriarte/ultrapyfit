@@ -4,9 +4,9 @@ Created on Sun Jan 10 23:02:19 2021
 
 @author: lucas
 """
-from ultrafast.old.ExponentialFit import globalfit_exponential
-from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.graphics.ExploreResults import ExploreResults
+from ultrapyfit.old.ExponentialFit import globalfit_exponential
+from ultrapyfit.utils.divers import read_data, select_traces
+from ultrapyfit.graphics.ExploreResults import ExploreResults
 
 path = '../data/denoised_2.csv'
 time, data, wave = read_data(path, wave_is_row= True)

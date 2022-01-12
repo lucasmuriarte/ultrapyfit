@@ -6,8 +6,8 @@ Created on Thu Nov 12 21:00:23 2020
 """
 import numpy as np
 import lmfit
-from ultrafast.fit.ModelCreator import ModelCreator
-from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrapyfit.fit.ModelCreator import ModelCreator
+from ultrapyfit.fit.GlobalParams import GlobExpParameters
 from packaging import version
 
 

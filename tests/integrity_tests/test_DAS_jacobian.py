@@ -7,15 +7,15 @@ Created on Sat Sep 25 15:37:51 2021
 """
 
 import unittest
-from ultrafast.utils.divers import DataSetCreator
-from ultrafast.fit.GlobalFit import GlobalFitExponential
-from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.graphics.ExploreResults import ExploreResults
-from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrapyfit.utils.divers import DataSetCreator
+from ultrapyfit.fit.GlobalFit import GlobalFitExponential
+from ultrapyfit.utils.divers import read_data, select_traces
+from ultrapyfit.graphics.ExploreResults import ExploreResults
+from ultrapyfit.fit.GlobalParams import GlobExpParameters
 from scipy.optimize import check_grad, approx_fprime
 import numpy as np
 
-#datasets_dir = "ultrafast/examples/dynamically_created_data/"
+#datasets_dir = "ultrapyfit/examples/dynamically_created_data/"
 
 class TestDatasetsDAS(unittest.TestCase):
     """

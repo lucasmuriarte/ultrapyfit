@@ -6,8 +6,8 @@ Created on Mon Jan  4 13:26:45 2021
 """
 import unittest
 import numpy as np
-from ultrafast.fit.ModelCreator import ModelCreator
-from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrapyfit.fit.ModelCreator import ModelCreator
+from ultrapyfit.fit.GlobalParams import GlobExpParameters
 from parameterized import parameterized
 from math import e as euler
 from scipy.special import erfc

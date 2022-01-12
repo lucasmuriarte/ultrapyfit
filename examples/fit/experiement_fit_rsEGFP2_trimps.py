@@ -10,9 +10,9 @@ Created on Sun Jan 10 23:02:19 2021
 
 @author: lucas
 """
-from ultrafast.fit.GlobalFit import GlobalFitExponential
-from ultrafast.experiment import Experiment
-from ultrafast.utils.divers import read_data
+from ultrapyfit.fit.GlobalFit import GlobalFitExponential
+from ultrapyfit.experiment import Experiment
+from ultrapyfit.utils.divers import read_data
 import matplotlib.pyplot as plt
 
 path='D:/PC/donnes/donnes femto/DATA RAL MARS 2019 oxford/preproces december2019 with bining/Off to On TRIMPS correct/WT.csv'

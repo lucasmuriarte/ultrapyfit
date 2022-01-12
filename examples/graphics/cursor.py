@@ -4,7 +4,7 @@ Created on Mon Jan  4 19:31:09 2021
 
 @author: lucas
 """
-from ultrafast.graphics.MaptplotLibCursor import SnaptoCursor
+from ultrapyfit.graphics.MaptplotLibCursor import SnaptoCursor
 import matplotlib.pyplot as plt
 import numpy as np
 

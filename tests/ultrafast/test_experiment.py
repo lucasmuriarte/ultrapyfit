@@ -1,6 +1,6 @@
 import unittest
 import unittest.mock
-from ultrafast.experiment import Experiment
+from ultrapyfit.experiment import Experiment
 import os
 import numpy as np
 from copy import deepcopy

@@ -1,6 +1,6 @@
 import unittest
-from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.graphics.PlotSVD import PlotSVD
+from ultrapyfit.utils.divers import read_data, select_traces
+from ultrapyfit.graphics.PlotSVD import PlotSVD
 import numpy as np
 from parameterized import parameterized
 import matplotlib.pyplot as plt

@@ -4,11 +4,11 @@ Created on Sun Jan 10 23:02:19 2021
 
 @author: lucas
 """
-from ultrafast.fit.GlobalFit import GlobalFitTarget
-from ultrafast.utils.divers import read_data
-from ultrafast.graphics.ExploreResults import ExploreResults
-from ultrafast.fit.GlobalParams import GlobalTargetParameters
-from ultrafast.old.targetmodel import Model
+from ultrapyfit.fit.GlobalFit import GlobalFitTarget
+from ultrapyfit.utils.divers import read_data
+from ultrapyfit.graphics.ExploreResults import ExploreResults
+from ultrapyfit.fit.GlobalParams import GlobalTargetParameters
+from ultrapyfit.old.targetmodel import Model
 
 
 path = 'C:/Users/lucas/git project/ultrafast/examples/data/data for igor 3 exp.txt'

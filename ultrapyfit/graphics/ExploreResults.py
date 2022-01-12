@@ -4,12 +4,12 @@ Created on Sun Nov 15 18:35:41 2020
 
 @author: lucas
 """
-from ultrafast.utils.divers import FiguresFormating, solve_kmatrix, TimeUnitFormater
-from ultrafast.utils.Preprocessing import ExperimentException
-from ultrafast.graphics.styles.set_styles import use_style
+from ultrapyfit.utils.divers import FiguresFormating, solve_kmatrix, TimeUnitFormater
+from ultrapyfit.utils.Preprocessing import ExperimentException
+from ultrapyfit.graphics.styles.set_styles import use_style
 import matplotlib.pyplot as plt
 import numpy as np
-from ultrafast.fit.ModelCreator import ModelCreator
+from ultrapyfit.fit.ModelCreator import ModelCreator
 import scipy.integrate as integral
 from matplotlib.widgets import Slider
 
@@ -141,7 +141,7 @@ class ExploreResults:
             
         style: style valid name (default 'lmu_res')
             defines the style to format the output figure, it can be any defined
-            matplotlib style, any ultrafast style (utf) or any user defined
+            matplotlib style, any ultrapyfit style (utf) or any user defined
             style that follows matplotlib or utf styles and is saved in the
             correct folder. Check styles for more information.
         
@@ -288,7 +288,7 @@ class ExploreResults:
         
         style: style valid name (default 'lmu_spec')
             defines the style to format the output figure, it can be any defined
-            matplotlib style, any ultrafast style (utf) or any user defined
+            matplotlib style, any ultrapyfit style (utf) or any user defined
             style that follows matplotlib or utf styles and is saved in the
             correct folder. Check styles for more information.
         
@@ -583,7 +583,7 @@ class ExploreResults:
 
         style: style valid name (default 'lmu_res')
             defines the style to format the output figure, it can be any defined
-            matplotlib style, any ultrafast style (utf) or any user defined
+            matplotlib style, any ultrapyfit style (utf) or any user defined
             style that follows matplotlib or utf styles and is saved in the
             correct folder. Check styles for more information.
 

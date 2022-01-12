@@ -6,16 +6,16 @@ Created on Thu Nov 12 21:18:25 2020
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import Normalize
-from ultrafast.utils.divers import select_traces, FiguresFormating, \
+from ultrapyfit.utils.divers import select_traces, FiguresFormating, \
     TimeUnitFormater
-from ultrafast.utils.Preprocessing import ExperimentException
-from ultrafast.graphics.MaptplotLibCursor import SnaptoCursor
+from ultrapyfit.utils.Preprocessing import ExperimentException
+from ultrapyfit.graphics.MaptplotLibCursor import SnaptoCursor
 import pandas as pd
-from ultrafast.graphics.PlotSVD import PlotSVD
+from ultrapyfit.graphics.PlotSVD import PlotSVD
 from copy import copy
 import matplotlib.cm as cm
-from ultrafast.graphics.styles.set_styles import *
-from ultrafast.graphics.styles.plot_base_functions import *
+from ultrapyfit.graphics.styles.set_styles import *
+from ultrapyfit.graphics.styles.plot_base_functions import *
 
 
 class ExploreData(PlotSVD):
@@ -149,7 +149,7 @@ class ExploreData(PlotSVD):
 
         style: style valid name (default 'lmu_res')
             defines the style to format the output figure, it can be any defined
-            matplotlib style, any ultrafast style (utf) or any user defined
+            matplotlib style, any ultrapyfit style (utf) or any user defined
             style that follows matplotlib or utf styles and is saved in the
             correct folder. Check styles for more information.
 
@@ -265,7 +265,7 @@ class ExploreData(PlotSVD):
 
         style: style valid name (default 'lmu_res')
             defines the style to format the output figure, it can be any defined
-            matplotlib style, any ultrafast style (utf) or any user defined
+            matplotlib style, any ultrapyfit style (utf) or any user defined
             style that follows matplotlib or utf styles and is saved in the
             correct folder. Check styles for more information.
         include_rango_max: bool (default True)

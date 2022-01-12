@@ -4,8 +4,8 @@ Created on Tue Feb 16 17:42:19 2021
 
 @author: lucas
 """
-from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.experiment import Experiment
+from ultrapyfit.utils.divers import read_data, select_traces
+from ultrapyfit.experiment import Experiment
 import os
 
 path = 'C:\\Users\\lucas\\git project\\ultrafast\\examples\\data\\exp3_data_denoised.csv'

@@ -7,7 +7,7 @@ Created on Sun Nov 22 12:52:02 2020
 import pandas as pd
 import numpy as np
 from scipy.signal import savgol_filter as SF
-from ultrafast.old.ChirpCorrection import ChripCorrection
+from ultrapyfit.old.ChirpCorrection import ChripCorrection
 
 
 class ExperimentException(Exception):

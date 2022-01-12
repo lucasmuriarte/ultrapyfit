@@ -5,8 +5,8 @@ Created on Fri Nov 13 13:12:36 2020
 """
 import numpy as np
 import lmfit
-from ultrafast.fit.ModelCreator import ModelCreator
-from ultrafast.utils.divers import solve_kmatrix
+from ultrapyfit.fit.ModelCreator import ModelCreator
+from ultrapyfit.utils.divers import solve_kmatrix
 from packaging import version
 
 class GlobalFitTargetModel(lmfit.Minimizer, ModelCreator):

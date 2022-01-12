@@ -10,11 +10,11 @@ Created on Sun Jan 10 23:02:19 2021
 
 @author: lucas
 """
-from ultrafast.fit.GlobalFit import GlobalFitExponential
-from ultrafast.utils.divers import read_data, select_traces
-from ultrafast.graphics.ExploreResults import ExploreResults
-from ultrafast.graphics.ExploreData import ExploreData
-from ultrafast.fit.GlobalParams import GlobExpParameters
+from ultrapyfit.fit.GlobalFit import GlobalFitExponential
+from ultrapyfit.utils.divers import read_data, select_traces
+from ultrapyfit.graphics.ExploreResults import ExploreResults
+from ultrapyfit.graphics.ExploreData import ExploreData
+from ultrapyfit.fit.GlobalParams import GlobExpParameters
 import pandas as pd
 import numpy as np
 

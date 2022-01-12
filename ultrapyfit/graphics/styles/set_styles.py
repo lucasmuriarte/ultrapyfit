@@ -10,7 +10,7 @@ from os.path import join, dirname, realpath
 import json
 from functools import wraps
 import matplotlib.pyplot as plt
-from ultrafast.graphics.styles.plot_base_functions import *
+from ultrapyfit.graphics.styles.plot_base_functions import *
 
 UTF_STYLE_DIR = dirname(__file__)
 UTF_BASIC_STYLES = realpath(join(UTF_STYLE_DIR, 'basic_styles'))
@@ -48,7 +48,7 @@ def get_combined_style(styles):
             if isinstance(styles, (str, Path)):
                 return styles
             else:
-                msg = 'Not a valid ultrafast style'
+                msg = 'Not a valid ultrapyfit style'
                 raise Exception(msg)
     else:
         mix_style = [library[i] for i in styles if check_if_valid_style(i)]
