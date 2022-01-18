@@ -1,11 +1,11 @@
-Welcome to ultrafast's documentation!
+Ultrapyfit documentation
 ======================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   readme
+.. mdinclude:: ../../README.md
 
 .. toctree::
    :caption: Package documentation
