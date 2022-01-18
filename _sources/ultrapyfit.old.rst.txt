@@ -1,0 +1,77 @@
+ultrapyfit.old package
+======================
+
+Submodules
+----------
+
+ultrapyfit.old.Calibration\_Final\_QT\_2 module
+-----------------------------------------------
+
+.. automodule:: ultrapyfit.old.Calibration_Final_QT_2
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrapyfit.old.ChirpCorrection module
+-------------------------------------
+
+.. automodule:: ultrapyfit.old.ChirpCorrection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrapyfit.old.ExponentialFit module
+------------------------------------
+
+.. automodule:: ultrapyfit.old.ExponentialFit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrapyfit.old.Global\_Fit\_class module
+----------------------------------------
+
+.. automodule:: ultrapyfit.old.Global_Fit_class
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrapyfit.old.TargetFit module
+-------------------------------
+
+.. automodule:: ultrapyfit.old.TargetFit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrapyfit.old.basicSpectrum module
+-----------------------------------
+
+.. automodule:: ultrapyfit.old.basicSpectrum
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrapyfit.old.data\_containers module
+--------------------------------------
+
+.. automodule:: ultrapyfit.old.data_containers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrapyfit.old.targetmodel module
+---------------------------------
+
+.. automodule:: ultrapyfit.old.targetmodel
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: ultrapyfit.old
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,37 @@
+ultrapyfit.utils package
+========================
+
+Submodules
+----------
+
+ultrapyfit.utils.ChirpCorrection module
+---------------------------------------
+
+.. automodule:: ultrapyfit.utils.ChirpCorrection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrapyfit.utils.Preprocessing module
+-------------------------------------
+
+.. automodule:: ultrapyfit.utils.Preprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ultrapyfit.utils.divers module
+------------------------------
+
+.. automodule:: ultrapyfit.utils.divers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: ultrapyfit.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

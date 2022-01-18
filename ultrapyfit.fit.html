@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ultrapyfit.fit package &mdash; ultrapyfit 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ultrapyfit.graphics package" href="ultrapyfit.graphics.html" />
+    <link rel="prev" title="ultrapyfit package" href="ultrapyfit.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ultrapyfit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Package documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ultrapyfit</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ultrapyfit.html">ultrapyfit package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ultrapyfit.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ultrapyfit.fit package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ultrapyfit.graphics.html">ultrapyfit.graphics package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ultrapyfit.old.html">ultrapyfit.old package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ultrapyfit.utils.html">ultrapyfit.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ultrapyfit.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ultrapyfit.html#ultrapyfit-experiment-module">ultrapyfit.experiment module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ultrapyfit.html#module-ultrapyfit">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ultrapyfit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">ultrapyfit</a> &raquo;</li>
+          <li><a href="ultrapyfit.html">ultrapyfit package</a> &raquo;</li>
+      <li>ultrapyfit.fit package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ultrapyfit.fit.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ultrapyfit-fit-package">
+<h1>ultrapyfit.fit package<a class="headerlink" href="#ultrapyfit-fit-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-ultrapyfit.fit.GlobalFit">
+<span id="ultrapyfit-fit-globalfit-module"></span><h2>ultrapyfit.fit.GlobalFit module<a class="headerlink" href="#module-ultrapyfit.fit.GlobalFit" title="Permalink to this headline"></a></h2>
+<p>Created on Sat Mars 13 14:35:39 2021
+&#64;author: Lucas</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.GlobalFit.</span></span><span class="sig-name descname"><span class="pre">GlobalFit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deconv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GVD_corrected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFit" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.minimizer.Minimizer</span></code>, <a class="reference internal" href="#ultrapyfit.fit.jacobian.Jacobian" title="ultrapyfit.fit.jacobian.Jacobian"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrapyfit.fit.jacobian.Jacobian</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFit.allow_stop">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">allow_stop</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFit.allow_stop" title="Permalink to this definition"></a></dt>
+<dd><p>controlles if is posible to stop the fit or not</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFit.global_fit">
+<span class="sig-name descname"><span class="pre">global_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'leastsq'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kws</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFit.global_fit" title="Permalink to this definition"></a></dt>
+<dd><p>Method to fit the data to a model. Returns a modified lmfit result
+object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxfev</strong> (<em>int (default 5000)</em>) – maximum number of iterations of the fit.</p></li>
+<li><p><strong>apply_weights</strong> (<em>bool (default False)</em>) – If True and weights have been defined, this will be applied in the
+fit (for defining weights) check the function define_weights.</p></li>
+<li><p><strong>use_jacobian</strong> (<em>bool</em>) – decide if generate and apply analytic jacobian matrix
+False will result in usage of standard numeric estimation of the
+jacobian matrix, which is slow. assumes that jacobian function is
+implemented.</p></li>
+<li><p><strong>method</strong> (<em>default (leastsq)</em>) – Any valid method that can be used by lmfit minimize function</p></li>
+<li><p><strong>verbose</strong> (<em>bool (default True)</em>) – If True, every 200 iterations the X2 will be printed out</p></li>
+<li><p><strong>kws</strong> – Any valid kwarg that can be used by lmfit minimize function</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFit.minimize">
+<span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'leastsq'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_nfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kws</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFit.minimize" title="Permalink to this definition"></a></dt>
+<dd><p>Modified minimize function to output GloablFitResult instead of
+lmfit results, except for this works identically as lmfit minimize.
+Check lmfit minimize for more information</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFit.pre_fit">
+<span class="sig-name descname"><span class="pre">pre_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFit.pre_fit" title="Permalink to this definition"></a></dt>
+<dd><p>Intended to be a method that optimized the pre_exponential factors
+trace by trace without optimizing the decay times (taus).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFit.print_progress">
+<span class="sig-name descname"><span class="pre">print_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFit.print_progress" title="Permalink to this definition"></a></dt>
+<dd><p>call back function of the minimizer, it can be used to stop the fit.
+If not print the number of iterations and the chi square every 200
+iterations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFit.stop_fit">
+<span class="sig-name descname"><span class="pre">stop_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFit.stop_fit" title="Permalink to this definition"></a></dt>
+<dd><p>use to stop the fit</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.GlobalFit.</span></span><span class="sig-name descname"><span class="pre">GlobalFitExponential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deconv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GVD_corrected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.fit.GlobalFit.GlobalFit" title="ultrapyfit.fit.GlobalFit.GlobalFit"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrapyfit.fit.GlobalFit.GlobalFit</span></code></a></p>
+<p>Class that does a global fit using exponential models. This class is uses by
+the function, globalfit_gauss_exponential and globalfit_exponential
+functions. A global fit evaluate the times from all the traces (taus are
+globally fitted), while the pre_exponential values (pre_exp) are estimated
+independently from each trace. The pre_exp values give later the decay
+associated spectra (DAS). The Class do not generates the parameters
+automatically.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential.x">
+<span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential.x" title="Permalink to this definition"></a></dt>
+<dd><p>x-vector, normally time vector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>1darray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential.data" title="Permalink to this definition"></a></dt>
+<dd><p>array containing the data, the number of rows should be equal to the
+len(x)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>2darray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential.exp_no">
+<span class="sig-name descname"><span class="pre">exp_no</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential.exp_no" title="Permalink to this definition"></a></dt>
+<dd><p>number of exponential that will be used to fit the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential.params" title="Permalink to this definition"></a></dt>
+<dd><p>object containing the initial parameters values used to build an
+exponential model. These parameters are iteratively optimize to
+reduce the residual matrix formed by data-model (error matrix)
+using Levenberg-Marquardt algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>lmfit parameters object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential.deconv">
+<span class="sig-name descname"><span class="pre">deconv</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential.deconv" title="Permalink to this definition"></a></dt>
+<dd><p>If True the fitting functions will search for the deconvolution
+parameter (“fwhm”) in the params attribute, and the the model is a
+weighted sum of Gauss modified exponential functions. If False the
+the model is a weighted sum of exponential functions, and params
+should not contain the fwhm entrance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential.tau_inf">
+<span class="sig-name descname"><span class="pre">tau_inf</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential.tau_inf" title="Permalink to this definition"></a></dt>
+<dd><p>An extra decay time use to evaluate possible photoproduct. This
+should be used if the signal at long delay times is not completely
+recovered and if deconv is set to True. If the signal at long delay
+times is zero tau_inf should be set to None.
+(only affects if deconv is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float or int or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential.GVD_corrected">
+<span class="sig-name descname"><span class="pre">GVD_corrected</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential.GVD_corrected" title="Permalink to this definition"></a></dt>
+<dd><p>Defines if the chrip or group velocity dispersion (GVD) has been
+corrected. If True t0 is globally optimized (faster). If False t0 is
+separately optimized for each trace (slower). Notice in some cases
+even if the chirp or GVD has been corrected, very small variations
+of t0 that might be imperceptible and small may generate problems in
+the fit, setting this parameter to False can help to acquire
+overcome this problem although the fit will take longer.
+(only affects if deconv is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential.weights">
+<span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential.weights" title="Permalink to this definition"></a></dt>
+<dd><p>This dictionary controls if the fitting weights are applied,
+the keys are:
+“apply”: Bool
+“vector”: weighting vector.
+‘type’: type of vector defined in the ,
+‘range’: time range according to x-vector of the weights that are</p>
+<blockquote>
+<div><p>different than 1</p>
+</div></blockquote>
+<p>‘value’: val weighting value</p>
+<p>The dictionary keys can be passes as kwargs when instantiating the
+object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential.global_fit">
+<span class="sig-name descname"><span class="pre">global_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vary_taus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'leastsq'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kws</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential.global_fit" title="Permalink to this definition"></a></dt>
+<dd><p>Method to fit the data to a model. Returns a modified lmfit result
+object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vary_taus</strong> (<em>bool or list of bool</em>) – If True or False all taus are optimized or fixed. If a list, should
+be a list of bool equal with len equal to the number of taus.
+Each entry defines if a initial taus should be optimized or not.</p></li>
+<li><p><strong>maxfev</strong> (<em>int (default 5000)</em>) – maximum number of iterations of the fit.</p></li>
+<li><p><strong>time_constraint</strong> (<em>bool (default False)</em>) – If True and there are more than one tau to optimized force:
+tau2 &gt; tau1, tau3 &gt; tau2 and so on
+If self.deconv and True a Gaussian modified exponential model is
+applied and tau1 &gt; fwhm.</p></li>
+<li><p><strong>apply_weights</strong> (<em>bool (default False)</em>) – If True and weights have been defined, this will be applied in the
+fit (for defining weights) check the function define_weights.</p></li>
+<li><p><strong>use_jacobian</strong> (<em>bool</em>) – decide if generate and apply analytic jacobian matrix
+False will result in usage of standard numeric estimation of the
+jacobian matrix, which is slow</p></li>
+<li><p><strong>method</strong> (<em>default (leastsq)</em>) – Any valid method that can be used by lmfit minimize function</p></li>
+<li><p><strong>verbose</strong> (<em>bool (default True)</em>) – If True, every 200 iterations the X2 will be printed out</p></li>
+<li><p><strong>kws</strong> – Any valid kwarg that can be used by lmfit minimize function</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitExponential.pre_fit">
+<span class="sig-name descname"><span class="pre">pre_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitExponential.pre_fit" title="Permalink to this definition"></a></dt>
+<dd><p>Method that optimized the pre_exponential factors trace by trace without
+optimizing the decay times (taus). It is automatically ran before a
+global fit.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.GlobalFit.</span></span><span class="sig-name descname"><span class="pre">GlobalFitResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitResult" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Contain all attributes that an lmfit minimizer result has, and add some
+specific details of the fit to this results. These are:
+x: 1darray</p>
+<blockquote>
+<div><p>x-vector, normally time vector</p>
+</div></blockquote>
+<dl class="simple">
+<dt>data: 2darray</dt><dd><p>Array containing the data, the number of rows should be equal to
+the len(x)</p>
+</dd>
+<dt>wavelength: 1darray</dt><dd><p>wavelength vector</p>
+</dd>
+<dt>details:</dt><dd><p>A dictionary containing specific details of the fit performed</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitResult.add_data_details">
+<span class="sig-name descname"><span class="pre">add_data_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitResult.add_data_details" title="Permalink to this definition"></a></dt>
+<dd><p>Add as attributes to the lmfit results object: these are the data, the
+time the wavelength. Also add fit details such as the number of
+exponential if convolve with a gaussian or not, tau_inf, maxfev and
+other properties that are later use by UltrafastExperiments class and
+other classes as ExploreResults.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitResult.add_full_data_matrix">
+<span class="sig-name descname"><span class="pre">add_full_data_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_wavelengths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitResult.add_full_data_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Add the full data matrix to the result. The full_data_matrix is not
+needed to explore the fit results it might only be needed to do the
+bootstrap_fit on the entire full data matrix (Check
+Bootstrap.generate_datasets() for more info)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitResult.get_fitted_data">
+<span class="sig-name descname"><span class="pre">get_fitted_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitResult.get_fitted_data" title="Permalink to this definition"></a></dt>
+<dd><p>Return the fitted data of the object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitResult.get_values">
+<span class="sig-name descname"><span class="pre">get_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitResult.get_values" title="Permalink to this definition"></a></dt>
+<dd><p>return important values from the results object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitResult.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitResult.load" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitResult.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitResult.save" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitTarget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.GlobalFit.</span></span><span class="sig-name descname"><span class="pre">GlobalFitTarget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deconv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GVD_corrected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitTarget" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.fit.GlobalFit.GlobalFit" title="ultrapyfit.fit.GlobalFit.GlobalFit"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrapyfit.fit.GlobalFit.GlobalFit</span></code></a></p>
+<p>Class that does a global target fit to a kinetic model. This class is uses
+a global fit evaluate the times from all the traces (kinetic constants are
+globally fitted), while the pre_exponential values (pre_exp) are estimated
+independently from each trace. The pre_exp values give later the species
+associated spectra (SAS). The Class do not generates the parameters
+automatically.
+.. attribute:: x</p>
+<blockquote>
+<div><p>x-vector, normally time vector</p>
+<dl class="field-list simple">
+<dt class="field-odd">type</dt>
+<dd class="field-odd"><p>1darray</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitTarget.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitTarget.data" title="Permalink to this definition"></a></dt>
+<dd><p>array containing the data, the number of rows should be equal to the
+len(x)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>2darray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitTarget.exp_no">
+<span class="sig-name descname"><span class="pre">exp_no</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitTarget.exp_no" title="Permalink to this definition"></a></dt>
+<dd><p>number of exponential that will be used to fit the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitTarget.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitTarget.params" title="Permalink to this definition"></a></dt>
+<dd><p>object containing the initial parameters values used to build an
+exponential model. These parameters are iteratively optimize to
+reduce the residual matrix formed by data-model (error matrix)
+using Levenberg-Marquardt algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>lmfit parameters object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitTarget.deconv">
+<span class="sig-name descname"><span class="pre">deconv</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitTarget.deconv" title="Permalink to this definition"></a></dt>
+<dd><p>If True the fitting functions will search for the deconvolution
+parameter (“fwhm”) in the params attribute, and the the model is a
+weighted sum of Gauss modified exponential functions. If False the
+the model is a weighted sum of exponential functions, and params
+should not contain the fwhm entrance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitTarget.GVD_corrected">
+<span class="sig-name descname"><span class="pre">GVD_corrected</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitTarget.GVD_corrected" title="Permalink to this definition"></a></dt>
+<dd><p>Defines if the chrip or group velocity dispersion (GVD) has been
+corrected. If True t0 is globally optimized (faster). If False t0 is
+separately optimized for each trace (slower). Notice in some cases
+even if the chirp or GVD has been corrected, very small variations
+of t0 that might be imperceptible and small may generate problems in
+the fit, setting this parameter to False can help to acquire
+overcome this problem although the fit will take longer.
+(only affects if deconv is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitTarget.weights">
+<span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitTarget.weights" title="Permalink to this definition"></a></dt>
+<dd><p>This dictionary controls if the fitting weights are applied,
+the keys are:
+“apply”: Bool
+“vector”: weighting vector.
+‘type’: type of vector defined in the ,
+‘range’: time range according to x-vector of the weights that are</p>
+<blockquote>
+<div><p>different than 1</p>
+</div></blockquote>
+<p>‘value’: val weighting value
+The dictionary keys can be passes as kwargs when instantiating the
+object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitTarget.pre_fit">
+<span class="sig-name descname"><span class="pre">pre_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitTarget.pre_fit" title="Permalink to this definition"></a></dt>
+<dd><p>Method that optimized the pre_exponential factors trace by trace without
+optimizing the kinetic constants times. It is automatically ran before a
+global fit.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitWithIRF">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.GlobalFit.</span></span><span class="sig-name descname"><span class="pre">GlobalFitWithIRF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">irf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitWithIRF" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.fit.GlobalFit.GlobalFit" title="ultrapyfit.fit.GlobalFit.GlobalFit"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrapyfit.fit.GlobalFit.GlobalFit</span></code></a></p>
+<p>WARNING: Not working properly
+Class that does a global fit using exponential models convolved with an
+instrument response function (IRF) array. A global fit evaluate the times
+from all the traces (taus are globally fitted), while the pre_exponential
+values (pre_exp) are estimated independently from each trace.
+The Class do not generates the parameters automatically.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.x">
+<span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.x" title="Permalink to this definition"></a></dt>
+<dd><p>x-vector, normally time vector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>1darray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.data" title="Permalink to this definition"></a></dt>
+<dd><p>array containing the data, the number of rows should be equal to the
+len(x)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>2darray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.exp_no">
+<span class="sig-name descname"><span class="pre">exp_no</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.exp_no" title="Permalink to this definition"></a></dt>
+<dd><p>number of exponential that will be used to fit the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.params" title="Permalink to this definition"></a></dt>
+<dd><p>object containing the initial parameters values used to build an
+exponential model. These parameters are iteratively optimize to
+reduce the residual matrix formed by data-model (error matrix)
+using Levenberg-Marquardt algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>lmfit parameters object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.global_fit">
+<span class="sig-name descname"><span class="pre">global_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vary_taus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'leastsq'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kws</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.global_fit" title="Permalink to this definition"></a></dt>
+<dd><p>Method to fit the data to a model. Returns a modified lmfit result
+object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vary_taus</strong> (<em>bool or list of bool</em>) – If True or False all taus are optimized or fixed. If a list, should
+be a list of bool equal with len equal to the number of taus.
+Each entry defines if a initial taus should be optimized or not.</p></li>
+<li><p><strong>maxfev</strong> (<em>int (default 5000)</em>) – maximum number of iterations of the fit.</p></li>
+<li><p><strong>time_constraint</strong> (<em>bool (default False)</em>) – If True and there are more than one tau to optimized force:
+tau2 &gt; tau1, tau3 &gt; tau2 and so on
+If self.deconv and True a Gaussian modified exponential model is
+applied and tau1 &gt; fwhm.</p></li>
+<li><p><strong>method</strong> (<em>default (leastsq)</em>) – Any valid method that can be used by lmfit minimize function</p></li>
+<li><p><strong>kws</strong> – Any valid kwarg that can be used by lmfit minimize function</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.pre_fit">
+<span class="sig-name descname"><span class="pre">pre_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.GlobalFitWithIRF.pre_fit" title="Permalink to this definition"></a></dt>
+<dd><p>Method that optimized the pre_exponential factors trace by trace without
+optimizing the decay times (taus). It is automatically ran before a
+global fit.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.InputThread">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.GlobalFit.</span></span><span class="sig-name descname"><span class="pre">InputThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.InputThread" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.InputThread.get_id">
+<span class="sig-name descname"><span class="pre">get_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.InputThread.get_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.InputThread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.InputThread.run" title="Permalink to this definition"></a></dt>
+<dd><p>Method representing the thread’s activity.</p>
+<p>You may override this method in a subclass. The standard run() method
+invokes the callable object passed to the object’s constructor as the
+target argument, if any, with sequential and keyword arguments taken
+from the args and kwargs arguments, respectively.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalFit.InputThread.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalFit.InputThread.stop" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="ultrapyfit-fit-globalfitbootstrap-module">
+<h2>ultrapyfit.fit.GlobalFitBootstrap module<a class="headerlink" href="#ultrapyfit-fit-globalfitbootstrap-module" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-ultrapyfit.fit.GlobalParams">
+<span id="ultrapyfit-fit-globalparams-module"></span><h2>ultrapyfit.fit.GlobalParams module<a class="headerlink" href="#module-ultrapyfit.fit.GlobalParams" title="Permalink to this headline"></a></h2>
+<p>Created on Fri Nov 13 18:48:51 2020</p>
+<p>&#64;author: 79344</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobExpParameters">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.GlobalParams.</span></span><span class="sig-name descname"><span class="pre">GlobExpParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_traces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobExpParameters" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class parameter generator global fitting</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobExpParameters.taus">
+<span class="sig-name descname"><span class="pre">taus</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobExpParameters.taus" title="Permalink to this definition"></a></dt>
+<dd><p>contains the value of the decay times</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobExpParameters.exp_no">
+<span class="sig-name descname"><span class="pre">exp_no</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobExpParameters.exp_no" title="Permalink to this definition"></a></dt>
+<dd><p>is the number of exponential and equal to the len of taus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobExpParameters.number_traces">
+<span class="sig-name descname"><span class="pre">number_traces</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobExpParameters.number_traces" title="Permalink to this definition"></a></dt>
+<dd><p>contains the number of data sets (traces) that should be globally fitted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobExpParameters.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobExpParameters.params" title="Permalink to this definition"></a></dt>
+<dd><p>contains the parameters for the fit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>lmFit Parameters class</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobExpParameters.adjustParams">
+<span class="sig-name descname"><span class="pre">adjustParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vary_t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GVD_corrected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobExpParameters.adjustParams" title="Permalink to this definition"></a></dt>
+<dd><p>function to initialize parameters for global fitting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t0</strong> (<em>int or float</em>) – the t0 for the fitting</p></li>
+<li><p><strong>vary_t0</strong> (<em>bool (default True)</em>) – allows to optimize t0 when the sum of exponential is convolve with
+a gaussian. If there is no deconvolution t0 is always fix to the
+given value.</p></li>
+<li><p><strong>fwhm</strong> (<em>float or None (default 0.12)</em>) – FWHM of the the laser pulse use in the experiment
+If None. the deconvolution parameters will not be added</p></li>
+<li><p><strong>opt_fwhm</strong> (<em>bool (default False)</em>) – allows to optimized the FWHM.
+Theoretically this should be measured externally and be fix
+(only applicable if fwhm is given)</p></li>
+<li><p><strong>GVD_corrected</strong> (<em>bool (default True)</em>) – If True all traces will have same t0.
+If False t0 is independent of the trace</p></li>
+<li><p><strong>tau_inf</strong> (<em>int or float (default 1E12)</em>) – allows to add a constant decay value to the parameters.
+This modelled photoproducts formation with long decay times
+If None tau_inf is not added.
+(only applicable if fwhm is given)</p></li>
+<li><p><strong>y0</strong> (<em>int or float or list/1d-array (default None)</em>) – If this parameter is pass y0 value will be a fixed parameter to the
+value passed. This affects fits with and without deconvolution. For
+a fit with deconvolution y0 is is added to negative delay offsets.
+For a fit without deconvolution y0 fit the offset of the exponential.
+If an array is pass this should have the length of the curves that
+want to be fitted, and for each curve the the y0 value would
+be different.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobalTargetParameters">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.GlobalParams.</span></span><span class="sig-name descname"><span class="pre">GlobalTargetParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_traces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobalTargetParameters" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class parameter generator global fitting</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobalTargetParameters.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobalTargetParameters.model" title="Permalink to this definition"></a></dt>
+<dd><p>contains model to be fitted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>model object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobalTargetParameters.exp_no">
+<span class="sig-name descname"><span class="pre">exp_no</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobalTargetParameters.exp_no" title="Permalink to this definition"></a></dt>
+<dd><p>is the number of exponential and equal to the len of taus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobalTargetParameters.number_traces">
+<span class="sig-name descname"><span class="pre">number_traces</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobalTargetParameters.number_traces" title="Permalink to this definition"></a></dt>
+<dd><p>contains the number of data sets (traces) that should be globally fitted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobalTargetParameters.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobalTargetParameters.params" title="Permalink to this definition"></a></dt>
+<dd><p>contains the parameters for the fit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>lmFit Parameters class</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobalTargetParameters.adjustParams">
+<span class="sig-name descname"><span class="pre">adjustParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vary_t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GVD_corrected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobalTargetParameters.adjustParams" title="Permalink to this definition"></a></dt>
+<dd><p>function to initialize parameters for global fitting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t0</strong> (<em>int or float</em>) – the t0 for the fitting</p></li>
+<li><p><strong>vary_t0</strong> (<em>bool (default True)</em>) – allows to optimize t0 when the sum of exponential is convolve with
+a gaussian. If there is no deconvolution t0 is always fix to the
+given value.</p></li>
+<li><p><strong>fwhm</strong> (<em>float or None (default 0.12)</em>) – FWHM of the the laser pulse use in the experiment
+If None. the deconvolution parameters will not be added</p></li>
+<li><p><strong>opt_fwhm</strong> (<em>bool (default False)</em>) – allows to optimized the FWHM.
+Theoretically this should be measured externally and be fix
+(only applicable if fwhm is given)</p></li>
+<li><p><strong>GVD_corrected</strong> (<em>bool (default True)</em>) – If True all traces will have same t0.
+If False t0 is independent of the trace</p></li>
+<li><p><strong>y0</strong> (<em>int or float or list/1d-array (default None)</em>) – If this parameter is pass y0 value will be a fixed parameter to the
+value passed. This affects fits with and without deconvolution. For
+a fit with deconvolution y0 is is added to negative delay offsets.
+For a fit without deconvolution y0 fit the offset of the exponential.
+If an array is pass this should have the length of the curves that
+want to be fitted, and for each curve the the y0 value would
+be different.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobalTargetParameters.params_from_matrix">
+<span class="sig-name descname"><span class="pre">params_from_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concentrations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobalTargetParameters.params_from_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Build the k_matrix manually.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>k_matrix</strong> (<em>list of lists</em>) – Contains all the information of k, rates. This parameter should be a
+list of list/tuples where every sub list should be of length and
+with the following form: [source, destination, rate constant, vary]
+if destination == source, parallel decay or terminal component.</p>
+<blockquote>
+<div><p>i.e.: [1, 3, 1/0.7, True] –&gt; component 1 gives component 3 with
+a rate constant of 1/0.7, and this parameter can be optimized.</p>
+</div></blockquote>
+</li>
+<li><p><strong>concentrations</strong> (<em>list</em>) – a list containing the initial concentrations</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.GlobalParams.GlobalTargetParameters.params_from_model">
+<span class="sig-name descname"><span class="pre">params_from_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ultrapyfit.old.html#ultrapyfit.old.targetmodel.Model" title="ultrapyfit.old.targetmodel.Model"><span class="pre">ultrapyfit.old.targetmodel.Model</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.GlobalParams.GlobalTargetParameters.params_from_model" title="Permalink to this definition"></a></dt>
+<dd><p>create parameters from a Model object</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ultrapyfit.fit.ModelCreator">
+<span id="ultrapyfit-fit-modelcreator-module"></span><h2>ultrapyfit.fit.ModelCreator module<a class="headerlink" href="#module-ultrapyfit.fit.ModelCreator" title="Permalink to this headline"></a></h2>
+<p>Created on Thu Nov 12 21:35:15 2020</p>
+<p>&#64;author: lucas</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.ModelCreator.</span></span><span class="sig-name descname"><span class="pre">ModelCreator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class containing the simple exponential and sum of exponential functions
+(including modified Gaussian exponential). This functions are used to
+generate the model that is later fit to the data and the parameters
+optimized. The class has several static methods that returns the
+exponential functions from the parameters pass as well as methods that
+return exponential from the parameters inside an lmfit parameters object.
+This parameter is and lmfit object can be obtained from the
+GlobExpParameters class.</p>
+<p>exp1: single exponential decay function</p>
+<p>expN: weighted sum of exponential decay functions with an off-set</p>
+<p>ExpGauss: exponential modified Gaussian function</p>
+<p>ExpNGauss: weighted sum of exponential modified Gaussian decay functions
+with an off-set</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator.exp1">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exp1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator.exp1" title="Permalink to this definition"></a></dt>
+<dd><p>single exponential decay function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>array type</em>) – the time vector</p></li>
+<li><p><strong>tau</strong> (<em>float or int</em>) – decay associated time value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator.expGauss">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expGauss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator.expGauss" title="Permalink to this definition"></a></dt>
+<dd><p>exponential modified Gaussian function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>array type</em>) – the time vector</p></li>
+<li><p><strong>tau</strong> (<em>float or int</em>) – decay associated time value</p></li>
+<li><p><strong>sigma</strong> (<em>float or int</em>) – variance of the gaussian distribution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator.expN">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator.expN" title="Permalink to this definition"></a></dt>
+<dd><p>weighted sum of exponential decay functions with an off-set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>array type</em>) – the time vector</p></li>
+<li><p><strong>y0</strong> (<em>float or int</em>) – off-set value at the longest decay time</p></li>
+<li><p><strong>t0</strong> (<em>float or int</em>) – initial time from where the exponential value will be evaluated</p></li>
+<li><p><strong>values</strong> (<em>list of list</em>) – values should be a list of list containing the pre_exps and
+decay associated time values (taus)
+[[0.1,8],[0.001,30]]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator.expNDataset">
+<span class="sig-name descname"><span class="pre">expNDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator.expNDataset" title="Permalink to this definition"></a></dt>
+<dd><p>calculate a weighted sum of exponential decay functions with an
+off-set from params for data set i using simple hardwired naming
+convention. This function can be used for datasets having different t0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator.expNDatasetFast">
+<span class="sig-name descname"><span class="pre">expNDatasetFast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expvects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator.expNDatasetFast" title="Permalink to this definition"></a></dt>
+<dd><p>calculate a weighted sum of exponential modified Gaussian decay
+functions with an off-set from params for data set i using simple
+hardwired naming convention and GlobExpParameters object. This
+function can only be used for datasets having identical t0.
+(is computationally faster than expNDataset)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+<li><p><strong>expvects</strong> (<em>1darray</em>) – sum of expN functions where time-vector should be: time-t0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to expvects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator.expNDatasetIRF">
+<span class="sig-name descname"><span class="pre">expNDatasetIRF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IRF</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator.expNDatasetIRF" title="Permalink to this definition"></a></dt>
+<dd><p>WARNING: Not working properly.
+calculate a weighted sum of exponential decay functions with an
+off-set from params for data set i using simple hardwired naming
+convention. This function can be used for datasets having different t0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator.expNGauss">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expNGauss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator.expNGauss" title="Permalink to this definition"></a></dt>
+<dd><p>weighted sum of exponential modified Gaussian decay functions
+with an off-set</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>time</strong> (<em>array type</em>) – the time vector</p></li>
+<li><p><strong>y0</strong> (<em>float or int</em>) – off-set value at the shortest decay time
+(the off-set at long decay times can be evaluated</p>
+<blockquote>
+<div><p>adding to values a long decay associated time )</p>
+</div></blockquote>
+</li>
+<li><p><strong>t0</strong> (<em>float or int</em>) – initial time from where the exponential value will be evaluated</p></li>
+<li><p><strong>fwhm</strong> (<em>float or int</em>) – full width half maximum of the gaussian distribution</p></li>
+<li><p><strong>values</strong> (<em>list of list</em>) – values should be a list of list containing the pre_exps and
+decay associated time values (taus)
+[[0.1,8],[0.001,30]]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to x attribute vector (time vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator.expNGaussDataset">
+<span class="sig-name descname"><span class="pre">expNGaussDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator.expNGaussDataset" title="Permalink to this definition"></a></dt>
+<dd><p>calculate a weighted sum of exponential modified Gaussian decay
+functions with an off-set from params for data set i using simple
+hardwired naming convention. This function can be used for datasets
+having different t0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator.expNGaussDatasetFast">
+<span class="sig-name descname"><span class="pre">expNGaussDatasetFast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expvects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator.expNGaussDatasetFast" title="Permalink to this definition"></a></dt>
+<dd><p>calculate a weighted sum of exponential decay functions with an
+off-set from params for data set i using simple hardwired naming
+convention and GlobExpParameters object. This function can only be
+used for datasets having identical t0.
+(is computationally faster than expNGaussDataset)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+<li><p><strong>expvects</strong> (<em>1darray</em>) – sum of expN functions where time-vector should be: time-t0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to expvects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.ModelCreator.ModelCreator.expNGaussDatasetTM">
+<span class="sig-name descname"><span class="pre">expNGaussDatasetTM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cons_eigen</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.ModelCreator.ModelCreator.expNGaussDatasetTM" title="Permalink to this definition"></a></dt>
+<dd><p>calculate kinetic reaction model from params for data set i using
+simple hardwired naming convention and GlobTargetParameters object.
+(Automatically detects id all traces have identical t0)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – number corresponding to the specific trace</p></li>
+<li><p><strong>cons_eigen</strong> (<em>list</em>) – list containing eingen vectors, eigen values and eigenmatrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to expvects</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ultrapyfit.fit.jacobian">
+<span id="ultrapyfit-fit-jacobian-module"></span><h2>ultrapyfit.fit.jacobian module<a class="headerlink" href="#module-ultrapyfit.fit.jacobian" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.jacobian.Jacobian">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.jacobian.</span></span><span class="sig-name descname"><span class="pre">Jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.jacobian.Jacobian" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.fit.ModelCreator.ModelCreator" title="ultrapyfit.fit.ModelCreator.ModelCreator"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrapyfit.fit.ModelCreator.ModelCreator</span></code></a></p>
+<p>‘WARNING class under development’
+Class that has functions to calculate the Jacobian matrix analitically.
+It can be used as an alternative in the global fit classes or method of
+experiment, which by default resolve the Jacobian matrix numerically.
+If the Jabobian is used, it can speed-up the calculation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.jacobian.Jacobian.erfDerrivative">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">erfDerrivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.jacobian.Jacobian.erfDerrivative" title="Permalink to this definition"></a></dt>
+<dd><p>calculate derrivative of the error function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>float or array of floats</em>) – function argument</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float or array of floats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.jacobian.Jacobian.expGaussDerrivativeSigma">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expGaussDerrivativeSigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.jacobian.Jacobian.expGaussDerrivativeSigma" title="Permalink to this definition"></a></dt>
+<dd><p>exponential derrivative by sigma</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>array type</em>) – the time vector</p></li>
+<li><p><strong>tau</strong> (<em>float or int</em>) – decay associated time value</p></li>
+<li><p><strong>sigma</strong> (<em>float or int</em>) – variance of the gaussian distribution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.jacobian.Jacobian.expGaussDerrivativeT0">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expGaussDerrivativeT0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.jacobian.Jacobian.expGaussDerrivativeT0" title="Permalink to this definition"></a></dt>
+<dd><p>exponential derrivative by t0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>array type</em>) – the time vector</p></li>
+<li><p><strong>tau</strong> (<em>float or int</em>) – decay associated time value</p></li>
+<li><p><strong>sigma</strong> (<em>float or int</em>) – variance of the gaussian distribution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianByPreExp">
+<span class="sig-name descname"><span class="pre">expNGaussDatasetJacobianByPreExp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianByPreExp" title="Permalink to this definition"></a></dt>
+<dd><p>calculate jacobian derrivative by pre_exp in a equivalent
+way to the expNGaussDataset method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>lambda_i</strong> (<em>int</em>) – number corresponding to the specific trace
+it is from 1 to self.exp_no (like in param key)</p></li>
+<li><p><strong>tau_j</strong> (<em>int</em>) – number corresponding to the specific tau number
+it is from 1 to self.exp_no (like in param key)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianBySigma">
+<span class="sig-name descname"><span class="pre">expNGaussDatasetJacobianBySigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianBySigma" title="Permalink to this definition"></a></dt>
+<dd><p>calculate jacobian derrivative by tau in a equivalent
+way to the expNGaussDataset method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>lambda_i</strong> (<em>int</em>) – number corresponding to the specific trace
+it is from 1 to self.exp_no (like in param key)</p></li>
+<li><p><strong>tau_j</strong> (<em>int</em>) – number corresponding to the specific tau number
+it is from 1 to self.exp_no (like in param key)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianByT0">
+<span class="sig-name descname"><span class="pre">expNGaussDatasetJacobianByT0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianByT0" title="Permalink to this definition"></a></dt>
+<dd><p>calculate jacobian derrivative by time offset component (t0)
+in a equivalent way to the expNGaussDataset method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>lambda_i</strong> (<em>int</em>) – number corresponding to the specific trace
+it is from 1 to self.exp_no (like in param key)</p></li>
+<li><p><strong>tau_j</strong> (<em>int</em>) – number corresponding to the specific tau number
+it is from 1 to self.exp_no (like in param key)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianByTau">
+<span class="sig-name descname"><span class="pre">expNGaussDatasetJacobianByTau</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianByTau" title="Permalink to this definition"></a></dt>
+<dd><p>calculate jacobian derrivative by tau in a equivalent
+way to the expNGaussDataset method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>lambda_i</strong> (<em>int</em>) – number corresponding to the specific trace
+it is from 1 to self.exp_no (like in param key)</p></li>
+<li><p><strong>tau_j</strong> (<em>int</em>) – number corresponding to the specific tau number
+it is from 1 to self.exp_no (like in param key)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianByY0">
+<span class="sig-name descname"><span class="pre">expNGaussDatasetJacobianByY0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianByY0" title="Permalink to this definition"></a></dt>
+<dd><p>calculate jacobian derrivative by global offset component (y0)
+in a equivalent way to the expNGaussDataset method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>lambda_i</strong> (<em>int</em>) – number corresponding to the specific trace
+it is from 1 to self.exp_no (like in param key)</p></li>
+<li><p><strong>tau_j</strong> (<em>int</em>) – number corresponding to the specific tau number
+it is from 1 to self.exp_no (like in param key)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianByYInf">
+<span class="sig-name descname"><span class="pre">expNGaussDatasetJacobianByYInf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.jacobian.Jacobian.expNGaussDatasetJacobianByYInf" title="Permalink to this definition"></a></dt>
+<dd><p>calculate jacobian derrivative by pre_exp of inifinite component
+(yinf) in a equivalent way to the expNGaussDataset method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>GlobExpParameters  object</em>) – object containing the parameters created for global
+fitting several decay traces</p></li>
+<li><p><strong>lambda_i</strong> (<em>int</em>) – number corresponding to the specific trace
+it is from 1 to self.exp_no (like in param key)</p></li>
+<li><p><strong>tau_j</strong> (<em>int</em>) – number corresponding to the specific tau number
+it is from 1 to self.exp_no (like in param key)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1darray of size equal to time-vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ultrapyfit.fit.targetmodel">
+<span id="ultrapyfit-fit-targetmodel-module"></span><h2>ultrapyfit.fit.targetmodel module<a class="headerlink" href="#module-ultrapyfit.fit.targetmodel" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModPopulation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.targetmodel.</span></span><span class="sig-name descname"><span class="pre">ModPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModPopulation" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModPopulation.countActive">
+<span class="sig-name descname"><span class="pre">countActive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModPopulation.countActive" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModPopulation.countActiveSFs">
+<span class="sig-name descname"><span class="pre">countActiveSFs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModPopulation.countActiveSFs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModPopulation.countActiveSFsValues">
+<span class="sig-name descname"><span class="pre">countActiveSFsValues</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModPopulation.countActiveSFsValues" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModPopulation.countFixed">
+<span class="sig-name descname"><span class="pre">countFixed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModPopulation.countFixed" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModPopulation.countOutgoingArrows">
+<span class="sig-name descname"><span class="pre">countOutgoingArrows</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModPopulation.countOutgoingArrows" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModPopulation.enableDisableKs">
+<span class="sig-name descname"><span class="pre">enableDisableKs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModPopulation.enableDisableKs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModPopulation.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModPopulation.remove" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModPopulation.updateBranchKs">
+<span class="sig-name descname"><span class="pre">updateBranchKs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModPopulation.updateBranchKs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModPopulation.updateState">
+<span class="sig-name descname"><span class="pre">updateState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_edit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_edit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_all_edit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModPopulation.updateState" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModProcess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.targetmodel.</span></span><span class="sig-name descname"><span class="pre">ModProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pop_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModProcess" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModProcess.contains">
+<span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModProcess.contains" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModProcess.getsetLocation">
+<span class="sig-name descname"><span class="pre">getsetLocation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModProcess.getsetLocation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModProcess.paintYourself">
+<span class="sig-name descname"><span class="pre">paintYourself</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModProcess.paintYourself" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModProcess.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModProcess.remove" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModProcess.updateState">
+<span class="sig-name descname"><span class="pre">updateState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k_edit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_edit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModProcess.updateState" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.Model">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.targetmodel.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.Model" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.Model.addPopulation">
+<span class="sig-name descname"><span class="pre">addPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_population</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.Model.addPopulation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.Model.addProcess">
+<span class="sig-name descname"><span class="pre">addProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_process</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.Model.addProcess" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.Model.checkParams">
+<span class="sig-name descname"><span class="pre">checkParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.Model.checkParams" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.Model.genParameters">
+<span class="sig-name descname"><span class="pre">genParameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.Model.genParameters" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.Model.load">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.Model.load" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.Model.manualModelBuild">
+<span class="sig-name descname"><span class="pre">manualModelBuild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">call_back</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.Model.manualModelBuild" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.Model.manualModelBuild_V2">
+<span class="sig-name descname"><span class="pre">manualModelBuild_V2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.Model.manualModelBuild_V2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.Model.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.Model.save" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.targetmodel.</span></span><span class="sig-name descname"><span class="pre">ModelWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_back</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.add_process_function">
+<span class="sig-name descname"><span class="pre">add_process_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.add_process_function" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.button1Func">
+<span class="sig-name descname"><span class="pre">button1Func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.button1Func" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.button31Func">
+<span class="sig-name descname"><span class="pre">button31Func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.button31Func" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.countArrows">
+<span class="sig-name descname"><span class="pre">countArrows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.countArrows" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.delete_process">
+<span class="sig-name descname"><span class="pre">delete_process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.delete_process" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.eventFilter">
+<span class="sig-name descname"><span class="pre">eventFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QObject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.eventFilter" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.genParametersAndClose">
+<span class="sig-name descname"><span class="pre">genParametersAndClose</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.genParametersAndClose" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.isStrNumber">
+<span class="sig-name descname"><span class="pre">isStrNumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.isStrNumber" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.loadModel">
+<span class="sig-name descname"><span class="pre">loadModel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.loadModel" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QPaintEvent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.paintEvent" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.populationEditFunc">
+<span class="sig-name descname"><span class="pre">populationEditFunc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.populationEditFunc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.population_done">
+<span class="sig-name descname"><span class="pre">population_done</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.population_done" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.processEditFunc">
+<span class="sig-name descname"><span class="pre">processEditFunc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.processEditFunc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.process_done">
+<span class="sig-name descname"><span class="pre">process_done</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.process_done" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.saveModel">
+<span class="sig-name descname"><span class="pre">saveModel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.saveModel" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ModelWindow.splitterMoved">
+<span class="sig-name descname"><span class="pre">splitterMoved</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ModelWindow.splitterMoved" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ParamControl">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.targetmodel.</span></span><span class="sig-name descname"><span class="pre">ParamControl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ParamControl" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ParamControl.isActive">
+<span class="sig-name descname"><span class="pre">isActive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ParamControl.isActive" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ParamControl.loadState">
+<span class="sig-name descname"><span class="pre">loadState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enabled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ParamControl.loadState" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ParamControl.setActive">
+<span class="sig-name descname"><span class="pre">setActive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">setactive</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ParamControl.setActive" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.ParamControl.setEnabled">
+<span class="sig-name descname"><span class="pre">setEnabled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.ParamControl.setEnabled" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.VLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.targetmodel.</span></span><span class="sig-name descname"><span class="pre">VLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.VLayout" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QVBoxLayout</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.VLayout.addSeveralWidgets">
+<span class="sig-name descname"><span class="pre">addSeveralWidgets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lista</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.VLayout.addSeveralWidgets" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.VLayout.addWidget">
+<span class="sig-name descname"><span class="pre">addWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stretch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alignment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Qt.Alignment</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Qt.AlignmentFlag</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Qt.Alignment()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.VLayout.addWidget" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.VLayout.hide_all">
+<span class="sig-name descname"><span class="pre">hide_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.VLayout.hide_all" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.VLayout.show_all">
+<span class="sig-name descname"><span class="pre">show_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.VLayout.show_all" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ultrapyfit.fit.targetmodel.isIdentifier">
+<span class="sig-prename descclassname"><span class="pre">ultrapyfit.fit.targetmodel.</span></span><span class="sig-name descname"><span class="pre">isIdentifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.fit.targetmodel.isIdentifier" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-ultrapyfit.fit">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ultrapyfit.fit" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ultrapyfit.html" class="btn btn-neutral float-left" title="ultrapyfit package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ultrapyfit.graphics.html" class="btn btn-neutral float-right" title="ultrapyfit.graphics package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Lucas Martinez Uriarte.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
