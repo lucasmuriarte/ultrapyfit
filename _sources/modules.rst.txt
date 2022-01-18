@@ -1,0 +1,7 @@
+ultrapyfit
+==========
+
+.. toctree::
+   :maxdepth: 4
+
+   ultrapyfit
