@@ -36,6 +36,7 @@ The first thing is to load the data:
 
 ``
 path = "my_path.csv"
+  
 experiment = Experiment.load_data(path)
 ``
 
