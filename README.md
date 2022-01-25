@@ -175,7 +175,7 @@ experiment.plot_spectra("auto")
 The plot_spectra method is can be easilly used to plot a slection of spectra fast.
 
 ``
-experiment.plot_spectra(["auto", num_spectra, equally_apced_at])``
+experiment.plot_spectra(["auto", num_spectra, equally_spaced_at])``
 
 The following command willl plot 6 spectra equally spaced 1440 nm
 
