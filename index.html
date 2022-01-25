@@ -97,8 +97,10 @@ and verifying their results.</p>
 <h1>The ultrapyfit package<a class="headerlink" href="#the-ultrapyfit-package" title="Permalink to this headline"></a></h1>
 <p>The Experiment class is a wrapper over Ultrapyfit entire packge that simplifies the process and allow to eassilly format and explore data and generate high quality Figures.</p>
 <p>The first thing is to load the data:</p>
-<p><code class="docutils literal notranslate"><span class="pre">path</span> <span class="pre">=</span> <span class="pre">&quot;my_path.csv&quot;</span>
-<span class="pre">experiment</span> <span class="pre">=</span> <span class="pre">Experiment.load_data(path)</span></code></p>
+<p>``
+path = “my_path.csv”</p>
+<p>experiment = Experiment.load_data(path)
+``</p>
 <p>in cases where the wavelenght vector correspond to the rows</p>
 <p><code class="docutils literal notranslate"><span class="pre">experiment</span> <span class="pre">=</span> <span class="pre">Experiment.load_data(path,</span> <span class="pre">wave_is_row=True)</span></code></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ultrapyfit.experiment</span> <span class="kn">import</span> <span class="n">Experiment</span>
