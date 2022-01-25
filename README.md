@@ -1,6 +1,9 @@
 ### Disclaimer of Warranty
 
-  THERE IS NO WARRANTY FOR THE PROGRAM.
+  The package is ready to use and stable, and has been used previously for analyzing real datasets.
+  In case there is any error the authors of the package are not responsible for any user use:
+  That is to say: THERE IS NO WARRANTY FOR THE PROGRAM, and users are responsible for checking 
+  and verifying their results.
 
 # ultrapyfit
 ----------------
