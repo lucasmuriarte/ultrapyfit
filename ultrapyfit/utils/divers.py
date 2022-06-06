@@ -460,10 +460,10 @@ class ReadData:
         try:
             column = np.array([float(i) for i in pandas.columns.values])
         except:
-            column = np.array([float((re.findall(r'[-+]?\d*\.\d*[eE]?[-+]?\d*|[-+]?\d+', i))[0]) for i in
+            column = np.array([float((re.findall(r'[-+]?\d*\.\d*[eE]?[-+]?\d*|[-+]?\d+[eE]?[-+]?\d+', i))[0]) for i in
                                pandas.columns.values]).flatten()
         if type(pandas.index[0]) == str:
-            row = np.array([float((re.findall(r'[-+]?\d*\.\d*[eE]?[-+]?\d*|[-+]?\d+', i))[0]) for i in
+            row = np.array([float((re.findall(r'[-+]?\d*\.\d*[eE]?[-+]?\d*|[-+]?\d+[eE]?[-+]?\d+', i))[0]) for i in
                             pandas.index.values]).flatten()
         else:
             row = np.array([float(ii) for ii in pandas.index.values])
