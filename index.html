@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -66,11 +67,11 @@
            <div itemprop="articleBody">
              
   <section id="ultrapyfit-documentation">
-<h1>Ultrapyfit documentation<a class="headerlink" href="#ultrapyfit-documentation" title="Permalink to this headline"></a></h1>
+<h1>Ultrapyfit documentation<a class="headerlink" href="#ultrapyfit-documentation" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <section id="disclaimer-of-warranty">
-<h2>Disclaimer of Warranty<a class="headerlink" href="#disclaimer-of-warranty" title="Permalink to this headline"></a></h2>
+<h2>Disclaimer of Warranty<a class="headerlink" href="#disclaimer-of-warranty" title="Permalink to this heading"></a></h2>
 <blockquote>
 <div><p>The package is ready to use and stable, and has been used previously for analyzing real datasets.
 In case there is any error the authors of the package are not responsible for any user use:
@@ -80,10 +81,10 @@ and verifying their results.</p>
 </section>
 </section>
 <section id="ultrapyfit">
-<h1>ultrapyfit<a class="headerlink" href="#ultrapyfit" title="Permalink to this headline"></a></h1>
+<h1>ultrapyfit<a class="headerlink" href="#ultrapyfit" title="Permalink to this heading"></a></h1>
 <hr class="docutils" />
 <section id="the-study-of-photochemical-reactions">
-<h2>The Study of photochemical reactions<a class="headerlink" href="#the-study-of-photochemical-reactions" title="Permalink to this headline"></a></h2>
+<h2>The Study of photochemical reactions<a class="headerlink" href="#the-study-of-photochemical-reactions" title="Permalink to this heading"></a></h2>
 <p>The study of photochemical reactions has been an intense field of research where two main questions can be pointed out: how to follow ultrafast dynamics and how to characterize precisely the nature of intermediates. Chemical reactions occur via transient excited states or reaction intermediates which are short-living species that play a major role in the reactions. The goal is to build a photo-dynamical scheme, i.e. to determine the nature of the different short-living transient species, their lifetime, their rate constant and the different pathways with their formation yield. The final target is then to find which parameters control the properties of interest (for example for rhodopsin the switching yield) in order to design efficient new bio-materials. The classical method is to use time-resolved spectroscopy which consists in measuring spectra while the photoreaction is occurring.</p>
 <p>Time-resolved techniques are often based on a pump pulse (shorter than the dynamics to be studied) that triggers photophysical processes and photochemical reactions, and a probe beam (continuous or pulsed, depending on the technique) that will analyze the dynamics of the systems after the photo-excitation. The most represnetative technique is to use as probe a UV-Vis beam (TRUV-Vis), and to meassure the absorbance with and without laser excitation, and calculate the difference. Therefore the difference absorption spectra can be positive or negative related to the appearance of new absorbing intermediate species and photoproducts and disappearance of the initial products. In TRUV-vis spectroscopy, negative and positive difference spectra are the result of different contributions: Ground state bleaching or depopulation bands (GSB) and stimulated emission bands (SE) which are negative signals, and induced absorption which is positive. These signals can be seen in Figure 1 for TRUV-vis and TRIR experiments. While induced absorption and GSB are common for TRUV-vis and TRIR, SE is specific for TRUV-vis measurements.</p>
 <p><span class="raw-html-m2r"><img src="./resources/figure_1_readme.png" style="width:900px;height:300px;"/></span></p>
@@ -94,7 +95,7 @@ and verifying their results.</p>
 </section>
 </section>
 <section id="the-ultrapyfit-package">
-<h1>The ultrapyfit package<a class="headerlink" href="#the-ultrapyfit-package" title="Permalink to this headline"></a></h1>
+<h1>The ultrapyfit package<a class="headerlink" href="#the-ultrapyfit-package" title="Permalink to this heading"></a></h1>
 <p>The Experiment class is a wrapper over Ultrapyfit entire packge that simplifies the process and allow to eassilly format and explore data and generate high quality Figures.</p>
 <p>The first thing is to load the data:</p>
 <p>``
@@ -134,7 +135,7 @@ path = “my_path.csv”</p>
 <p>These can be change wiht the attributes <strong>time_unit</strong> and <strong>wavelength_unit</strong>, are used to format figures axes and legends automatically</p>
 </section>
 <section id="defining-time-units">
-<h1>Defining time units<a class="headerlink" href="#defining-time-units" title="Permalink to this headline"></a></h1>
+<h1>Defining time units<a class="headerlink" href="#defining-time-units" title="Permalink to this heading"></a></h1>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># these expressions are all equivalent</span>
 <span class="n">experiment</span><span class="o">.</span><span class="n">time_unit</span> <span class="o">=</span> <span class="s2">&quot;ns&quot;</span>
 <span class="n">experiment</span><span class="o">.</span><span class="n">time_unit</span> <span class="o">=</span> <span class="s2">&quot;nano&quot;</span>
@@ -155,7 +156,7 @@ path = “my_path.csv”</p>
 <span class="pre">experiment.plot_traces()</span></code></p>
 </section>
 <section id="plotting-data">
-<h1>Plotting data<a class="headerlink" href="#plotting-data" title="Permalink to this headline"></a></h1>
+<h1>Plotting data<a class="headerlink" href="#plotting-data" title="Permalink to this heading"></a></h1>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">experiment</span><span class="o">.</span><span class="n">plot_3D</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -209,7 +210,7 @@ path = “my_path.csv”</p>
 </div>
 <p><span class="raw-html-m2r"><img src="./resources/output_21_2.png"></span></p>
 <section id="color-map">
-<h2>color map<a class="headerlink" href="#color-map" title="Permalink to this headline"></a></h2>
+<h2>color map<a class="headerlink" href="#color-map" title="Permalink to this heading"></a></h2>
 <p>Any matplotlib coolor map is valid, this can be set using:
 <code class="docutils literal notranslate"><span class="pre">experiment.set_color_map(&quot;color_map&quot;)</span></code></p>
 <p>The color map can be obtain
@@ -229,7 +230,7 @@ path = “my_path.csv”</p>
 </section>
 </section>
 <section id="number-of-components-in-the-data-singular-value-deocomposition-svd">
-<h1>Number of components in the data; Singular Value Deocomposition (SVD)<a class="headerlink" href="#number-of-components-in-the-data-singular-value-deocomposition-svd" title="Permalink to this headline"></a></h1>
+<h1>Number of components in the data; Singular Value Deocomposition (SVD)<a class="headerlink" href="#number-of-components-in-the-data-singular-value-deocomposition-svd" title="Permalink to this heading"></a></h1>
 <p>In practice, the selection of the number of species/components (number of exponential time constants in DAS) is not straightforward, as a higher number of components will always fit better the data set, without necessarily describing better the photophysical model. The literature on similar systems can help in this step. Then a first visual analysis of the transient absorption spectra evolutions is already giving the main temporal and spectral evolutions. Finally, mathematical methods such as singular value decomposition (SVD) can also help. The SVD is a matrix factorization technique that decomposes the data (M) in three simpler matrices U, S and V (Equation 2).
 <span class="raw-html-m2r"><br /></span></p>
 <p>$$M=U×S×V^T$$    <span class="raw-html-m2r"><div style="text-align: right"> Equation 2. </div></span></p>
@@ -245,9 +246,9 @@ Where U and V are the left and right singular vectors and S a diagonal matrix co
 <p><span class="raw-html-m2r"><img src="./resources/output_28_0.png"></span></p>
 </section>
 <section id="fitting">
-<h1>Fitting<a class="headerlink" href="#fitting" title="Permalink to this headline"></a></h1>
+<h1>Fitting<a class="headerlink" href="#fitting" title="Permalink to this heading"></a></h1>
 <section id="fitting-a-simple-exponential-model">
-<h2>Fitting a simple exponential model<a class="headerlink" href="#fitting-a-simple-exponential-model" title="Permalink to this headline"></a></h2>
+<h2>Fitting a simple exponential model<a class="headerlink" href="#fitting-a-simple-exponential-model" title="Permalink to this heading"></a></h2>
 <p>As mentioned above, the most simple approach to model a photochemical reaction is to assume that the concentration of transient species or reaction rate follows a first-order reaction. According to this hypothesis, the data should be explained by a weighted sum of exponential functions, where every exponential time represents the decay of a transient species that follow a first-order reaction, and the pre-exponential value or weight is the concentration of this species. Logically, fitting one of the kinetic traces records at one wavelength can yield an estimation of the number of transient species involved in the reaction and their decay constants.</p>
 <p>Fitting a single expoential wavelenght is quite straightforward in ultrapyfit</p>
 <p><code class="docutils literal notranslate"><span class="pre">experiment.fitting.fit_single_exp(wavelength,</span> <span class="pre">average,</span> <span class="pre">t0,</span> <span class="pre">fwhm,</span> <span class="pre">taus,</span> <span class="pre">plot=True)</span></code></p>
@@ -277,7 +278,7 @@ Where U and V are the left and right singular vectors and S a diagonal matrix co
 <p><code class="docutils literal notranslate"><span class="pre">experiment.fitting.plot_single_fit(fit_number)</span></code></p>
 </section>
 <section id="globallly-fitting-a-simple-exponential-model">
-<h2>Globallly Fitting a simple exponential model<a class="headerlink" href="#globallly-fitting-a-simple-exponential-model" title="Permalink to this headline"></a></h2>
+<h2>Globallly Fitting a simple exponential model<a class="headerlink" href="#globallly-fitting-a-simple-exponential-model" title="Permalink to this heading"></a></h2>
 <p>For cases wiht high signal to noise ration (S/N), fitting a single wavelength might result in good fitting values, Nevetherless, the model ambiguity is a well known issue in multi-exponential fitting (in this case we have used 3 exponentials). One of the most established approaches to  overcome the multi-exponential fitting model ambiguity is to analyze a certain number of selected traces (multi wavelengths) with the same sum of exponentials. This approach, typically known as global analysis, has been demonstrated to be much more robust and accurate than separate or single wavelength analysis. Furthermore, from a global analysis of the data, not only the decay time constants and number of transient species can be obtained, but also their spectral shapes from the weights (pre-exponential factor) of the sum of exponential at each of the wavelengths, which constitute the so call Decay Associated Spectra (DAS).</p>
 <p>For this in ultrapyfit, we first need to select a sub-set of traces in case we have many this is done with:</p>
 <p><code class="docutils literal notranslate"><span class="pre">experiment.select_traces(points=3,</span> <span class="pre">average=1)</span></code></p>
@@ -434,7 +435,7 @@ Where U and V are the left and right singular vectors and S a diagonal matrix co
 </section>
 </section>
 <section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline"></a></h1>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>

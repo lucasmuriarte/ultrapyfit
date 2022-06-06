@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -83,12 +84,12 @@
            <div itemprop="articleBody">
              
   <section id="ultrapyfit-utils-package">
-<h1>ultrapyfit.utils package<a class="headerlink" href="#ultrapyfit-utils-package" title="Permalink to this headline"></a></h1>
+<h1>ultrapyfit.utils package<a class="headerlink" href="#ultrapyfit-utils-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-ultrapyfit.utils.ChirpCorrection">
-<span id="ultrapyfit-utils-chirpcorrection-module"></span><h2>ultrapyfit.utils.ChirpCorrection module<a class="headerlink" href="#module-ultrapyfit.utils.ChirpCorrection" title="Permalink to this headline"></a></h2>
+<span id="ultrapyfit-utils-chirpcorrection-module"></span><h2>ultrapyfit.utils.ChirpCorrection module<a class="headerlink" href="#module-ultrapyfit.utils.ChirpCorrection" title="Permalink to this heading"></a></h2>
 <p>Created on Mon Mar 15 21:40:16 2021</p>
 <p>&#64;author: lucas</p>
 <dl class="py class">
@@ -266,7 +267,7 @@ pass (x). See <a class="reference external" href="https://en.wikipedia.org/wiki/
 <dl class="py class">
 <dt class="sig sig-object py" id="ultrapyfit.utils.ChirpCorrection.EstimationGVD">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.utils.ChirpCorrection.</span></span><span class="sig-name descname"><span class="pre">EstimationGVD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excitation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.utils.ChirpCorrection.EstimationGVD" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.utils.ChirpCorrection.ChirpCorrection" title="ultrapyfit.utils.ChirpCorrection.ChirpCorrection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrapyfit.utils.ChirpCorrection.ChirpCorrection</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.utils.ChirpCorrection.ChirpCorrection" title="ultrapyfit.utils.ChirpCorrection.ChirpCorrection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChirpCorrection</span></code></a></p>
 <p>Basic class to estimate and correct the GVD or chrip</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ultrapyfit.utils.ChirpCorrection.EstimationGVD.time">
@@ -375,7 +376,7 @@ the data</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="ultrapyfit.utils.ChirpCorrection.EstimationGVDPolynom">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.utils.ChirpCorrection.</span></span><span class="sig-name descname"><span class="pre">EstimationGVDPolynom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.utils.ChirpCorrection.EstimationGVDPolynom" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.utils.ChirpCorrection.EstimationGVD" title="ultrapyfit.utils.ChirpCorrection.EstimationGVD"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrapyfit.utils.ChirpCorrection.EstimationGVD</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.utils.ChirpCorrection.EstimationGVD" title="ultrapyfit.utils.ChirpCorrection.EstimationGVD"><code class="xref py py-class docutils literal notranslate"><span class="pre">EstimationGVD</span></code></a></p>
 <p>Class that allows to calculate the dispersion GVD or chirp fitting a
 polynomial to the data.</p>
 <dl class="py method">
@@ -405,7 +406,7 @@ wavelength attribute vector.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="ultrapyfit.utils.ChirpCorrection.EstimationGVDSellmeier">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.utils.ChirpCorrection.</span></span><span class="sig-name descname"><span class="pre">EstimationGVDSellmeier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excitation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.utils.ChirpCorrection.EstimationGVDSellmeier" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.utils.ChirpCorrection.EstimationGVD" title="ultrapyfit.utils.ChirpCorrection.EstimationGVD"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrapyfit.utils.ChirpCorrection.EstimationGVD</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.utils.ChirpCorrection.EstimationGVD" title="ultrapyfit.utils.ChirpCorrection.EstimationGVD"><code class="xref py py-class docutils literal notranslate"><span class="pre">EstimationGVD</span></code></a></p>
 <p>Class that calculate the dispersion GVD or chirp using the Sellmeier
 equation. It only contain static methods.
 The default dispersive media are BK7, SiO2 and CaF2</p>
@@ -519,7 +520,7 @@ by all elements.</p>
 
 </section>
 <section id="module-ultrapyfit.utils.Preprocessing">
-<span id="ultrapyfit-utils-preprocessing-module"></span><h2>ultrapyfit.utils.Preprocessing module<a class="headerlink" href="#module-ultrapyfit.utils.Preprocessing" title="Permalink to this headline"></a></h2>
+<span id="ultrapyfit-utils-preprocessing-module"></span><h2>ultrapyfit.utils.Preprocessing module<a class="headerlink" href="#module-ultrapyfit.utils.Preprocessing" title="Permalink to this heading"></a></h2>
 <p>Created on Sun Nov 22 12:52:02 2020</p>
 <p>&#64;author: lucas</p>
 <dl class="py exception">
@@ -875,7 +876,7 @@ spectra should be zero</p></li>
 
 </section>
 <section id="module-ultrapyfit.utils.divers">
-<span id="ultrapyfit-utils-divers-module"></span><h2>ultrapyfit.utils.divers module<a class="headerlink" href="#module-ultrapyfit.utils.divers" title="Permalink to this headline"></a></h2>
+<span id="ultrapyfit-utils-divers-module"></span><h2>ultrapyfit.utils.divers module<a class="headerlink" href="#module-ultrapyfit.utils.divers" title="Permalink to this heading"></a></h2>
 <p>Created on Fri Nov 13 15:13:09 2020</p>
 <p>&#64;author: Lucas</p>
 <dl class="py class">
@@ -1355,7 +1356,7 @@ be printed in a single line</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="ultrapyfit.utils.divers.TimeMultiplicator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.utils.divers.</span></span><span class="sig-name descname"><span class="pre">TimeMultiplicator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.utils.divers.TimeMultiplicator" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
 <p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ultrapyfit.utils.divers.TimeMultiplicator.a">
@@ -1404,14 +1405,14 @@ be printed in a single line</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ultrapyfit.utils.divers.TimeMultiplicator.">
-<span id="ultrapyfit.utils.divers.TimeMultiplicator.μ"></span><span class="sig-name descname"><span class="pre">μ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-06</span></em><a class="headerlink" href="#ultrapyfit.utils.divers.TimeMultiplicator." title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">μ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-06</span></em><a class="headerlink" href="#ultrapyfit.utils.divers.TimeMultiplicator." title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ultrapyfit.utils.divers.TimeUnitFormater">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.utils.divers.</span></span><span class="sig-name descname"><span class="pre">TimeUnitFormater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplicator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ultrapyfit.utils.divers.TimeMultiplicator" title="ultrapyfit.utils.divers.TimeMultiplicator"><span class="pre">ultrapyfit.utils.divers.TimeMultiplicator</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">TimeMultiplicator.p</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.utils.divers.TimeUnitFormater" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.utils.divers.</span></span><span class="sig-name descname"><span class="pre">TimeUnitFormater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplicator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ultrapyfit.utils.divers.TimeMultiplicator" title="ultrapyfit.utils.divers.TimeMultiplicator"><span class="pre">TimeMultiplicator</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">TimeMultiplicator.p</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.utils.divers.TimeUnitFormater" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class to format a time number in a string with the corresponding unit, after
 indicating the unit measure.</p>
@@ -1449,7 +1450,7 @@ indicating the unit measure.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="ultrapyfit.utils.divers.UnvariableContainer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ultrapyfit.utils.divers.</span></span><span class="sig-name descname"><span class="pre">UnvariableContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kws</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ultrapyfit.utils.divers.UnvariableContainer" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.utils.divers.LabBook" title="ultrapyfit.utils.divers.LabBook"><code class="xref py py-class docutils literal notranslate"><span class="pre">ultrapyfit.utils.divers.LabBook</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#ultrapyfit.utils.divers.LabBook" title="ultrapyfit.utils.divers.LabBook"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabBook</span></code></a></p>
 <p>Object where once an attribute has been set cannot be modified if
 self.__frozen = True</p>
 </dd></dl>
@@ -1637,7 +1638,7 @@ i. e.: [[380,450],[520,530] traces with wavelength values between</p>
 
 </section>
 <section id="module-ultrapyfit.utils">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ultrapyfit.utils" title="Permalink to this headline"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ultrapyfit.utils" title="Permalink to this heading"></a></h2>
 </section>
 </section>
 
